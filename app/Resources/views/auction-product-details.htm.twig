@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ auctionProduct.product.title }}{% endblock %}
+{% block body %}
+    <section class="section-single-product-page">
+    <div class="container">
+        <div class="row" itemscope itemtype="http://data-vocabulary.org/Product">
+
+            <div id="product-page">
+                <div class="col-lg-6 col-md-12" itemprop="offerDetails" itemscope itemtype="http://data-vocabulary.org/Offer">
+
+                    <div class="single-product-info-holder">
+                        {{ include(':partials:auction-breadcrumb-bar.htm.twig') }}
+                        <div class="brand">
+                        </div>
+
+                        <div id="product-gallery">
+                            <div class="col-lg-6 col-md-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <img temprop="image"  class="lazy product-img" alt="{{ auctionProduct.product.imageurl }}" src="{{ asset('images/products/') }}{{ auctionProduct.product.imageurl }}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h1 itemprop="name">{{ auctionProduct.product.title }}</h1>
+
+                        <div class="price">
+                             <span  itemprop="price">{{ auctionProduct.currency }} {{ auctionProduct.finalPrice }}</span>
+                            <meta itemprop="currency" content="{{ auctionProduct.currency }}" />
+                        </div>
+                        {% if auctionProduct.product.description %}
+                            <div class="excerpt" itemprop="description">
+                                {{ auctionProduct.product.description }}
+                            </div>
+                        {% endif %}
+
+
+
+                        <div class="drop-down-holder">
+
+                            <div class="quantitiy inline">
+                                <h5>Quantity</h5>
+                                <input class="md-input quantity" type="text" value="1" name="quantity"/>
+                            </div>
+                        </div>
+                        <div class="buttons-holder">
+                            <div class="add-cart-holder inline">
+
+
+                                <input type="hidden" name="productId" value="{{ auctionProduct.id }}"/>
+                                <a class="md-button" href="#" data-ajax-handler="shop:onAddToCart" data-ajax-update="#mini-cart=shop-minicart, #product-page=shop-product">Add to Cart</a>
+
+                            </div>
+                        </div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+
+
+
+     {% endblock %}

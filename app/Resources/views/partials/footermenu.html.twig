@@ -1,0 +1,101 @@
+<div class="container">
+    <div class="col-xs-offset-2 col-xs-8 col-sm-6 col-sm-offset-0  col-md-3">
+        <div class="footer-column adress-column">
+            <h4>connect with us</h4>
+
+            <div class="content">
+                <p class="bold">iFlora - eMarketplace</p>
+                <p>
+                    College House,Koinange Street
+                    <br>254-720-123-4567
+                    <br>sales@iflora.biz
+                </p>
+                <div class="footer-socials">
+                    <ul>
+                        <li>
+                            <a href="" class="fa fa-facebook"></a>
+                        </li>
+                        <li>
+                            <a href="" class="fa fa-twitter"></a>
+                        </li>
+                        <li>
+                            <a href="" class="fa fa-pinterest"></a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-xs-offset-2 col-xs-8 col-sm-6 col-sm-offset-0  col-md-3">
+        <div class="footer-column">
+            <h4>shop</h4>
+
+            <div class="content">
+                {{ render(controller('AppBundle:Category:list')) }}
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-xs-offset-2 col-xs-8 col-sm-6 col-sm-offset-0  col-md-3">
+        <div class="footer-column">
+            <h4>my account</h4>
+
+            <div class="content">
+                <ul class="link-list">
+                    {% if is_granted('ROLE_USER') %}
+                        <li class=""><a href="{{ path('auction_product_list') }}">Auction</a> </li>
+                        <li class=""><a href="{{ path('my_order_list') }}">My Orders</a></li>
+                        <li class=""><a href="{{ path('my_profile') }}">My Profile</a></li>
+                    {% else %}
+                        <li><a href="{{ path('security_login') }}" title="Login / Register">Login / Register</a></li>
+                    {% endif %}
+                </ul>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-xs-offset-2 col-xs-8 col-sm-6 col-sm-offset-0  col-md-3">
+        <div class="footer-column">
+            <h4>our support</h4>
+
+            <div class="content">
+                <ul class="link-list">
+                    <li>
+                        <a href="">terms & conditions</a>
+                    </li>
+
+                    <li>
+                        <a href="">delivery</a>
+                    </li>
+                    <li>
+                        <a href="">secure payment</a>
+                    </li>
+
+                    <li>
+                        <a href="">contact us</a>
+                    </li>
+
+                    <li>
+                        <a href="">refunds</a>
+                    </li>
+
+                    <li>
+                        <a href="">track orders</a>
+                    </li>
+                    <li>
+                        <a href="">services</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

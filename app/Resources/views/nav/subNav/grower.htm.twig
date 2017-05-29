@@ -1,0 +1,56 @@
+<div class="my-acount">
+    <strong class="label" style="color:black;"><span>My Account<i style="color:#d61818"
+                    class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <ul class="header links">
+        <li><a href="#">My Account</a></li>
+        <li><a href="{{ path('my_grower_order_list') }}">My Orders</a></li>
+        <li class="authorization-link" data-label="or">
+            <a href="{{ path('security_logout') }}">
+                Logout </a>
+        </li>
+    </ul>
+</div>
+<div class="my-acount">
+    <strong class="label" style="color:black;"><span>Product Management<i
+                    style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <ul class="header links">
+        <li><a href="{{ path('grower_product_new') }}">New Product</a></li>
+        <li><a href="{{ path('grower_auction_new') }}">Add to Auction</a></li>
+        <li><a href="{{ path('grower_order_list') }}">Received Orders</a></li>
+    </ul>
+</div>
+<div class="my-acount">
+    <strong class="label" style="color:black;"><span>My Breeders / Agents<i
+                    style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <ul class="header links">
+        <li><a href="{{ path('my_breeder_list') }}">My Breeders</a></li>
+        <li><a href="{{ path('my_grower_agent_list') }}">My Agents</a></li>
+
+    </ul>
+</div>
+
+<div class="my-acount" style="margin-right: 60px;height:20px">
+    <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Grower/Grower:getTotalRequests')) }}">
+    <i style="color: black" class="fa fa-envelope fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;"></strong>
+    <ul class="header links" style="left:-100px;margin-top:5px">
+        <li class="top">Received Requests</li>
+        <li><a href="{{ path('breeder_requests') }}">Breeders ( {{ render(controller('AppBundle:Grower/Grower:getTotalBreederRequests')) }} )</a></li>
+        <li><a href="{{ path('grower_agent_requests') }}">Agents ( {{ render(controller('AppBundle:Grower/Grower:getTotalAgentRequests')) }} )</a></li>
+
+    </ul>
+</div>
+
+<div class="my-acount" style="margin-right: 60px;height:20px">
+    <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Grower/Grower:getMyTotalRequests')) }}">
+    <i style="color: black" class="fa fa-exchange fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;"></strong>
+    <ul class="header links" style="left:-100px;margin-top:5px">
+        <li class="top">My Requests</li>
+        <li><a href="{{ path('my_breeder_requests') }}">Breeders ( {{ render(controller('AppBundle:Grower/Grower:getMyTotalBreederRequests')) }} )</a></li>
+        <li><a href="{{ path('my_grower_agent_requests') }}">Agents ( {{ render(controller('AppBundle:Grower/Grower:getMyTotalAgentRequests')) }} )</a></li>
+
+    </ul>
+</div>

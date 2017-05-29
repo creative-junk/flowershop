@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Home {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('barcelona/js/css_browser_selector.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('barcelona/js/chosen.jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('barcelona/js/jquery.carouFredSel-6.2.1-packed.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('barcelona/js/jquery.easing-1.3.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('barcelona/js/jquery.flexslider-min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('barcelona/js/jquery.lazyload.min.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <section class="section-home-banner">
+        <div class="container"><img class="lazy" src="{{ asset('barcelona/images/banner07.jpg') }}"></div>
+    </section>
+
+    <section id="homepage-products-tab" class="section-products-grid">
+        <div class="container">
+
+            {# Nav tabs #}
+            <div class="tab-nav-holder">
+                <ul class="nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#featured" class="active-tab tab-control" aria-controls="featured" role="tab"
+                           data-toggle="featured">featured</a>
+                    </li>
+
+                    <li role="presentation">
+                        <a href="#whats-new" class="active-tab tab-control" aria-controls="whats-new" role="tab"
+                           data-toggle="whats-new">what's new</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-tag-line uppercase bold">
+                we have over 2000 Rose products in our shop
+            </div>
+            <div class="tab-content product-grid no-move-down">
+                <div role="tabpanel" class="tab-pane active" id="featured">
+                    <div class="row">
+                        {{ render(controller('AppBundle:Product:featuredProducts')) }}
+                    </div>
+                </div>{# /featured #}
+
+                <div role="tabpanel" class="tab-pane" id="whats-new">
+                    <div class="row">
+                        {{ render(controller('AppBundle:Product:newProducts')) }}
+                    </div>
+                </div>{# /whats-new #}
+            </div>
+
+        </div>
+    </section>
+
+    <section class="section-newsletter">
+        <div class="container">
+            <div class="news-letter-holder">
+                <form>
+                    <div class="row">
+                        <div class="newsletter-title col-xs-12 col-sm-4">
+                            <h2>sign up to our newsletter</h2>
+
+                            <h3>and get $30 coupon</h3>
+                        </div>
+
+                        <div class=" col-xs-12 col-sm-8">
+                            <div class="newsletter-body">
+                                <input class="md-input col-xs-12 col-sm-7" placeholder="Enter here your email">
+                                <button class="md-button black narrow">sign up</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+

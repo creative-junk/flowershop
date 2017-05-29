@@ -1,0 +1,4 @@
+{{ form_start(form) }}
+<input type="hidden" name="productId" value="{{ product.id }}"/>
+<a class="md-button" href="#" data-ajax-handler="shop:onAddToCart" data-ajax-update="#mini-cart=shop-minicart, #product-page=shop-product">Add to Cart</a>
+{{ form_end(form) }}

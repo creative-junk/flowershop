@@ -1,0 +1,37 @@
+<div class="products-list-holder">
+    {% for auctionProduct in products %}
+            <div class="product-list-item">
+            <div class="row">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="image-holder">
+                        <a href="/auction/{{ auctionProduct.id }}/view"><img class="product-img" alt="{{ auctionProduct.product.title }}" src="{{ asset('images/products/') }}{{ auctionProduct.product.imageurl }}" /></a>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-8">
+                    <div class="item-details-holder">
+
+                        <h2 class="title" ><a href="/auction/{{ auctionProduct.id }}/view">{{ auctionProduct.product.title }}</a></h2>
+
+                        <div class="excerpt">
+                            {{ auctionProduct.product.description }}
+                        </div>
+
+                        <div class="price">
+
+                            <span>{{ auctionProduct.currency }} {{ auctionProduct.finalPrice }}</span>
+                        </div>
+                        <div class="buttons-holder">
+                            <div class="add-cart-holder">
+                                <input type="hidden" name="productId" value="{{ auctionProduct.id }}"/>
+                                <a class="md-button" href="#" data-ajax-handler="shop:onAddToCart" data-ajax-update="#mini-cart=shop-minicart, #product-page=shop-product">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <h2 class="empty">There are no products in this category.</h2>
+    {% endfor %}
+</div>

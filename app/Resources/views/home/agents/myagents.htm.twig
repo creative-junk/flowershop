@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} My Agents {% endblock %}
+
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">My Agents</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('home') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item category131">
+                    <strong><a href="{{ path('buyer_agents') }}">Agents</a></strong>
+                </li>
+                <li class="item category131">
+                    <strong>My Agents</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+
+        </div>
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
+        <div class="columns">
+            <div class="column main">
+                <div class="cart table-wrapper">
+                    <table id="shopping-cart-table" class="cart items data table">
+                        <thead>
+                        <tr>
+                            <th class="col item" scope="col"><span>Agent</span></th>
+                            <th class="col price" scope="col"><span>Connected Since</span></th>
+                            <th class="col price" scope="col"><span>Roses</span></th>
+                        </tr>
+                        </thead>
+                        <tbody class="cart item">
+                        {% for buyerAgent in buyerAgents %}
+                            <tr class="item-info js-grower-item">
+                                <td data-th="Item" class="col item">
+                                        <span class="product-image-container" style="width:165px;">
+                                        <strong class="product-item-name">
+
+                                            <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                              <a href="{{ path('view_grower',{
+                                                  'id':buyerAgent.agent.id
+                                              }) }}">{{ buyerAgent.agent.fullName }}</a>
+                                        </span>
+                                        </strong>
+                                        </span>
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ buyerAgent.dateSince |date("d/m/Y") }}
+                                                </span>
+                                            </span>
+
+                                    </span>
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                    <a class="action action-edit" href="{{ path('buyer_view_agent_roses',{'id': buyerAgent.agent.id }) }}"
+                                                       title="View Roses">View Roses</a></span>
+                                            </span>
+
+                                    </span>
+                                </td>
+
+
+                            </tr>
+                        {% else %}
+                            <tr class="item-info">
+                                <td data-th="Item" class="col item">
+                                    You have No Agents on Record
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+            {% include(':home:sidebar.htm.twig') %}
+
+        </div>
+    </main>
+{% endblock %}
+

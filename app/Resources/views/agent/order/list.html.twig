@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+{% block title %} Received Orders {% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+
+{% block body %}
+<div class="category-view">
+    <div class="page-title-wrapper">
+        <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+            <span class="base" data-ui-id="page-title-wrapper">Received Orders</span></h1>
+    </div>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item category131">
+                <strong>Orders - Received Orders</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages">
+        </div>
+        <div data-bind="scope: 'messages'">
+            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            </div>
+            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column main">
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Received Orders </h2>
+                            <ul class="nav navbar-right panel_toolbox">
+
+
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">
+                            </p>
+                            <table id="datatable" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Customer</th>
+
+                                    <th>Order Amount</th>
+                                    <th>Order Status</th>
+                                    <th>Order State</th>
+                                    <th>is Auction Order?</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for order in orders %}
+                                    <tr>
+
+                                        <td>{{ order.user.firstName }}&nbsp;{{ order.user.lastName }}</td>
+
+                                        <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount }}</td>
+                                        <td>{{ order.orderStatus }}</td>
+                                        <td>{{ order.orderState }}</td>
+                                        <td>{% if(order.isAuctionOrder == 1) %}
+                                                true
+                                            {% else %}
+                                                false
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6">No Orders found</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include(':agent:sidebar.htm.twig') %}
+
+    </div>
+</main>
+
+{% endblock %}

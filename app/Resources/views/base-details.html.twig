@@ -1,0 +1,645 @@
+<html lang="en-US" class="">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="description" content="Default Description">
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}iFlora eMarketplace {% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/calendar.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/styles-m.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/styles-l.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/bootstrap.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/bootstrap-theme.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/font-awesome.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/animate.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/style.css') }}">
+        <link rel="stylesheet" type="text/css" media="print" href="{{ asset('iflora/css/print.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/owl.carousel.css') }}">
+        <link rel="stylesheet" type="text/css"
+              href='https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i'>
+        <link rel="stylesheet" type="text/css"
+              href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+    {% endblock %}
+    {% block javascripts %}
+        <script type="text/javascript" src="{{ asset('iflora/js/require.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('iflora/js/mixins.js') }}"></script>
+    {% endblock %}
+</head>
+<body data-container="body" itemtype="http://schema.org/Product" itemscope="itemscope"
+      class="catalog-product-view product-orion-two-tone-fitted page-layout-1column" aria-busy="false">
+
+<noscript>
+    &lt;div class="message global noscript"&gt;
+    &lt;div class="content"&gt;
+    &lt;p&gt;
+    &lt;strong&gt;JavaScript seems to be disabled in your browser.&lt;/strong&gt;
+    &lt;span&gt;For the best experience on our site, be sure to turn on Javascript in your browser.&lt;/span&gt;
+    &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;/div&gt;
+</noscript>
+<div class="page-wrapper">
+    <header class="header-container">
+        <div class="top-bar visible-lg visible-md">
+            <div class="container-inner">
+                <div class="container-size">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="switcher currency switcher-currency" id="switcher-currency">
+                                <strong class="label switcher-label"><span>Currency:</span></strong>
+
+                                <div class="actions dropdown options switcher-options">
+                                    <div class="action toggle switcher-trigger" id="switcher-currency-trigger">
+                                        <strong class="language-USD">
+                                            <span>KSH<i class="fa fa-angle-down">&nbsp;</i></span>
+                                        </strong>
+                                    </div>
+                                    <ul class="dropdown switcher-dropdown">
+                                        <li class="currency-EUR switcher-option">
+                                            <a href="#">USD</a>
+                                        </li>
+                                        <li class="currency-EUR switcher-option">
+                                            <a href="#">EUR</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+                            {% if is_granted('ROLE_BUYER') %}
+                                <div class="my-acount">
+                                    <strong class="label" style="color:black;"><span>My Account<i
+                                                    class="fa fa-angle-down">&nbsp;</i></span></strong>
+                                    <ul class="header links">
+                                        <li><a href="{{ path('my_profile') }}">My Account</a></li>
+                                        <li class="link wishlist" data-bind="scope: 'wishlist'">
+                                            <a href="{{ path('my_compare') }}">My Wish List
+                                                <!-- ko if: wishlist().counter --><!-- /ko -->
+                                            </a>
+                                        </li>
+
+                                        <li class="authorization-link" data-label="or">
+                                            <a href="{{ path('security_logout') }}">
+                                                Logout </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-fix">
+            <div class="container-inner">
+                <div class="header">
+                    <div class="h-left">
+                        <span data-action="toggle-nav" class="action nav-toggle"><span>Toggle Nav</span></span>
+                        <strong class="logo">
+                            <img src="{{ asset('iflora/images/logo.png') }}" alt="iFlora" width="223" height="60">
+                        </strong>
+                    </div>
+                    <div class="h-right">
+                        {% if is_granted('ROLE_BUYER') %}
+                            {{ include(':nav:buyer.htm.twig') }}
+                        {% elseif is_granted('ROLE_GROWER') %}
+                            {{ include(':nav:buyer.htm.twig') }}
+                        {% elseif is_granted('ROLE_BREEDER') %}
+                            {{ include(':nav:buyer.htm.twig') }}
+                        {% elseif is_granted('ROLE_AGENT') %}
+                            {{ include(':nav:buyer.htm.twig') }}
+                        {% else %}
+                            {{ include(':nav:nav.htm.twig') }}
+
+                        {% endif %}
+                        <script type="text/javascript">
+
+                            jQuery.fn.extend({
+                                mobilemenu: function () {
+                                    return this.each(function () {
+
+                                        var jQueryul = jQuery(this);
+
+                                        if (jQueryul.data('accordiated'))
+                                            return false;
+
+                                        jQuery.each(jQueryul.find('ul, li>div'), function () {
+                                            jQuery(this).data('accordiated', true);
+                                            jQuery(this).hide();
+                                        });
+
+                                        jQuery.each(jQueryul.find('span.head'), function () {
+                                            jQuery(this).click(function (e) {
+                                                activate(this);
+                                                return void(0);
+                                            });
+                                        });
+
+                                        var active = (location.hash) ? jQuery(this).find('a[href=' + location.hash + ']')[0] : '';
+
+                                        if (active) {
+                                            activate(active, 'toggle');
+                                            jQuery(active).parents().show();
+                                        }
+
+                                        function activate(el, effect) {
+                                            jQuery(el).parent('li').toggleClass('active').siblings().removeClass('active').children('ul, div').slideUp('fast');
+                                            jQuery(el).siblings('ul, div')[(effect || 'slideToggle')]((!effect) ? 'fast' : null);
+                                        }
+
+                                    });
+                                }
+                            });
+                            })
+                            (jQuery);
+
+                            jQuery("ul.mobilemenu li.level1, ul.level2 li").each(function () {
+                                if (jQuery(this).find('li').length > 0) {
+                                    jQuery(this).addClass('have_sub');
+                                    jQuery(this).append('<span class="head"><a href="javascript:void(0)"></a></span>');
+                                }
+                            });
+                            jQuery('ul.mobilemenu').mobilemenu();
+                            jQuery("ul.mobilemenu li.active").each(function () {
+                                jQuery(this).children().next("ul").css('display', 'block');
+                            });
+
+                            //mobile
+                            jQuery('.btn-navbar').click(function () {
+
+                                var chk = 0;
+                                if (jQuery('#navbar-inner').hasClass('navbar-inactive') && ( chk == 0 )) {
+                                    jQuery('#navbar-inner').removeClass('navbar-inactive');
+                                    jQuery('#navbar-inner').addClass('navbar-active');
+                                    jQuery('#ma-mobilemenu').css('display', 'block');
+                                    chk = 1;
+                                }
+                                if (jQuery('#navbar-inner').hasClass('navbar-active') && ( chk == 0 )) {
+                                    jQuery('#navbar-inner').removeClass('navbar-active');
+                                    jQuery('#navbar-inner').addClass('navbar-inactive');
+                                    jQuery('#ma-mobilemenu').css('display', 'none');
+                                    chk = 1;
+                                }
+                            });
+
+
+                            jQuery("#pt_menu_link ul li").each(function () {
+                                var url = document.URL;
+                                jQuery("#pt_menu_link ul li a").removeClass("act");
+                                jQuery('#pt_menu_link ul li a[href="' + url + '"]').addClass('act');
+                            });
+
+                            jQuery('.pt_menu_no_child').hover(function () {
+                                jQuery(this).addClass("active");
+                            }, function () {
+                                jQuery(this).removeClass("active");
+                            })
+
+                            jQuery('.pt_menu').hover(function () {
+                                if (jQuery(this).attr("id") != "pt_menu_link") {
+                                    jQuery(this).addClass("active");
+                                }
+                            }, function () {
+                                jQuery(this).removeClass("active");
+                            })
+
+                            jQuery('.pt_menu').hover(function () {
+                                /*show popup to calculate*/
+                                jQuery(this).find('.popup').css('display', 'inline-block');
+
+                                /* get total padding + border + margin of the popup */
+                                var extraWidth = 0
+                                var wrapWidthPopup = jQuery(this).find('.popup').outerWidth(true);
+                                /*include padding + margin + border*/
+                                var actualWidthPopup = jQuery(this).find('.popup').width();
+                                /*no padding, margin, border*/
+                                extraWidth = wrapWidthPopup - actualWidthPopup;
+
+                                /* calculate new width of the popup*/
+                                var widthblock1 = jQuery(this).find('.popup .block1').outerWidth(true);
+                                var widthblock2 = jQuery(this).find('.popup .block2').outerWidth(true);
+                                var new_width_popup = 0;
+                                if (widthblock1 && !widthblock2) {
+                                    new_width_popup = widthblock1;
+                                }
+                                if (!widthblock1 && widthblock2) {
+                                    new_width_popup = widthblock2;
+                                }
+                                if (widthblock1 && widthblock2) {
+                                    if (widthblock1 >= widthblock2) {
+                                        new_width_popup = widthblock1;
+                                    }
+                                    if (widthblock1 < widthblock2) {
+                                        new_width_popup = widthblock2;
+                                    }
+                                }
+                                var new_outer_width_popup = new_width_popup + extraWidth;
+
+                                /*define top and left of the popup*/
+                                var wraper = jQuery('.pt_custommenu');
+                                var wWraper = wraper.outerWidth();
+                                var posWraper = wraper.offset();
+                                var pos = jQuery(this).offset();
+
+                                var xTop = pos.top - posWraper.top + CUSTOMMENU_POPUP_TOP_OFFSET;
+                                var xLeft = pos.left - posWraper.left;
+                                if ((xLeft + new_outer_width_popup) > wWraper) xLeft = wWraper - new_outer_width_popup;
+
+                                jQuery(this).find('.popup').css('top', xTop);
+                                jQuery(this).find('.popup').css('left', xLeft);
+
+                                /*set new width popup*/
+                                jQuery(this).find('.popup').css('width', new_width_popup);
+                                jQuery(this).find('.popup .block1').css('width', new_width_popup);
+
+                                /*return popup display none*/
+                                jQuery(this).find('.popup').css('display', 'none');
+
+                                /*show hide popup*/
+                                if (CUSTOMMENU_POPUP_EFFECT == 0) jQuery(this).find('.popup').stop(true, true).slideDown('slow');
+                                if (CUSTOMMENU_POPUP_EFFECT == 1) jQuery(this).find('.popup').stop(true, true).fadeIn('slow');
+                                if (CUSTOMMENU_POPUP_EFFECT == 2) jQuery(this).find('.popup').stop(true, true).show();
+                            }, function () {
+                                if (CUSTOMMENU_POPUP_EFFECT == 0) jQuery(this).find('.popup').stop(true, true).slideUp();
+                                if (CUSTOMMENU_POPUP_EFFECT == 1) jQuery(this).find('.popup').stop(true, true).fadeOut('slow');
+                                if (CUSTOMMENU_POPUP_EFFECT == 2) jQuery(this).find('.popup').stop(true, true).hide('fast');
+                            })
+
+
+                        </script>
+
+                        <script type="text/javascript">
+                            //<![CDATA[
+                            var CUSTOMMENU_POPUP_EFFECT = 0;
+                            var CUSTOMMENU_POPUP_TOP_OFFSET = 45;
+                            //]]>
+                        </script>
+
+
+                        <div class="absolute">
+                            <div class="search-switcher">
+
+                                <form class="form minisearch" id="search_mini_form"
+                                      action="http://plazathemes.com/demo/presiden/english11/catalogsearch/result/"
+                                      method="get">
+                                    <div class="field search">
+                                        <input id="search" type="text" name="q" value=""
+                                               placeholder="Search for item..." class="input-text" maxlength="128"
+                                               role="combobox" aria-haspopup="false" aria-autocomplete="both"
+                                               autocomplete="off">
+
+
+                                        <button type="submit" title="Search" class="action fa fa-search" disabled="">
+                                            <span></span>
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                            <div data-block="minicart" class="minicart-wrapper">
+                                <a class="action showcart" href="" data-bind="scope: 'minicart_content'">
+                                    <span class="text">Shopping Cart</span>
+        <span class="counter qty empty"
+              data-bind="css: { empty: !!getCartParam('summary_count') == false }, blockLoader: isLoading">
+            <span class="counter-number"><!-- ko text: getCartParam('summary_count') -->0<!-- /ko --></span>
+            <span class="counter-label">
+            <!-- ko if: getCartParam('summary_count') --><!-- /ko -->
+            </span>
+        </span>
+                                </a>
+
+                                <script>
+                                    window.checkout = {
+                                        "shoppingCartUrl": "",
+                                        "checkoutUrl": "",
+                                        "updateItemQtyUrl": "",
+                                        "removeItemUrl": "",
+                                        "imageTemplate": "",
+                                        "baseUrl": "",
+                                        "minicartMaxItemsVisible": 5,
+                                        "websiteId": "1",
+                                        "customerLoginUrl": "",
+                                        "isRedirectRequired": false,
+                                        "autocomplete": "off",
+                                        "captcha": {
+                                            "user_login": {
+                                                "isCaseSensitive": false,
+                                                "imageHeight": 50,
+                                                "imageSrc": "",
+                                                "refreshUrl": "",
+                                                "isRequired": false
+                                            },
+                                            "guest_checkout": {
+                                                "isCaseSensitive": false,
+                                                "imageHeight": 50,
+                                                "imageSrc": "",
+                                                "refreshUrl": "",
+                                                "isRequired": false
+                                            }
+                                        }
+                                    };
+                                </script>
+
+                                <div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front mage-dropdown-dialog"
+                                     tabindex="-1" role="dialog" aria-describedby="ui-id-1" style="display: none;">
+                                    <div class="block block-minicart empty ui-dialog-content ui-widget-content"
+                                         data-role="dropdownDialog" id="ui-id-1" style="display: block;">
+                                        <div id="minicart-content-wrapper" data-bind="scope: 'minicart_content'">
+                                            <!-- ko template: getTemplate() -->
+                                            <div class="block-title">
+                                                <strong>
+                                                    <span class="text"><!-- ko i18n: 'My Cart' --><span>My Cart</span><!-- /ko --></span>
+        <span class="qty empty" data-bind="css: { empty: !!getCartParam('summary_count') == false },
+                       attr: { title: $t('Items in Cart') }" title="Items in Cart">
+            <!-- ko text: getCartParam('summary_count') -->0<!-- /ko -->
+        </span>
+                                                </strong>
+                                            </div>
+
+                                            <div class="block-content">
+                                                <button type="button" id="btn-minicart-close" class="action close"
+                                                        data-action="close" data-bind="attr: { title: $t('Close') }"
+                                                        title="Close">
+                                                    <span><!-- ko i18n: 'Close' --><span>Close</span><!-- /ko --></span>
+                                                </button>
+
+                                                <!-- ko if: getCartParam('summary_count') --><!-- /ko -->
+
+                                                <!-- ko if: getCartParam('summary_count') --><!-- /ko -->
+
+                                                <!-- ko ifnot: getCartParam('summary_count') -->
+                                                <strong class="subtitle empty" data-bind="visible: closeSidebar()">
+                                                    <!-- ko i18n: 'You have no items in your shopping cart.' --><span>You have no items in your shopping cart.</span><!-- /ko -->
+                                                </strong>
+                                                <!-- ko if: getCartParam('cart_empty_message') --><!-- /ko -->
+                                                <!-- /ko -->
+
+                                                <!-- ko if: getCartParam('summary_count') --><!-- /ko -->
+
+                                                <div id="minicart-widgets" class="minicart-widgets">
+                                                    <!-- ko foreach: getRegion('promotion') -->
+                                                    <!-- ko template: getTemplate() -->
+                                                    <!-- ko foreach: {data: elems, as: 'element'} --><!-- /ko -->
+                                                    <!-- /ko -->
+                                                    <!-- /ko -->
+                                                </div>
+                                            </div>
+                                            <!-- ko foreach: getRegion('sign-in-popup') --><!-- /ko -->
+                                            <!-- /ko -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-ozmegamenu-inner">
+                    <div class="mobile-bar-icon"><span>mobile icon</span></div>
+                </div>
+                <div class="mobile-bar-content">
+                    <div class="mobile-bar-close">Close</div>
+                    <ul class="tabs-mobile">
+                        <li class="item item-menu active">Menu</li>
+
+                        <li class="item item-setting">Setting</li>
+                    </ul>
+                    <div class="tabs-content-mobile tabs-menu">
+
+
+                        <nav class="ma-nav-mobile-container">
+                            <ul id="ma-mobilemenu" class="mobilemenu">
+                                <li class="level1"><a href="http://plazathemes.com/demo/presiden/english11/skirts.html"><span
+                                                class="name">Skirts</span></a>
+                                    <ul class="level2">
+                                        <li>
+                                            <a href="http://plazathemes.com/demo/presiden/english11/skirts/heeled-sandals.html"><span
+                                                        class="name">Heeled sandals</span></a>
+                                            <ul class="level3">
+                                                <li>
+                                                    <a href="http://plazathemes.com/demo/presiden/english11/skirts/heeled-sandals/dining-sets.html"><span
+                                                                class="name">Dining sets</span></a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="http://plazathemes.com/demo/presiden/english11/skirts/polo-short-sleeve.html"><span
+                                                        class="name">Polo Short Sleeve</span></a>
+                                            <ul class="level3">
+                                                <li>
+                                                    <a href="http://plazathemes.com/demo/presiden/english11/skirts/polo-short-sleeve/long-sleeve.html"><span
+                                                                class="name">Long Sleeve</span></a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="level1"><a
+                                            href="http://plazathemes.com/demo/presiden/english11/short-sleeve.html"><span
+                                                class="name">Short Sleeve</span></a>
+                                    <ul class="level2"></ul>
+                                </li>
+                                <li class="level1"><a
+                                            href="http://plazathemes.com/demo/presiden/english11/catalog/category/view/s/trousers/id/139/"><span
+                                                class="name">Trousers</span></a>
+                                    <ul class="level2"></ul>
+                                </li>
+                                <li class="level1"><a
+                                            href="http://plazathemes.com/demo/presiden/english11/catalog/category/view/s/dresses/id/231/"><span
+                                                class="name">Dresses</span></a>
+                                    <ul class="level2"></ul>
+                                </li>
+                                <li class="level1"><a href="http://plazathemes.com/demo/presiden/english11/shorts.html"><span
+                                                class="name">Shorts</span></a>
+                                    <ul class="level2"></ul>
+                                </li>
+                            </ul>
+                        </nav>
+
+                    </div>
+                    <div class="tabs-content-mobile tabs-setting" style="display:none;">
+                        <ul class="header links">
+                            <li><a href="http://plazathemes.com/demo/presiden/english11/customer/account/">My
+                                    Account</a></li>
+                            <li class="link wishlist" data-bind="scope: 'wishlist'">
+                                <a href="http://plazathemes.com/demo/presiden/english11/wishlist/">My Wish List
+                                    <!-- ko if: wishlist().counter --><!-- /ko -->
+                                </a>
+                            </li>
+
+                            <li class="authorization-link" data-label="or">
+                                <a href="http://plazathemes.com/demo/presiden/english11/customer/account/login/">
+                                    Sign In </a>
+                            </li>
+                        </ul>
+
+                        <div class="switcher currency switcher-currency" id="switchers-currency">
+                            <!--<strong class="label switcher-label"><span></span></strong>-->
+                            <div class="actions dropdown options switcher-options">
+                                <div class="action toggle switcher-trigger" id="switchers-currency-trigger">
+                                    <strong class="language-USD">
+                                        <span>KSH<i class="fa fa-angle-down">&nbsp;</i></span>
+                                    </strong>
+                                </div>
+                                <ul class="dropdown switcher-dropdown">
+                                    <li class="currency-EUR switcher-option">
+                                        <a href="#">KSH</a>
+                                    </li>
+                                    <li class="currency-EUR switcher-option">
+                                        <a href="#">USD</a>
+                                    </li>
+                                    <li class="currency-EUR switcher-option">
+                                        <a href="#">EUR</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <script type="text/javascript">
+        function ($) {
+            $(document).ready(function () {
+                <!-- show, hide mobile bar content -->
+                $(".mobile-bar-icon").click(function () {
+                    $(".mobile-bar-content").addClass("open");
+                });
+                $(".mobile-bar-close").click(function () {
+                    $(".mobile-bar-content").removeClass("open");
+                });
+
+                <!-- choose tabs-->
+                $(".tabs-mobile .item-menu").addClass("active");
+                $(".tabs-mobile .item").click(function () {
+                    $(".tabs-mobile .item").removeClass("active");
+                    $(this).addClass("active");
+                });
+                $(".tabs-mobile .item-menu").click(function () {
+                    $(".tabs-content-mobile").css("display", "none");
+                    $(".tabs-menu").css("display", "block");
+                });
+                $(".tabs-mobile .item-account").click(function () {
+                    $(".tabs-content-mobile").css("display", "none");
+                    $(".tabs-account").css("display", "block");
+                });
+                $(".tabs-mobile .item-setting").click(function () {
+                    $(".tabs-content-mobile").css("display", "none");
+                    $(".tabs-setting").css("display", "block");
+                });
+
+            });
+
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 60) {
+                    $('.header-fix').addClass("fix-header-fix");
+                } else {
+                    $('.header-fix').removeClass("fix-header-fix");
+                }
+            });
+        }
+        )
+        ;
+    </script>
+
+    {% block body %}{% endblock %}
+
+    <footer class="page-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="container-inner">
+                    <div class="footer-static row">
+                        <div class="col-sm-4">
+                            <p class="text">We are a flower resource and marketplace.</p>
+                            <ul class="add">
+                                <li>College House, Koinange Street</li>
+                                <li>Email: support@iflora.biz</li>
+                                <li>Phone: +254 720-123-456</li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-2">
+                            <h3 class="title">Information</h3>
+                            <ul>
+                                <li><a href="#">Specials</a></li>
+                                <li><a href="#">New products</a></li>
+                                <li><a href="#">Top sellers</a></li>
+                                <li><a href="#">Our stores</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-2">
+                            <h3 class="title">My account</h3>
+                            <ul>
+                                <li><a href="#">My orders</a></li>
+                                <li><a href="#">My credit slips</a></li>
+                                <li><a href="#">My addresses</a></li>
+                                <li><a href="#">My personal info</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-4">
+
+
+                            <h3>follow us on</h3>
+                            <ul class="link-follow">
+                                <li class="first"><a class="twitter fa fa-twitter" title="Twitter"
+                                                     href="https://www.twitter.com/ifloraofficial"><span>twitter</span></a>
+                                </li>
+                                <li><a class="google fa fa-google-plus" title="Google" href="#"><span>google </span></a>
+                                </li>
+                                <li><a class="facebook fa fa-facebook" title="Facebook"
+                                       href="https://www.facebook.com/ifloraofficial"><span>facebook</span></a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <div class="container-inner">
+                    <div class="container-size">
+                        <div class="link-footer">
+                            <!-- <ul>
+                                 <li><a href="#">Specials</a></li>
+                                 <li><a href="#">New products</a></li>
+                                 <li><a href="#">Top sellers</a></li>
+                                 <li><a href="#">Our stores</a></li>
+                                 <li><a href="#">contact</a></li>
+                             </ul>		-->        </div>
+                        <small class="copyright">
+                            <span>Copyright &copy; 2017 iFlora eMarketplace, All rights reserved.</span>
+                        </small>
+                        <div class="payment">
+                            <p><img src="http://plazathemes.com/demo/presiden/pub/media/wysiwyg/payment.png" alt=""></p>
+                        </div>
+
+                        <div id="back_top" style="display: block;">
+                            <a href="#back-top"><span>Back</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 300) {
+                    $('#back_top').fadeIn();
+                } else {
+                    $('#back_top').fadeOut();
+                }
+            });
+            $('#back_top').click(function () {
+                $('body,html').animate({scrollTop: 0}, 500);
+            });
+
+
+        </script>
+    </footer>
+</div>
+
+</body>
+</html>

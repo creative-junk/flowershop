@@ -1,0 +1,169 @@
+<div class="block block-minicart empty ui-dialog-content ui-widget-content ui-corner-all ui-front mage-dropdown-dialog"
+     data-role="dropdownDialog" id="ui-id-1" style="left:-330px">
+    <div id="minicart-content-wrapper" data-bind="scope: 'minicart_content'">
+
+        <div class="block-title">
+            <strong>
+                <span class="text"><!-- ko i18n: 'My Cart' --><span>My Cart</span><!-- /ko --></span>
+        <span class="qty" data-bind="css: { empty: !!getCartParam('summary_count') == false },
+                       attr: { title: $t('Items in Cart') }" title="Items in Cart">
+            <!-- ko text: getCartParam('summary_count') -->1<!-- /ko -->
+        </span>
+            </strong>
+        </div>
+
+        <div class="block-content">
+            <button type="button" id="btn-minicart-close" class="action close" href='javascript:;'
+                    onclick='hide_cart();' title="Close">
+                <span><span>Close</span><!-- /ko --></span>
+            </button>
+            {% if(cart) %}
+                <!-- ko if: getCartParam('summary_count') -->
+                <div class="items-total">
+
+                <span class="count">
+                    {{ cart.nrItems }}
+                </span>
+                    <span> item{% if(cart.nrItems >1 ) %}s{% endif %}</span>
+
+                </div>
+
+                <div class="subtotal">
+            <span class="label">
+                <span style="color:#666666;font-weight: bold;">Cart Subtotal</span>
+            </span>
+
+                    <div class="amount price-container">
+                        <span class="price-wrapper" data-bind="html: cart().subtotal_excl_tax"><span
+                                    class="price">{{ cart.cartCurrency }} {{ cart.cartAmount }}</span></span>
+
+                    </div>
+                </div>
+
+                <!-- ko if: getCartParam('possible_onepage_checkout') -->
+                <div class="actions">
+                    <div class="primary">
+                        <a id="top-cart-btn-checkout" href="{{ path('grower-checkout') }}" type="button"
+                           class="action primary checkout" title="Go to Checkout">
+                            <!-- ko i18n: 'Go to Checkout' --><span>Go to Checkout</span><!-- /ko -->
+                        </a>
+
+                    </div>
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+
+                <!-- ko if: getCartParam('summary_count') -->
+                <div data-action="scroll" class="minicart-items-wrapper" style="height: 150px;">
+                    <ol id="mini-cart" class="minicart-items">
+                        {% for item in cartItems %}
+                            <li class="item product product-item odd last" data-role="product-item">
+                                <div class="product">
+
+                                    <a data-bind="attr: {href: product_url, title: product_name}" tabindex="-1"
+                                       class="product-item-photo"
+                                       href="grower/product/seedlings{{ item.product.id }}/view"
+                                       title="{{ item.product.title }}">
+
+                                <span class="product-image-container" style="width: 76px;">
+                                    <span class="product-image-wrapper" style="padding-bottom: 128.947%;">
+                                        <img class="product-image-photo"
+                                             src="{{ asset('images/products/') }}{{ item.product.imageName }}"
+                                             alt="{{ item.product.title }}" style="width: 76px; height: 98px;">
+                                    </span>
+                                </span>
+                                    </a>
+
+                                    <div class="product-item-details">
+                                        <strong class="product-item-name">
+                                            <a href="grower/product/seedlings{{ item.product.id }}/view">{{ item.product.title }}</a>
+                                        </strong>
+
+                                        <div class="product-item-pricing">
+                                            <div class="price-container">
+                                          <span class="price-wrapper" data-bind="html: price">
+                                          <span class="price-excluding-tax" data-label="Excl. Tax">
+                                          <span class="minicart-price">
+                                                <span class="price">{{ item.cart.cartCurrency }}{{ item.product.price }}</span>
+                                          </span>
+
+                         </span>
+                        </span>
+                                            </div>
+
+                                            <div class="details-qty qty">
+                                                <label class="label" style="color:#666;font-weight: bold"
+                                                       for="cart-item-{{ item.product.id }}-qty">Qty</label>
+                                                <input value="{{ item.quantity }}" style=""
+                                                       id="update-cart-item-{{ item.product.id }}"
+                                                       data-cart-item="{{ item.product.id }}" title="Update">
+                                            </div>
+                                        </div>
+                                        <!--
+                                                                        <div class="product actions">
+                                                                            <div class="primary">
+                                                                                <a class="action edit" href="cart/edit/" title="Edit item">
+                                                                                    <span data-bind="i18n: 'Edit'">Edit</span>
+                                                                                </a>
+                                                                            </div>
+                                                                            <!-- /ko --
+                                                                            <div class="secondary">
+                                                                                <a href="#" data-bind="attr: {'data-cart-item': item_id, title: $t('Remove item')}" class="action delete" data-cart-item="287" title="Remove item">
+                                                                                    <span data-bind="i18n: 'Remove'">Remove</span>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div> -->
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                <!-- /ko -->
+
+                <!-- ko ifnot: getCartParam('summary_count') --><!-- /ko -->
+
+                <!-- ko if: getCartParam('summary_count') -->
+                <div class="actions">
+                    <div class="secondary">
+                        <a class="action viewcart" data-bind="attr: {href: shoppingCartUrl}"
+                           href="{{ path('grower-cart') }}">
+                            <span><!-- ko i18n: 'View and edit cart' --><span>View and edit cart</span><!-- /ko --></span>
+                        </a>
+                    </div>
+                </div>
+                <!-- /ko -->
+            {% else %}
+                <div class="block-content">
+                    <button type="button" id="btn-minicart-close" class="action close" data-action="close"
+                            href='javascript:;' onclick='hide_cart();' title="Close">
+                        <span><!-- ko i18n: 'Close' --><span>Close</span><!-- /ko --></span>
+                    </button>
+
+                    <!-- ko if: getCartParam('summary_count') --><!-- /ko -->
+
+                    <!-- ko if: getCartParam('summary_count') --><!-- /ko -->
+
+                    <!-- ko ifnot: getCartParam('summary_count') -->
+                    <strong class="subtitle empty" data-bind="visible: closeSidebar()">
+                        <!-- ko i18n: 'You have no items in your shopping cart.' --><span>You have no items in your shopping cart.</span><!-- /ko -->
+                    </strong>
+                    <!-- ko if: getCartParam('cart_empty_message') --><!-- /ko -->
+                    <!-- /ko -->
+
+                    <!-- ko if: getCartParam('summary_count') --><!-- /ko -->
+
+                    <div id="minicart-widgets" class="minicart-widgets">
+                        <!-- ko foreach: getRegion('promotion') -->
+                        <!-- ko template: getTemplate() -->
+                        <!-- ko foreach: {data: elems, as: 'element'} --><!-- /ko -->
+                        <!-- /ko -->
+                        <!-- /ko -->
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>

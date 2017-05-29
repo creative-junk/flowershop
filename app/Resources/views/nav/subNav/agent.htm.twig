@@ -1,0 +1,65 @@
+
+<div class="my-acount">
+    <span class="fa-stack fa-2x" style="color: black;position:absolute">
+    <i style="color: black" class="fa fa-user-circle-o fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;"></strong>
+    <ul class="header links" style="left:-100px;margin-top:25px">
+        <li><a href="#">My Account</a></li>
+
+        <li class="authorization-link" data-label="or">
+            <a href="{{ path('security_logout') }}">
+                Logout </a>
+        </li>
+    </ul>
+</div>
+<div class="my-acount"  style="margin-right: 30px;height:20px">
+     <span class="fa-stack fa-2x" style="color: black;position:absolute">
+    <i style="color: black" class="fa fa-tasks fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;"><span><i style="color: black;"
+                    class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <ul class="header links" style="left:-100px;margin-top:9px">
+        <li><a href="{{ path('my_assigned_product_list') }}">My Wishlist</a></li>
+        <li><a href="{{ path('my-agent-recommendations') }}">My Recommendations</a>
+        </li>
+    </ul>
+</div>
+
+<div class="my-acount" style="margin-right: 60px;height:20px">
+<span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Agent/Agent:getTotalRequests')) }}">
+    <i style="color: black" class="fa fa-envelope fa-1x fa-inverse"></i>
+</span>
+<strong class="label" style="color:black;"></strong>
+<ul class="header links" style="left:-100px;margin-top:9px">
+    <li class="top">Received Requests</li>
+    <li><a href="{{ path('agent_buyer_requests') }}">Buyers ( {{ render(controller('AppBundle:Agent/Agent:getTotalBuyerRequests')) }} )</a></li>
+    <li><a href="{{ path('agent_grower_requests') }}">Growers ( {{ render(controller('AppBundle:Agent/Agent:getTotalGrowerRequests')) }} )</a></li>
+
+</ul>
+</div>
+
+<div class="my-acount" style="margin-right: 60px;height:20px">
+    <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Agent/Agent:getMyTotalRequests')) }}">
+    <i style="color: black" class="fa fa-exchange fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;"></strong>
+    <ul class="header links" style="left:-100px;margin-top:9px">
+        <li class="top">My Requests</li>
+        <li><a href="{{ path('my_agent_buyer_requests') }}">Buyers ( {{ render(controller('AppBundle:Agent/Agent:getMyTotalBuyerRequests')) }} )</a></li>
+        <li><a href="{{ path('my_agent_grower_requests') }}">Growers ( {{ render(controller('AppBundle:Agent/Agent:getMyTotalGrowerRequests')) }} )</a></li>
+
+    </ul>
+</div>
+<div class="my-acount" style="margin-right: 60px;height:20px">
+    <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Agent/Agent:getMyTotalAgencyRequests')) }}">
+    <i style="color: black" class="fa fa-shopping-cart fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;"></strong>
+    <ul class="header links" style="left:-100px;margin-top:9px">
+        <li class="top">Agency Requests</li>
+        <li><a href="{{ path('my_agent_buyer_requests') }}">Products ( {{ render(controller('AppBundle:Agent/Agent:getMyAuctionAgencyRequests')) }} )</a></li>
+        <li><a href="{{ path('my_agent_grower_requests') }}">Orders ( {{ render(controller('AppBundle:Agent/Agent:getMyOrderAssignmentRequest')) }} )</a></li>
+
+    </ul>
+</div>

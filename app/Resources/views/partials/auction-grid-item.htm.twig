@@ -1,0 +1,21 @@
+<div class="product-item text-center">
+
+        <a href="/auction/{{ auctionProduct.id }}/view">
+            <img class="product-img" src="{{ asset('images/products/') }}{{ auctionProduct.product.imageurl }}" alt="{{ auctionProduct.product.title }}" />
+        </a>
+
+    <hr>
+    <div class="title uppercase bold">
+        <a href="/auction/{{ auctionProduct.id }}/view">{{ auctionProduct.product.title }}</a>
+    </div>
+    <div class="price">
+
+        <span>{{ auctionProduct.currency }} {{ auctionProduct.finalPrice }}</span>
+    </div>
+    <div class="buttons-holder">
+        <div class="add-cart-holder">
+            <input type="hidden" name="productId" value="{{ auctionProduct.id }}"/>
+            <a class="md-button" href="#" data-ajax-handler="shop:onAddToCart" data-ajax-update="#mini-cart=shop-minicart, #product-page=shop-product">Add to Cart</a>
+        </div>
+    </div>
+</div>

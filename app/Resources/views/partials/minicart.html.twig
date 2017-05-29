@@ -1,0 +1,21 @@
+<a href="{{ path('cart_list') }}">shopping cart</a>:
+<span class="top-cart-price">
+    {% if(cart) %}
+        {{ cart.cartCurrency }} {{ cart.cartAmount }}
+    {% else %}
+        $ 0.00
+    {% endif %}
+</span>
+<div class="total-buble">
+    <span>
+     {% if(cart) %}
+         {{ cart.nrItems }}
+     {% else %}
+         0
+     {% endif %}
+    </span>
+</div>
+
+{% if(cart) %}
+
+{% endif %}

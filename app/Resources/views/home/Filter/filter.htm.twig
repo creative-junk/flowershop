@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#resetForm').on('click', function () {
+            $('#form_filter').find('input:text, input:password, select, textarea').val('');
+        });
+    });
+</script>
+<div class="block-content">
+    {{ form_start(form, {'action': path('filter-products'),'attr': {'id': 'form_filter'}}) }}
+    <fieldset class="fieldset filter">
+
+        <div class="field">
+
+            {{ form_row(form.season) }}
+        </div>
+        <div class="field">
+            {{ form_row(form.color) }}
+
+        </div>
+        <div class="field">
+            {{ form_row(form.price) }}
+        </div>
+        <div class="field">
+            {{ form_row(form.user) }}
+        </div>
+        <div class="field">
+            {{ form_row(form.vaselife) }}
+        </div>
+        <div class="field">
+            {{ form_row(form.stemLength ) }}
+        </div>
+        <div class="field">
+            {{ form_row(form.headsize ) }}
+        </div>
+
+        <div class="field">
+            <input class="action primary" id="resetForm" type="button" value="Reset">
+            </input>
+            <button class="action primary" type="submit">Filter
+            </button>
+        </div>
+    </fieldset>
+    {{ form_end(form) }}
+</div>

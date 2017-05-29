@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block title %} Shopping Cart{% endblock %}
+{% block body %}
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <div id="checkout-page">{{ partial('shop-checkout') }}</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="cart-totals"> {{ include(':partials:cart-totals.htm.twig') }}</div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}
+

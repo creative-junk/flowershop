@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+{% block title %} Checkout{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('buyer_auction') }}" title="Go to Home Page">
+                    Auction Market </a>
+            </li>
+            <li class="item product">
+                <strong>Checkout</strong>
+            </li>
+        </ul>
+    </div>
+
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <div id="checkout-page">  <!-- Checkout progress -->
+
+                                <div id="checkout-progress">
+                                    <ul class="breadcrumb list-inline checkout-progress">
+                                        <li><a class="progress-active">BILLING ADDRESS</a></li>
+                                        <li>SHIPPING ADDRESS</li>
+                                        <li>SHIPPING METHOD</li>
+                                        <li>AGENT</li>
+                                        <li>PAYMENT</li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- End id="checkout-progress" -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <span>billing address</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body step-1">
+                                   {{ form_start(buyerCheckoutForm) }}
+
+                                        <div class="row field-row">
+                                            <div class="col-xs-6">
+                                                {{ form_row(buyerCheckoutForm.firstName, { 'attr': {'class': 'md-input'} }) }}
+                                            </div>
+                                            <div class="col-xs-6 col-right">
+                                                {{ form_row(buyerCheckoutForm.lastName, { 'attr': {'class': 'md-input'} }) }}
+                                            </div>
+                                        </div>
+                                        <div class="row field-row ">
+                                            <div class="col-xs-12">
+                                                {{ form_row(buyerCheckoutForm.company, { 'attr': {'class': 'md-input'} }) }}
+                                            </div>
+                                        </div>
+                                        <div class="row field-row ">
+                                            <div class="col-xs-12">
+                                                {{ form_row(buyerCheckoutForm.streetAddress, { 'attr': {'class': 'md-input'} }) }}
+                                            </div>
+                                        </div>
+                                        <div class="row field-row ">
+                                            <div class="col-xs-10">
+                                                {{ form_row(buyerCheckoutForm.town, { 'attr': {'class': 'md-input'} }) }}
+                                            </div>
+                                            <div class="col-xs-2">
+                                                {{ form_row(buyerCheckoutForm.zip, { 'attr': {'class': 'md-select'} }) }}
+                                            </div>
+                                        </div>
+                                        <div class="row field-row ">
+                                            <div class="col-xs-6">
+                                                {{ form_row(buyerCheckoutForm.country, { 'attr': {'class': 'md-select'} }) }}
+                                            </div>
+
+                                        </div>
+                                        <div class="row field-row ">
+                                            <div class="col-xs-6">
+                                                {{ form_row(buyerCheckoutForm.emailAddress, { 'attr': {'class': 'md-input'} }) }}
+                                            </div>
+                                            <div class="col-xs-6 col-right">
+                                                {{ form_row(buyerCheckoutForm.phoneNumber, { 'attr': {'class': 'md-input'} }) }}
+                                            </div>
+                                        </div>
+                                        <div class="row field-row checkout-button-row">
+
+                                            <div class="primary pull-right">
+                                                <button class="action primary" type="submit" id="billing-continue">continue</button>
+                                            </div>
+
+                                        </div>
+
+                                        <input type="hidden" id="billing-current-step" name="step" value="billing_info">
+                                        <input type="hidden" id="billing-next-step" name="nextStep" value="shipping_info">
+                                    {{ form_end(buyerCheckoutForm) }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="cart-totals"> {{ include('partials/iflora/user/auction/product-totals.htm.twig') }}</div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

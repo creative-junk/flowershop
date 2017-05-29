@@ -1,0 +1,38 @@
+
+<!-- sidebar menu -->
+<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+    <div class="menu_section">
+        <h3>General</h3>
+        <ul class="nav side-menu">
+            <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{{ path('admin_dashboard') }}">Dashboard</a></li>
+                </ul>
+            </li>
+            <li><a><i class="fa fa-users"></i> User Management <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{{ path('user_list') }}">All Users</a></li>
+                    <li><a href="{{ path('new_user') }}">Add User</a></li>
+
+                </ul>
+            </li>
+            <li><a><i class="fa fa-folder-open"></i> Catalog Management <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{{ path('admin_category_list') }}">Categories</a></li>
+                    <li><a href="{{ path('admin_product_list') }}">Products</a></li>
+                    <li><a href="{{ path('admin_auction_list') }}">Auction</a></li>
+                    <li><a href="{{ path('admin_category_new') }}">New Category</a></li>
+                    <li><a href="{{ path('admin_product_new') }}">New Product</a></li>
+                </ul>
+            </li>
+            <li><a><i class="fa fa-cart-plus"></i> Order Management <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{{ path('admin_order_list') }}">Orders</a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+
+</div>
+<!-- /sidebar menu -->

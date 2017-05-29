@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+{% block title %} Auction {% endblock %}
+{% block body %}
+    <section id="products-grid-sidebar" class="section-products-grid">
+        <div class="container">
+            <div class="col-xs-12 col-md-3">
+                <div class="sidebar">
+                    <div class="accordion-widget category-accordions">
+                        <h2>Categories</h2>
+                        {{ render(controller('AppBundle:Category:list')) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-9">
+
+                <div class="banner">
+                    <img alt="" class="lazy" src="{{ asset('barcelona/images/pgrid-banner-img.jpg') }}" />
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 text-right">
+                        <div class="grid-list-buttons">
+                            <ul class="list-inline">
+                                <li class="active"><a data-toggle="tab" href="#grid-view"><i class="fa fa-th-large"></i> Grid</a></li>
+                                <li ><a data-toggle="tab" href="#list-view"><i class="fa fa-th-list"></i> List</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="product-grid no-move-down tab-content">
+
+                    <!-- grid view starts here -->
+                    <div id="grid-view" class="tab-pane active">
+
+                        {{ render(controller('AppBundle:Auction:gridAuction')) }}
+
+                    </div>
+                    <!-- List View starts here-->
+                    <div id="list-view" class="tab-pane">
+
+                        {{ render(controller('AppBundle:Auction:listAuction')) }}
+
+                    </div>
+
+                </div>
+
+                <div class="paging-holder">
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
+

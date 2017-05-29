@@ -1,0 +1,32 @@
+<!-- sidebar menu -->
+<div class="sidebar sidebar-main">
+    <div class="menu_section">
+        <h3>General</h3>
+        <ul class="nav side-menu">
+            <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{{ path('grower_dashboard') }}">Dashboard</a></li>
+                </ul>
+            </li>
+
+            <li><a><i class="fa fa-folder-open"></i> Catalog Management <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+
+                    <li><a href="{{ path('my_grower_product_list') }}">Products</a></li>
+                    <li><a href="{{ path('my_grower_auction_list') }}">Auction</a></li>
+                    <li><a href="{{ path('grower_auction_new') }}">Add to Auction</a></li>
+                    <li><a href="{{ path('grower_product_new') }}">New Product</a></li>
+                </ul>
+            </li>
+            <li><a><i class="fa fa-cart-plus"></i> Order Management <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{{ path('grower_order_list') }}">Received Orders</a></li>
+                    <li><a href="{{ path('my_grower_order_list') }}">My Orders</a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+
+</div>
+<!-- /sidebar menu -->

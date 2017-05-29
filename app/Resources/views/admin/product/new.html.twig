@@ -1,0 +1,21 @@
+{% extends 'admin-base.htm.twig' %}
+{% block body %}
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>New Product </h2>
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <br>
+                {{ form_start(productForm) }}
+                {{ form_widget(productForm) }}
+
+                <button type="submit" class="btn  btn-primary" formnovalidate>Save</button>
+                {{ form_end(productForm) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

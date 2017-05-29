@@ -1,0 +1,37 @@
+<div class="products-list-holder">
+    {% for product in products %}
+            <div class="product-list-item">
+            <div class="row">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="image-holder">
+                        <a href="/shop/{{ product.id }}/view"><img class="product-img" alt="{{ product.title }}" src="{{ asset('images/products/') }}{{ product.imageurl }}" /></a>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-8">
+                    <div class="item-details-holder">
+
+                        <h2 class="title" ><a href="/shop/{{ product.id }}/view">{{ product.title }}</a></h2>
+
+                        <div class="excerpt">
+                            {{ product.description }}
+                        </div>
+
+                        <div class="price">
+
+                            <span>{{ product.currency }} {{ product.price }}</span>
+                        </div>
+                        <div class="buttons-holder">
+                            <div class="add-cart-holder">
+                                <input type="hidden" name="productId" value="{{ product.id }}"/>
+                                <a class="md-button" href="#" data-ajax-handler="shop:onAddToCart" data-ajax-update="#mini-cart=shop-minicart, #product-page=shop-product">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <h2 class="empty">There are no products in this category.</h2>
+    {% endfor %}
+</div>

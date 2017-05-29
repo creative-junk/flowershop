@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+{% block title %} Checkout{% endblock %}
+{% block body %}
+<div class="breadcrumbs">
+    <ul class="items">
+        <li class="item home">
+            <a href="{{ path('home') }}" title="Go to Home Page">
+                Home </a>
+        </li>
+        <li class="item home">
+            <a href="{{ path('buyer_shop') }}" title="Go to Home Page">
+                Direct Market </a>
+        </li>
+        <li class="item product">
+            <strong>Checkout Complete</strong>
+        </li>
+    </ul>
+</div>
+    <section class="section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Checkout Complete.</h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="items-holder">
+                        <div class="cart-item row">
+                            <p>Your Order has been successfully received and is being processed.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-3">
+                    <div class="right-sidebar">
+                        <p><strong>Order number: </strong> #46 </p>
+                        <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
+                        <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
+                        <p><strong>Subtotal:</strong> <i>{{ order.orderCurrency }} {{ order.orderAmount | number_format(2, '.', ',') }}</i></p>
+                        <p><strong>Shipping:</strong> <i>{{ order.orderCurrency }} {{ order.shippingCost | number_format(2, '.', ',') }}</i></p>
+                        <p class="subtotal"><strong>Total:</strong>  <i>{{ order.orderCurrency }} {{ order.orderTotal | number_format(2, '.', ',') }}</i></p>
+                        <div class="right">
+                            <button class="action primary" href="{{ path('buyer_shop') }}">Continue Shopping</button><br/><br/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <div class="clearfix"></div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<div class="col-md-12 col-lg-3">
+    <div class="right-sidebar">
+            <div class="widget shopping-cart-summary">
+                <h4 class="md-bordered-title">Checkout summary</h4>
+                {% if product %}
+                <form>
+                    <fieldset>
+                        <span class="col-xs-12">{{ product.title }}</span>
+                    </fieldset>
+                    <hr>
+                    <fieldset>
+                        <label class="col-xs-6">Bundle Qty</label>
+                        <span class="col-xs-6 value">{{ product.quantity | number_format('0','.',',') }}</span>
+                    </fieldset>
+
+                    <fieldset>
+                        <label class="col-xs-6">subtotal</label>
+                        <span class="col-xs-6 value">{{ product.currency }} {{ product.price | number_format(2, '.', ',') }}</span>
+                    </fieldset>
+
+                    <fieldset>
+                        <label class="col-xs-6">shipping</label>
+                        <span class="col-xs-6 value">{{ product.currency }}
+                            {% if app.session.get('shippingCost') > 0 %}
+                            {{ app.session.get('shippingCost') | number_format(2, '.', ',') }}
+                            {% else %}
+                                0.00
+                            {% endif %}
+                        </span>
+                    </fieldset>
+                    <hr>
+                    <fieldset class="total">
+                        <label class="col-xs-6">order total</label>
+                        <span class="col-xs-6 value">{{ product.currency }} {{ (product.price + app.session.get('shippingCost') ) | number_format(2, '.', ',') }}</span>
+                    </fieldset>
+
+
+                </form>
+            </div>
+        {% else %}
+            <h4 class="md-bordered-title">Your checkout is empty!</h4>
+            <a class="md-button col-xs-12 cart-empty-button" href="{{ path('buyer_auction') }}">Continue shopping <span
+                        class="fa fa-arrow-circle-right"></span></a>
+        {% endif %}
+    </div>
+</div>

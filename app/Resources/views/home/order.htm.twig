@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %} Order {% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <section id="products-grid-sidebar" class="section-products-grid">
+        <div class="container">
+            <div class="col-xs-12 col-md-3">
+                <div class="sidebar">
+                    <div class="accordion-widget category-accordions">
+                        <h2>Categories</h2>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-9">
+
+                <div class="banner">
+                    <!--  <img alt="" class="lazy" src="{{ asset('barcelona/images/pgrid-banner-img.jpg') }}" /> -->
+                </div>
+                <div class="product-grid no-move-down tab-content">
+
+                    <!-- grid view starts here -->
+                    <div id="grid-view" class="tab-pane active">
+
+                        {{ render(controller('AppBundle:User:myOrdersList')) }}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+{% endblock %}

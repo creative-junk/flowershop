@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+    {% block title %}iFlora Direct Market{% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+<div class="category-view">
+    <div class="page-title-wrapper">
+        <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+            <span class="base" data-ui-id="page-title-wrapper">Edit Seedling</span></h1>
+    </div>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('breeder_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item category131">
+                <strong>My Seedlings</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages">
+        </div>
+        <div data-bind="scope: 'messages'">
+            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            </div>
+            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column main">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Edit Seedling</h2>
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <br>
+                        {{ form_start(productForm) }}
+                        <fieldset class="fieldset create info">
+                            <legend class="legend"><span>Basic Information</span></legend>
+                            <br>
+
+                            <div class="field field-name-lastname required">
+                                {{ form_row(productForm.category) }}
+                            </div>
+                            <div class="field field-name-firstname required">
+                                {{ form_row(productForm.title) }}
+                            </div>
+                            <div class="field field-name-lastname required">
+                                {{ form_row(productForm.imageFile) }}
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset create info">
+                            <legend class="legend"><span>Price Information</span></legend>
+                            <br>
+
+                            <div class="field field-name-lastname required">
+                                {{ form_row(productForm.currency) }}
+                            </div>
+                            <div class="field field-name-lastname required">
+                                {{ form_row(productForm.price) }}
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset create info">
+                            <legend class="legend"><span>Product Description</span></legend>
+                            <br>
+
+                            <div class="field field-name-lastname required">
+                                {{ form_row(productForm.summary) }}
+                            </div>
+                            <div class="field field-name-lastname required">
+                                {{ form_row(productForm.description) }}
+                            </div>
+
+
+                        </fieldset>
+                        <div class="actions-toolbar">
+                            <div class="primary"><a class="action remind"
+                                                    href="{{ path('my_grower_product_list') }}"><span>Back</span></a>
+                            </div>
+                            <div class="secondary">
+                                <button type="submit" class="action login primary" formnovalidate>
+                                    <span>Update Product</span>
+                                </button>
+                            </div>
+
+                        </div>
+                        {{ form_end(productForm) }}
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        {% include(':breeder:sidebar.htm.twig') %}
+
+    </div>
+</main>
+{% endblock %}

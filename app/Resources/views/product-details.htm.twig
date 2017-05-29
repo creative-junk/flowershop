@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ product.title }}{% endblock %}
+{% block body %}
+    {% block javascripts %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.1/jquery.form.min.js" integrity="sha384-tIwI8+qJdZBtYYCKwRkjxBGQVZS3gGozr3CtI+5JF/oL1JmPEHzCEnIKbDbLTCer" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-JAW99MJVpJBGcbzEuXk4Az05s/XyDdBomFqNlM3ic+I=" crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            // prepare the form when the DOM is ready
+            $(document).ready(function() {
+
+                // bind to the form's submit event
+                $('#addToCart').submit(function(e) {
+                    var ajaxRequest;
+                    //Prevent Normal Submit
+                    e.preventDefault();
+                    //Clear result div
+                    $("$result").html("");
+
+                    $(this).ajaxSubmit(options);
+                    return false;
+                });
+            });
+
+
+        </script>
+    {% endblock %}
+    <section class="section-single-product-page">
+        <div class="page messages">
+                <div class="messages">
+                        <div class="success">You added Joust Duffle Bag to your shopping cart.</div>
+
+                </div>
+            </div>
+
+        </div>
+        <div id="result"></div>
+    <div class="container">
+        <div class="row">
+
+            <div id="product-page">
+                <div class="col-lg-6 col-md-12" itemprop="offerDetails" itemscope itemtype="http://data-vocabulary.org/Offer">
+
+                    <div class="single-product-info-holder">
+                        {{ include(':partials:breadcrumb-bar.htm.twig') }}
+                        <div class="brand">
+                        </div>
+
+                        <div id="product-gallery">
+                            <div class="col-lg-6 col-md-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <img temprop="image"  class="lazy product-img" alt="{{ product.imageurl }}" src="{{ asset('images/products/') }}{{ product.imageurl }}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h1 itemprop="name">{{ product.title }}</h1>
+
+                        <div class="price">
+                            {% if product.isOnSale %}
+                                <span class="previous-price">{{ product.currency }} {{ product.price }}</span>
+                            {% endif %}
+                            <span  itemprop="price">{{ product.currency }} {{ product.price }}</span>
+                            <meta itemprop="currency" content="{{ product.currency }}" />
+                        </div>
+                        {% if product.description %}
+                            <div class="excerpt" itemprop="description">
+                                {{ product.description }}
+                            </div>
+                        {% endif %}
+
+
+                        {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
+                        <div class="drop-down-holder">
+
+                            <div class="quantitiy inline">
+                                <h5>Quantity</h5>
+                                <input class="md-input quantity" type="text" value="1" name="quantity"/>
+                            </div>
+                        </div>
+                        <div class="buttons-holder">
+                            <div class="add-cart-holder inline">
+                                <input type="hidden" name="productCurrency" value="{{ product.currency }}"/>
+                                <input type="hidden" name="productPrice" value="{{ product.price }}"/>
+                                <input type="hidden" name="productId" value="{{ product.id }}"/>
+                                <button class="md-button">Add to Cart</button>
+                                <!-- <a class="md-button" href="#" data-ajax-handler="shop:onAddToCart" data-ajax-update="#mini-cart=shop-minicart, #product-page=shop-product">Add to Cart</a>
+                                -->
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+     {% endblock %}

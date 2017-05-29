@@ -1,0 +1,40 @@
+<div class="col-md-12 col-lg-3">
+    <div class="right-sidebar">
+        {% if cart.nrItems %}
+            <div class="widget shopping-cart-summary">
+                <h4 class="md-bordered-title">shopping cart summary</h4>
+
+                <form>
+                    <fieldset>
+                        <label class="col-xs-6">cart subtotal</label>
+                        <span class="col-xs-6 value">{{ cart.cartCurrency }} {{ cart.cartAmount }}</span>
+                    </fieldset>
+
+                    <fieldset>
+                        <label class="col-xs-6">shipping</label>
+                        <span class="col-xs-6 value"></span>
+                    </fieldset>
+                    <hr>
+                    <fieldset class="total">
+                        <label class="col-xs-6">order total</label>
+                        <span class="col-xs-6 value">{{ cart.cartCurrency }} {{ cart.cartAmount }}</span>
+                    </fieldset>
+
+                    <input class="md-input col-xs-12" placeholder="coupon code" value="" name="coupon"
+                           id="coupon"/><br/><br/>
+
+                    <a class="md-button black" href="#" data-ajax-handler="shop:cart"
+                       data-ajax-update="#cart-content=shop-cart-content, #mini-cart=shop-minicart">Update cart</a>
+
+                    <a class="md-button large col-xs-12" href="{{ path('billing-address') }}">Checkout</a>
+                    <a href="{{ path('products') }}">continue shopping</a>
+
+                </form>
+            </div>
+        {% else %}
+            <h4 class="md-bordered-title">Your cart is empty!</h4>
+            <a class="md-button col-xs-12 cart-empty-button" href="{{ path('grower_seedlings_list') }}">Continue shopping <span
+                        class="fa fa-arrow-circle-right"></span></a>
+        {% endif %}
+    </div>
+</div>

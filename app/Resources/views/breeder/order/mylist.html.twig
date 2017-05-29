@@ -1,0 +1,60 @@
+{% extends 'admin-base.htm.twig' %}
+{% block title %} Orders {% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>My Orders </h2>
+                    <ul class="nav navbar-right panel_toolbox">
+
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <p class="text-muted font-13 m-b-30">
+                    </p>
+                    <table id="datatable" class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+
+
+                            <th>Order Amount</th>
+                            <th>Order Status</th>
+                            <th>Order State</th>
+                            <th>Sold By</th>
+                            <th>is Auction Order?</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in orders %}
+                            <tr>
+
+
+                                <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount }}</td>
+                                <td>{{ order.orderStatus }}</td>
+                                <td>{{ order.orderState }}</td>
+                                <td>{{ order.vendor.firstName }}&nbsp;{{ order.vendor.lastName }}</td>
+                                <td>{% if(order.isAuctionOrder == 1) %}
+                                        true
+                                    {% else %}
+                                        false
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6">No Orders found</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+{% block title %} Order Details{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('order_list') }}" title="Go to Home Page">
+                    Orders </a>
+            </li>
+            <li class="item product">
+                <strong>Order Details</strong>
+            </li>
+        </ul>
+    </div>
+    <section class="section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Below are the Items in your Order.</h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="items-holder">
+                        {% for orderItem in orderItems %}
+                        <div class="cart-item row">
+                            <div class="col-sm-2 col-lg-3">
+                                <div class="image">
+                                    <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ orderItem.product.imageName }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="brand">
+                                </div>
+                                <div class="title">
+                                    <a href="{{ path('product_details',{
+                                        'id': orderItem.product.id
+                                    }) }}">{{ orderItem.product.title }}</a>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-5 details no-edit">
+                                <div class="unit-price">
+                                    <span class="visible-xs">Price</span>
+                                    {{ order.orderCurrency }} {{ orderItem.unitPrice | number_format(2, '.', ',') }}
+                                </div>
+                                <div class="quantity">
+                                    <span class="visible-xs">Quantity</span>
+                                    {{ orderItem.quantity }}
+                                </div>
+                                <div class="total-price">
+                                    <span class="visible-xs">Total</span>
+                                    {{ order.orderCurrency }} {{ orderItem.lineTotal | number_format(2, '.', ',') }}
+                                </div>
+                            </div>
+                        </div>
+                         {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-3">
+                    <div class="right-sidebar">
+                        <p><strong>Order number: </strong> #46 </p>
+                        <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
+                        <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
+                        <p><strong>Subtotal:</strong> <i>{{ order.orderCurrency }} {{ order.orderAmount | number_format(2, '.', ',') }}</i></p>
+                        <p><strong>Shipping:</strong> <i>{{ order.orderCurrency }} {{ order.shippingCost | number_format(2, '.', ',') }}</i></p>
+                        <p class="subtotal"><strong>Total:</strong>  <i>{{ order.orderCurrency }} {{ order.orderTotal | number_format(2, '.', ',') }}</i></p>
+                        <div class="right">
+                            <a class="action primary" href="{{ path('order_list') }}">Back to Orders</a><br/><br/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <div class="clearfix"></div>
+{% endblock %}

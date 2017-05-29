@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+{% block title %} Login / Register {% endblock %}
+{% block body %}
+
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">Grower Login</span></h1>
+        </div>
+        <div class="page messages">
+            <div data-placeholder="messages">
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="columns">
+            <div class="column main">
+                <div class="login-container">
+                    <div class="block block-customer-login">
+                        <div class="block-title">
+                            <strong id="block-customer-login-heading" role="heading" aria-level="2">Registered
+                                Growers</strong>
+                        </div>
+                        <div class="block-content" aria-labelledby="block-customer-login-heading">
+                            {{ form_start(loginform) }}
+                            <fieldset class="fieldset login" data-hasrequired="* Required Fields">
+                                <div class="field note">If you have an account, sign in with your email address.</div>
+                                <div class="field email required">
+
+                                    {{ form_row(loginform._username) }}
+                                </div>
+                                <div class="field password required">
+                                    {{ form_row(loginform._password) }}
+
+                                </div>
+                                <input type="hidden" name="_target_path" value="grower_dashboard"/>
+                                <input type="hidden" name="_failure_path" value="grower_login"/>
+
+                                <div class="actions-toolbar">
+                                    <div class="primary">
+                                        <button type="submit" class="action login primary" name="send" id="send2"><span>Sign In</span>
+                                        </button>
+                                    </div>
+                                    <div class="secondary"><a class="action remind"
+                                                              href="#"><span>Forgot Your Password?</span></a></div>
+                                </div>
+                            </fieldset>
+                            {{ form_end(loginform) }}
+                        </div>
+                    </div>
+                    <div class="block block-new-customer">
+                        <div class="block-title">
+                            <strong id="block-new-customer-heading" role="heading" aria-level="2">New Growers</strong>
+                        </div>
+                        <div class="block-content" aria-labelledby="block-new-customer-heading">
+                            <p>Create an account to access breeders, buyers, agents, check out faster, track orders and
+                                more.</p>
+
+                            <div class="actions-toolbar">
+                                <div class="primary">
+                                    <a href="{{ path('grower_register') }}" class="action create primary"><span>Create an Account</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+{% endblock %}

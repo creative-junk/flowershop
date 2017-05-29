@@ -1,0 +1,41 @@
+{% extends 'admin-base.htm.twig' %}
+
+{% block body %}
+    <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+    <div class="x_title">
+        <h2>Product Categories</h2>
+        <ul class="nav navbar-right panel_toolbox">
+
+            <li><a style="color: white" class="btn btn-xs btn-success" href="{{ path('admin_category_new') }}"><span
+                            style="color: white" class="fa fa-plus-circle"></span> New Category</a></li>
+
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+    <table class="table table-striped jambo_table bulk-action">
+        <thead>
+        <tr>
+
+        <th>Category Id</th>
+            <th>Category Name</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+        <tr>
+
+        <td scope="row">{{ category.id }}</td>
+            <td>{{ category.title }}</td>
+
+        </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+    </div>
+    </div>
+    </div>
+{% endblock %}

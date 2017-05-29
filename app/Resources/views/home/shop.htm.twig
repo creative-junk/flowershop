@@ -1,0 +1,199 @@
+{% extends 'base.html.twig' %}
+{% block title %}iFlora Direct Market{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('iflora/js/jquery.js') }}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.tocart').on('click',function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-agent-item');
+
+                $(this).find('.counter')
+                    .removeClass('counter')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $el.fadeOut("slow");
+                }).error(function () {
+                    $(this).find('.fa-spinner')
+                        .removeClass('fa-spinner')
+                        .addClass('fa-exchange')
+                });
+            });
+        })
+    </script>
+{% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+
+<div class="category-view">
+    <div class="page-title-wrapper">
+        <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+            <span class="base" data-ui-id="page-title-wrapper">Direct Market</span></h1>
+    </div>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item category131">
+                <strong>Direct Market</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages">
+        </div>
+        <div data-bind="scope: 'messages'">
+            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            </div>
+            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column main">
+
+            <div class="toolbar toolbar-products">
+                <div class="modes">
+                    <strong id="modes-label" class="modes-label">View as</strong>
+                    <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
+                        <span>Grid</span> </strong>
+                    <a id="mode-list" aria-labelledby="modes-label mode-list" class="modes-mode mode-list"
+                       data-role="mode-switcher" data-value="list" href="#" title="List">
+                        <span>List</span> </a></div>
+                <p id="toolbar-amount" class="toolbar-amount">Items
+                    <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
+                    of <span class="toolbar-number">{{ products.getTotalItemCount }}</span></p>
+
+
+                <div class="toolbar-sorter sorter">
+                    <label class="sorter-label" for="sorter">Sort By</label>
+                    <table>
+                        <tr>
+                            {# sorting of properties based on query components #}
+                            <th>{{ knp_pagination_sortable(products, 'Price', 'product.price') }}</th>
+                            <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Title', 'product.title') }}</th>
+
+                        </tr>
+                    </table>
+
+                    <a class="action sorter-action sort-asc" data-role="direction-switcher" data-value="desc" href="#"
+                       title="Set Descending Direction">
+                        <span>Set Descending Direction</span> </a></div>
+            </div>
+            <div class="products wrapper grid products-grid">
+                <ol class="products list items product-items">
+                    {% for product in products %}
+                        <li class="item product product-item">
+                            <div class="product-item-info" data-container="product-grid">
+                                <div class=" product-item-images">
+                                    <a class="product photo product-item-photo"
+                                       href="{{ path('buyer_product_details',{
+                                           'id': product.id
+                                       }) }}" tabindex="-1">
+						<span class="product-image-container" style="width: 350px;">
+						<span class="product-image-wrapper" style="padding-bottom: 126%;">
+						<img alt="{{ product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ product.imageName }}" alt="{{ product.title }}"
+                             width="350"></span>
+						</span></a></div>
+                                <div class="product-item-details">
+                                    <div class="content-name">
+                                        <strong class="product name product-item-name">
+                                            <a class="product-item-link"
+                                               href="{{ path('buyer_product_details',{
+                                                   'id': product.id
+                                               }) }}">
+                                                {{ product.title }} </a></strong>
+                                        <a aria-label="WishList" class="wishlist" data-action="add-to-wishlist" href="#"
+                                           role="button" title="WishList">
+                                            <span>WishList</span> </a></div>
+                                    <div class="product-reviews-summary short">
+                                        <div class="rating-summary">
+                                            <span class="label"><span>Rating:</span></span>
+
+                                            <div class="rating-result" title="80%">
+                                                <span style="width: 80%"><span>80%</span></span>
+                                            </div>
+                                        </div>
+                                        <div class="reviews-actions">
+                                            <a class="action view" href="#">
+                                                1&nbsp;<span>Review</span></a></div>
+                                    </div>
+                                    <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
+							<span class="price-container price-final_price tax weee">
+							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
+							<span class="price">{{ product.currency }} {{ product.price }}</span> </span></span>
+                                    </div>
+                                    <div class="product-item-actions">
+                                        <div class="add-to-cart-primary">
+
+                                            <input name="product" type="hidden" value="{{ product.id }}">
+                                            <button class="action tocart primary" title="Add to Cart" type="submit">
+                                                <span>Add to Cart</span></button>
+
+                                        </div>
+                                        <div class="add-to-links-secondary" data-role="add-to-links">
+                                            <a aria-label="WishList" class="action wishlist"
+                                               data-action="add-to-wishlist" href="#" role="button" title="WishList">
+                                                <span>WishList</span> </a>
+                                            <a aria-label="Compare" class="action compare" href="#" role="button"
+                                               title="Compare">
+                                                <span>Compare</span> </a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class="toolbar toolbar-products">
+                <div class="modes">
+                    <strong id="modes-label" class="modes-label">View as</strong>
+                    <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
+                        <span>Grid</span> </strong>
+                    <a id="mode-list" aria-labelledby="modes-label mode-list" class="modes-mode mode-list"
+                       data-role="mode-switcher" data-value="list" href="#" title="List">
+                        <span>List</span> </a></div>
+                <p id="toolbar-amount" class="toolbar-amount">Items
+                    <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
+                    of <span class="toolbar-number">10</span></p>
+
+                <div class="pages">
+                    <strong id="paging-label" class="label pages-label">Page</strong>
+                    {# display navigation #}
+                    <div class="navigation text-center">
+                        {{ knp_pagination_render(products) }}
+                    </div>
+                </div>
+
+                <div class="toolbar-sorter sorter">
+                    <label class="sorter-label" for="sorter">Sort By</label>
+                    <select id="sorter" class="sorter-options" data-role="sorter">
+                        <option selected="selected" value="position">Position</option>
+                        <option value="name">Product Name</option>
+                        <option value="price">Price</option>
+                    </select>
+                    <a class="action sorter-action sort-asc" data-role="direction-switcher" data-value="desc" href="#"
+                       title="Set Descending Direction">
+                        <span>Set Descending Direction</span> </a></div>
+            </div>
+        </div>
+        {% include(':partials/iflora/user:sidebar.htm.twig') %}
+
+    </div>
+</main>
+
+{% endblock %}

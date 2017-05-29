@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} My Buyer Requests {% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.js-request-user').on('click', function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-agent-item');
+
+                $(this).find('.fa-thumbs-o-up')
+                    .removeClass('fa-thumbs-o-up')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".messages").fadeIn("slow");
+
+                    $("#accept")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+
+                    $el.fadeOut("slow");
+                });
+            });
+            $('.js-reject-user').on('click', function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-agent-item');
+
+                $(this).find('.fa-times')
+                    .removeClass('fa-times')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".messages").fadeIn("slow");
+
+                    $("#reject")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+
+                    $el.fadeOut("slow");
+                });
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">My Buyer Requests</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('home') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item category131">
+                    <strong>Buyers</strong>
+                </li>
+                <li class="item category131">
+                    <strong>My Buyer Requests</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+        <div class="page messages">
+            <div class="messages" style="">
+                <div class="message-success success message">
+                    <div>
+                        You request has been processed.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="page-title-wrapper">
+
+        </div>
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
+        <div class="columns">
+            <div class="column main">
+                <div class="cart table-wrapper">
+                    <table id="shopping-cart-table" class="cart items data table">
+                        <thead>
+                        <tr>
+                            <th class="col item" scope="col"><span>Buyer</span></th>
+                            <th class="col price" scope="col"><span>Status</span></th>
+                            <th class="col price" scope="col"><span>Roses</span></th>
+
+                            <th class="col subtotal" scope="col"><span>Requested On</span></th>
+                            <th class="col subtotal" scope="col"><span>Accept / Reject</span></th>
+                        </tr>
+                        </thead>
+                        <tbody class="cart item">
+                        {% for buyerRequest in buyerRequests %}
+                            <tr class="item-info js-agent-item">
+                                <td data-th="Item" class="col item">
+                    <span class="product-image-container" style="width:165px;">
+                    <strong class="product-item-name">
+
+                        <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                          <a href="#">{{ buyerRequest.buyer.fullName }}</a>
+                    </span>
+                    </strong>
+
+                    </span>
+
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ buyerRequest.status }}
+                                                </span>
+                                            </span>
+
+                                    </span>
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                    <a class="action action-edit" href="#"
+                                                       title="View Roses">View Roses</a></span>
+                                            </span>
+
+                                    </span>
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ buyerRequest.updatedAt |date("d/m/Y") }}
+                                                </span>
+                                            </span>
+
+                                    </span>
+                                </td>
+
+                                <td class="col price" data-th="Price">
+                                    <a
+                                            href="#"
+                                            class="action accept  js-request-user"
+                                            data-url="{{ path('accept-agent-buyer-request',{
+                                                'id': buyerRequest.id
+                                            }) }}"
+                                            title="Accept Request">
+                                        <span id="accept" class="fa fa-thumbs-o-up"></span>
+
+                                    </a>&nbsp;
+                                    <a
+                                            href="#"
+                                            class="action request js-reject-user"
+                                            data-url="{{ path('reject-agent-buyer-request',{
+                                                'id': buyerRequest.id
+                                            }) }}"
+                                            title="Cancel Request">
+                                        <span id="reject" class="fa fa-times"></span>
+
+                                    </a>
+
+
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr class="item-info">
+                                <td data-th="Item" class="col item">
+                                    You have no Pending Buyer Requests
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+            {% include(':agent:sidebar.htm.twig') %}
+
+        </div>
+    </main>
+{% endblock %}
+
+
+

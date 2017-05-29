@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block title %} Payment{% endblock %}
+{% block body %}
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <!-- Checkout progress -->
+                            <div id="checkout-progress">
+                                <ul class="breadcrumb list-inline checkout-progress">
+                                    <li>BILLING ADDRESS</li>
+                                    <li>SHIPPING ADDRESS</li>
+                                    <li>SHIPPING METHOD</li>
+                                    <li><a class="progress-active">PAY</a></li>
+                                </ul>
+                            </div>
+                            <!-- End id="checkout-progress" -->
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <span>shipping method</span>
+                                </h4>
+                            </div>
+                            <div class="panel-body step-2">
+                                <div class="row">
+                                    <div class="col-xs-6 button-holder">
+                                        <a class="md-button gray step-btn" href="{{ path('shipping-method') }}"><span
+                                                    class="fa fa-chevron-circle-left"></span> shipping method</a>
+                                    </div>
+                                    <div class="col-xs-6 button-holder right">
+                                        <button type="submit" class="md-button step-btn" formnovalidate>Pay</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="cart-totals"> {{ include(':partials:checkout-totals.htm.twig') }}</div>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}

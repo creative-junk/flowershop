@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+{% block title %} Login / Register {% endblock %}
+{% block body %}
+
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Grower Registration</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('homepage') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item category121">
+                    <strong>Register</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="page messages">
+        <div data-placeholder="messages">
+
+        </div>
+
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">Create New Grower Account</span></h1>
+        </div>
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
+        <div class="columns">
+            <div class="column main">
+                {{ form_start(form) }}
+                <fieldset class="fieldset create info">
+                    <legend class="legend"><span>Personal Information</span></legend>
+                    <br>
+
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.firstName) }}
+                    </div>
+                    <div class="field field-name-lastname required">
+                        {{ form_row(form.lastName) }}
+                    </div>
+
+                </fieldset>
+                <fieldset class="fieldset create account" data-hasrequired="* Required Fields">
+                    <legend class="legend"><span>Sign-in Information</span></legend>
+                    <br>
+
+                    <div class="field required">
+                        {{ form_row(form.email) }}
+                    </div>
+                    <div class="field password required">
+                        {{ form_row(form.plainPassword.first,{
+                            'label': 'Password'
+                        }) }}
+                    </div>
+                    <div class="field confirmation required">
+                        {{ form_row(form.plainPassword.second, {
+                            'label': 'Confirm Password'
+                        }) }}
+                    </div>
+                </fieldset>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button type="submit" class="action submit primary" title="Create an Account"><span>Create an Account</span>
+                        </button>
+                    </div>
+                    <div class="secondary">
+                        <a class="action back" href="{{ path('grower_login') }}"><span>Back</span></a>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+                <script>
+                    require([
+                        'jquery',
+                        'mage/mage'
+                    ], function ($) {
+
+                        var dataForm = $('#form-validate');
+                        var ignore = null;
+
+                        dataForm.mage('validation', {
+                            ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+                        }).find('input:text').attr('autocomplete', 'off');
+
+                    });
+                </script>
+
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

@@ -1,0 +1,273 @@
+<html lang="en-US" class="">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="description" content="Default Description">
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <title> {% block title %} iFlora eMarketplace {% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/calendar.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/styles-m.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/styles-l.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/bootstrap.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/bootstrap-theme.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/font-awesome.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/animate.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/style.css') }}">
+        <link rel="stylesheet" type="text/css" media="print" href="{{ asset('iflora/css/print.css') }}">
+        <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/owl.carousel.css') }}">
+        <link rel="stylesheet" type="text/css"
+              href='https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i'>
+        <link rel="stylesheet" type="text/css"
+              href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+    {% endblock %}
+    <script type="text/javascript" src="{{ asset('iflora/js/jquery.js') }}"></script>
+    {% block javascripts %}
+
+
+        <script type="text/javascript" src="{{ asset('iflora/js/require.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('iflora/js/mixins.js') }}"></script>
+    {% endblock %}
+</head>
+{% block pageclass %}
+<body data-container="body" class="cms-index-index page-layout-1column">{% endblock %}
+<noscript>
+    &lt;div class="message global noscript"&gt;
+    &lt;div class="content"&gt;
+    &lt;p&gt;
+    &lt;strong&gt;JavaScript seems to be disabled in your browser.&lt;/strong&gt;
+    &lt;span&gt;For the best experience on our site, be sure to turn on Javascript in your browser.&lt;/span&gt;
+    &lt;/p&gt;
+    &lt;/div&gt;
+    &lt;/div&gt;
+</noscript>
+<div class="page-wrapper">
+    <header class="header-container">
+        <div class="top-bar visible-lg visible-md">
+            <div class="container-inner">
+                <div class="container-size">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="switcher currency switcher-currency" id="switcher-currency">
+                                <strong class="label switcher-label"><span>Currency:</span></strong>
+
+                                {% if app.user %}
+                                    Welcome to Iflora,  <span style="color:#e93838;font-weight: bold">{{ app.user.fullName }}</span>
+                                {% else %}
+                                    Welcome to Iflora
+                                {% endif %}
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-6">
+                            {% if is_granted('ROLE_BUYER') %}
+                                {% include(':nav/subNav:buyer.htm.twig') %}
+                            {% elseif is_granted('ROLE_GROWER') %}
+                                {% include(':nav/subNav:grower.htm.twig')  %}
+                            {% elseif is_granted('ROLE_BREEDER') %}
+                                {% include(':nav/subNav:breeder.htm.twig') %}
+                            {% elseif is_granted('ROLE_AGENT') %}
+                                {% include(':nav/subNav:agent.htm.twig') %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-fix">
+            <div class="container-inner">
+                <div class="header">
+                    <div class="h-left">
+                        <span data-action="toggle-nav" class="action nav-toggle"><span>Toggle Nav</span></span>
+                        <strong class="logo">
+                            <img src="{{ asset('iflora/images/logo.png') }}" alt="iFlora" width="223" height="60">
+                        </strong>
+                    </div>
+                    <div class="h-right">
+                        <nav class="nav-container visible-lg visible-md">
+                        {% if is_granted('ROLE_BUYER') %}
+                            {{ knp_menu_render('AppBundle:Builder:mainUserMenu') }}
+                        {% elseif is_granted('ROLE_GROWER') %}
+                            {{ include(':nav:grower.htm.twig') }}
+                        {% elseif is_granted('ROLE_BREEDER') %}
+                            {{ include(':nav:breeder.htm.twig') }}
+                        {% elseif is_granted('ROLE_AGENT') %}
+                            {{ include(':nav:agent.htm.twig') }}
+                        {% else %}
+                            {{ include(':nav:nav.htm.twig') }}
+
+                        {% endif %}
+                        </nav>
+
+
+                        <div class="absolute">
+                            <div class="search-switcher">
+
+
+                            </div>
+                            <script type="text/javascript">
+                                function show_cart() {
+                                    document.getElementById('ui-id-1').style.display = 'block';
+                                }
+                                function hide_cart() {
+                                    document.getElementById('ui-id-1').style.display = 'none';
+                                }
+                            </script>
+                            {% if is_granted('ROLE_BUYER') %}
+                                <div data-block="minicart" class="minicart-wrapper my-acount">
+                                    <a class="action showcart" href='javascript:;' onclick='show_cart();'>
+                                        <span class="text">Shopping Cart</span>
+                                        {{ render(controller('AppBundle:Cart:cart')) }}
+                                    </a>
+
+                                    <div id="macrocart">
+                                        {{ render(controller('AppBundle:Cart:buyerIndex')) }}
+                                    </div>
+                                </div>
+                            {% elseif is_granted('ROLE_GROWER') %}
+                                <div data-block="minicart" class="minicart-wrapper my-acount">
+                                    <a class="action showcart" href='javascript:;' onclick='show_cart();'>
+                                        <span class="text">Shopping Cart</span>
+                                        {{ render(controller('AppBundle:Cart:cart')) }}
+                                    </a>
+
+                                    <div id="macrocart">
+                                        {{ render(controller('AppBundle:Cart:growerIndex')) }}
+                                    </div>
+                                </div>
+                            {% else %}
+
+
+                            {% endif %}
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-ozmegamenu-inner">
+                    <div class="mobile-bar-icon"><span>mobile icon</span></div>
+                </div>
+                <div class="mobile-bar-content">
+                    <div class="mobile-bar-close">Close</div>
+                    <ul class="tabs-mobile">
+                        <li class="item item-menu active">Menu</li>
+
+                        <li class="item item-setting">Setting</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {% block body %}{% endblock %}
+
+    <footer class="page-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="container-inner">
+                    <div class="footer-static row">
+                        <div class="col-sm-4">
+                            <p class="text">We are a flower resource and marketplace.</p>
+                            <ul class="add">
+                                <li>College House, Koinange Street</li>
+                                <li>Email: support@iflora.biz</li>
+                                <li>Phone: +254 720-123-456</li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-2">
+                            <h3 class="title">Information</h3>
+                            <ul>
+                                <li><a href="#">Specials</a></li>
+                                <li><a href="#">New products</a></li>
+                                <li><a href="#">Top sellers</a></li>
+                                <li><a href="#">Our stores</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-2">
+                            <h3 class="title">My account</h3>
+                            <ul>
+                                <li><a href="#">My orders</a></li>
+                                <li><a href="#">My credit slips</a></li>
+                                <li><a href="#">My addresses</a></li>
+                                <li><a href="#">My personal info</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-4">
+
+
+                            <h3>follow us on</h3>
+                            <ul class="link-follow">
+                                <li class="first"><a class="twitter fa fa-twitter" title="Twitter"
+                                                     href="https://www.twitter.com/ifloraofficial"><span>twitter</span></a>
+                                </li>
+                                <li><a class="google fa fa-google-plus" title="Google" href="#"><span>google </span></a>
+                                </li>
+                                <li><a class="facebook fa fa-facebook" title="Facebook"
+                                       href="https://www.facebook.com/ifloraofficial"><span>facebook</span></a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom text-center">
+                <div class="container-inner">
+                    <div class="container-size">
+                        <div class="link-footer">
+                            <!-- <ul>
+                                 <li><a href="#">Specials</a></li>
+                                 <li><a href="#">New products</a></li>
+                                 <li><a href="#">Top sellers</a></li>
+                                 <li><a href="#">Our stores</a></li>
+                                 <li><a href="#">contact</a></li>
+                             </ul>		-->        </div>
+                        <small class="copyright">
+                            <span>Copyright &copy; 2017 iFlora eMarketplace, All rights reserved.</span>
+                        </small>
+                        <div class="payment">
+                            <p><img src="http://plazathemes.com/demo/presiden/pub/media/wysiwyg/payment.png" alt=""></p>
+                        </div>
+
+                        <div id="back_top" style="display: block;">
+                            <a href="#back-top"><span>Back</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+
+            jQuery(document).ready(function () {
+
+                $(window).scroll(function() {
+                    var scroll = $(window).scrollTop();
+
+                    if (scroll >= 50) {
+                        $(".header-fix").addClass("fix-header-fix");
+                    } else {
+                        $(".header-fix").removeClass("fix-header-fix");
+                    }
+                });
+
+                $(window).scroll(function () {
+                    if ($(this).scrollTop() > 300) {
+                        $('#back_top').fadeIn();
+                    } else {
+                        $('#back_top').fadeOut();
+                    }
+                });
+                $('#back_top').click(function () {
+                    $('body,html').animate({scrollTop: 0}, 500);
+                });
+
+            });
+        </script>
+    </footer>
+</div>
+
+</body>
+</html>

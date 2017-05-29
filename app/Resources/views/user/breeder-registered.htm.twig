@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Registration - Pending Review</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('homepage') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item home">
+                    <a href="{{ path('breeder_login') }}" title="">
+                        Breeder Login </a>
+                </li>
+                <li class="item home">
+                    <a href="{{ path('breeder_register') }}" title="">
+                        Breeder Registration </a>
+                </li>
+                <li class="item category131">
+                    <strong>Registered - Pending Review</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+        </div>
+        <div class="columns" style="height: 400px">
+            <p>Thank you for your Interest in Joining iFlora. Your registration has been received and is being reviewed
+                by one of our Administrators.</p>
+
+            <p>We will email you when the Review Process is complete</p>
+
+            <p> -- iFlora Team
+            </p>
+        </div>
+    </main>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

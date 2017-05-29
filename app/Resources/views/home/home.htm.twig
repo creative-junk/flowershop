@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+{% block title %}Home{% endblock %}
+{% block body %}
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
+    </main>
+    <div class="content-home">
+        <div class="main-container">
+            <div class="container-inner">
+                <div class="static-info">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="info info1"><em class="zmdi zmdi-flower-alt zmdi-hc-fw"></em>
+
+                                <div class="static_info">
+                                    <h4>View All Roses</h4>
+
+                                    <p>View all Roses.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info info2"><em class="zmdi zmdi-flower zmdi-hc-fw"></em>
+
+                                <div class="static_info">
+                                    <h4><a href="{{ path('buyer_growers') }}">View Growers</a></h4>
+
+                                    <p><a href="{{ path('buyer_growers') }}">View all available Growers.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info info3"><em class="zmdi zmdi-card-giftcard zmdi-hc-fw"></em>
+
+                                <div class="static_info">
+                                    <h4><a href="{{ path('buyer_agents') }}">View Agents</a></h4>
+
+                                    <p><a href="{{ path('buyer_agents') }}">View all available Agents.</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="banner-home">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="banner-box">
+                                <a href="{{ path('buyer_shop') }}">
+                                    <img src="{{ asset('images/direct-market.jpg') }}" alt="">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="banner-box">
+                                <a href="{{ path('buyer_auction') }}">
+                                    <img src="http://plazathemes.com/demo/presiden/pub/media/wysiwyg/banner73.jpg"
+                                         alt="">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="banner-box">
+                                <a href="{{ path('buyer_auction') }}">
+                                    <img src="{{ asset('images/auction-market.jpg') }}" alt="">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    require([
+                        "jquery",
+                        "owlcarousel/minjs"
+                    ], function ($, owlCarousel) {
+
+                        $(".feature-container").owlCarousel({
+                            items: 12,
+                            autoPlay: false,
+                            slideSpeed: 1000,
+                            navigation: true,
+                            stopOnHover: true,
+                            pagination: false,
+                            items: 5,
+                            itemsDesktop: [1199, 4],
+                            itemsDesktopSmall: [992, 3],
+                            itemsTablet: [767, 2],
+                            itemsMobile: [479, 1]
+                        });
+
+                    });
+                </script>
+
+                <div class="brandslider-container">
+                    <div class="container-inner">
+                        <div class="title">
+                        </div>
+
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    require([
+                        "jquery",
+                        "owlcarousel/minjs"
+                    ], function ($, owlCarousel) {
+                        $(document).ready(function () {
+                            $(".pt-brand-container .ptowl").owlCarousel({
+                                items: 6,
+                                itemsDesktop: [1199, 6],
+                                itemsDesktopSmall: [980, 4],
+                                itemsTablet: [768, 3],
+                                itemsMobile: [479, 2],
+                                slideSpeed: 500,
+                                paginationSpeed: 500,
+                                rewindSpeed: 500,
+                                addClassActive: true,
+                                navigation: false,
+                                stopOnHover: true,
+                                pagination: false,
+                                scrollPerPage: true,
+                            });
+                        });
+                    });
+                </script>
+
+
+                <script type="text/javascript">
+                    require([
+                        "jquery",
+                        "owlcarousel/minjs"
+                    ], function ($, owlCarousel) {
+                        $(document).ready(function () {
+                            $(".block-recent-posts .ptowl").owlCarousel({
+                                items: 2,
+                                itemsDesktop: [1199, 2],
+                                itemsDesktopSmall: [980, 2],
+                                itemsTablet: [768, 2],
+                                itemsMobile: [479, 1],
+                                slideSpeed: 500,
+                                paginationSpeed: 500,
+                                rewindSpeed: 500,
+                                addClassActive: true,
+                                navigation: true,
+                                stopOnHover: true,
+                                pagination: false,
+                                scrollPerPage: true,
+                            });
+                        });
+                    });
+                </script>
+
+            </div>
+
+        </div>
+
+
+    </div>
+{% endblock %}

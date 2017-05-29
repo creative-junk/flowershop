@@ -1,0 +1,175 @@
+{% extends 'base.html.twig' %}
+{% block title %}Home{% endblock %}
+{% block body %}
+    <div class="content-home">
+    <div class="main-container">
+        <div class="container-inner">
+            <div class="ma-banner row">
+                <div class="col-sm-9">
+
+                    <div class="pt-banner-container">
+                        <ul class="ptowl owl-carousel owl-theme" style="display: block; opacity: 1;">
+                            <div class="owl-wrapper-outer">
+                                <div class="owl-wrapper"
+                                     style="width: 3480px; left: 0px; display: block; transition: all 500ms ease; transform: translate3d(0px, 0px, 0px);">
+                                    <div class="owl-item active" style="">
+                                        <li>
+                                            <a href="#" class="pt-url">
+                                                <img alt="" src="{{ asset('images/banner1.jpg') }}">
+                                            </a>
+
+
+                                            <div id="pt-banner-caption1" class="pt-banner-caption pt-caption"
+                                                 style="display: block;">
+
+
+                                            </div>
+                                        </li>
+                                    </div>
+                                    <div class="owl-item" style="width: 870px;">
+                                        <li>
+                                            <a href="#" class="pt-url">
+                                                <img alt="" src="{{ asset('images/banner2.jpg') }}">
+                                            </a>
+
+
+                                            <div id="pt-banner-caption2" class="pt-banner-caption"
+                                                 style="display: none;">
+
+                                                <div class="pt-banner-content ptslider-2">
+
+                                                    <h2 class="pt-title2"><span>baby &amp; kids</span></h2>
+
+                                                    <h3 class="pt-title3"><span>color ful childhood</span></h3>
+                                                    <a href="#" class="pt-url">shop now</a>
+
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="owl-controls clickable">
+                                <div class="owl-pagination">
+                                    <div class="owl-page active"><span class=""></span></div>
+                                    <div class="owl-page"><span class=""></span></div>
+                                </div>
+                                <div class="owl-buttons">
+                                    <div class="owl-prev">prev</div>
+                                    <div class="owl-next">next</div>
+                                </div>
+                            </div>
+                        </ul>
+                        </div>
+
+                    <script type="text/javascript">
+                        require([
+                            "jquery",
+                            "owlcarousel/minjs"
+                        ], function ($, owlCarousel) {
+                            $(document).ready(function () {
+                                $(".pt-banner-container .ptowl").owlCarousel({
+                                    singleItem: true,
+                                    autoPlay: 5000,
+                                    //autoPlay : false,
+                                    items: 1,
+                                    itemsDesktop: [1199, 1],
+                                    itemsDesktopSmall: [980, 1],
+                                    itemsTablet: [768, 1],
+                                    itemsMobile: [479, 1],
+                                    slideSpeed: 500,
+                                    paginationSpeed: 500,
+                                    rewindSpeed: 500,
+                                    addClassActive: true,
+                                    navigation: true,
+                                    stopOnHover: true,
+                                    pagination: true,
+                                    scrollPerPage: true,
+                                    afterMove: nextslide,
+                                    afterInit: nextslide,
+                                });
+                                function nextslide() {
+                                    $(".pt-banner-container .owl-item .pt-banner-caption").css('display', 'none');
+                                    $(".pt-banner-container .owl-item .pt-banner-caption").removeClass('pt-caption')
+                                    $(".pt-banner-container .owl-item.active .pt-banner-caption").css('display', 'block');
+
+                                    var heading = $('.pt-banner-container .owl-item.active .pt-banner-caption').clone().removeClass();
+                                    $('.pt-banner-container .owl-item.active .pt-banner-caption').remove();
+                                    $('.pt-banner-container .owl-item.active>li').append(heading);
+                                    $('.pt-banner-container .owl-item.active>li>div').addClass('pt-banner-caption pt-caption');
+                                }
+                            });
+                        });
+                    </script>
+
+                </div>
+                <div class="col-sm-3">
+                    <div class="banner-box"><a href="http://plazathemes.com/demo/presiden/english11/skirts.html/"><img
+                                    src="{{ asset('images/banner3.jpg') }}" alt=""></a></div>
+                </div>
+            </div>
+
+            <div class="static-info">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="info info1"><em class="zmdi zmdi-shopping-basket zmdi-hc-fw"></em>
+
+                            <div class="static_info">
+                                <h4><a href="">I am a Buyer</a></h4>
+
+                                <p>Buy Roses, check out faster, track orders and more.<br/><br/><a
+                                            href="{{ path('user_login') }}" class="action login primary" name="send"
+                                            id="send2"> Go to Webshop</a></p>
+                            </div>
+                            </div>
+                        </div>
+                    <div class="col-sm-3">
+                        <div class="info info2"><em class="zmdi zmdi-flower-alt zmdi-hc-fw"></em>
+
+                            <div class="static_info">
+                                <h4>I am a Grower</h4>
+
+                                <p>Access breeders, buyers, agents and more.<br/><br/><a
+                                            href="{{ path('grower_login') }}" class="action login primary" name="send"
+                                            id="send2"> Go to Webshop</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="info info3"><em class="zmdi zmdi-flower zmdi-hc-fw"></em>
+
+                            <div class="static_info">
+                                <h4>I am a Breeder</h4>
+
+                                <p>Access growers, manage your seedlings and more.<br/><br/><a
+                                            href="{{ path('breeder_login') }}" class="action login primary" name="send"
+                                            id="send2"> Go to Webshop</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="info info3"><em class="zmdi zmdi-pin-account zmdi-hc-fw"></em>
+
+                            <div class="static_info">
+                                <h4>I am an Agent</h4>
+
+                                <p>Access growers and buyers, manage products more.<br/><br/><a
+                                            href="{{ path('agent_login') }}" class="action login primary" name="send"
+                                            id="send2"> Go to Webshop</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+            <div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+{% endblock %}

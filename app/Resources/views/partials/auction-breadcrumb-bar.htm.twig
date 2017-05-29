@@ -1,0 +1,14 @@
+<div class="nav-area-holder">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="back">
+                <ul class="breadcrumb list-inline">
+                    <li><a href="{{ path('homepage') }}">Home</a></li>
+                    <li><a href="{{ path('auction_list') }}">Auction</a></li>
+
+                        <li class="active"><a href="{{ path('auction_list') }}/{{ auctionProduct.id }}/view">{{ auctionProduct.product.title }}</a></li>
+                                    </ul>
+            </div>
+        </div>
+    </div>
+</div>

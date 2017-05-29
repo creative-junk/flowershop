@@ -1,0 +1,35 @@
+{% for item in cartItems %}
+    <div class="cart-item row">
+        <div class="col-sm-2 col-lg-1">
+            <div class="image">
+                <img width="60" height="60" alt="" src="{{ asset('images/products/') }}{{ item.product.imageName }}"/>
+            </div>
+        </div>
+        <div class="col-sm-4 col-lg-6">
+
+            <div class="title">
+                <a href="{{ path('seedling_details',{
+                    'id': item.product.id
+                }) }}">{{ item.product.title }}</a>
+
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-5 details">
+            <div class="unit-price">
+                {{ item.cart.cartCurrency }}{{ item.unitPrice }}
+            </div>
+            <div class="quantity">
+                <input type="text" name="item_quantity[{{ item.id }}]" class="md-input quantity"
+                       value="{{ item.quantity }}">
+            </div>
+            <div class="total-price">
+                {{ item.cart.cartCurrency }} {{ item.lineTotal }}
+            </div>
+            <a class="close-btn" href="#close"
+               data-ajax-handler="shop:cart"
+               data-ajax-update="#cart-content=shop-cart-content, #mini-cart=shop-minicart"
+               data-ajax-extra-fields="delete_item='{{ item.id }}'"></a>
+
+        </div>
+    </div>
+{% endfor %}

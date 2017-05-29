@@ -1,0 +1,15 @@
+<div class="nav-area-holder">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="back">
+                <ul class="breadcrumb list-inline">
+                    <li><a href="{{ path('homepage') }}">Home</a></li>
+                    <li><a href="{{ path('products') }}">Shop</a></li>
+
+                         <li><a href="/category/{{ product.category.id }}">{{ product.category.title }}</a></li>
+                        <li class="active"><a href="/shop/{{ product.id }}/view">{{ product.title }}</a></li>
+                                    </ul>
+            </div>
+        </div>
+    </div>
+</div>

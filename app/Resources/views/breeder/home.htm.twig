@@ -1,0 +1,238 @@
+{% extends 'base.html.twig' %}
+{% block title %}Home{% endblock %}
+{% block body %}
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
+    </main>
+    <div class="content-home">
+        <div class="main-container">
+            <div class="container-inner">
+                <div class="static-info">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="info info1"><em class="zmdi zmdi-flower-alt zmdi-hc-fw"></em>
+
+                                <div class="static_info">
+                                    <h4><a href="{{ path('my_breeder_seedling_list') }}">View Seedlings</a></h4>
+
+                                    <p>View all my Seedlings.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info info2"><em class="zmdi zmdi-flower zmdi-hc-fw"></em>
+
+                                <div class="static_info">
+                                    <h4><a href="{{ path('breeder_growers_list') }}">View Growers</a></h4>
+
+                                    <p>View all available Growers.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info info3"><em class="zmdi zmdi-pin-account zmdi-hc-fw"></em>
+
+                                <div class="static_info">
+                                    <h4><a href="{{ path('breeder_order_list') }}">View Orders</a></h4>
+
+                                    <p>View all Orders.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="banner-home">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="banner-box">
+                                <a href="{{ path('my_breeder_seedling_list') }}">
+                                    <img src="{{ asset('images/seedlings.jpg') }}" alt="">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="banner-box dashboard"
+                                 style="background-image: url({{ asset('images/dashboard.jpg') }})">
+
+                                <div style="width: 100%">
+                                    <div class="info-box bg-red">
+                                        <span class="info-box-icon"><i class="fa fa-shopping-cart"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">New Orders</span>
+                                            <span class="info-box-number"><i class="fa  fa-arrow-down down"></i> 114,381</span>
+
+                                            <div class="progress">
+                                                <div class="progress-bars" style="width: 70%">
+
+                                                </div>
+                                            </div>
+                                            <span class="progress-description">
+                                                <a style="color: #fff" href="{{ path('breeder_order_list') }}">Manage
+                                                    Orders</a>
+                                            </span>
+
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                    <div class="info-box bg-yellow">
+                                        <span class="info-box-icon"><i class="fa fa-tag"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">My Growers</span>
+                                            <span class="info-box-number"><i
+                                                        class="fa  fa-arrow-up up"></i> 5,200</span>
+
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: 50%"></div>
+                                            </div>
+                                            <span class="progress-description">
+                                            <a style="color: #fff" href="{{ path('breeder_growers_list') }}">View
+                                                Growers</a>
+                                             </span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                    <div class="info-box bg-green">
+                                        <span class="info-box-icon"><i class="fa fa-cubes"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">My Seedlings</span>
+                                            <span class="info-box-number">92,050</span>
+
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: 20%"></div>
+                                            </div>
+                                             <span class="progress-description">
+                                                <a style="color: #fff" href="{{ path('my_breeder_seedling_list') }}">Manage
+                                                    Seedlings</a>
+                                              </span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                    <div class="info-box bg-aqua">
+                                        <span class="info-box-icon"><i class="fa fa-comments"></i></span>
+
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Direct Messages</span>
+                                            <span class="info-box-number">163,921</span>
+
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: 40%"></div>
+                                            </div>
+                                            <span class="progress-description">
+                                                 <a style="color: #fff" href="#">View Messages</a>
+                                             </span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="banner-box">
+                                <a href="{{ path('breeder_order_list') }}">
+                                    <img src="{{ asset('images/orders.jpg') }}" alt="">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    require([
+                        "jquery",
+                        "owlcarousel/minjs"
+                    ], function ($, owlCarousel) {
+
+                        $(".feature-container").owlCarousel({
+                            items: 12,
+                            autoPlay: false,
+                            slideSpeed: 1000,
+                            navigation: true,
+                            stopOnHover: true,
+                            pagination: false,
+                            items: 5,
+                            itemsDesktop: [1199, 4],
+                            itemsDesktopSmall: [992, 3],
+                            itemsTablet: [767, 2],
+                            itemsMobile: [479, 1]
+                        });
+
+                    });
+                </script>
+
+                <div class="brandslider-container">
+                    <div class="container-inner">
+                        <div class="title">
+                        </div>
+
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    require([
+                        "jquery",
+                        "owlcarousel/minjs"
+                    ], function ($, owlCarousel) {
+                        $(document).ready(function () {
+                            $(".pt-brand-container .ptowl").owlCarousel({
+                                items: 6,
+                                itemsDesktop: [1199, 6],
+                                itemsDesktopSmall: [980, 4],
+                                itemsTablet: [768, 3],
+                                itemsMobile: [479, 2],
+                                slideSpeed: 500,
+                                paginationSpeed: 500,
+                                rewindSpeed: 500,
+                                addClassActive: true,
+                                navigation: false,
+                                stopOnHover: true,
+                                pagination: false,
+                                scrollPerPage: true,
+                            });
+                        });
+                    });
+                </script>
+
+
+                <script type="text/javascript">
+                    require([
+                        "jquery",
+                        "owlcarousel/minjs"
+                    ], function ($, owlCarousel) {
+                        $(document).ready(function () {
+                            $(".block-recent-posts .ptowl").owlCarousel({
+                                items: 2,
+                                itemsDesktop: [1199, 2],
+                                itemsDesktopSmall: [980, 2],
+                                itemsTablet: [768, 2],
+                                itemsMobile: [479, 1],
+                                slideSpeed: 500,
+                                paginationSpeed: 500,
+                                rewindSpeed: 500,
+                                addClassActive: true,
+                                navigation: true,
+                                stopOnHover: true,
+                                pagination: false,
+                                scrollPerPage: true,
+                            });
+                        });
+                    });
+                </script>
+
+            </div>
+
+        </div>
+
+
+    </div>
+{% endblock %}

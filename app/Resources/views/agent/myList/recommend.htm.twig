@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+{% block title %} My Recommendations {% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+
+{% block body %}
+<div class="category-view">
+    <div class="page-title-wrapper">
+        <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+            <span class="base" data-ui-id="page-title-wrapper">Recommendations</span></h1>
+    </div>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item category131">
+                <strong>My Recommendations</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages">
+        </div>
+        <div data-bind="scope: 'messages'">
+            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            </div>
+            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column main">
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>My Recommendations </h2>
+                            <ul class="nav navbar-right panel_toolbox">
+
+
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <p class="text-muted font-13 m-b-30">
+                            </p>
+                            <table id="datatable" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Image</th>
+                                <th>Product</th>
+                                    <th>Recommended To</th>
+                                    <th>Recommended On</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for recommendation in recommendations %}
+                                    <tr>
+                                        <td> <img class="" src="{{ asset('images/products/') }}{{ recommendation.auctionProduct.imageName }}" width="150"
+                                                  height="141" alt="{{ recommendation.auctionProduct.title }}"></td>
+                                        <td>{{ recommendation.auctionProduct.title }}</td>
+                                        <td>{{ recommendation.listOwner.firstName }}&nbsp;{{ recommendation.listOwner.lastName }}</td>
+                                        <td>{{ recommendation.createdAt |date("d/m/Y") }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6">No Recommendations found</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include(':agent:sidebar.htm.twig') %}
+
+    </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+<!--  non mobile menu -->
+<div class="top-menu visible-md visible-lg">
+    <ul>
+        <li class=""><a href="{{ path('homepage') }}">Home</a></li>
+        <li class=""><a href="{{ path('products') }}">Shop</a> </li>
+        {% if is_granted('ROLE_GROWER') %}
+            <li class=""><a href="{{ path('seedlings') }}">
+                    Seedlings
+                </a></li>
+        {% endif %}
+        {% if is_granted('ROLE_USER') %}
+            <li class=""><a href="{{ path('auction_list') }}">Auction</a> </li>
+            <li class=""><a href="{{ path('my_order_list') }}">My Orders</a></li>
+            <li class=""><a href="{{ path('my_profile') }}">My Profile</a></li>
+        {% endif %}
+        {% if is_granted('ROLE_GROWER') %}
+            <li class=""><a href="{{ path('grower_dashboard') }}">
+                    Manage Products / Orders
+                </a></li>
+        {% elseif is_granted('ROLE_BREEDER') %}
+            <li class=""><a href="{{ path('breeder_dashboard') }}">
+                    Manage Seedlings / Orders
+                </a></li>
+        {% elseif is_granted('ROLE_ADMIN') %}
+            <li class=""><a href="{{ path('admin_dashboard') }}">
+                    Administration
+                </a></li>
+        {% else %}
+        <li class=""><a href="{{ path('about') }}">About</a></li>
+        <li class=""><a href="{{ path('contact') }}">Contact</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+<!--  mobile only menu -->
+<select class="top-drop-menu  visible-sm visible-xs">
+    <option value="{{ path('homepage') }}">
+        Home
+    </option>
+    <option value="{{ path('products') }}">
+        Shop
+    </option>
+    {% if is_granted('ROLE_USER') %}
+        <option value="{{ path('my_order_list') }}">
+            My Orders
+        </option>
+        <option value="{{ path('my_profile') }}">
+            My Profile
+        </option>
+
+    {% endif %}
+    {% if is_granted('ROLE_GROWER') %}
+    <option value="{{ path('grower_dashboard') }}">
+        Manage Products / Orders
+    </option>
+    {% elseif is_granted('ROLE_BREEDER') %}
+    <option value="{{ path('breeder_dashboard') }}">
+        Manage Seedlings / Orders
+        </option>
+    {%elseif is_granted('ROLE_ADMIN')  %}
+    <option value="{{ path('admin_dashboard') }}">
+        Administration
+        </option>
+    {% endif %}
+    <option value="{{ path('about') }}">
+        About
+    </option>
+    <option value="{{ path('contact') }}">
+        Contact
+    </option>
+</select>
