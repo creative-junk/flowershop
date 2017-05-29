@@ -1102,8 +1102,8 @@ class HomeController extends Controller
         $myOrder->setCreatedAt(new \DateTime());
         $myOrder->setBillingAddress($billingAddress[0]);
         $myOrder->setShippingAddress($shippingAddress[0]);
-        $myOrder->setSoldBy($user);
-        $myOrder->setOrderStatus("Pending");
+        //$myOrder->setSoldBy($user);
+        $myOrder->setOrderStatus("Pending Agent");
         $myOrder->setOrderNotes("None");
 
         $myOrder->setCheckoutCompletedAt(new \DateTime());
@@ -1112,6 +1112,7 @@ class HomeController extends Controller
         $myOrder->setOrderCurrency($product->getCurrency());
         $myOrder->setShippingCost($shippingCost);
         $myOrder->setOrderTotal($product->getPrice()+$shippingCost);
+        $myOrder->setReceivingAgent($product->getAgent());
 
 
         $orderProduct = $em->find("AppBundle:Auction",$product->getId());

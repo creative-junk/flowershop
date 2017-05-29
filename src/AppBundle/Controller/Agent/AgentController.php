@@ -11,6 +11,7 @@ namespace AppBundle\Controller\Agent;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\AuctionOrder;
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\MyList;
 use AppBundle\Entity\Product;
@@ -60,6 +61,8 @@ class AgentController extends Controller
             ->createQueryBuilder('product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
+            ->andWhere('product.agent = :agentIs')
+            ->setParameter('agentIs',$user)
             ->orderBy('product.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
@@ -78,7 +81,42 @@ class AgentController extends Controller
         ]);
 
     }
+    /**
+     * @Route("/product/requests/my",name="my_assigned_product_requests")
+     */
 
+    public function myAssignedProductRequestListAction(Request $request = null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->createQueryBuilder('product')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('product.status = :productStatus')
+            ->setParameter('productStatus', "Pending Agent")
+            ->andWhere('product.agent = :agentIs')
+            ->setParameter('agentIs',$user)
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('agent/product/mylist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
     /**
      * @Route("/product/{id}/edit",name="assigned_product_edit")
      */
@@ -91,7 +129,8 @@ class AgentController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $product = $form->getData();
-
+            $product->setStatus("Agent Accepted");
+            //TODO Notify the user that the Agent has accepted the Requested
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
@@ -102,7 +141,8 @@ class AgentController extends Controller
         }
 
         return $this->render('agent/product/edit.html.twig', [
-            'productForm' => $form->createView()
+            'productForm' => $form->createView(),
+            'product'=>$product
         ]);
     }
 
@@ -116,6 +156,20 @@ class AgentController extends Controller
         $orders = $em->getRepository('AppBundle:UserOrder')
             ->findAllMyReceivedOrdersOrderByDate($user);
         return $this->render('agent/order/list.html.twig', [
+            'orders' => $orders,
+        ]);
+
+    }
+    /**
+     * @Route("/orders/my/assigned",name="my_agent_assigned_order_list")
+     */
+    public function myAssignedOrdersListAction(){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $em=$this->getDoctrine()->getManager();
+        $orders = $em->getRepository('AppBundle:AuctionOrder')
+            ->findAllMyOrderAssignmentRequests($user);
+        return $this->render('agent/order/myAssignedlist.html.twig', [
             'orders' => $orders,
         ]);
 
@@ -135,29 +189,58 @@ class AgentController extends Controller
 
     }
     /**
+     * @Route("/orders/received/my",name="my_agent_received_order_list")
+     */
+    public function myReceivedOrdersListAction(Request $request){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $em=$this->getDoctrine()->getManager();
+        $orders = $user->getMyReceivedAgencyOrders();
+        return $this->render('agent/order/myReceivedList.html.twig', [
+            'orders' => $orders,
+        ]);
+
+    }
+    /**
+     * @Route("/orders/process/{id}/update",name="agent_process_order")
+     */
+    public function agentProcessOrderAction(Request $request,AuctionOrder $order)
+    {
+        $user = $order->getWhoseOrder();
+        $product=$order->getOrderItems();
+
+        $em = $this->getDoctrine()->getManager();
+        $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
+            ->findMyBillingAddress($user);
+        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
+            ->findMyShippingAddress($user);
+
+        return $this->render(':agent/order:processOrder.htm.twig',[
+            'order'=>$order,
+            'orderItems'=>$order->getOrderItems(),
+            'billingAddress'=>$billingAddress[0],
+            'shippingAddress'=>$shippingAddress[0],
+            'product'=>$product[0]->getProduct()
+        ]);
+    }
+    /**
      * @Route("/orders/{id}/update",name="agent_order_update")
      */
-    public function updateOrderStatusAction(Request $request,UserOrder $order)
+    public function updateOrderStatusAction(Request $request,AuctionOrder $order)
     {
-        $form = $this->createForm(ProductFormType::class,$order);
+        $user = $order->getWhoseOrder();
 
-        //only handles data on POST
-        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
+            ->findMyBillingAddress($user);
+        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
+            ->findMyShippingAddress($user);
 
-        if($form->isSubmitted() && $form->isValid()){
-            $product = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($product);
-            $em->flush();
-
-            $this->addFlash('success','Order Status Updated Successfully!');
-
-            return $this->redirectToRoute('agent_order_list');
-        }
-
-        return $this->render('grower/order/update.html.twig',[
-            'productForm' => $form->createView()
+        return $this->render(':agent/order:orderRequest.htm.twig',[
+            'order'=>$order,
+            'orderItems'=>$order->getOrderItems(),
+            'billingAddress'=>$billingAddress[0],
+            'shippingAddress'=>$shippingAddress[0],
         ]);
     }
     /**
@@ -826,7 +909,7 @@ class AgentController extends Controller
         $wishlist = $em->getRepository('AppBundle:MyList')
             ->getMyWishlist($agent);
         return $this->render(':agent/myList:wishlist.htm.twig',[
-            'wishlist' => $wishlist
+            'wishlist' => $wishlist[0]
         ]);
 
 
@@ -842,10 +925,91 @@ class AgentController extends Controller
         $wishlist = $em->getRepository('AppBundle:MyList')
             ->getMyAuctionWishlist($agent);
         return $this->render(':agent/myList:auctionWishlist.htm.twig',[
-            'wishlist' => $wishlist
+            'wishlist' => $wishlist[0]
         ]);
 
 
     }
+
+    /**
+     * @Route("/orders/assigned/{id}/accept",name="accept-order-assignment")
+     */
+    public function acceptOrderAssignmentAction(Request $request,AuctionOrder $order){
+        $em=$this->getDoctrine()->getManager();
+
+        $order->setOrderStatus("Agent Accepted");
+        $order->setOrderState("Active");
+
+        $em->persist($order);
+        $em->flush();
+        //TODO Notify the Agent Assigned the Product and the Owner of the Product at this stage
+
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/orders/assigned/{id}/reject",name="reject-order-assignment")
+     */
+    public function rejectOrderAssignmentAction(Request $request,AuctionOrder $order){
+        $em=$this->getDoctrine()->getManager();
+
+        $order->setOrderStatus("Rejected");
+        $order->setOrderState("Inactive");
+
+        $em->persist($order);
+        $em->flush();
+        //TODO Notify the User who Created the Order That their Order has been Rejected
+
+
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/products/assigned/{id}/reject",name="reject-product-assignment")
+     */
+    public function rejectProductAssignmentAction(Request $request,Auction $product){
+        $em=$this->getDoctrine()->getManager();
+/*
+        $product->setOrderStatus("Rejected");
+        $order->setOrderState("Inactive");
+
+        $em->persist($order);
+        $em->flush();
+        //TODO Notify the User who Created the Product That their Assignment has been Rejected
+
+*/
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/orders/assigned/{id}/ship",name="agent-ship-order")
+     */
+    public function shipOrderAction(Request $request,AuctionOrder $order){
+        $em=$this->getDoctrine()->getManager();
+
+        $order->setOrderState("Shipped");
+        $order->setOrderStatus("Processed");
+
+        $em->persist($order);
+        $em->flush();
+                //TODO Notify the User who Created the Order That their Order has been Rejected
+
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/orders/assigned/{id}/request",name="agent-request-supply")
+     */
+    public function requestSupplyAction(Request $request,Auction $product){
+        $em=$this->getDoctrine()->getManager();
+        /*
+                $product->setOrderStatus("Rejected");
+                $order->setOrderState("Inactive");
+
+                $em->persist($order);
+                $em->flush();
+                //TODO Notify the Grower that more Product is required
+
+        */
+        return new Response(null,204);
+    }
+
+
 
 }

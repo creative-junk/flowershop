@@ -19,10 +19,46 @@
         <link rel="stylesheet" type="text/css" media="all" href="{{ asset('iflora/css/owl.carousel.css') }}">
         <link rel="stylesheet" type="text/css"
               href='https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i'>
+        <link rel="stylesheet" type="text/css" href="{{ asset('iflora/css/ionicons.min.css') }}"/>
         <link rel="stylesheet" type="text/css"
               href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
     {% endblock %}
     <script type="text/javascript" src="{{ asset('iflora/js/jquery.js') }}"></script>
+    <script type="text/javascript">
+        /*global $ */
+        $(document).ready(function() {
+            "use strict";
+            $(".menu > ul > li:has( > ul)").addClass("menu-dropdown-icon");
+
+
+            $(".menu > ul > li > ul:not(:has(ul))").addClass("normal-sub");
+
+            $(".menu > ul").before('<a href="#" class="menu-mobile"></a>');
+
+
+            $(".menu > ul > li").hover(function(e) {
+                if ($(window).width() > 943) {
+                    $(this).children("ul").stop(true, false).fadeToggle(150);
+                    e.preventDefault();
+                }
+            });
+
+
+            $(".menu > ul > li").click(function() {
+                if ($(window).width() <= 943) {
+                    $(this).children("ul").fadeToggle(150);
+                }
+            });
+
+
+            $(".menu-mobile").click(function(e) {
+                $(".menu > ul").toggleClass("show-on-mobile");
+                e.preventDefault();
+            });
+
+        });
+
+    </script>
     {% block javascripts %}
 
 
@@ -86,7 +122,8 @@
                         </strong>
                     </div>
                     <div class="h-right">
-                        <nav class="nav-container visible-lg visible-md">
+                        <div class="menu-container">
+                            <div class="menu">
                         {% if is_granted('ROLE_BUYER') %}
                             {{ knp_menu_render('AppBundle:Builder:mainUserMenu') }}
                         {% elseif is_granted('ROLE_GROWER') %}
@@ -94,19 +131,17 @@
                         {% elseif is_granted('ROLE_BREEDER') %}
                             {{ include(':nav:breeder.htm.twig') }}
                         {% elseif is_granted('ROLE_AGENT') %}
-                            {{ include(':nav:agent.htm.twig') }}
+                            {{ knp_menu_render('AppBundle:Builder:mainAgentMenu') }}
                         {% else %}
                             {{ include(':nav:nav.htm.twig') }}
 
                         {% endif %}
-                        </nav>
+                            </div>
+                        </div>
 
 
                         <div class="absolute">
-                            <div class="search-switcher">
 
-
-                            </div>
                             <script type="text/javascript">
                                 function show_cart() {
                                     document.getElementById('ui-id-1').style.display = 'block';
@@ -147,18 +182,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="nav-ozmegamenu-inner">
-                    <div class="mobile-bar-icon"><span>mobile icon</span></div>
-                </div>
-                <div class="mobile-bar-content">
-                    <div class="mobile-bar-close">Close</div>
-                    <ul class="tabs-mobile">
-                        <li class="item item-menu active">Menu</li>
 
-                        <li class="item item-setting">Setting</li>
-                    </ul>
-
-                </div>
             </div>
         </div>
     </header>

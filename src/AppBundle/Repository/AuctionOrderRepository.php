@@ -51,7 +51,18 @@ class AuctionOrderRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
-    
+    /**
+     * @return AuctionOrder[]
+     */
+    public function findAllMyOrderAssignmentRequests(User $user){
+
+        return $this->createQueryBuilder('auction_order')
+            ->andWhere('auction_order.agent= :soldBy')
+            ->setParameter('soldBy',$user)
+            ->orderBy('auction_order.createdAt','DESC')
+            ->getQuery()
+            ->execute();
+    }
     public function findMyAuctionAgencyRequests(User $user){
 
         $auctionAgencyRequests=$this->createQueryBuilder('auction_order')

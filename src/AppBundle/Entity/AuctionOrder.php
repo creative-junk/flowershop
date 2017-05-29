@@ -93,6 +93,10 @@ class AuctionOrder
      * @ORM\JoinColumn(nullable=false)
      */
     private $agent;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User",inversedBy="myReceivedAgencyOrders")
+     */
+    private $receivingAgent;
 
 
     function __construct()
@@ -370,6 +374,22 @@ class AuctionOrder
     public function setOrderItems($orderItems)
     {
         $this->orderItems = $orderItems;
+    }
+
+    /**
+     * @return User
+     */
+    public function getReceivingAgent()
+    {
+        return $this->receivingAgent;
+    }
+
+    /**
+     * @param User $receivingAgent
+     */
+    public function setReceivingAgent($receivingAgent)
+    {
+        $this->receivingAgent = $receivingAgent;
     }
 
 

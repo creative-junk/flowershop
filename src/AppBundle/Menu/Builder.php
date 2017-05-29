@@ -32,6 +32,34 @@ class Builder implements ContainerAwareInterface
 
           return $menu;
       }
+    public function mainAgentMenu(FactoryInterface $factory,array $options){
+
+        $menu = $factory->createItem('root');
+
+        $menu->addChild('Home',array('route'=>'agent_dashboard'));
+
+      /*  $menu->addChild('Direct Market',array('route'=>'my_assigned_product_list'));
+        $menu['Direct Market']->addChild('Assigned Products',array('route'=>'my_assigned_product_list'));
+        $menu['Direct Market']->addChild('My WishList',array('route'=>'my-agent-wishlist'));
+*/
+
+        $menu->addChild('Auction Market',array('route'=>'agent_auction_product_list'));
+        $menu['Auction Market']->addChild('Assigned Products',array('route'=>'my_assigned_product_list'));
+        $menu['Auction Market']->addChild('My WishList',array('route'=>'my-agent-auction-wishlist'));
+
+        $menu->addChild('Buyers',array('route'=>'agent_buyer_list'));
+        $menu['Buyers']->addChild('My Buyers',array('route'=>'my-agent-buyers'));
+
+        $menu->addChild('Growers',array('route'=>'agent_growers_list'));
+        $menu['Growers']->addChild('My Growers',array('route'=>'my-agent-growers'));
+
+        $menu->addChild('Orders',array('route'=>'my_agent_order_list'));
+        $menu['Orders']->addChild('Assigned Orders',array('route'=>'my_agent_assigned_order_list'));
+        $menu['Orders']->addChild('Received Orders',array('route'=>'my_agent_received_order_list'));
+        $menu['Orders']->addChild('My Orders',array('route'=>'my_agent_order_list'));
+
+        return $menu;
+    }
     /**
      * Sets the container.
      *

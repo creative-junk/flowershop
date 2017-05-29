@@ -58,8 +58,8 @@
     <strong class="label" style="color:black;"></strong>
     <ul class="header links" style="left:-100px;margin-top:9px">
         <li class="top">Agency Requests</li>
-        <li><a href="{{ path('my_agent_buyer_requests') }}">Products ( {{ render(controller('AppBundle:Agent/Agent:getMyAuctionAgencyRequests')) }} )</a></li>
-        <li><a href="{{ path('my_agent_grower_requests') }}">Orders ( {{ render(controller('AppBundle:Agent/Agent:getMyOrderAssignmentRequest')) }} )</a></li>
+        <li><a href="{{ path('my_assigned_product_requests') }}">Products ( {{ render(controller('AppBundle:Agent/Agent:getMyAuctionAgencyRequests')) }} )</a></li>
+        <li><a href="{{ path('my_agent_assigned_order_list') }}">Orders ( {{ render(controller('AppBundle:Agent/Agent:getMyOrderAssignmentRequest')) }} )</a></li>
 
     </ul>
 </div>

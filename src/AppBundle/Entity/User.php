@@ -125,7 +125,10 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="recommendedBy",fetch="EXTRA_LAZY")
      */
     private $myRecommendations;
-
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\AuctionOrder",mappedBy="receivingAgent",fetch="EXTRA_LAZY")
+     */
+    private $myReceivedAgencyOrders;
 
     public function __construct()
     {
@@ -136,6 +139,7 @@ class User implements UserInterface
         $this->agentGrowers = new ArrayCollection();
         $this->myLists = new ArrayCollection();
         $this->myRecommendations = new ArrayCollection();
+        $this->myReceivedAgencyOrders = new ArrayCollection();
     }
 
     /**
@@ -522,6 +526,14 @@ class User implements UserInterface
     public function getMyRecommendations()
     {
         return $this->myRecommendations;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMyReceivedAgencyOrders()
+    {
+        return $this->myReceivedAgencyOrders;
     }
 
 

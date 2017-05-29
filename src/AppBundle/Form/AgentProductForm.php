@@ -22,9 +22,7 @@ class AgentProductForm extends AbstractType
             ->add('description', null, array(
                 'attr' => ['readonly' => true],
             ))
-            ->add('imageFile', FileType::class, array(
-                'attr' => ['readonly' => true],
-            ))
+
             ->add('quantity', null, array(
                 'label_format' => 'Quantity in Bundle',
                 'attr' => ['readonly' => true],
