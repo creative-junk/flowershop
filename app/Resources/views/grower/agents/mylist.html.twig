@@ -69,6 +69,7 @@
                     <thead>
                     <tr>
                         <th class="col item" scope="col"><span>Agent</span></th>
+                        <th class="col price" scope="col"><span>Connected Since</span></th>
                         <th class="col price" scope="col"><span>Roses</span></th>
 
                     </tr>
@@ -90,7 +91,16 @@
 
                     </span>
                             </td>
+                            <td class="col subtotal" data-th="Subtotal">
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ growerAgent.dateSince |date("d/m/Y") }}
+                                                </span>
+                                            </span>
 
+                                    </span>
+                            </td>
                             <td class="col price" data-th="Price">
 
                 <span class="price-excluding-tax" data-label="Excl. Tax">

@@ -29,7 +29,7 @@ class AuctionRepository extends EntityRepository
             ->execute();
     }
     /**
-     * @return Product[]
+     * @return Auction[]
      */
     public function findAllMyActiveAuctionProductsOrderByDate(User $user){
 
@@ -73,6 +73,39 @@ class AuctionRepository extends EntityRepository
         }else{
             return 0;
         }
+    }
+    public function findNrMyActiveProductsAgent(User $user){
+        $nrProducts= $this->createQueryBuilder('product')
+            ->select('count(product.id)')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('product.agent= :isAgent')
+            ->setParameter('isAgent',$user)
+            ->andWhere('product.status= :status')
+            ->setParameter('status',"Agent Accepted")
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrProducts){
+            return $nrProducts;
+        }else{
+            return 0;
+        }
+    }
+    /**
+     * @return Auction[]
+     */
+    public function findAllMyActiveAgentProductsOrderByDate(User $user){
+
+        return $this->createQueryBuilder('product')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('product.agent= :isAgent')
+            ->setParameter('isAgent',$user)
+            ->andWhere('product.status= :status')
+            ->setParameter('status',"Agent Accepted")
+            ->orderBy('product.createdAt','DESC')
+            ->getQuery()
+            ->execute();
     }
 
 }

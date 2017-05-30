@@ -66,7 +66,7 @@
                     <thead>
                     <tr>
                         <th class="col item" scope="col"><span>Agent</span></th>
-                        <th class="col price" scope="col"><span>Products</span></th>
+
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
@@ -79,7 +79,7 @@
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="{{ path('agent_profile',{
+                          <a href="{{ path('agent_details',{
                               'id':agent.id
                           }) }}">{{ agent.fullName }}</a>
    </span>
@@ -88,15 +88,7 @@
                     </span>
                             </td>
 
-                            <td class="col price" data-th="Price">
 
-                <span class="price-excluding-tax" data-label="Excl. Tax">
-                        <span class="cart-price">
-                            <span class="price"><a class="action action-edit" href="#"
-                                                   title="View Roses">View Roses</a></span>            </span>
-
-                </span>
-                            </td>
 
                             <td class="col subtotal" data-th="Subtotal">
   <span class="price-excluding-tax" data-label="Excl. Tax">

@@ -74,7 +74,7 @@ class GrowerBreederController extends Controller
         }
     }
     /**
-     * @Route("/grower/request/agent/{id}/accept",name="accept_grower-breeder-request")
+     * @Route("/grower/request/breeder/{id}/accept",name="accept_grower-breeder-request")
      */
 
     public function acceptGrowerAgentRequestAction(GrowerBreeder $growerBreeder)
@@ -90,7 +90,7 @@ class GrowerBreederController extends Controller
     }
 
     /**
-     * @Route("/grower/request/agent/{id}/request",name="reject-grower-breeder-request")
+     * @Route("/grower/request/breeder/{id}/request",name="reject-grower-breeder-request")
      */
 
     public function rejectGrowerAgentRequestAction(GrowerBreeder $growerBreeder)

@@ -106,5 +106,39 @@ class ProductRepository extends EntityRepository
             return 0;
         }
     }
+    public function findNrActiveBreederSeedlings(User $user){
+        $nrProducts= $this->createQueryBuilder('product')
+            ->select('count(product.id)')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('product.user= :createdBy')
+            ->setParameter('createdBy',$user)
+            ->andWhere('product.isSeedling= :isSeedling')
+            ->setParameter('isSeedling',true)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrProducts){
+            return $nrProducts;
+        }else{
+            return 0;
+        }
+    }
+    /**
+     * @return Product[]
+     */
+    public function findAllUserActiveSeedlingsOrderByDate(User $user){
+        return $this->createQueryBuilder('product')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('product.isSeedling= :isSeedling')
+            ->setParameter('isSeedling',false)
+            ->andWhere('product.user= :createdBy')
+            ->setParameter('createdBy',$user)
+            ->andWhere('product.isSeedling= :isSeedling')
+            ->setParameter('isSeedling',true)
+            ->orderBy('product.createdAt','DESC')
+            ->getQuery()
+            ->execute();
+    }
 
 }

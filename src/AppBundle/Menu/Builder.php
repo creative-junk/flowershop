@@ -24,8 +24,14 @@ class Builder implements ContainerAwareInterface
           $menu = $factory->createItem('root');
 
           $menu->addChild('Home',array('route'=>'home'));
+
           $menu->addChild('Direct Market',array('route'=>'buyer_shop'));
+        //  $menu['Direct Market']->addChild('Wishlist',array('route'=>'my_buyer_wishlist'));
+
           $menu->addChild('Auction Market',array('route'=>'buyer_auction'));
+          $menu['Auction Market']->addChild('Recommendations',array('route'=>'my_buyer_recommendations'));
+         // $menu['Auction Market']->addChild('Wishlist',array('route'=>'my_buyer_auction_wishlist'));
+
           $menu->addChild('Roses',array('route'=>'buyer_shop'));
           $menu->addChild('Growers',array('route'=>'buyer_growers'));
           $menu->addChild('Agents',array('route'=>'buyer_agents'));
@@ -59,6 +65,33 @@ class Builder implements ContainerAwareInterface
         $menu['Orders']->addChild('My Orders',array('route'=>'my_agent_order_list'));
 
         return $menu;
+    }
+    public function mainGrowerMenu(FactoryInterface $factory,array $options){
+
+        $menu = $factory->createItem('root');
+
+        $menu->addChild('Home',array('route'=>'agent_dashboard'));
+
+
+        $menu->addChild('My Products',array('route'=>'my_grower_product_list'));
+        $menu['My Products']->addChild('Direct Market',array('route'=>'my_grower_product_list'));
+        $menu['My Products']->addChild('Auction Market',array('route'=>'my_grower_auction_list'));
+
+
+        $menu->addChild('Seedlings',array('route'=>'breeder_list'));
+       // $menu['Seedlings']->addChild('Wishlist',array('route'=>'my-seedling-wishlist'));
+
+
+        $menu->addChild('Buyers',array('route'=>'grower_buyer_list'));
+        $menu['Buyers']->addChild('My Buyers',array('route'=>'my_grower_buyer_list'));
+
+        $menu->addChild('Breeders',array('route'=>'breeder_list'));
+        $menu['Breeders']->addChild('My Breeders',array('route'=>'my_breeder_list'));
+
+        $menu->addChild('Agents',array('route'=>'breeder_list'));
+        $menu['Agents']->addChild('My Agents',array('route'=>'my_grower_agent_list'));
+
+         return $menu;
     }
     /**
      * Sets the container.

@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
-{% block title %} Breeders {% endblock %}
+{% block title %} Buyers {% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         jQuery(document).ready(function () {
             $('.js-request-user').on('click',function (e) {
                 e.preventDefault();
 
-                var $el = $(this).closest('.js-breeder-item');
+                var $el = $(this).closest('.js-agent-item');
 
                 $(this).find('.fa-exchange')
                     .removeClass('fa-exchange')
@@ -23,6 +23,7 @@
     </script>
 {% endblock %}
 
+
 {% block pageclass %}
 <body data-container="body"
       class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
@@ -31,7 +32,7 @@
 <div class="category-view">
     <div class="page-title-wrapper">
         <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-            <span class="base" data-ui-id="page-title-wrapper">Breeders</span></h1>
+            <span class="base" data-ui-id="page-title-wrapper">My Buyers</span></h1>
     </div>
     <div class="breadcrumbs">
         <ul class="items">
@@ -40,10 +41,10 @@
                     Home </a>
             </li>
             <li class="item category131">
-                <a href="{{ path('breeder_list') }}" title="Go to My Breeders">My Breeders</a>
+                <a href="{{ path('grower_buyer_list') }}" title="Go to Buyers">Buyers</a>
             </li>
             <li class="item category131">
-                <strong>My Breeders</strong>
+                <strong>My Buyers</strong>
             </li>
         </ul>
     </div>
@@ -67,54 +68,47 @@
                 <table id="shopping-cart-table" class="cart items data table">
                     <thead>
                     <tr>
-                        <th class="col item" scope="col"><span>Breeder</span></th>
+                        <th class="col item" scope="col"><span>Buyer</span></th>
                         <th class="col price" scope="col"><span>Connected Since</span></th>
-                        <th class="col price" scope="col"><span>Seedlings</span></th>
+                  
 
                     </tr>
                     </thead>
                     <tbody class="cart item">
-                    {% for growerBreeder in growerBreeders %}
-                        <tr class="item-info js-breeder-item">
+                    {% for buyerGrower in buyerGrowers %}
+                        <tr class="item-info js-agent-item">
                             <td data-th="Item" class="col item">
+
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="{{ path('breeder_profile',{
-                              'id':growerBreeder.breeder.id
-                          }) }}">{{ growerBreeder.breeder.fullName }}</a>
-                    </span>
+                          <a href="{{ path('grower_buyer_profile',{
+                              'id':buyerGrower.buyer.id
+                          }) }}">{{ buyerGrower.buyer.fullName }}</a>
+   </span>
                     </strong>
 
                     </span>
-
-                                                           </td>
+                            </td>
                             <td class="col subtotal" data-th="Subtotal">
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ growerBreeder.dateSince |date("d/m/Y") }}
+                                                {{ buyerGrower.dateSince |date("d/m/Y") }}
                                                 </span>
                                             </span>
 
                                     </span>
                             </td>
-                            <td class="col price" data-th="Price">
 
-                <span class="price-excluding-tax" data-label="Excl. Tax">
-                        <span class="cart-price">
-                            <span class="price"><a class="action action-edit" href="#"
-                                                   title="View Roses">View Seedlings</a></span>            </span>
 
-                </span>
-                            </td>
 
                         </tr>
                      {% else %}
                          <tr class="item-info js-breeder-item">
-                             <td data-th="Item" class="col item">You currently have no Breeders.</td>
-                        </tr>
+                             <td data-th="Item" class="col item">You currently have no Buyers.</td>
+                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>

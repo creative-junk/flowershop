@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -10,6 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AuctionProductForm extends AbstractType
 {
+    function __construct()
+    {
+
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -29,13 +35,16 @@ class AuctionProductForm extends AbstractType
             ))
             ->add('bundlePrice')
             ->add('finalPrice')
-            ->add('agent');
+            ->add('agent',null,[
+                'choices'=>$options['agents']
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Auction'
+            'data_class' => 'AppBundle\Entity\Auction',
+            'agents'=>''
         ]);
     }
 

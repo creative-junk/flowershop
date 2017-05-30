@@ -127,7 +127,7 @@
                         {% if is_granted('ROLE_BUYER') %}
                             {{ knp_menu_render('AppBundle:Builder:mainUserMenu') }}
                         {% elseif is_granted('ROLE_GROWER') %}
-                            {{ include(':nav:grower.htm.twig') }}
+                            {{ knp_menu_render('AppBundle:Builder:mainGrowerMenu') }}
                         {% elseif is_granted('ROLE_BREEDER') %}
                             {{ include(':nav:breeder.htm.twig') }}
                         {% elseif is_granted('ROLE_AGENT') %}

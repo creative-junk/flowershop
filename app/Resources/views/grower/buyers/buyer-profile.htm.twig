@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ buyer.firstName }}  {{ buyer.lastName }}
+{% endblock %}
+
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Buyers</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="#" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item home">
+                    <a href="{{ path('grower_buyer_list') }}" title="Go to Home Page">
+                        Buyers </a>
+                </li>
+                <li class="item product">
+                    <strong>{{ buyer.firstName }} {{ buyer.lastName }}</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main">
+
+
+        <div class="columns">
+            <div class="column main">
+                <h2>Buyer Profile</h2>
+                <div class="leftProfileColumn col-md-4">
+                    <img src="{{ asset('images/avatar.jpg') }}" width="200px"/>
+
+                </div>
+                <div class="rightProfileColumn col-md-5">
+
+                    <h3>{{ buyer.firstName }} {{ buyer.lastName }}</h3>
+                    {% if billingAddress %}
+                    <h4>Billing Address</h4>
+                    <hr/>
+                    <p><strong>Names: </strong> {{ billingAddress.firstName }} {{ billingAddress.lastName }} </p>
+                    <p><strong>Company: </strong> {{ billingAddress.company }}</p>
+                    <p><strong>Street Address: </strong> {{ billingAddress.streetAddress }}</p>
+                    <p><strong>Town: </strong> {{ billingAddress.town }}</p>
+                    <p><strong>Zip: </strong> {{ billingAddress.zip }}</p>
+                    <p><strong>Country: </strong> {{ billingAddress.country }}</p>
+                    <p><strong>Email: </strong> {{ billingAddress.emailAddress }}</p>
+                    <p><strong>Phone: </strong> {{ billingAddress.phoneNumber }}</p>
+                    <br/>
+                    {% endif %}
+                    {% if shippingAddress %}
+                    <h4>Shipping Address</h4>
+                    <hr/>
+                    <p><strong>Names: </strong> {{ shippingAddress.firstName }} {{ shippingAddress.lastName }} </p>
+                    <p><strong>Company: </strong> {{ shippingAddress.company }}</p>
+                    <p><strong>Street Address: </strong> {{ shippingAddress.streetAddress }}</p>
+                    <p><strong>Town: </strong> {{ shippingAddress.town }}</p>
+                    <p><strong>Zip: </strong> {{ shippingAddress.zip }}</p>
+                    <p><strong>Country: </strong> {{ shippingAddress.country }}</p>
+                    <p><strong>Email: </strong> {{ shippingAddress.emailAddress }}</p>
+                    <p><strong>Phone: </strong> {{ shippingAddress.phoneNumber }}</p>
+                    {% endif %}
+                </div>
+                <div class="clearfix"></div>
+                <div class="clearfix"></div>
+
+            </div>
+
+            {% include(':grower:sidebar.htm.twig') %}
+        </div>
+
+    </main>
+
+{% endblock %}
+

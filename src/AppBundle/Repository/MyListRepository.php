@@ -35,6 +35,20 @@ class MyListRepository extends EntityRepository
      * @param User $user
      * @return MyList
      */
+    public function getMyUserRecommendations(User $user){
+        return $this->createQueryBuilder('myList')
+            ->andWhere('myList.listType = :listType')
+            ->setParameter('listType',"Agent Recommendations")
+            ->andWhere('myList.listOwner= :listOwner')
+            ->setParameter('listOwner',$user)
+            ->orderBy('myList.createdAt','DESC')
+            ->getQuery()
+            ->execute();
+    }
+    /**
+     * @param User $user
+     * @return MyList
+     */
     public function getMyWIshlist(User $user){
         return $this->createQueryBuilder('myList')
             ->andWhere('myList.listType = :listType')

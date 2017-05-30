@@ -64,7 +64,7 @@ class GrowerAgentController extends Controller
 
         $growerAgent = $em->getRepository('AppBundle:growerAgent')
             ->findOneBy([
-                'buyer'=>$grower,
+                'grower'=>$grower,
                 'agent'=>$agent,
                 'listOwner'=> $whoseList
             ]);
@@ -126,7 +126,7 @@ class GrowerAgentController extends Controller
     /**
      * @Route("/grower/accept/{id}/request",name="accept-agent-grower-request")
      */
-    public function acceptGrowerRequest(GrowerAgent $growerAgent){
+    public function acceptAgentRequest(GrowerAgent $growerAgent){
 
         $growerAgent->setStatus("Accepted");
         $growerAgent->setDateSince(new \DateTime());
@@ -140,7 +140,7 @@ class GrowerAgentController extends Controller
     /**
      * @Route("/grower/reject/{id}/request",name="reject-agent-grower-request")
      */
-    public function rejectBuyerRequest(GrowerAgent $growerAgent){
+    public function rejectAgentRequest(GrowerAgent $growerAgent){
 
         $growerAgent->setStatus("Rejected");
         $growerAgent->setDateSince(new \DateTime());

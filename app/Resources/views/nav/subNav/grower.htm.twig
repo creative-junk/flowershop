@@ -24,6 +24,7 @@
                     style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>
     <ul class="header links">
         <li><a href="{{ path('my_breeder_list') }}">My Breeders</a></li>
+        <li><a href="{{ path('my_grower_buyer_list') }}">My Buyers</a> </li>
         <li><a href="{{ path('my_grower_agent_list') }}">My Agents</a></li>
 
     </ul>
@@ -37,6 +38,7 @@
     <ul class="header links" style="left:-100px;margin-top:5px">
         <li class="top">Received Requests</li>
         <li><a href="{{ path('breeder_requests') }}">Breeders ( {{ render(controller('AppBundle:Grower/Grower:getTotalBreederRequests')) }} )</a></li>
+        <li><a href="{{ path('grower_buyer_requests') }}">Buyers ( {{ render(controller('AppBundle:Grower/Grower:getTotalBuyerRequests')) }} )</a></li>
         <li><a href="{{ path('grower_agent_requests') }}">Agents ( {{ render(controller('AppBundle:Grower/Grower:getTotalAgentRequests')) }} )</a></li>
 
     </ul>
@@ -50,6 +52,7 @@
     <ul class="header links" style="left:-100px;margin-top:5px">
         <li class="top">My Requests</li>
         <li><a href="{{ path('my_breeder_requests') }}">Breeders ( {{ render(controller('AppBundle:Grower/Grower:getMyTotalBreederRequests')) }} )</a></li>
+        <li><a href="{{ path('my_grower_buyer_requests') }}">Buyers ( {{ render(controller('AppBundle:Grower/Grower:getMyTotalBuyerRequests')) }} )</a></li>
         <li><a href="{{ path('my_grower_agent_requests') }}">Agents ( {{ render(controller('AppBundle:Grower/Grower:getMyTotalAgentRequests')) }} )</a></li>
 
     </ul>

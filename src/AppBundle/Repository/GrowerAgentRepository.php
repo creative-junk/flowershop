@@ -11,6 +11,7 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\GrowerAgent;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
@@ -83,5 +84,19 @@ class GrowerAgentRepository extends EntityRepository
         }else{
             return 0;
         }
+    }
+
+    /**
+     * @param User $user
+     * @return GrowerAgent
+     */
+    public function findMyAgents(User $user){
+        return $this->createQueryBuilder('grower_agent')
+            ->andWhere('grower_agent.status = :isAccepted')
+            ->setParameter('isAccepted',true)
+            ->andWhere('grower_agent.grower= :isGrower')
+            ->setParameter('isGrower',$user)
+            ->getQuery()
+            ->execute();
     }
 }

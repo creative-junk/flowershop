@@ -33,6 +33,23 @@ class BuyerGrowerRepository extends EntityRepository
             return 0;
         }
     }
+    public function getNrBuyerRequests(User $user){
+        $nrBuyerRequests= $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.listOwner <> :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->andWhere('user.grower = :grower')
+            ->setParameter('grower', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrBuyerRequests){
+            return $nrBuyerRequests;
+        }else{
+            return 0;
+        }
+    }
     public function getGrowerRequestsQuery(User $user){
         return $this->createQueryBuilder('user')
             ->select('count(user.id)')
@@ -44,7 +61,17 @@ class BuyerGrowerRepository extends EntityRepository
             ->setParameter('buyer', $user)
             ->getQuery();
     }
-
+    public function getBuyerRequestsQuery(User $user){
+        return $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.listOwner <> :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->andWhere('user.grower = :grower')
+            ->setParameter('grower', $user)
+            ->getQuery();
+    }
     public function getNrMyGrowerRequests(User $user){
         $nrGrowerRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
@@ -68,6 +95,33 @@ class BuyerGrowerRepository extends EntityRepository
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.buyer = :whoIsBuyer')
             ->setParameter('whoIsBuyer', $user)
+            ->andWhere('user.listOwner = :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->getQuery();
+    }
+    public function getNrMyBuyerRequests(User $user){
+        $nrBuyerRequests= $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.grower = :whoIsGrower')
+            ->setParameter('whoIsGrower', $user)
+            ->andWhere('user.listOwner = :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrBuyerRequests){
+            return $nrBuyerRequests;
+        }else{
+            return 0;
+        }
+    }
+    public function getMyBuyerRequests(User $user){
+        return $this->createQueryBuilder('user')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.grower = :whoIsGrower')
+            ->setParameter('whoIsGrower', $user)
             ->andWhere('user.listOwner = :whoOwnsList')
             ->setParameter('whoOwnsList', $user)
             ->getQuery();

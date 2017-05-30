@@ -1262,5 +1262,53 @@ class HomeController extends Controller
         ]);
 
     }
+    /**
+     * @Route("/wishlist/my",name="my_buyer_wishlist")
+     */
+    public function myAuctionWishlistAction(){
+        $buyer = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em=$this->getDoctrine()->getManager();
+
+        $wishlist = $em->getRepository('AppBundle:MyList')
+            ->getMyWishlist($buyer);
+        return $this->render(':home/myList:wishlist.htm.twig',[
+            'wishlist' => $wishlist[0]
+        ]);
+
+
+    }
+    /**
+     * @Route("/wishlist/auction/my",name="my_buyer_auction_wishlist")
+     */
+    public function myWishlistAction(){
+        $buyer = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em=$this->getDoctrine()->getManager();
+
+        $wishlist = $em->getRepository('AppBundle:MyList')
+            ->getMyAuctionWishlist($buyer);
+        return $this->render(':home/myList:auctionWishlist.htm.twig',[
+            'wishlist' => $wishlist[0]
+        ]);
+
+
+    }
+    /**
+     * @Route("/recommendations/my",name="my_buyer_recommendations")
+     */
+    public function myRecommendationsAction(){
+        $buyer = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em=$this->getDoctrine()->getManager();
+
+        $recommendations = $em->getRepository('AppBundle:MyList')
+            ->getMyUserRecommendations($buyer);
+        return $this->render(':home/myList:recommend.htm.twig',[
+            'recommendations' => $recommendations
+        ]);
+
+
+    }
 
 }

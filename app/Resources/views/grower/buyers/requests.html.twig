@@ -1,13 +1,12 @@
 {% extends 'base.html.twig' %}
-
-{% block title %} Breeder Requests {% endblock %}
+{% block title %} Buyer Requests {% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         jQuery(document).ready(function () {
             $('.js-request-user').on('click', function (e) {
                 e.preventDefault();
 
-                var $el = $(this).closest('.js-breeder-item');
+                var $el = $(this).closest('.js-agent-item');
 
                 $(this).find('.fa-thumbs-o-up')
                     .removeClass('fa-thumbs-o-up')
@@ -31,7 +30,7 @@
             $('.js-reject-user').on('click', function (e) {
                 e.preventDefault();
 
-                var $el = $(this).closest('.js-breeder-item');
+                var $el = $(this).closest('.js-agent-item');
 
                 $(this).find('.fa-times')
                     .removeClass('fa-times')
@@ -56,6 +55,7 @@
     </script>
 {% endblock %}
 
+
 {% block pageclass %}
 <body data-container="body"
       class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
@@ -64,7 +64,7 @@
     <div class="category-view">
         <div class="page-title-wrapper">
             <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-                <span class="base" data-ui-id="page-title-wrapper">Breeders</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">Buyer Requests</span></h1>
         </div>
         <div class="breadcrumbs">
             <ul class="items">
@@ -73,19 +73,12 @@
                         Home </a>
                 </li>
                 <li class="item category131">
-                    <strong>Breeders</strong>
-                </li>
-                <li class="item category131">
-                    <strong>Breeder Requests</strong>
+                    <strong>Buyer Requests</strong>
                 </li>
             </ul>
         </div>
     </div>
     <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
-
-        <div class="page-title-wrapper">
-
-        </div>
         <div class="page messages">
             <div class="messages" style="">
                 <div class="message-success success message">
@@ -96,36 +89,45 @@
 
             </div>
         </div>
+        <div class="page-title-wrapper">
+
+        </div>
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
         <div class="columns">
             <div class="column main">
                 <div class="cart table-wrapper">
                     <table id="shopping-cart-table" class="cart items data table">
                         <thead>
                         <tr>
-                            <th class="col item" scope="col"><span>Breeder</span></th>
+                            <th class="col item" scope="col"><span>Buyer</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
-                            <th class="col price" scope="col"><span>Seedlings</span></th>
-
                             <th class="col subtotal" scope="col"><span>Requested On</span></th>
                             <th class="col subtotal" scope="col"><span>Accept / Reject</span></th>
                         </tr>
                         </thead>
                         <tbody class="cart item">
-                        {% for breederRequest in breederRequests %}
-                            <tr class="item-info js-breeder-item">
+                        {% for buyerRequest in buyerRequests %}
+                            <tr class="item-info js-agent-item">
                                 <td data-th="Item" class="col item">
+
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="{{ path('breeder_profile',{
-                              'id':breederRequest.breeder.id
-                          }) }}">{{ breederRequest.breeder.fullName }}</a>
-                    </span>
+                          <a href="{{ path('grower_buyer_profile',{
+                              'id':buyerRequest.buyer.id
+                          }) }}">{{ buyerRequest.buyer.fullName }}</a>
+   </span>
                     </strong>
 
                     </span>
-
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
 
@@ -133,7 +135,7 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ breederRequest.status }}
+                                                {{ buyerRequest.status }}
                                                 </span>
                                             </span>
 
@@ -145,19 +147,7 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                    <a class="action action-edit" href="#"
-                                                       title="View Roses">View Roses</a></span>
-                                            </span>
-
-                                    </span>
-                                </td>
-                                <td class="col subtotal" data-th="Subtotal">
-
-
-                                    <span class="price-excluding-tax" data-label="Excl. Tax">
-                                            <span class="cart-price">
-                                                <span class="price">
-                                                {{ breederRequest.updatedAt |date("d/m/Y") }}
+                                                {{ buyerRequest.updatedAt |date("d/m/Y") }}
                                                 </span>
                                             </span>
 
@@ -168,8 +158,8 @@
                                     <a
                                             href="#"
                                             class="action accept  js-request-user"
-                                            data-url="{{ path('accept_grower-breeder-request',{
-                                                'id': breederRequest.id
+                                            data-url="{{ path('accept-buyer-grower-request',{
+                                                'id': buyerRequest.id
                                             }) }}"
                                             title="Accept Request">
                                         <span id="accept" class="fa fa-thumbs-o-up"></span>
@@ -178,8 +168,8 @@
                                     <a
                                             href="#"
                                             class="action request js-reject-user"
-                                            data-url="{{ path('reject-grower-breeder-request',{
-                                                'id': breederRequest.id
+                                            data-url="{{ path('reject-buyer-grower-request',{
+                                                'id': buyerRequest.id
                                             }) }}"
                                             title="Cancel Request">
                                         <span id="reject" class="fa fa-times"></span>
@@ -190,9 +180,9 @@
                                 </td>
                             </tr>
                         {% else %}
-                            <tr class="item-info">
+                            <tr class="item-info js-agent-item">
                                 <td data-th="Item" class="col item">
-                                    There are no Pending Breeder Requests
+                                    You have no Pending Buyer Requests
                                 </td>
                             </tr>
                         {% endfor %}

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\BuyerAgent;
 use AppBundle\Entity\BuyerGrower;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -77,7 +78,7 @@ class BuyerGrowerController extends Controller
      * @Route("/buyer/request/grower/{id}/cancel",name="cancel-buyer-grower-request")
      */
 
-    public function cancelGrowerBreederRequestAction(BuyerGrower $buyerGrower)
+    public function cancelGrowerBuyerRequestAction(BuyerGrower $buyerGrower)
     {
         $buyerGrower->setStatus("Cancelled");
         $buyerGrower->setDateSince(new \DateTime());
@@ -88,4 +89,33 @@ class BuyerGrowerController extends Controller
 
         return new Response(null, 204);
     }
+    /**
+     * @Route("/grower/accept/{id}/request",name="accept-buyer-grower-request")
+     */
+    public function acceptGrowerRequest(BuyerGrower $buyerGrower){
+
+        $buyerGrower->setStatus("Accepted");
+        $buyerGrower->setDateSince(new \DateTime());
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($buyerGrower);
+        $em->flush();
+
+        return new Response(null, 204);
+    }
+    /**
+     * @Route("/grower/reject/{id}/request",name="reject-buyer-grower-request")
+     */
+    public function rejectBuyerRequest(BuyerGrower $buyerGrower){
+
+        $buyerGrower->setStatus("Rejected");
+        $buyerGrower->setDateSince(new \DateTime());
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($buyerGrower);
+        $em->flush();
+
+        return new Response(null, 204);
+    }
+
 }

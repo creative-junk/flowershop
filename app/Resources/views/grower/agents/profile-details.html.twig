@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ agent.firstName }}  {{ agent.lastName }}
+{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.js-request-user').on('click',function (e) {
+                e.preventDefault();
+
+
+                $(this).find('.fa-plus-circle')
+                    .removeClass('fa-plus-circle')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $(".messages").fadeIn("slow");
+
+                    $("#add-t-cart")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                });
+            });
+        })
+    </script>
+{% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Agents</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="#" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item home">
+                    <a href="{{ path('grower_agent_list') }}" title="Go to Home Page">
+                        Agents </a>
+                </li>
+                <li class="item product">
+                    <strong>{{ agent.firstName }} {{ agent.lastName }}</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main">
+
+
+        <div class="columns">
+            <div class="column main">
+                <h2>Agent Profile</h2>
+                <div class="leftProfileColumn col-md-4">
+                    <img src="{{ asset('images/avatar.jpg') }}" width="200px"/>
+
+                </div>
+                <div class="rightProfileColumn col-md-5">
+                    <h3>{{ agent.firstName }} {{ agent.lastName }}</h3>
+
+                    <p>Products:</p>
+
+                    <p>{{ nrProducts }} Active Roses(s) in Auction Market</p>
+
+                    <div class="box-tocart">
+                        <div class="fieldset">
+                            <div class="actions">
+                                <a href="#"  class="action request js-request-user"
+                                   data-url="{{ path('request-agent-grower',{
+                                       'id': agent.id
+                                   }) }}"
+                                   title="Request Agent"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Agent</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="clearfix"></div>
+                <h3 style="text-align: center">Roses in Auction</h3>
+                <div class="products wrapper grid products-grid">
+                    <ol class="products list items product-items">
+                        {% for product in products %}
+                            <li class="item product product-item">
+                                <div class="product-item-info" data-container="product-grid">
+                                    <div class=" product-item-images">
+                                        <a class="product photo product-item-photo"
+                                           href="{{ path('agent_profile_product_details',{
+                                               'id': product.id
+                                           }) }}" tabindex="-1">
+						<span class="product-image-container" style="width: 350px;">
+						<span class="product-image-wrapper" style="padding-bottom: 126%;">
+						<img alt="{{ product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ product.imageName }}" alt="{{ product.title }}"
+                             width="350"></span>
+						</span></a></div>
+                                    <div class="product-item-details">
+                                        <div class="content-name">
+                                            <strong class="product name product-item-name">
+                                                <a class="product-item-link"
+                                                   href="{{ path('agent_profile_product_details',{
+                                                       'id': product.id
+                                                   }) }}">
+                                                    {{ product.title }} </a></strong>
+                                        </div>
+                                        <div class="product-reviews-summary short">
+                                            <div class="rating-summary">
+                                                <span class="label"><span>Rating:</span></span>
+
+                                                <div class="rating-result" title="80%">
+                                                    <span style="width: 80%"><span>80%</span></span>
+                                                </div>
+                                            </div>
+                                            <div class="reviews-actions">
+                                                <a class="action view" href="#">
+                                                    1&nbsp;<span>Review</span></a></div>
+                                        </div>
+                                        <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
+							<span class="price-container price-final_price tax weee">
+							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
+							<span class="price">{{ product.currency }} {{ product.price }}</span> </span></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </li>
+                        {% else %}
+                            <p style="text-align: center;width:100%">This Agent has no Roses in Auction</p>
+                        {% endfor %}
+                    </ol>
+                </div>
+
+            </div>
+
+            {% include(':grower:sidebar.htm.twig') %}
+        </div>
+
+    </main>
+
+{% endblock %}
+
