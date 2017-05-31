@@ -8,16 +8,18 @@
                     <div class="panel-group checkout-accordions">
                         <div class="panel">
 
-                            <!-- Checkout progress -->
-                            <div id="checkout-progress">
-                                <ul class="breadcrumb list-inline checkout-progress">
-                                    <li><a class="progress-active">BILLING ADDRESS</a></li>
-                                    <li>SHIPPING ADDRESS</li>
-                                    <li>SHIPPING METHOD</li>
-                                    <li>PAY</li>
-                                </ul>
-                            </div>
-                            <div id="checkout-page">
+                            <div id="checkout-page">  <!-- Checkout progress -->
+
+                                <div id="checkout-progress">
+                                    <ul class="breadcrumb list-inline checkout-progress">
+                                        <li><a class="progress-active">BILLING ADDRESS</a></li>
+                                        <li>SHIPPING ADDRESS</li>
+                                        <li>SHIPPING METHOD</li>
+                                        <li>PAYMENT</li>
+                                    </ul>
+                                </div>
+
+
                                 <!-- End id="checkout-progress" -->
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
@@ -25,10 +27,59 @@
                                     </h4>
                                 </div>
                                 <div class="panel-body step-1">
-                                    {{ form_start(buyerCartForm) }}
-                                    {{ form_widget(buyerCartForm) }}
-                                    <button type="submit" class="md-button step-btn" formnovalidate>Continue</button>
-                                    {{ form_end(buyerCartForm) }}
+                                    {{ form_start(buyerCheckoutForm) }}
+
+                                    <div class="row field-row">
+                                        <div class="col-xs-6">
+                                            {{ form_row(buyerCheckoutForm.firstName, { 'attr': {'class': 'md-input'} }) }}
+                                        </div>
+                                        <div class="col-xs-6 col-right">
+                                            {{ form_row(buyerCheckoutForm.lastName, { 'attr': {'class': 'md-input'} }) }}
+                                        </div>
+                                    </div>
+                                    <div class="row field-row ">
+                                        <div class="col-xs-12">
+                                            {{ form_row(buyerCheckoutForm.company, { 'attr': {'class': 'md-input'} }) }}
+                                        </div>
+                                    </div>
+                                    <div class="row field-row ">
+                                        <div class="col-xs-12">
+                                            {{ form_row(buyerCheckoutForm.streetAddress, { 'attr': {'class': 'md-input'} }) }}
+                                        </div>
+                                    </div>
+                                    <div class="row field-row ">
+                                        <div class="col-xs-10">
+                                            {{ form_row(buyerCheckoutForm.town, { 'attr': {'class': 'md-input'} }) }}
+                                        </div>
+                                        <div class="col-xs-2">
+                                            {{ form_row(buyerCheckoutForm.zip, { 'attr': {'class': 'md-select'} }) }}
+                                        </div>
+                                    </div>
+                                    <div class="row field-row ">
+                                        <div class="col-xs-6">
+                                            {{ form_row(buyerCheckoutForm.country, { 'attr': {'class': 'md-select'} }) }}
+                                        </div>
+
+                                    </div>
+                                    <div class="row field-row ">
+                                        <div class="col-xs-6">
+                                            {{ form_row(buyerCheckoutForm.emailAddress, { 'attr': {'class': 'md-input'} }) }}
+                                        </div>
+                                        <div class="col-xs-6 col-right">
+                                            {{ form_row(buyerCheckoutForm.phoneNumber, { 'attr': {'class': 'md-input'} }) }}
+                                        </div>
+                                    </div>
+                                    <div class="row field-row checkout-button-row">
+
+                                        <div class="primary pull-right">
+                                            <button class="action primary" type="submit" id="billing-continue">continue</button>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="hidden" id="billing-current-step" name="step" value="billing_info">
+                                    <input type="hidden" id="billing-next-step" name="nextStep" value="shipping_info">
+                                    {{ form_end(buyerCheckoutForm) }}
                                 </div>
                             </div>
 
@@ -36,6 +87,7 @@
                     </div>
                 </div>
                 <div id="cart-totals"> {{ include(':partials:checkout-totals.htm.twig') }}</div>
+
             </div>
 
         </div>

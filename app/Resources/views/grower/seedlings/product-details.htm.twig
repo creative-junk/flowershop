@@ -81,35 +81,7 @@
                         </div>
                         {{ form_end(form) }}
                     </div>
-                    <script>
-                        require([
-                            'jquery',
-                            'priceBox'
-                        ], function ($) {
-                            var dataPriceBoxSelector = '[data-role=priceBox]',
-                                    dataProductIdSelector = '[data-product-id=63]',
-                                    priceBoxes = $(dataPriceBoxSelector + dataProductIdSelector);
-
-                            priceBoxes = priceBoxes.filter(function (index, elem) {
-                                return !$(elem).find('.price-from').length;
-                            });
-
-                            priceBoxes.priceBox({
-                                'priceConfig': {
-                                    "productId": "63",
-                                    "priceFormat": {
-                                        "pattern": "$%s",
-                                        "precision": 2,
-                                        "requiredPrecision": 2,
-                                        "decimalSymbol": ".",
-                                        "groupSymbol": ",",
-                                        "groupLength": 3,
-                                        "integerRequired": 1
-                                    }
-                                }
-                            });
-                        });
-                    </script>
+                 <!--
                     <div class="product-social-links">
                         <div class="product-addto-links" data-role="add-to-links">
                             <a class="action towishlist" data-action="add-to-wishlist"
@@ -123,7 +95,7 @@
                         <a class="action mailto friend"
                            href="#">
                             <span>Email</span></a></div>
-                    <div class="product attribute overview">
+                  -->  <div class="product attribute overview">
                         <div class="value" itemprop="description">
                             <p>{{ product.summary }}</p>
                         </div>

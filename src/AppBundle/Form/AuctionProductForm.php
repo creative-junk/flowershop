@@ -44,7 +44,7 @@ class AuctionProductForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\Auction',
-            'agents'=>''
+            'agents'=>null
         ]);
     }
 

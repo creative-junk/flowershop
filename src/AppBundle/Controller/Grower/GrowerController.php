@@ -9,6 +9,7 @@
 
 namespace AppBundle\Controller\Grower;
 
+use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\CartItems;
 use AppBundle\Entity\ShippingAddress;
 use AppBundle\Entity\User;
@@ -19,7 +20,10 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\UserOrder;
 use AppBundle\Form\addToCartFormType;
 use AppBundle\Form\AuctionProductForm;
+use AppBundle\Form\BillingAddressFormType;
+use AppBundle\Form\CheckoutForm;
 use AppBundle\Form\LoginForm;
+use AppBundle\Form\PaymentMethodFormType;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\ShippingAddressFormType;
 use AppBundle\Form\ShippingMethodFormType;
@@ -221,11 +225,13 @@ class GrowerController extends Controller
             //Update the Cart
             if ($existingCart) {
                 $existingCart[0]->setCartAmount(($existingCart[0]->getCartAmount()) + ($lineTotal));
+                $existingCart[0]->setCartTotal(($existingCart[0]->getCartTotal()) + ($lineTotal));
                 $existingCart[0]->setNrItems(($existingCart[0]->getNrItems()) + $quantity);
                 $cartItem->setCart($existingCart[0]);
                 $em->persist($existingCart[0]);
             } else {
                 $cart->setCartAmount($lineTotal);
+                $cart->setCartTotal($lineTotal);
                 $cart->setNrItems($quantity);
                 $cart->setCartCurrency($currency);
                 $cartItem->setCart($cart);
@@ -439,7 +445,20 @@ class GrowerController extends Controller
      */
     public function editAuctionProductAction(Request $request, Auction $product)
     {
-        $form = $this->createForm(AuctionProductForm::class, $product);
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $growerAgents = $em->getRepository("AppBundle:GrowerAgent")
+            ->findBy([
+                'grower'=>$user,
+                'status'=>"Accepted"
+            ]);
+        $agents=array();
+        foreach ($growerAgents as $growerAgent) {
+            $agents[]=$growerAgent->getAgent();
+        }
+
+        $form = $this->createForm(AuctionProductForm::class, $product, ['agents' => $agents]);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -760,14 +779,19 @@ class GrowerController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em = $this->getDoctrine()->getManager();
-        $cart = $em->getRepository('AppBundle:Cart')
-            ->findMyCart($user);
-        $billingAddress = new BillingAddress();
-        $billingAddress->setUser($user);
-        $billingAddress->setFirstName($user->getFirstName());
-        $billingAddress->setLastName($user->getLastName());
-        $billingAddress->setEmailAddress($user->getUserName());
-        $form = $this->createForm(BillingAddressFormType::class, $billingAddress);
+        $billingAddressArray = $em->getRepository('AppBundle:BillingAddress')
+            ->findMyBillingAddress($user);
+        if ($billingAddressArray){
+            $billingAddress= $billingAddressArray[0];
+        }else {
+
+            $billingAddress = new BillingAddress();
+            $billingAddress->setUser($user);
+            $billingAddress->setFirstName($user->getFirstName());
+            $billingAddress->setLastName($user->getLastName());
+            $billingAddress->setEmailAddress($user->getUserName());
+        }
+        $form = $this->createForm(CheckoutForm::class, $billingAddress);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -780,9 +804,11 @@ class GrowerController extends Controller
 
             return $this->redirectToRoute('shipping-address');
         }
+        $cart = $em->getRepository('AppBundle:Cart')
+            ->findMyCart($user);
 
         return $this->render(':partials:checkout-billing.htm.twig', [
-            'billingAddressForm' => $form->createView(),
+            'buyerCheckoutForm' => $form->createView(),
             'cart' => $cart[0]
         ]);
     }
@@ -798,11 +824,39 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
         $cart = $em->getRepository('AppBundle:Cart')
             ->findMyCart($user);
-        $shippingAddress = new ShippingAddress();
-        $shippingAddress->setUser($user);
-        $shippingAddress->setFirstName($user->getFirstName());
-        $shippingAddress->setLastName($user->getLastName());
-        $shippingAddress->setEmailAddress($user->getUserName());
+
+        $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
+            ->findMyBillingAddress($user);
+
+        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
+            ->findMyShippingAddress($user);
+
+        if ($shippingAddress){
+
+            $shippingAddress=$shippingAddress[0];
+
+        }else if (!$shippingAddress && $billingAddress){
+            $shippingAddress = new ShippingAddress();
+            $shippingAddress->setUser($user);
+            $shippingAddress->setFirstName($billingAddress[0]->getFirstName());
+            $shippingAddress->setLastName($billingAddress[0]->getLastName());
+            $shippingAddress->setEmailAddress($billingAddress[0]->getEmailAddress());
+            $shippingAddress->setCompany($billingAddress[0]->getCompany());
+            $shippingAddress->setStreetAddress($billingAddress[0]->getStreetAddress());
+            $shippingAddress->setTown($billingAddress[0]->getTown());
+            $shippingAddress->setCountry($billingAddress[0]->getCountry());
+            $shippingAddress->setZip($billingAddress[0]->getZip());
+            $shippingAddress->setPhoneNumber($billingAddress[0]->getPhoneNumber());
+
+        }else{
+            $shippingAddress = new ShippingAddress();
+            $shippingAddress->setUser($user);
+            $shippingAddress->setFirstName($user->getFirstName());
+            $shippingAddress->setLastName($user->getLastName());
+            $shippingAddress->setEmailAddress($user->getUserName());
+
+        }
+
 
         $form = $this->createForm(ShippingAddressFormType::class, $shippingAddress);
 
@@ -819,7 +873,7 @@ class GrowerController extends Controller
         }
 
         return $this->render(':partials:checkout-shipping-address.htm.twig', [
-            'shippingAddressForm' => $form->createView(),
+            'buyerCheckoutForm' => $form->createView(),
             'cart' => $cart[0]
         ]);
     }
@@ -835,25 +889,27 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
         $cart = $em->getRepository('AppBundle:Cart')
             ->findMyCart($user);
-        $shippingAddress = new ShippingAddress();
-        $shippingAddress->setUser($user);
 
         $form = $this->createForm(ShippingMethodFormType::class);
 
         //only handles data on POST
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($category);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $shippingCost = $request->request->get('shippingCost');
+            $cartTotal=$cart[0]->getCartTotal()-$cart[0]->getShippingCost();
+
+            $cart[0]->setShippingCost($shippingCost);
+            $cartTotal+=$shippingCost;
+            $cart[0]->setCartTotal($cartTotal);
+            $em->persist($cart[0]);
             $em->flush();
 
-            return $this->redirectToRoute('shipping-method');
+            return $this->redirectToRoute('payment');
         }
 
         return $this->render(':partials:checkout-shipping-method.htm.twig', [
-            'shippingMethodForm' => $form->createView(),
+            'buyerCheckoutForm' => $form->createView(),
             'cart' => $cart[0]
         ]);
     }
@@ -870,7 +926,7 @@ class GrowerController extends Controller
         $cart = $em->getRepository('AppBundle:Cart')
             ->findMyCart($user);
 
-        $form = $this->createForm(ShippingAddressFormType::class);
+        $form = $this->createForm(PaymentMethodFormType::class);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -885,7 +941,7 @@ class GrowerController extends Controller
         }
 
         return $this->render(':partials:checkout-pay.htm.twig', [
-            'paymentForm' => $form->createView(),
+            'buyerCheckoutForm' => $form->createView(),
             'cart' => $cart[0]
         ]);
     }

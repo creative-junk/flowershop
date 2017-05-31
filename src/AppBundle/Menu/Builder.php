@@ -78,7 +78,7 @@ class Builder implements ContainerAwareInterface
         $menu['My Products']->addChild('Auction Market',array('route'=>'my_grower_auction_list'));
 
 
-        $menu->addChild('Seedlings',array('route'=>'breeder_list'));
+        $menu->addChild('Seedlings',array('route'=>'grower_seedlings_list'));
        // $menu['Seedlings']->addChild('Wishlist',array('route'=>'my-seedling-wishlist'));
 
 

@@ -727,12 +727,20 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $shippingAddress = new ShippingAddress();
+
 
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
                 ->findMyBillingAddress($user);
 
-        if ($billingAddress){
+        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
+            ->findMyShippingAddress($user);
+
+        if ($shippingAddress){
+
+            $shippingAddress=$shippingAddress[0];
+
+        }else if (!$shippingAddress && $billingAddress){
+            $shippingAddress = new ShippingAddress();
             $shippingAddress->setUser($user);
             $shippingAddress->setFirstName($billingAddress[0]->getFirstName());
             $shippingAddress->setLastName($billingAddress[0]->getLastName());
@@ -745,6 +753,7 @@ class HomeController extends Controller
             $shippingAddress->setPhoneNumber($billingAddress[0]->getPhoneNumber());
 
         }else{
+            $shippingAddress = new ShippingAddress();
             $shippingAddress->setUser($user);
             $shippingAddress->setFirstName($user->getFirstName());
             $shippingAddress->setLastName($user->getLastName());
