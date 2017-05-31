@@ -93,6 +93,20 @@ class Builder implements ContainerAwareInterface
 
          return $menu;
     }
+    public function mainBreederMenu(FactoryInterface $factory,array $options){
+
+        $menu = $factory->createItem('root');
+
+        $menu->addChild('Home',array('route'=>'breeder_dashboard'));
+        $menu->addChild('My Seedlings',array('route'=>'my_breeder_seedling_list'));
+
+        $menu->addChild('Growers',array('route'=>'breeder_growers_list'));
+        $menu['Growers']->addChild('My Buyers',array('route'=>'my_breeder_growers'));
+
+        $menu->addChild('Orders',array('route'=>'breeder_order_list'));
+
+        return $menu;
+    }
     /**
      * Sets the container.
      *

@@ -11,6 +11,7 @@ namespace AppBundle\Controller\Grower;
 
 use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\CartItems;
+use AppBundle\Entity\OrderItems;
 use AppBundle\Entity\ShippingAddress;
 use AppBundle\Entity\User;
 use AppBundle\Entity\GrowerBreeder;
@@ -27,10 +28,12 @@ use AppBundle\Form\PaymentMethodFormType;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\ShippingAddressFormType;
 use AppBundle\Form\ShippingMethodFormType;
+use Doctrine\Common\Collections\ArrayCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/grower")
@@ -292,10 +295,9 @@ class GrowerController extends Controller
 
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
-        $orders = $em->getRepository('AppBundle:UserOrder')
-            ->findAllMyReceivedOrdersOrderByDate($user);
+        $orderItems = $user->getMyOrderItems();
         return $this->render('grower/order/list.html.twig', [
-            'orders' => $orders,
+            'orderItems' => $orderItems,
         ]);
 
     }
@@ -315,7 +317,28 @@ class GrowerController extends Controller
         ]);
 
     }
+    /**
+     * @Route("/orders/my/{id}/view",name="grower-order-details")
+     */
+    public function orderDetailsAction(Request $request, UserOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        return $this->render(':grower/order:order-details.htm.twig',[
+            'order'=>$order,
+            'orderItems'=>$order->getOrderItems()
+        ]);
+    }
+    /**
+     * @Route("/orders/received/{id}/view",name="grower-order-item-details")
+     */
+    public function orderItemDetailsAction(Request $request, OrderItems $orderItem){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        return $this->render(':grower/order:order-item-details.htm.twig',[
+            'order'=>$orderItem->getOrder(),
+            'orderItem'=>$orderItem
+        ]);
+    }
     /**
      * @Route("/orders/{id}/update",name="grower_order_update")
      */
@@ -921,31 +944,107 @@ class GrowerController extends Controller
     public function paymentAction(Request $request)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
-
         $em = $this->getDoctrine()->getManager();
+        $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
+            ->findMyBillingAddress($user);
+        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
+            ->findMyShippingAddress($user);
         $cart = $em->getRepository('AppBundle:Cart')
             ->findMyCart($user);
+
+
+        $myOrder = new UserOrder();
+        $myOrder->setCreatedAt(new \DateTime());
+        $myOrder->setBillingAddress($billingAddress[0]);
+        $myOrder->setShippingAddress($shippingAddress[0]);
+        $myOrder->setUser($user);
+        $myOrder->setOrderStatus("Pending");
+        $myOrder->setOrderNotes("None");
+        $myOrder->setIsAuctionOrder(false);
+        $myOrder->setCheckoutCompletedAt(new \DateTime());
+        $myOrder->setOrderState("Active");
+        $myOrder->setOrderAmount($cart[0]->getCartAmount());
+        $myOrder->setOrderCurrency($cart[0]->getCartCurrency());
+        $myOrder->setShippingCost($cart[0]->getShippingCost());
+        $myOrder->setOrderTotal($cart[0]->getCartTotal());
+        $myOrder->setPaymentStatus("Pending");
+
+
+        $orderItems = new ArrayCollection();
+        $cartItems = $cart[0]->getCartItems();
+
+
+        foreach ( $cartItems as $cartItem){
+            $orderItem = new OrderItems();
+            $orderItem->setProduct($cartItem->getProduct());
+            $orderItem->setUnitPrice($cartItem->getUnitPrice());
+            $orderItem->setQuantity($cartItem->getQuantity());
+            $orderItem->setLineTotal($cartItem->getLineTotal());
+            $orderItem->setVendor($cartItem->getProduct()->getUser());
+            $orderItem->setOrder($myOrder);
+            $orderItem->setItemStatus("Pending");
+            $em->persist($orderItem);
+            $em->remove($cartItem);
+        }
+        //$myOrder->setOrderItems($orderItems);
 
         $form = $this->createForm(PaymentMethodFormType::class);
 
         //only handles data on POST
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($category);
+            $myOrder->setProcessingFee($request->request->get("paymentMethod"));
+            $em->persist($myOrder);
+            $em->remove($cart[0]);
             $em->flush();
+            $this->container->get('session')->set('order', $myOrder);
+            return $this->redirectToRoute('grower-checkout-complete');
 
-            return $this->redirectToRoute('shipping-method');
         }
+
 
         return $this->render(':partials:checkout-pay.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
             'cart' => $cart[0]
         ]);
     }
+    /**
+     * @Route("/checkout/complete",name="grower-checkout-complete")
+     */
+    public function checkoutCompleteAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $order = $this->container->get('session')->get('order');
+
+        return $this->render(':partials:checkout-complete.htm.twig',[
+            'order'=>$order
+        ]);
+    }
+    /**
+     * @Route("/payment/complete",name="grower-payment-complete")
+     */
+    public function paymentCompleteAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $order = $this->container->get('session')->get('order');
+        $orderId= $order->getId();
+        $userOrder = $em->getRepository('AppBundle:UserOrder')
+            ->findBy([
+                'id'=>$orderId
+            ]);
+
+        $userOrder[0]->setPaymentStatus("Complete");
+
+        $em->persist($userOrder[0]);
+        $em->flush();
+
+        return $this->render(':partials:payment-complete.htm.twig',[
+            'order'=>$userOrder[0]
+        ]);
+    }
     /**
      * @Route("/cart",name="grower-cart")
      */
@@ -1321,6 +1420,35 @@ class GrowerController extends Controller
 
 
     }
+    /**
+     * @Route("/orders/assigned/{id}/ship",name="grower-ship-order")
+     */
+    public function shipOrderAction(Request $request,OrderItems $orderItem){
+        $em=$this->getDoctrine()->getManager();
 
+        $order = $orderItem->getOrder();
+
+        $nrUnshippedItems = $em->getRepository("AppBundle:OrderItems")
+            ->findNrUnshippedItems($order);
+
+        $orderItem->setItemStatus("Shipped");
+        $orderItem->setLastProcessed(new \DateTime());
+
+        if ($nrUnshippedItems==1){
+            $order->setOrderState("Shipped");
+            $order->setOrderStatus("Processed");
+
+        }else {
+            $order->setOrderState("Partially Shipped");
+            $order->setOrderStatus("Partially Processed");
+        }
+        $em->persist($order);
+        $em->persist($orderItem);
+
+        $em->flush();
+        //TODO Notify the User who Created the Order That their Order has been Shipped
+
+        return new Response(null,204);
+    }
 
 }

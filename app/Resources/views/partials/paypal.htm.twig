@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+{% block title %} Payment{% endblock %}
+{% block javascripts %}
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+    <script type="text/javascript">
+
+
+        // Render the PayPal button
+
+        paypal.Button.render({
+
+            // Set your environment
+
+            env: 'sandbox', // sandbox | production
+
+            // Specify the style of the button
+
+            style: {
+                label: 'checkout', // checkout | credit | pay
+                size:  'small',    // small | medium | responsive
+                shape: 'pill',     // pill | rect
+                color: 'blue'      // gold | blue | silver
+            },
+
+            client: {
+                sandbox:    'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R',
+                production: '<insert production client id>'
+            },
+
+            payment: function(data, actions) {
+                return actions.payment.create({
+                    transactions: [
+                        {
+                            amount: { total: '0.01', currency: 'USD' }
+                        }
+                    ]
+                });
+            },
+
+            onAuthorize: function(data, actions) {
+                return actions.payment.execute().then(function() {
+                    window.alert('Payment Complete!');
+                });
+            }
+
+        }, '#paypal-button-container');
+
+    </script>
+
+{% endblock %}
+{% block body %}
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <div id="checkout-page">  <!-- Checkout progress -->
+
+                                <div id="checkout-progress">
+                                    <ul class="breadcrumb list-inline checkout-progress">
+                                        <li>BILLING ADDRESS</li>
+                                        <li>SHIPPING ADDRESS</li>
+                                        <li>SHIPPING METHOD</li>
+                                        <li><a class="progress-active">PAYMENT</a></li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- End id="checkout-progress" -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <span>Paypal Payment</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body step-1">
+
+                                    <div class="section-shopping-cart-page row field-row">
+
+                                        <div class="shipping-method col-md-4 col-lg-3">
+                                            <div id="paypal-button-container"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row field-row checkout-button-row">
+                                        <div class="col-xs-6 button-holder">
+                                            <a class="md-button gray step-btn" href="#"><span class="fa fa-chevron-circle-left"></span> shipping method</a>
+                                        </div>
+                                        <div class="col-xs-6 primary pull-right">
+                                            <button class="md-button action primary" type="submit" id="billing-continue">complete</button>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="hidden" id="billing-current-step" name="step" value="billing_info">
+                                    <input type="hidden" id="billing-next-step" name="nextStep" value="shipping_info">
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="cart-totals"> {{ include(':partials:checkout-totals.htm.twig') }}</div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

@@ -84,6 +84,10 @@ class AuctionOrder
      */
     private $orderStatus;
     /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $paymentStatus;
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -390,6 +394,22 @@ class AuctionOrder
     public function setReceivingAgent($receivingAgent)
     {
         $this->receivingAgent = $receivingAgent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentStatus()
+    {
+        return $this->paymentStatus;
+    }
+
+    /**
+     * @param mixed $paymentStatus
+     */
+    public function setPaymentStatus($paymentStatus)
+    {
+        $this->paymentStatus = $paymentStatus;
     }
 
 

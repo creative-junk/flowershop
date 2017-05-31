@@ -59,6 +59,10 @@ class UserOrder
      */
     private $processingFee;
     /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $paymentStatus;
+    /**
      * @ORM\Column(type="string")
      */
     private $orderState;
@@ -366,6 +370,22 @@ class UserOrder
     public function setOrderItems($orderItems)
     {
         $this->orderItems = $orderItems;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentStatus()
+    {
+        return $this->paymentStatus;
+    }
+
+    /**
+     * @param mixed $paymentStatus
+     */
+    public function setPaymentStatus($paymentStatus)
+    {
+        $this->paymentStatus = $paymentStatus;
     }
 
 

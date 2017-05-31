@@ -15,6 +15,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\UserOrder;
 use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\ProductFormType;
+use AppBundle\Form\SeedlingFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -81,7 +82,7 @@ class BreederController extends Controller
         $product->setIsOnSale(false);
         $product->setIsSeedling(true);
 
-        $form = $this->createForm(ProductFormType::class, $product);
+        $form = $this->createForm(SeedlingFormType::class, $product);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -107,7 +108,7 @@ class BreederController extends Controller
      */
     public function editAction(Request $request,Product $product)
     {
-        $form = $this->createForm(ProductFormType::class,$product);
+        $form = $this->createForm(SeedlingFormType::class,$product);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -179,6 +180,12 @@ class BreederController extends Controller
 
     }
 
+    /**
+     * @Route("/growers/my",name="my_breeder_growers")
+     */
+    public function myBreederGrowersAction(){
+
+    }
     /**
      * @Route("/growers/{id}/view",name="grower_profile")
      */

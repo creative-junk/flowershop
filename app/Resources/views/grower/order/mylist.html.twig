@@ -18,7 +18,7 @@
                     Home </a>
             </li>
             <li class="item category131">
-                <strong>Orders - Seedling Orders</strong>
+                <strong>Orders - My Seedling Orders</strong>
             </li>
         </ul>
     </div>
@@ -56,22 +56,27 @@
                         <thead>
                         <tr>
 
-
-                            <th>Order Amount</th>
+                            <th>Order Date</th>
                             <th>Order Status</th>
                             <th>Order State</th>
-                            <th>Sold By</th>
+                            <th>Payment Method</th>
+                            <th>Payment Status</th>
+                            <th>Order Amount</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for order in orders %}
                             <tr>
 
-
-                                <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount }}</td>
+                                <td><a style="color: #e93838" href="{{ path('grower-order-details',{
+                                        'id':order.id
+                                    }) }}">{{ order.createdAt | date('d-m-Y H:i:s')  }} </a> </td>
                                 <td>{{ order.orderStatus }}</td>
                                 <td>{{ order.orderState }}</td>
-                                <td>{{ order.vendor.firstName }}&nbsp;{{ order.vendor.lastName }}</td>
+                                <td>{{ order.processingFee }}</td>
+                                <td>{{ order.paymentStatus }}</td>
+                                <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount | number_format(2, '.', ',') }}</td>
+
                             </tr>
                         {% else %}
                             <tr><td colspan="6">No Orders found</td></tr>

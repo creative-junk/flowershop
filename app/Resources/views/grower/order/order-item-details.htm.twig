@@ -1,0 +1,172 @@
+{% extends 'base.html.twig' %}
+{% block title %} Order Details{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.js-request-user').on('click', function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-agent-item');
+
+                $(this).find('.fa-ship')
+                    .removeClass('fa-ship')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $('.requestResponse').html('Order Update Successful');
+                    $(".messages").fadeIn("slow");
+
+                    $("#accept")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+
+                });
+            });
+            $('.js-reject-user').on('click', function (e) {
+                e.preventDefault();
+
+
+                $(this).find('.fa-truck')
+                    .removeClass('fa-truck')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $('.requestResponse').html('Supply Request Successful');
+                    $(".messages").fadeIn("slow");
+
+                    $("#reject")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+
+                });
+            });
+        })
+    </script>
+{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('grower_order_list') }}" title="Go to Home Page">
+                    Received Orders </a>
+            </li>
+            <li class="item product">
+                <strong>Order Details</strong>
+            </li>
+        </ul>
+    </div>
+    <div class="page messages">
+        <div class="messages" style="">
+            <div class="message-success success message">
+                <div class="requestResponse">
+                    You request has been processed.
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <section class="section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Below are the Details of this Order.
+                        {% if orderItem.itemStatus != "Shipped" %}
+                        <a
+                                href="#"
+                                class="action accept  js-request-user"
+                                data-url="{{ path('grower-ship-order',{
+                                    'id': orderItem.id
+                                }) }}"
+                                title="Accept Request">
+                            <span id="accept" class="fa fa-ship"> </span> Ship Order
+
+                        </a>&nbsp;
+                            {% endif %}
+                        {% if orderItem.order.paymentStatus == "Complete" %}
+                        {% else %}
+                        <a
+                                href="#"
+                                class="action accept js-reject-user"
+                                data-url="{{ path('agent-request-supply',{
+                                    'id': orderItem.id
+                                }) }}"
+                                title="Cancel Request">
+                            <span id="reject" class="fa fa-truck"> </span> Receive Payment
+
+                        </a>
+                            {% endif %}
+                    </h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="items-holder">
+
+                        <div class="cart-item row">
+                            <div class="col-sm-2 col-lg-3">
+                                <div class="image">
+                                    <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ orderItem.product.imageName }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-lg-4">
+                                <div class="brand">
+                                </div>
+                                <div class="title">
+                                    <a href="{{ path('seedling_details',{
+                                        'id': orderItem.product.id
+                                    }) }}">{{ orderItem.product.title }}</a>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-5 details no-edit">
+                                <div class="unit-price">
+                                    <span class="visible-xs">Price</span>
+                                    {{ order.orderCurrency }} {{ orderItem.unitPrice | number_format(2, '.', ',') }}
+                                </div>
+                                <div class="quantity">
+                                    <span class="visible-xs">Quantity</span>
+                                    {{ orderItem.quantity }}
+                                </div>
+                                <div class="total-price">
+                                    <span class="visible-xs">Total</span>
+                                    {{ order.orderCurrency }} {{ orderItem.lineTotal | number_format(2, '.', ',') }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-3">
+                    <div class="right-sidebar">
+                        <p><strong>Order number: </strong> #46 </p>
+                        <p><strong>Payment method: </strong> {{ orderItem.order.processingFee }}</p>
+                        <p><strong>Payment status: </strong> {{ orderItem.order.paymentStatus }}</p>
+                        <p><strong>Order Date: </strong> {{ orderItem.order.createdAt | date('d-m-Y H:i:s')  }}</p>
+                        <p><strong>Subtotal:</strong> <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.orderAmount | number_format(2, '.', ',') }}</i></p>
+                        <p><strong>Shipping:</strong> <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.shippingCost | number_format(2, '.', ',') }}</i></p>
+                        <p class="subtotal"><strong>Total:</strong>  <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.orderTotal | number_format(2, '.', ',') }}</i></p>
+                        <div class="right">
+                            <a class="action primary" href="{{ path('grower_order_list') }}">Back to Orders</a><br/><br/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <div class="clearfix"></div>
+{% endblock %}

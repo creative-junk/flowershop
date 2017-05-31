@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
+{% block title %} Received Orders {% endblock %}
 {% block pageclass %}
 <body data-container="body"
       class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
 {% endblock %}
-{% block title %}Received Orders{% endblock %}
+
 {% block body %}
 <div class="category-view">
     <div class="page-title-wrapper">
@@ -13,15 +14,11 @@
     <div class="breadcrumbs">
         <ul class="items">
             <li class="item home">
-                <a href="{{ path('breeder_dashboard') }}" title="Go to Home Page">
+                <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
                     Home </a>
             </li>
-            <li class="item home">
-                <a href="{{ path('my_breeder_seedling_list') }}" title="Go to Home Page">
-                    Seedlings </a>
-            </li>
             <li class="item category131">
-                <strong>Received Orders</strong>
+                <strong>Orders - Received Orders</strong>
             </li>
         </ul>
     </div>
@@ -40,7 +37,8 @@
     </div>
     <div class="columns">
         <div class="column main">
-    <div class="row">
+
+            <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
                 <div class="x_title">
@@ -58,33 +56,30 @@
                         <thead>
                         <tr>
                             <th>Customer</th>
-
-                            <th>Order Amount</th>
-                            <th>Order Status</th>
+                            <th>Order Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
                             <th>Order State</th>
-                            <th>is Auction Order?</th>
+                            <th>Payment Method</th>
+                            <th>Payment Status</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for order in orders %}
+                        {% for orderItem in orderItems %}
                             <tr>
 
-                                <td>{{ order.user.firstName }}&nbsp;{{ order.user.lastName }}</td>
-
-                                <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount }}</td>
-                                <td>{{ order.orderStatus }}</td>
-                                <td>{{ order.orderState }}</td>
-                                <td>{% if(order.isAuctionOrder == 1) %}
-                                        true
-                                    {% else %}
-                                        false
-                                    {% endif %}
-                                </td>
+                                <td><a href="">{{ orderItem.vendor.fullName }}</a></td>
+                                <td><a style="color: #e93838" href="{{ path('grower-order-item-details',{
+                                        'id':orderItem.id
+                                    }) }}">{{ orderItem.order.createdAt | date('d-m-Y H:i:s')  }} </a> </td>
+                                <td>{{ orderItem.order.orderCurrency }}&nbsp;{{ orderItem.order.orderAmount | number_format(2, '.', ',') }}</td>
+                                <td>{{ orderItem.itemStatus }}</td>
+                                <td>{{ orderItem.order.orderState }} </td>
+                                <td>{{ orderItem.order.processingFee }}</td>
+                                <td>{{ orderItem.order.paymentStatus }}</td>
                             </tr>
                         {% else %}
-                            <tr>
-                                <td colspan="6">No Orders found</td>
-                            </tr>
+                            <tr><td colspan="6">No Orders found</td></tr>
                         {% endfor %}
                         </tbody>
 
@@ -95,8 +90,9 @@
         </div>
     </div>
         </div>
-        {% include('breeder/sidebar.htm.twig') %}
+        {% include(':grower:sidebar.htm.twig') %}
 
     </div>
 </main>
+
 {% endblock %}

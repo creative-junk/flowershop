@@ -967,15 +967,15 @@ class AgentController extends Controller
      */
     public function rejectProductAssignmentAction(Request $request,Auction $product){
         $em=$this->getDoctrine()->getManager();
-/*
-        $product->setOrderStatus("Rejected");
-        $order->setOrderState("Inactive");
 
-        $em->persist($order);
+        $product->setOrderStatus("Rejected");
+//        $order->setOrderState("Inactive");
+
+        $em->persist($product);
         $em->flush();
         //TODO Notify the User who Created the Product That their Assignment has been Rejected
 
-*/
+
         return new Response(null,204);
     }
     /**
@@ -989,7 +989,7 @@ class AgentController extends Controller
 
         $em->persist($order);
         $em->flush();
-                //TODO Notify the User who Created the Order That their Order has been Rejected
+                //TODO Notify the User who Created the Order That their Order has been Shipped
 
         return new Response(null,204);
     }
