@@ -74,4 +74,77 @@ class GrowerBreederRepository extends EntityRepository
             ->getQuery();
     }
 
+    public function getNrGrowerRequests(User $user){
+        $nrBreederRequests= $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.listOwner <> :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->andWhere('user.breeder = :breeder')
+            ->setParameter('breeder', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrBreederRequests){
+            return $nrBreederRequests;
+        }else{
+            return 0;
+        }
+    }
+    public function getGrowerRequestsQuery(User $user){
+        return $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.listOwner <> :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->andWhere('user.breeder = :breeder')
+            ->setParameter('breeder', $user)
+            ->getQuery();
+    }
+
+    public function getNrMyGrowerRequests(User $user){
+        $nrBreederRequests= $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.breeder = :whoIsBreeder')
+            ->setParameter('whoIsBreeder', $user)
+            ->andWhere('user.listOwner = :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrBreederRequests){
+            return $nrBreederRequests;
+        }else{
+            return 0;
+        }
+    }
+    public function getMyGrowerRequestsQuery(User $user){
+        return $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.breeder = :whoIsBreeder')
+            ->setParameter('whoIsBreeder', $user)
+            ->andWhere('user.listOwner = :whoOwnsList')
+            ->setParameter('whoOwnsList', $user)
+            ->getQuery();
+    }
+    public function getNrMyGrowers(User $user){
+        $nrGrowers= $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Accepted')
+            ->andWhere('user.breeder = :whoIsBreeder')
+            ->setParameter('whoIsBreeder', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrGrowers){
+            return $nrGrowers;
+        }else{
+            return 0;
+        }
+    }
+
 }

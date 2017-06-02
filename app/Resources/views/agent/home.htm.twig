@@ -68,7 +68,7 @@
 
                                         <div class="info-box-content">
                                             <span class="info-box-text">New Orders</span>
-                                            <span class="info-box-number"><i class="fa  fa-arrow-down down"></i> 114,381</span>
+                                            <span class="info-box-number"><i class="fa  fa-arrow-down down"></i> {{ nrAgentReceivedOrders }}</span>
 
                                             <div class="progress">
                                                 <div class="progress-bars" style="width: 70%">
@@ -87,15 +87,15 @@
                                         <span class="info-box-icon"><i class="fa fa-tag"></i></span>
 
                                         <div class="info-box-content">
-                                            <span class="info-box-text">My Seedling Orders</span>
+                                            <span class="info-box-text">My Orders</span>
                                             <span class="info-box-number"><i
-                                                        class="fa  fa-arrow-up up"></i> 5,200</span>
+                                                        class="fa  fa-arrow-up up"></i>{{ nrMyOrders }}</span>
 
                                             <div class="progress">
                                                 <div class="progress-bar" style="width: 50%"></div>
                                             </div>
                                             <span class="progress-description">
-                                            <a style="color: #fff" href="{{ path('my_grower_order_list') }}">View
+                                            <a style="color: #fff" href="{{ path('my_agent_order_list') }}">View
                                                 Orders</a>
                                              </span>
                                         </div>
@@ -106,13 +106,13 @@
 
                                         <div class="info-box-content">
                                             <span class="info-box-text">My Buyers</span>
-                                            <span class="info-box-number">92,050</span>
+                                            <span class="info-box-number">{{ nrMyBuyers }}</span>
 
                                             <div class="progress">
                                                 <div class="progress-bar" style="width: 20%"></div>
                                             </div>
                                              <span class="progress-description">
-                                               <a style="color: #fff" href="{{ path('my_grower_product_list') }}">View
+                                               <a style="color: #fff" href="{{ path('my-agent-buyers') }}">View
                                                    Buyers</a>
                                               </span>
                                         </div>
@@ -123,14 +123,14 @@
                                                     class="zmdi zmdi-pin-account zmdi-hc-fw"></em></span>
 
                                         <div class="info-box-content">
-                                            <span class="info-box-text">My Agents</span>
-                                            <span class="info-box-number">92,050</span>
+                                            <span class="info-box-text">My Growers</span>
+                                            <span class="info-box-number">{{ nrMyGrowers }}</span>
 
                                             <div class="progress">
                                                 <div class="progress-bar" style="width: 20%"></div>
                                             </div>
                                              <span class="progress-description">
-                                                <a style="color: #fff" href="{{ path('my_grower_product_list') }}">Manage
+                                                <a style="color: #fff" href="{{ path('my-agent-growers') }}">Manage
                                                     Agents</a>
                                               </span>
                                         </div>
@@ -140,36 +140,19 @@
                                         <span class="info-box-icon"><i class="fa fa-cubes"></i></span>
 
                                         <div class="info-box-content">
-                                            <span class="info-box-text">My Products</span>
-                                            <span class="info-box-number">92,050</span>
+                                            <span class="info-box-text">My Assigned Products</span>
+                                            <span class="info-box-number">{{ nrAssignedProducts }}</span>
 
                                             <div class="progress">
                                                 <div class="progress-bar" style="width: 20%"></div>
                                             </div>
                                              <span class="progress-description">
-                                                <a style="color: #fff" href="{{ path('my_grower_product_list') }}">Manage
+                                                <a style="color: #fff" href="{{ path('my_assigned_product_list') }}">Manage
                                                     Products</a>
                                               </span>
                                         </div>
                                         <!-- /.info-box-content -->
                                     </div>
-                                    <div class="info-box bg-aqua">
-                                        <span class="info-box-icon"><i class="fa fa-comments"></i></span>
-
-                                        <div class="info-box-content">
-                                            <span class="info-box-text">Direct Messages</span>
-                                            <span class="info-box-number">163,921</span>
-
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: 40%"></div>
-                                            </div>
-                                            <span class="progress-description">
-                                                 <a style="color: #fff" href="#">View Messages</a>
-                                             </span>
-                                        </div>
-                                        <!-- /.info-box-content -->
-                                    </div>
-
 
                                 </div>
                             </div>

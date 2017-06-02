@@ -69,7 +69,7 @@
         <div class="breadcrumbs">
             <ul class="items">
                 <li class="item home">
-                    <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
+                    <a href="{{ path('breeder_dashboard') }}" title="Go to Home Page">
                         Home </a>
                 </li>
                 <li class="item category131">
@@ -118,14 +118,14 @@
                         </tr>
                         </thead>
                         <tbody class="cart item">
-                        {% for agentGrower in agentGrowers %}
+                        {% for breederGrower in breederGrowers %}
                             <tr class="item-info js-agent-item">
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="#">{{ agentGrower.grower.fullName }}</a>
+                          <a href="#">{{ breederGrower.grower.fullName }}</a>
                     </span>
                     </strong>
 
@@ -138,7 +138,7 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ agentGrower.status }}
+                                                {{ breederGrower.status }}
                                                 </span>
                                             </span>
 
@@ -151,7 +151,7 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ agentGrower.dateSince |date("d/m/Y") }}
+                                                {{ breederGrower.dateSince |date("d/m/Y") }}
                                                 </span>
                                             </span>
 
@@ -173,7 +173,7 @@
 
                 </div>
             </div>
-            {% include(':agent:sidebar.htm.twig') %}
+            {% include(':breeder:sidebar.htm.twig') %}
 
         </div>
     </main>

@@ -265,7 +265,7 @@ class User implements UserInterface
     {
         $this->plainPassword = $plainPassword;
         //Guarantees that the entity looks "dirty" to Doctrine
-        //when chaning the plainPassword
+        //when changing the plainPassword
         $this->password=null;
     }
 

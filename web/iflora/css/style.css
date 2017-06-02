@@ -39,6 +39,9 @@
 button.accept{
     background: #36B954;
     color:white;
+    border-radius: 3px;
+    margin-left:10px;
+    margin-top:-5px;
 }
 /*Mega Menu Styles*/
 /*

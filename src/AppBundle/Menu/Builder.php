@@ -32,7 +32,7 @@ class Builder implements ContainerAwareInterface
           $menu['Auction Market']->addChild('Recommendations',array('route'=>'my_buyer_recommendations'));
          // $menu['Auction Market']->addChild('Wishlist',array('route'=>'my_buyer_auction_wishlist'));
 
-          $menu->addChild('Roses',array('route'=>'buyer_shop'));
+         // $menu->addChild('Roses',array('route'=>'buyer_shop'));
           $menu->addChild('Growers',array('route'=>'buyer_growers'));
           $menu->addChild('Agents',array('route'=>'buyer_agents'));
 
@@ -101,7 +101,7 @@ class Builder implements ContainerAwareInterface
         $menu->addChild('My Seedlings',array('route'=>'my_breeder_seedling_list'));
 
         $menu->addChild('Growers',array('route'=>'breeder_growers_list'));
-        $menu['Growers']->addChild('My Buyers',array('route'=>'my_breeder_growers'));
+        $menu['Growers']->addChild('My Growers',array('route'=>'my_breeder_growers'));
 
         $menu->addChild('Orders',array('route'=>'breeder_order_list'));
 

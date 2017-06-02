@@ -50,4 +50,20 @@ class OrderRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function findNrAllMyOrdersAgent(User $user){
+
+        $nrReceivedOrders= $this->createQueryBuilder('user_order')
+            ->select('count(user_order.id)')
+            ->andWhere('user_order.user = :agentIs')
+            ->setParameter('agentIs',$user)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($nrReceivedOrders){
+            return $nrReceivedOrders;
+        }else{
+            return 0;
+        }
+    }
 }

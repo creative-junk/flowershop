@@ -1,5 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block title %} Checkout{% endblock %}
+
+{% block javascripts %}
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
+
+{% endblock %}
 {% block body %}
 <div class="breadcrumbs">
     <ul class="items">
@@ -29,6 +35,59 @@
                     <div class="items-holder">
                         <div class="cart-item row">
                             <p>Your Order has been successfully received and is being processed.</p>
+                            {% if order.processingFee == "paypal" %}
+                                <p>Click on the Paypal button below to complete your payment.</p>
+                                <div id="paypal-button-container"></div>
+                                <script type="text/javascript">
+
+
+                                    // Render the PayPal button
+
+                                    paypal.Button.render({
+
+                                        // Set your environment
+
+                                        env: 'sandbox', // sandbox | production
+
+                                        // Specify the style of the button
+
+                                        style: {
+                                            label: 'pay'
+                                        },
+
+                                        // PayPal Client IDs - replace with your own
+                                        // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+
+                                        client: {
+                                            sandbox:    'AW5LlXhe7eDQrJ9mZUu6K1U2kGDd7ahVfVGjllRWnpgP6IThj_hCU3_FQVj_dUEffSFhQPgwtgDvojvv',
+                                            production: '<insert production client id>'
+                                        },
+
+                                        // Wait for the PayPal button to be clicked
+
+                                        payment: function(data, actions) {
+                                            return actions.payment.create({
+                                                transactions: [
+                                                    {
+                                                        amount: { total: '{{ order.orderAmount }}', currency: 'USD' }
+                                                    }
+                                                ]
+                                            });
+                                        },
+
+                                        // Wait for the payment to be authorized by the customer
+
+                                        onAuthorize: function(data, actions) {
+                                            return actions.payment.execute().then(function() {
+                                                window.location.href ="{{ path('buyer-payment-complete') }}";
+                                            });
+                                        }
+
+                                    }, '#paypal-button-container');
+
+                                </script>
+
+                            {% endif %}
                         </div>
 
                     </div>

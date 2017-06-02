@@ -88,7 +88,7 @@
                         <a
                                 href="#"
                                 class="action accept  js-request-user"
-                                data-url="{{ path('grower-ship-order',{
+                                data-url="{{ path('breeder-ship-order',{
                                     'id': orderItem.id
                                 }) }}"
                                 title="Accept Request">
@@ -96,12 +96,12 @@
 
                         </a>&nbsp;
                             {% endif %}
-                        {% if orderItem.order.paymentStatus == "Complete" %}
-                        {% else %}
+                        {% if orderItem.order.paymentStatus != "Complete" %}
+
                         <a
                                 href="#"
                                 class="action accept js-reject-user"
-                                data-url="{{ path('agent-request-supply',{
+                                data-url="{{ path('breeder-accept-payment',{
                                     'id': orderItem.id
                                 }) }}"
                                 title="Cancel Request">
@@ -127,9 +127,7 @@
                                 <div class="brand">
                                 </div>
                                 <div class="title">
-                                    <a href="{{ path('seedling_details',{
-                                        'id': orderItem.product.id
-                                    }) }}">{{ orderItem.product.title }}</a>
+                                   {{ orderItem.product.title }}
                                 </div>
                             </div>
                             <div class="col-sm-6 col-lg-5 details no-edit">
@@ -160,7 +158,7 @@
                         <p><strong>Shipping:</strong> <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.shippingCost | number_format(2, '.', ',') }}</i></p>
                         <p class="subtotal"><strong>Total:</strong>  <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.orderTotal | number_format(2, '.', ',') }}</i></p>
                         <div class="right">
-                            <a class="action primary" href="{{ path('grower_order_list') }}">Back to Orders</a><br/><br/>
+                            <a class="action primary" href="{{ path('breeder_order_list') }}">Back to Orders</a><br/><br/>
                         </div>
                     </div>
                 </div>

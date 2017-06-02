@@ -136,4 +136,20 @@ class BuyerAgentRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function getNrMyAgentBuyers(User $user){
+        $nrAgentRequests= $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Accepted')
+            ->andWhere('user.agent = :whoIsAgent')
+            ->setParameter('whoIsAgent', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrAgentRequests){
+            return $nrAgentRequests;
+        }else{
+            return 0;
+        }
+    }
 }

@@ -140,5 +140,19 @@ class ProductRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
-
+    public function findNrAllMyActiveProducts(User $user){
+        $nrProducts= $this->createQueryBuilder('product')
+            ->select('count(product.id)')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('product.user= :createdBy')
+            ->setParameter('createdBy',$user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrProducts){
+            return $nrProducts;
+        }else{
+            return 0;
+        }
+    }
 }

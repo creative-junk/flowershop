@@ -47,10 +47,29 @@ class GrowerController extends Controller
      */
     public function dashboardAction()
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        return $this->render(':grower:home.htm.twig');
-        //dump($products);die;
-        //return new Response('Product Saved');
+        $em = $this->getDoctrine()->getManager();
+
+        $nrMyReceivedOrders = $em->getRepository('AppBundle:OrderItems')
+            ->findNrAllMyReceivedOrders($user);
+        $nrMyOrders = $em->getRepository('AppBundle:UserOrder')
+            ->findNrAllMyOrdersAgent($user);
+        $nrMyBuyers = $em->getRepository('AppBundle:BuyerGrower')
+            ->getNrMyGrowerBuyers($user);
+        $nrMyAgents = $em->getRepository('AppBundle:GrowerAgent')
+            ->getNrMyGrowerAgents($user);
+
+
+
+        return $this->render(':grower:home.htm.twig',[
+            'nrMyReceivedOrders'=>$nrMyReceivedOrders,
+            'nrMyOrders' =>$nrMyOrders,
+            'nrMyBuyers' => $nrMyBuyers,
+            'nrMyAgents' => $nrMyAgents,
+            'nrMyProducts' =>''
+        ]);
+
     }
 
     /**
@@ -1447,6 +1466,21 @@ class GrowerController extends Controller
 
         $em->flush();
         //TODO Notify the User who Created the Order That their Order has been Shipped
+
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/orders/payment/{id}/accept",name="grower-accept-payment")
+     */
+    public function acceptPaymentAction(Request $request,OrderItems $orderItem){
+        $em=$this->getDoctrine()->getManager();
+
+        $order = $orderItem->getOrder();
+        $order->setPaymentStatus("Complete");
+        $em->persist($order);
+
+        $em->flush();
+        //TODO Notify the User who Created the Order That their Payment has been Accepted
 
         return new Response(null,204);
     }

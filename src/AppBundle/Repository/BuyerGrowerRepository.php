@@ -126,4 +126,19 @@ class BuyerGrowerRepository extends EntityRepository
             ->setParameter('whoOwnsList', $user)
             ->getQuery();
     }
+    public function getNrMyGrowerBuyers(User $user){
+        $nrAgentRequests= $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Accepted')
+            ->andWhere('user.grower = :whoIsGrower')
+            ->setParameter('whoIsGrower', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrAgentRequests){
+            return $nrAgentRequests;
+        }else{
+            return 0;
+        }
+    }
 }

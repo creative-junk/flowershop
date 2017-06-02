@@ -2,10 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\ChangePasswordFormType;
+use AppBundle\Form\ForgotPasswordFormType;
 use AppBundle\Form\LoginForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 class SecurityController extends Controller
 {
@@ -120,6 +124,77 @@ class SecurityController extends Controller
                 'loginform' => $form->createView(),
                 'error' => $error,
             ));
+    }
+
+    /**
+     * @Route("forgot-password",name="forgot-password")
+     */
+    public function forgotPasswordAction(Request $request=null){
+        $form = $this->createForm(ForgotPasswordFormType::class);
+        $error="";
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $email =$form["_username"]->getData();
+           // var_dump($email);exit;
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository('AppBundle:User')
+                ->findOneBy([
+                    'email'=>$email
+                ]);
+
+            if ($user){
+                $this->container->get('session')->set('user', $user);
+                return $this->redirectToRoute('change-password');
+            }else{
+                $error="Invalid User";
+            }
+
+        }
+        return $this->render('user/forgot-password.htm.twig',[
+            'buyerform'=> $form->createView(),
+            'error'=>$error
+        ]);
+    }
+
+    /**
+     * @Route("/change-password",name="change-password")
+     */
+    public function changePasswordAction(Request $request=null){
+        $owner = $this->container->get('session')->get('user');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $user = $em->getRepository('AppBundle:User')
+            ->findOneBy([
+                'id'=>$owner->getId()
+            ]);
+
+        $form = $this->createForm(ChangePasswordFormType::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            return $this->redirectToRoute('password-changed');
+
+        }
+        return $this->render('user/change-password.htm.twig',[
+            'form'=>$form->createView(),
+
+        ]);
+    }
+
+    /**
+     * @Route("/password-changed",name="password-changed")
+     */
+    public function passwordChangedAction(){
+        return $this->render(':user:password-changed.htm.twig');
     }
     /**
      * @Route("/logout",name="security_logout")

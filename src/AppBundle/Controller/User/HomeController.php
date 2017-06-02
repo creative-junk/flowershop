@@ -25,6 +25,7 @@ use AppBundle\Entity\UserOrder;
 use AppBundle\Form\AddGrowerForm;
 use AppBundle\Form\addToCartFormType;
 use AppBundle\Form\AuctionBuyForm;
+use AppBundle\Form\BuyerAgentFormType;
 use AppBundle\Form\CheckoutForm;
 use AppBundle\Form\FilterFormType;
 use AppBundle\Form\PaymentMethodFormType;
@@ -146,6 +147,8 @@ class HomeController extends Controller
             ->createQueryBuilder('product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
+            ->andWhere('product.isSeedling = :isSeedling')
+            ->setParameter('isSeedling', false)
             ->orderBy('product.createdAt', 'DESC');
         $query = $queryBuilder->getQuery();
         /**
@@ -895,7 +898,30 @@ class HomeController extends Controller
             'order'=>$order
         ]);
     }
+    /**
+     * @Route("/payment/complete",name="buyer-payment-complete")
+     */
+    public function paymentCompleteAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $em= $this->getDoctrine()->getManager();
+
+        $order = $this->container->get('session')->get('order');
+        $orderId= $order->getId();
+        $userOrder = $em->getRepository('AppBundle:UserOrder')
+            ->findBy([
+                'id'=>$orderId
+            ]);
+
+        $userOrder[0]->setPaymentStatus("Complete");
+
+        $em->persist($userOrder[0]);
+        $em->flush();
+
+        return $this->render(':partials:payment-complete.htm.twig',[
+            'order'=>$userOrder[0]
+        ]);
+    }
     /**
      * @Route("/auction/",name="buyer_auction")
      */
@@ -1075,14 +1101,26 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $form = $this->createForm(ShippingMethodFormType::class);
+        $buyerAgents = $em->getRepository("AppBundle:BuyerAgent")
+            ->findBy([
+                'buyer'=>$user,
+                'status'=>"Accepted"
+            ]);
+        $agents=array();
+        foreach ($buyerAgents as $buyerAgent) {
+            $agents[]=$buyerAgent->getAgent();
+        }
+
+        $form = $this->createForm(BuyerAgentFormType::class,null, ['agents' => $agents]);
 
         //only handles data on POST
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $agent =$form["agent"]->getData();
+            //var_dump($agent);exit;
             $this->container->get('session')->set('product', $product);
+            $this->container->get('session')->set('agent',$agent);
 
             return $this->redirectToRoute('auction_buyer_payment_method');
 
@@ -1099,6 +1137,7 @@ class HomeController extends Controller
     public function auctionPaymentAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
+
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
             ->findMyBillingAddress($user);
         $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
@@ -1106,6 +1145,12 @@ class HomeController extends Controller
 
         $product = $this->container->get('session')->get('product');
         $shippingCost = $this->container->get('session')->get('shippingCost');
+        $agent = $this->container->get('session')->get('agent');
+
+        $myAgent = $em->getRepository('AppBundle:User')
+            ->findOneBy([
+                'email'=>$agent->getUsername()
+            ]);
 
         $myOrder = new AuctionOrder();
         $myOrder->setCreatedAt(new \DateTime());
@@ -1122,9 +1167,13 @@ class HomeController extends Controller
         $myOrder->setShippingCost($shippingCost);
         $myOrder->setOrderTotal($product->getPrice()+$shippingCost);
         $myOrder->setReceivingAgent($product->getAgent());
+        $myOrder->setAgent($myAgent);
 
 
-        $orderProduct = $em->find("AppBundle:Auction",$product->getId());
+        $orderProduct = $em->getRepository("AppBundle:Auction")
+                ->findOneBy([
+                    'id'=>$product->getId()
+                ]);
         $orderItem = new AuctionOrderItems();
         $orderItem->setProduct($orderProduct);
         $orderItem->setUnitPrice($product->getPrice());
@@ -1139,11 +1188,13 @@ class HomeController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $myOrder->setAgent($orderProduct->getAgent());
+
             $myOrder->setProcessingFee($request->request->get("paymentMethod"));
+
             $em->persist($myOrder);
             $em->flush();
 
+            $this->container->get('session')->set('agent', '');
             $this->container->get('session')->set('product', '');
             $this->container->get('session')->set('shippingCost', '');
 
@@ -1151,10 +1202,12 @@ class HomeController extends Controller
             return $this->redirectToRoute('auction-checkout-complete');
 
         }
+        $agent = $this->container->get('session')->get('agent');
 
         return $this->render(':partials/iflora/user/auction:pay.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
-            'product' => $product
+            'product' => $product,
+            'agent' => $agent
         ]);
     }
 

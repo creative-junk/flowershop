@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} My Growers {% endblock %}
+{% block title %} Breeder Requests {% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         jQuery(document).ready(function () {
             $('.js-request-user').on('click', function (e) {
                 e.preventDefault();
 
-                var $el = $(this).closest('.js-agent-item');
+                var $el = $(this).closest('.js-breeder-item');
 
                 $(this).find('.fa-thumbs-o-up')
                     .removeClass('fa-thumbs-o-up')
@@ -31,7 +31,7 @@
             $('.js-reject-user').on('click', function (e) {
                 e.preventDefault();
 
-                var $el = $(this).closest('.js-agent-item');
+                var $el = $(this).closest('.js-breeder-item');
 
                 $(this).find('.fa-times')
                     .removeClass('fa-times')
@@ -64,24 +64,28 @@
     <div class="category-view">
         <div class="page-title-wrapper">
             <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-                <span class="base" data-ui-id="page-title-wrapper">My Growers</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">Breeders</span></h1>
         </div>
         <div class="breadcrumbs">
             <ul class="items">
                 <li class="item home">
-                    <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
+                    <a href="{{ path('breeder_dashboard') }}" title="Go to Home Page">
                         Home </a>
                 </li>
                 <li class="item category131">
                     <strong>Growers</strong>
                 </li>
                 <li class="item category131">
-                    <strong>My Growers</strong>
+                    <strong>Grower Requests</strong>
                 </li>
             </ul>
         </div>
     </div>
     <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+
+        </div>
         <div class="page messages">
             <div class="messages" style="">
                 <div class="message-success success message">
@@ -91,17 +95,6 @@
                 </div>
 
             </div>
-        </div>
-        <div class="page-title-wrapper">
-
-        </div>
-        <div class="page messages">
-            <div data-placeholder="messages"></div>
-            <div data-bind="scope: 'messages'">
-                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
-                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
-            </div>
-
         </div>
         <div class="columns">
             <div class="column main">
@@ -113,19 +106,21 @@
                             <th class="col price" scope="col"><span>Status</span></th>
 
 
-                            <th class="col subtotal" scope="col"><span>Connected On</span></th>
-
+                            <th class="col subtotal" scope="col"><span>Requested On</span></th>
+                            <th class="col subtotal" scope="col"><span>Accept / Reject</span></th>
                         </tr>
                         </thead>
                         <tbody class="cart item">
-                        {% for agentGrower in agentGrowers %}
-                            <tr class="item-info js-agent-item">
+                        {% for breederRequest in breederRequests %}
+                            <tr class="item-info js-breeder-item">
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="#">{{ agentGrower.grower.fullName }}</a>
+                          <a href="{{ path('grower_profile',{
+                              'id':breederRequest.grower.id
+                          }) }}">{{ breederRequest.grower.fullName }}</a>
                     </span>
                     </strong>
 
@@ -138,7 +133,7 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ agentGrower.status }}
+                                                {{ breederRequest.status }}
                                                 </span>
                                             </span>
 
@@ -151,19 +146,42 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ agentGrower.dateSince |date("d/m/Y") }}
+                                                {{ breederRequest.updatedAt |date("d/m/Y") }}
                                                 </span>
                                             </span>
 
                                     </span>
                                 </td>
 
+                                <td class="col price" data-th="Price">
+                                    <a
+                                            href="#"
+                                            class="action accept  js-request-user"
+                                            data-url="{{ path('accept_grower-breeder-request',{
+                                                'id': breederRequest.id
+                                            }) }}"
+                                            title="Accept Request">
+                                        <span id="accept" class="fa fa-thumbs-o-up"></span>
 
+                                    </a>&nbsp;
+                                    <a
+                                            href="#"
+                                            class="action request js-reject-user"
+                                            data-url="{{ path('reject-grower-breeder-request',{
+                                                'id': breederRequest.id
+                                            }) }}"
+                                            title="Cancel Request">
+                                        <span id="reject" class="fa fa-times"></span>
+
+                                    </a>
+
+
+                                </td>
                             </tr>
                         {% else %}
                             <tr class="item-info">
                                 <td data-th="Item" class="col item">
-                                    You have No Growers on Record
+                                    There are no Pending Grower Requests
                                 </td>
                             </tr>
                         {% endfor %}
@@ -173,11 +191,9 @@
 
                 </div>
             </div>
-            {% include(':agent:sidebar.htm.twig') %}
+            {% include(':breeder:sidebar.htm.twig') %}
 
         </div>
     </main>
 {% endblock %}
-
-
 

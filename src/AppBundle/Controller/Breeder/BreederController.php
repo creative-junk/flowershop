@@ -11,7 +11,9 @@ namespace AppBundle\Controller\Breeder;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\OrderItems;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
 use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\ProductFormType;
@@ -20,6 +22,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/breeder")
@@ -34,9 +37,27 @@ class BreederController extends Controller
      */
     public function dashboardAction(){
 
-        return $this->render(':breeder:home.htm.twig');
-        //dump($products);die;
-        //return new Response('Product Saved');
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $nrMyReceivedOrders = $em->getRepository('AppBundle:OrderItems')
+            ->findNrAllMyReceivedOrders($user);
+
+        $nrMyGrowers = $em->getRepository('AppBundle:GrowerBreeder')
+            ->getNrMyGrowers($user);
+
+        $nrMyProducts = $em->getRepository('AppBundle:Product')
+            ->findNrAllMyActiveProducts($user);
+
+
+
+        return $this->render(':breeder:home.htm.twig',[
+            'nrMyReceivedOrders'=>$nrMyReceivedOrders,
+            'nrMyGrowers' =>$nrMyGrowers,
+            'nrMySeedlings' => $nrMyProducts
+        ]);
+
     }
 
     /**
@@ -180,18 +201,57 @@ class BreederController extends Controller
 
     }
 
+
     /**
      * @Route("/growers/my",name="my_breeder_growers")
      */
-    public function myBreederGrowersAction(){
+    public function myGrowersAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:GrowerBreeder')
+            ->createQueryBuilder('user')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Accepted')
+            ->andWhere('user.breeder = :whoIsBreeder')
+            ->setParameter('whoIsBreeder', $user);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+        return $this->render('breeder/growers/mylist.html.twig', [
+            'breederGrowers' => $result,
+        ]);
     }
     /**
      * @Route("/growers/{id}/view",name="grower_profile")
      */
-    public function breederProfileAction()
+    public function breederProfileAction(Request $request,User $grower)
     {
-        return $this->render('breeder/growers/view.htm.twig');
+        $em= $this->getDoctrine()->getManager();
+
+        $products = $grower->getProducts();
+
+        $nrproducts = $em->getRepository('AppBundle:Product')
+            ->findMyActiveProducts($grower);
+
+        $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
+            ->findMyActiveAuctionProducts($grower);
+
+        return $this->render('breeder/growers/view.htm.twig',[
+            'grower'=>$grower,
+            'nrProducts'=>$nrproducts,
+            'products'=>$products,
+            'nrAuctionProducts' => $nrAuctionProducts
+        ]);
     }
 
     /**
@@ -200,11 +260,10 @@ class BreederController extends Controller
     public function ordersListAction(){
 
         $user = $this->get('security.token_storage')->getToken()->getUser();
-        $em=$this->getDoctrine()->getManager();
-        $orders = $em->getRepository('AppBundle:UserOrder')
-            ->findAllMyReceivedOrdersOrderByDate($user);
+        $em = $this->getDoctrine()->getManager();
+        $orderItems = $user->getMyOrderItems();
         return $this->render('breeder/order/list.html.twig', [
-            'orders' => $orders,
+            'orderItems' => $orderItems,
         ]);
 
     }
@@ -221,6 +280,17 @@ class BreederController extends Controller
             'orders' => $orders,
         ]);
 
+    }
+    /**
+     * @Route("/orders/received/{id}/view",name="breeder-order-item-details")
+     */
+    public function orderItemDetailsAction(Request $request, OrderItems $orderItem){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        return $this->render(':breeder/order:order-item-details.htm.twig',[
+            'order'=>$orderItem->getOrder(),
+            'orderItem'=>$orderItem
+        ]);
     }
     /**
      * @Route("/orders/{id}/update",name="breeder_order_update")
@@ -248,6 +318,145 @@ class BreederController extends Controller
             'productForm' => $form->createView()
         ]);
     }
+    /**
+     * @Route("/orders/assigned/{id}/ship",name="breeder-ship-order")
+     */
+    public function shipOrderAction(Request $request,OrderItems $orderItem){
+        $em=$this->getDoctrine()->getManager();
 
+        $order = $orderItem->getOrder();
+
+        $nrUnshippedItems = $em->getRepository("AppBundle:OrderItems")
+            ->findNrUnshippedItems($order);
+
+        $orderItem->setItemStatus("Shipped");
+        $orderItem->setLastProcessed(new \DateTime());
+
+        if ($nrUnshippedItems==1){
+            $order->setOrderState("Shipped");
+            $order->setOrderStatus("Processed");
+
+        }else {
+            $order->setOrderState("Partially Shipped");
+            $order->setOrderStatus("Partially Processed");
+        }
+        $em->persist($order);
+        $em->persist($orderItem);
+
+        $em->flush();
+        //TODO Notify the User who Created the Order That their Order has been Shipped
+
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/orders/payment/{id}/accept",name="breeder-accept-payment")
+     */
+    public function acceptPaymentAction(Request $request,OrderItems $orderItem){
+        $em=$this->getDoctrine()->getManager();
+
+        $order = $orderItem->getOrder();
+        $order->setPaymentStatus("Complete");
+        $em->persist($order);
+
+        $em->flush();
+        //TODO Notify the User who Created the Order That their Payment has been Accepted
+
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/requests/growers",name="breeder_grower_requests")
+     */
+    public function getBreederRequestsAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:GrowerBreeder')
+            ->createQueryBuilder('user')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.breeder = :whoIsBreeder')
+            ->setParameter('whoIsBreeder', $user);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('breeder/growers/requests.html.twig', [
+            'breederRequests' => $result,
+        ]);
+    }
+    /**
+     * @Route("/requests/my/growers",name="my_grower_requests")
+     */
+    public function getMyBreederRequestsAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:GrowerBreeder')
+            ->createQueryBuilder('user')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.listOwner = :whoOwnsList')
+            ->setParameter('whoOwnsList', $user);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('breeder/growers/myRequests.htm.twig', [
+            'breederRequests' => $result,
+        ]);
+    }
+
+    public function getMyTotalGrowerRequestsAction()
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $totalRequests = 0;
+        $em = $this->getDoctrine()->getManager();
+        $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
+            ->getNrMyGrowerRequests($user);
+
+        $totalRequests += $nrBreederRequests;
+
+
+        return $this->render(':partials:totalRequests.html.twig', [
+            'nrRequests' => $totalRequests,
+
+        ]);
+
+    }
+    public function getTotalGrowerRequestsAction()
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $totalRequests = 0;
+        $em = $this->getDoctrine()->getManager();
+        $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
+            ->getNrGrowerRequests($user);
+
+        $totalRequests += $nrBreederRequests;
+
+
+        return $this->render(':partials:totalRequests.html.twig', [
+            'nrRequests' => $totalRequests,
+
+        ]);
+
+    }
 
 }

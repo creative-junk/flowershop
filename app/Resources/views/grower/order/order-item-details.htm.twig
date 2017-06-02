@@ -96,12 +96,11 @@
 
                         </a>&nbsp;
                             {% endif %}
-                        {% if orderItem.order.paymentStatus == "Complete" %}
-                        {% else %}
-                        <a
+                        {% if orderItem.order.paymentStatus != "Complete" %}
+                            <a
                                 href="#"
                                 class="action accept js-reject-user"
-                                data-url="{{ path('agent-request-supply',{
+                                data-url="{{ path('grower-accept-payment',{
                                     'id': orderItem.id
                                 }) }}"
                                 title="Cancel Request">

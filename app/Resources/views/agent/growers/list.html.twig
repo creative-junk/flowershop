@@ -17,6 +17,11 @@
                     method: 'GET'
                 }).done(function () {
                     $el.fadeOut("slow");
+                }).error(function () {
+                    $(this).find('.fa-exchange')
+                        .removeClass('fa-exchange')
+                        .addClass('fa-spinner')
+                        .addClass('fa-spin');
                 });
             });
         })

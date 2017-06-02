@@ -12,7 +12,7 @@ class AgentProductForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
+       /* $builder
             ->add('title', null, array(
                 'attr' => ['readonly' => true],
             ))
@@ -41,7 +41,9 @@ class AgentProductForm extends AbstractType
             ->add('finalPrice')
             ->add('agent', null, array(
                 'attr' => ['readonly' => true],
-            ));
+            ));*/
+        $builder
+            ->add('finalPrice');
     }
 
     public function configureOptions(OptionsResolver $resolver)

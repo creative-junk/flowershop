@@ -25,6 +25,19 @@ class OrderItemsRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+    public function findNrAllMyReceivedOrders(User $user){
+        $nrReceivedOrders= $this->createQueryBuilder('order_items')
+            ->select('count(order_items.id)')
+            ->andWhere('order_items.vendor= :createdBy')
+            ->setParameter('createdBy',$user)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrReceivedOrders){
+            return $nrReceivedOrders;
+        }else{
+            return 0;
+        }
+    }
     public function findNrUnshippedItems(UserOrder $order){
         $nrUnshippedOrders= $this->createQueryBuilder('order_items')
             ->select('count(order_items.id)')

@@ -46,42 +46,7 @@
                                 <div class="panel-body step-3">
                                     {{ form_start(buyerCheckoutForm) }}
                                     <div class="section-shopping-cart-page row field-row">
-                                        <div class="shipping-method col-md-4 col-lg-3">
-                                            <div>
-                                                <h4>
-                                                    Ground Shipping
-                                                    <small></small>
-                                                </h4>
-
-                                                <div class="box-content highlight" id="shipping-methods">
-    			                			                <span class="">
-    				                                          <input type="radio" value="500" name="shippingCost" id="option1" checked>
-    			                                            </span>
-                                                            <span class="price">
-    			                                                <strong>$500.00</strong>
-    			                                           </span>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="shipping-method col-md-4 col-lg-3">
-                                            <div>
-                                                <h4>
-                                                    Freight Shipping
-                                                    <small></small>
-                                                </h4>
-
-                                                <div class="box-content highlight" id="shipping-methods">
-    			                			                <span class="">
-    				                                          <input type="radio" value="1500" name="shippingCost" id="option1">
-    			                                            </span>
-                                                    <span class="price">
-    			                                                <strong>$1,500.00</strong>
-    			                                           </span>
-                                                </div>
-
-                                            </div>
-                                        </div>
+                                        {{ form_widget(buyerCheckoutForm) }}
                                     </div>
                                     <div class="row field-row checkout-button-row">
                                         <div class="col-xs-6 button-holder">

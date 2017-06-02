@@ -41,10 +41,29 @@ class AgentController extends Controller
      */
     public function dashboardAction()
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        return $this->render(':agent:home.htm.twig');
-        //dump($products);die;
-        //return new Response('Product Saved');
+        $em = $this->getDoctrine()->getManager();
+
+        $nrReceivedAgentOrders = $em->getRepository('AppBundle:AuctionOrder')
+            ->findNrAllMyAgentReceivedOrders($user);
+        $nrMyOrders = $em->getRepository('AppBundle:UserOrder')
+            ->findNrAllMyOrdersAgent($user);
+        $nrBuyers = $em->getRepository('AppBundle:BuyerAgent')
+            ->getNrMyAgentBuyers($user);
+        $nrGrowers = $em->getRepository('AppBundle:GrowerAgent')
+            ->getNrMyAgentGrowers($user);
+
+
+
+        return $this->render(':agent:home.htm.twig',[
+            'nrAgentReceivedOrders'=>$nrReceivedAgentOrders,
+            'nrMyOrders' =>$nrMyOrders,
+            'nrMyBuyers' => $nrBuyers,
+            'nrMyGrowers' => $nrGrowers,
+            'nrAssignedProducts' =>''
+        ]);
+
     }
 
     /**
@@ -123,13 +142,14 @@ class AgentController extends Controller
     public function editAssignedProductAction(Request $request, Auction $product)
     {
         $form = $this->createForm(AgentProductForm::class, $product);
-
+        $product->setIsActive(true);
         //only handles data on POST
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $product = $form->getData();
             $product->setStatus("Agent Accepted");
+
             //TODO Notify the user that the Agent has accepted the Requested
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
@@ -140,7 +160,7 @@ class AgentController extends Controller
             return $this->redirectToRoute('my_assigned_product_list');
         }
 
-        return $this->render('agent/product/edit.html.twig', [
+        return $this->render('agent/product/processProductRequest.htm.twig', [
             'productForm' => $form->createView(),
             'product'=>$product
         ]);
@@ -968,8 +988,8 @@ class AgentController extends Controller
     public function rejectProductAssignmentAction(Request $request,Auction $product){
         $em=$this->getDoctrine()->getManager();
 
-        $product->setOrderStatus("Rejected");
-//        $order->setOrderState("Inactive");
+        $product->setStatus("Agent Rejected");
+        $product->setIsActive(false);
 
         $em->persist($product);
         $em->flush();
