@@ -19,11 +19,11 @@
             <thead>
             <tr>
                 <th>Customer</th>
-                <th>Sold By</th>
-                <th>Order Amount</th>
+                <th>Order Date</th>
                 <th>Order Status</th>
                 <th>Order State</th>
-                <th>is Auction Order?</th>
+                <th>Order Amount</th>
+
             </tr>
             </thead>
             <tbody>
@@ -31,16 +31,13 @@
                 <tr>
 
                     <td>{{ order.user.firstName }}&nbsp;{{ order.user.lastName }}</td>
-                    <td>{{ order.vendor.firstName }}&nbsp;{{ order.vendor.lastName }}</td>
-                    <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount }}</td>
+                    <td>{{ order.createdAt | date('d-m-Y H:i:s') }}
+                    </td>
                     <td>{{ order.orderStatus }}</td>
                     <td>{{ order.orderState }}</td>
-                    <td>{% if(order.isAuctionOrder == 1) %}
-                            true
-                        {% else %}
-                            false
-                        {% endif %}
-                    </td>
+                    <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount  | number_format(2, '.', ',') }}</td>
+
+
                 </tr>
                 {% else %}
                 <tr><td colspan="6">No Orders found</td></tr>

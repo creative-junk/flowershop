@@ -4,13 +4,13 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-4">
                     <div class="image-holder">
-                        <a href="/auction/{{ auctionProduct.id }}/view"><img class="product-img" alt="{{ auctionProduct.product.title }}" src="{{ asset('images/products/') }}{{ auctionProduct.product.imageurl }}" /></a>
+                        <a href="/auction/{{ auctionProduct.id }}/view"><img class="product-img" alt="{{ auctionProduct.title }}" src="{{ asset('images/products/') }}{{ auctionProduct.imageurl }}" /></a>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-8">
                     <div class="item-details-holder">
 
-                        <h2 class="title" ><a href="/auction/{{ auctionProduct.id }}/view">{{ auctionProduct.product.title }}</a></h2>
+                        <h2 class="title" ><a href="/auction/{{ auctionProduct.id }}/view">{{ auctionProduct.title }}</a></h2>
 
                         <div class="excerpt">
                             {{ auctionProduct.product.description }}

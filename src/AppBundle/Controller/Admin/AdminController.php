@@ -57,7 +57,7 @@ class AdminController extends Controller
     public function newUserAction(Request $request)
     {
 
-        $form = $this->createForm(ProductFormType::class);
+        $form = $this->createForm(UserFormType::class);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -69,12 +69,12 @@ class AdminController extends Controller
             $em->persist($product);
             $em->flush();
 
-            $this->addFlash('success','Product Created, Yaay!');
+            $this->addFlash('success','User Created, Yaay!');
 
-            return $this->redirectToRoute('admin_product_list');
+            return $this->redirectToRoute('user_list');
         }
 
-        return $this->render('admin/product/new.html.twig',[
+        return $this->render('admin/user/new.html.twig',[
             'productForm' => $form->createView()
         ]);
     }
@@ -83,7 +83,7 @@ class AdminController extends Controller
      */
     public function editAction(Request $request,Product $product)
     {
-        $form = $this->createForm(ProductFormType::class,$product);
+        $form = $this->createForm(UserFormType::class,$product);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -97,10 +97,10 @@ class AdminController extends Controller
 
             $this->addFlash('success','Product Updated, Yaay!');
 
-            return $this->redirectToRoute('admin_product_list');
+            return $this->redirectToRoute('user_list');
         }
 
-        return $this->render('admin/product/edit.html.twig',[
+        return $this->render('admin/user/edit.html.twig',[
             'productForm' => $form->createView()
         ]);
     }

@@ -21,6 +21,31 @@ class SecurityController extends Controller
     {
         return $this->render('home.htm.twig');
     }
+    /**
+     * @Route("/login/admin",name="admin_login")
+     *
+     */
+    public function loginAdminAction()
+    {
+        $authenticationUtils = $this->get('security.authentication_utils');
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        $form = $this->createForm(LoginForm::class,[
+            '_username' => $lastUsername
+        ]);
+
+        return $this->render(
+            'user/admin-login.htm.twig',
+            array(
+                'buyerform' => $form->createView(),
+                'error' => $error,
+            ));
+    }
 
     /**
      * @Route("/login/buyer",name="user_login")

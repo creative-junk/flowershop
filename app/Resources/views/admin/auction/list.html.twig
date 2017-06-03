@@ -42,8 +42,8 @@
         <tbody>
         {% for auctionProduct in auctionProducts %}
         <tr>
-            <td><img height="100" src="{{ asset('images/products/') }}{{ auctionProduct.product.imageurl }}"/></td>
-            <td>{{ auctionProduct.product.title }}<br/>Quantity: <b> {{ auctionProduct.quantity | number_format }} Roses in Bundle </b></td>
+            <td><img height="100" src="{{ asset('images/products/') }}{{ auctionProduct.imageName }}"/></td>
+            <td>{{ auctionProduct.title }}<br/>Quantity: <b> {{ auctionProduct.quantity | number_format }} Roses in Bundle </b></td>
             <td>{{ auctionProduct.currency }} {{ auctionProduct.bundlePrice }}</td>
              <td>{{ auctionProduct.currency }} {{ auctionProduct.finalPrice }}</td>
             <td><a href="">{{ auctionProduct.user.firstName }} {{ auctionProduct.user.lastName }}</a></td>

@@ -1,12 +1,12 @@
 <div class="product-item text-center">
 
         <a href="/auction/{{ auctionProduct.id }}/view">
-            <img class="product-img" src="{{ asset('images/products/') }}{{ auctionProduct.product.imageurl }}" alt="{{ auctionProduct.product.title }}" />
+            <img class="product-img" src="{{ asset('images/products/') }}{{ auctionProduct.imageurl }}" alt="{{ auctionProduct.title }}" />
         </a>
 
     <hr>
     <div class="title uppercase bold">
-        <a href="/auction/{{ auctionProduct.id }}/view">{{ auctionProduct.product.title }}</a>
+        <a href="/auction/{{ auctionProduct.id }}/view">{{ auctionProduct.title }}</a>
     </div>
     <div class="price">
 

@@ -907,6 +907,32 @@ class HomeController extends Controller
         $em= $this->getDoctrine()->getManager();
 
         $order = $this->container->get('session')->get('order');
+
+        $orderId= $order->getId();
+
+        $userOrder = $em->getRepository('AppBundle:AuctionOrder')
+            ->findBy([
+                'id'=>$orderId
+            ]);
+
+        $userOrder[0]->setPaymentStatus("Complete");
+
+        $em->persist($userOrder[0]);
+        $em->flush();
+
+        return $this->render('partials/iflora/user/auction/payment-complete.htm.twig',[
+            'order'=>$userOrder[0]
+        ]);
+    }
+    /**
+     * @Route("/auction/payment/complete",name="buyer-auction-payment-complete")
+     */
+    public function auctionPaymentCompleteAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $order = $this->container->get('session')->get('order');
         $orderId= $order->getId();
         $userOrder = $em->getRepository('AppBundle:UserOrder')
             ->findBy([
@@ -1135,21 +1161,30 @@ class HomeController extends Controller
      * @Route("/auction/payment",name="auction_buyer_payment_method")
      */
     public function auctionPaymentAction(Request $request){
-        $user = $this->get('security.token_storage')->getToken()->getUser();
-        $em = $this->getDoctrine()->getManager();
-
-        $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
-        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user);
 
         $product = $this->container->get('session')->get('product');
         $shippingCost = $this->container->get('session')->get('shippingCost');
         $agent = $this->container->get('session')->get('agent');
 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
+            ->findMyBillingAddress($user);
+
+        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
+            ->findMyShippingAddress($user);
+
+
+        $myOwner = $em->getRepository('AppBundle:User')
+            ->findOneBy([
+                'id'=>$user->getId()
+            ]);
+
         $myAgent = $em->getRepository('AppBundle:User')
             ->findOneBy([
-                'email'=>$agent->getUsername()
+                'id'=>$agent->getId()
             ]);
 
         $myOrder = new AuctionOrder();
@@ -1159,14 +1194,14 @@ class HomeController extends Controller
         //$myOrder->setSoldBy($user);
         $myOrder->setOrderStatus("Pending Agent");
         $myOrder->setOrderNotes("None");
-
+        $myOrder->setWhoseOrder($myOwner);
         $myOrder->setCheckoutCompletedAt(new \DateTime());
         $myOrder->setOrderState("Active");
         $myOrder->setOrderAmount($product->getPrice());
         $myOrder->setOrderCurrency($product->getCurrency());
         $myOrder->setShippingCost($shippingCost);
         $myOrder->setOrderTotal($product->getPrice()+$shippingCost);
-        $myOrder->setReceivingAgent($product->getAgent());
+
         $myOrder->setAgent($myAgent);
 
 
@@ -1174,6 +1209,9 @@ class HomeController extends Controller
                 ->findOneBy([
                     'id'=>$product->getId()
                 ]);
+
+        $myOrder->setReceivingAgent($orderProduct->getAgent());
+
         $orderItem = new AuctionOrderItems();
         $orderItem->setProduct($orderProduct);
         $orderItem->setUnitPrice($product->getPrice());
@@ -1192,6 +1230,7 @@ class HomeController extends Controller
             $myOrder->setProcessingFee($request->request->get("paymentMethod"));
 
             $em->persist($myOrder);
+
             $em->flush();
 
             $this->container->get('session')->set('agent', '');
