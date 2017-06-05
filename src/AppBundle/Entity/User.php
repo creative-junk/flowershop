@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @ORM\Table(name="user")
+ * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(fields={"email"},message="It looks like you already have an account!")
  */
 class User implements UserInterface
@@ -74,6 +75,14 @@ class User implements UserInterface
      * @ORM\Column(type="string",nullable=true,options={"default"="$"})
      */
     private $currency;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $createdAt;
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime",nullable=true)
@@ -136,6 +145,11 @@ class User implements UserInterface
 
     public function __construct()
     {
+        // we set up "created"+"modified"
+        $this->setCreatedAt(new \DateTime());
+        if ($this->getUpdatedAt() == null) {
+            $this->setUpdatedAt(new \DateTime());
+        }
         $this->products = new ArrayCollection();
         $this->buyerAgents = new ArrayCollection();
         $this->agentBuyers = new ArrayCollection();
@@ -147,6 +161,15 @@ class User implements UserInterface
         $this->myOrderItems = new ArrayCollection();
     }
 
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateModifiedDatetime()
+    {
+        // update the modified time
+        $this->setUpdatedAt(new \DateTime());
+    }
     /**
      * @return mixed
      */
@@ -547,6 +570,38 @@ class User implements UserInterface
     public function getMyOrderItems()
     {
         return $this->myOrderItems;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param mixed $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param mixed $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
     }
 
 

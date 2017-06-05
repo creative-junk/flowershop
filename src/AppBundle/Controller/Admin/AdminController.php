@@ -11,8 +11,10 @@ namespace AppBundle\Controller\Admin;
 
 
 use AppBundle\Entity\Product;
+use AppBundle\Entity\User;
 use AppBundle\Form\CategoryFormType;
 use AppBundle\Form\ProductFormType;
+use AppBundle\Form\UserFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -31,9 +33,58 @@ class AdminController extends Controller
      */
     public function listAction(){
 
-        return $this->render(':admin:dashboard.htm.twig');
-        //dump($products);die;
-        //return new Response('Product Saved');
+        $em = $this->getDoctrine()->getManager();
+
+        $nrOrders = $em->getRepository('AppBundle:UserOrder')
+            ->findNrOrders();
+        $nrUsers = $em->getRepository('AppBundle:User')
+            ->getNrUsers();
+        $nrBuyers = $em->getRepository('AppBundle:User')
+            ->getNrBuyers();
+        $nrAgents = $em->getRepository('AppBundle:User')
+            ->getNrAgents();
+        $nrGrowers = $em->getRepository('AppBundle:User')
+            ->getNrGrowers();
+        $nrBreeders = $em->getRepository('AppBundle:User')
+            ->getNrBreeders();
+
+        $nrChangeOrders = $em->getRepository('AppBundle:UserOrder')
+            ->findNrChangeOrders();
+        $nrChangeUsers = $em->getRepository('AppBundle:User')
+            ->getNrChangeUsersThisWeek();
+        $nrChangeBuyers = $em->getRepository('AppBundle:User')
+            ->getNrChangeBuyersThisWeek();
+        $nrChangeAgents = $em->getRepository('AppBundle:User')
+            ->getNrChangeAgentsThisWeek();
+        $nrChangeGrowers = $em->getRepository('AppBundle:User')
+            ->getNrChangeGrowersThisWeek();
+        $nrChangeBreeders = $em->getRepository('AppBundle:User')
+            ->getNrChangeBreedersThisWeek();
+
+        $percentChangeOrders = ($nrChangeOrders/$nrOrders)*100;
+        $percentChangeUsers = ($nrChangeUsers/$nrUsers)*100;
+        $percentChangeBuyers = ($nrChangeBuyers/$nrBuyers)*100;
+        $percentChangeAgents = ($nrChangeAgents/$nrAgents)*100;
+        $percentChangeGrowers = ($nrChangeGrowers/$nrGrowers)*100;
+        $percentChangeBreeders = ($nrChangeBreeders/$nrBreeders)*100;
+
+        return $this->render(':admin:dashboard.htm.twig',[
+            'nrUsers'=>$nrUsers,
+            'nrOrders'=>$nrOrders,
+            'nrBuyers' =>$nrBuyers,
+            'nrAgents' => $nrAgents,
+            'nrGrowers' => $nrGrowers,
+            'nrBreeders' => $nrBreeders,
+            'percentChangeUsers'=>$percentChangeUsers,
+            'percentChangeOrders'=>$percentChangeOrders,
+            'percentChangeBuyers'=>$percentChangeBuyers,
+            'percentChangeAgents'=>$percentChangeAgents,
+            'percentChangeGrowers'=>$percentChangeGrowers,
+            'percentChangeBreeders'=>$percentChangeBreeders,
+
+        ]);
+
+
     }
     /**
      * @Route("/users",name="user_list")
@@ -81,9 +132,9 @@ class AdminController extends Controller
     /**
      * @Route("/user/{id}/edit",name="user_edit")
      */
-    public function editAction(Request $request,Product $product)
+    public function editAction(Request $request,User $user)
     {
-        $form = $this->createForm(UserFormType::class,$product);
+        $form = $this->createForm(UserFormType::class,$user);
 
         //only handles data on POST
         $form->handleRequest($request);

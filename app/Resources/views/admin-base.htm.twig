@@ -29,6 +29,9 @@
         <!-- Custom Theme Style -->
         <link href="{{ asset('majorca/build/css/custom.min.css') }}" rel="stylesheet">
 
+        <!-- Datatables -->
+        <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet">
+
     {% endblock %}
 
 
@@ -82,7 +85,7 @@
                     <a data-toggle="tooltip" data-placement="top" title="Lock">
                         <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                     </a>
-                    <a data-toggle="tooltip" data-placement="top" title="Logout" href="{{ path('security_login') }}">
+                    <a data-toggle="tooltip" data-placement="top" title="Logout" href="{{ path('security_logout') }}">
                         <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                     </a>
                 </div>
@@ -105,6 +108,7 @@
     </div>
 </div>
 {% block javascripts %}
+
     <!-- jQuery -->
     <script src="{{ asset('majorca/vendors/jquery/dist/jquery.min.js') }}"></script>
     <!-- Bootstrap -->
@@ -145,6 +149,13 @@
 
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('majorca/build/js/custom.min.js') }}"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            jQuery('#datatable').DataTable();
+        });
+
+    </script>
 {% endblock %}
 </body>
 </html>

@@ -25,6 +25,7 @@ class OrderItemsRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
     public function findNrAllMyReceivedOrders(User $user){
         $nrReceivedOrders= $this->createQueryBuilder('order_items')
             ->select('count(order_items.id)')
