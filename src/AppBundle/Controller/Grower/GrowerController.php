@@ -11,8 +11,11 @@ namespace AppBundle\Controller\Grower;
 
 use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\CartItems;
+use AppBundle\Entity\Message;
+use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
 use AppBundle\Entity\ShippingAddress;
+use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
 use AppBundle\Entity\GrowerBreeder;
 use AppBundle\Entity\Auction;
@@ -24,7 +27,9 @@ use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\BillingAddressFormType;
 use AppBundle\Form\CheckoutForm;
 use AppBundle\Form\LoginForm;
+use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PaymentMethodFormType;
+use AppBundle\Form\PaymentProofFormType;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\ShippingAddressFormType;
 use AppBundle\Form\ShippingMethodFormType;
@@ -832,6 +837,7 @@ class GrowerController extends Controller
             $billingAddress->setFirstName($user->getFirstName());
             $billingAddress->setLastName($user->getLastName());
             $billingAddress->setEmailAddress($user->getUserName());
+            $billingAddress->setCompany($user->getMyCompany());
         }
         $form = $this->createForm(CheckoutForm::class, $billingAddress);
 
@@ -1034,10 +1040,36 @@ class GrowerController extends Controller
     public function checkoutCompleteAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $order = $this->container->get('session')->get('order');
+        $em = $this->getDoctrine()->getManager();
+
+        $savedOrder = $this->container->get('session')->get('order');
+
+        $order = $em->getRepository("AppBundle:UserOrder")
+            ->findOneBy(
+                [
+                    'id'=>$savedOrder->getId()
+                ]
+            );
+
+        $form = $this->createForm(PaymentProofFormType::class,$order);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+
+            $em->persist($order);
+
+            $em->flush();
+
+            return $this->redirectToRoute('grower-payment-complete');
+
+        }
 
         return $this->render(':partials:checkout-complete.htm.twig',[
-            'order'=>$order
+            'order'=>$order,
+            'transactionForm'=>$form->createView()
         ]);
     }
     /**
@@ -1484,5 +1516,121 @@ class GrowerController extends Controller
 
         return new Response(null,204);
     }
+
+    /**
+     * @Route("/inbox",name="grower-inbox")
+     */
+    public function inboxAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $threads = $em->getRepository("AppBundle:Thread")
+                            ->getInboxThreads($user);
+
+        return $this->render(':grower/messages:inbox.htm.twig',[
+            'threads'=> $threads
+        ]);
+    }
+
+    /**
+     * @Route("/inbox/{id}/view",name="grower-thread-view")
+     */
+    public function threadViewAction(Request $request,Thread $thread){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $lastMessage = $thread->getLastMessage();
+
+        if ($lastMessage->getSender()!= $user) {
+            $lastMessage->setIsRead(true);
+            $em->persist($lastMessage);
+            $em->flush();
+        }
+
+        $message = new Message();
+        $message->setSender($user);
+        if ($user==$lastMessage->getSender()){
+            $sender = $lastMessage->getParticipant();
+        }else{
+            $sender = $lastMessage->getSender();
+        }
+        $message->setParticipant($sender);
+        $message->setIsSpam(false);
+        $message->setIsRead(false);
+        $message->setThread($thread);
+        $message->setIsDeleted(false);
+        $message->setSubject($lastMessage->getSubject());
+
+
+        $form = $this->createForm(MessageReplyForm::class,$message);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+
+            $dateTime = new \DateTime();
+
+            $message=$form->getData();
+
+            $thread->setLastMessage($message);
+            $message->setSentAt($dateTime);
+            $thread->setLastMessageDate($dateTime);
+            $thread->setLastParticipantMessageDate($dateTime);
+
+            $em->persist($message);
+            $em->persist($thread);
+            $em->flush();
+            return new Response(null,200);
+        }
+        return $this->render(':grower/messages:thread.htm.twig',[
+            'replyForm'=>$form->createView(),
+            'thread'=>$thread
+        ]);
+    }
+    /**
+     * @Route("/sent",name="grower-sent")
+     */
+    public function sentAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $threads = $em->getRepository("AppBundle:Thread")
+            ->getSentThreads($user);
+
+        return $this->render(':grower/messages:sent.htm.twig',[
+            'threads'=> $threads
+        ]);
+    }
+    /**
+     * @Route("/notifications",name="grower-notifications")
+     */
+    public function deletedAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $messages = $em->getRepository("AppBundle:Notification")
+            ->getNotifications($user);
+
+        return $this->render(':grower/messages:notification.htm.twig',[
+            'messages'=> $messages
+        ]);
+    }
+    /**
+     * @Route("/notifications/{id}/view",name="view-notification")
+     */
+    public function viewNotificationAction(Request $request,Notification $notification){
+        return $this->render(':home/messages:viewNotification.htm.twig',[
+            'notification'=>$notification
+        ]);
+    }
+
 
 }

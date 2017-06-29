@@ -16,6 +16,17 @@ use Doctrine\ORM\EntityRepository;
 class UserRepository extends EntityRepository
 {
     /**
+     * @param $username
+     * @return null| User
+     */
+    public function findOneByUsername($username){
+        return $this->createQueryBuilder('user')
+            ->andWhere('user.email = :userName')
+            ->setParameter('userName', $username)
+            ->getQuery()
+            ->execute();
+    }
+    /**
      * @return User[]
      */
     public function findAllActiveBreedersOrderByDate()

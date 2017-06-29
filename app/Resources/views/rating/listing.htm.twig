@@ -1,0 +1,43 @@
+<div id="product-review-container" data-role="product-review"><div class="block review-list" id="customer-reviews">
+        <div class="block-title">
+            <strong>Customer Reviews</strong>
+        </div>
+        <div class="block-content">
+            <ol class="items review-items">
+                {% for review in reviews %}
+                    <li class="item review-item">
+                        <div class="review-title" itemprop="name">{{ review.summary }}</div>
+                        <div class="review-ratings">
+                            <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                <span class="label rating-label"><span>Quality</span></span>
+                                {{ review.quality | rating }}
+                            </div>
+                            <div class="rating-summary item">
+                                <span class="label rating-label"><span>Price</span></span>
+                                {{ review.price | rating }}
+                            </div>
+                            <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                <span class="label rating-label"><span>Value</span></span>
+                                {{ review.value | rating }}
+                            </div>
+                        </div>
+                        <div class="review-details">
+                            <p class="review-author">
+                                <span class="review-details-label">Review by</span>
+                                <strong class="review-details-value" itemprop="author">{{ review.ratedBy }}</strong>
+                            </p>
+                            <p class="review-date">
+                                <span class="review-details-label">Reviewed on</span>
+                                <time class="review-details-value" itemprop="datePublished" datetime="{{ review.createdAt | date }}">{{ review.createdAt | date }}</time>
+                            </p>
+                        </div>
+                    </li>
+                {% else %}
+                    <li>No Reviews Found<br/><br/></li>
+                {%  endfor %}
+            </ol>
+
+        </div>
+
+    </div>
+</div>

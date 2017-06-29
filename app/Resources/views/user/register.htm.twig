@@ -43,7 +43,9 @@
                 <fieldset class="fieldset create info">
                     <legend class="legend"><span>Personal Information</span></legend>
                     <br>
-
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.myCompany) }}
+                    </div>
                     <div class="field field-name-firstname required">
                         {{ form_row(form.firstName) }}
                     </div>

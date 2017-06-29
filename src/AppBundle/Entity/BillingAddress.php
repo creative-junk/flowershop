@@ -34,10 +34,7 @@ class BillingAddress
      * @ORM\Column(type="string",nullable=true)
      */
     private $lastName;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $company;
+
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -67,6 +64,12 @@ class BillingAddress
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="billingAddress")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $company;
+
 
     /**
      * @return mixed
@@ -101,7 +104,7 @@ class BillingAddress
     }
 
     /**
-     * @return mixed
+     * @return Company
      */
     public function getCompany()
     {
@@ -109,7 +112,7 @@ class BillingAddress
     }
 
     /**
-     * @param mixed $company
+     * @param Company $company
      */
     public function setCompany($company)
     {

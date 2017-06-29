@@ -66,6 +66,12 @@ a {
     width: 80%;
     margin: 50px auto;
 }
+.result{
+    display: none;
+}
+.error{
+    display: none;
+}
 /* ––––––––––––––––––––––––––––––––––––––––––––––––––
 megamenu.js STYLE STARTS HERE
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -4981,7 +4987,7 @@ dd {
 
 #newsletter_pop_up {
     background: #fff !important;
-    color: #FFFFFF;
+    /*color: #FFFFFF;*/
     display: none;
     margin: -195px 0 0 !important;
     min-width: 450px;
@@ -4990,7 +4996,12 @@ dd {
     position: fixed !important;
     text-align: center;
 }
-
+.b-modal{
+    display:none;
+}
+table.dataTable tr td a.new{
+    font-weight: bolder;
+}
 #newsletter_pop_up .b-close {
     color: #FFFFFF;
     cursor: pointer;
@@ -5019,10 +5030,10 @@ dd {
 #newsletter_pop_up .title {
     font-size: 36px;
     font-weight: 600;
-    margin-top: 60px;
+    margin-top: 20px;
     text-transform: capitalize;
     line-height: 30px;
-    margin-bottom: 0;
+    margin-bottom: 25px;
     color: #000;
 }
 

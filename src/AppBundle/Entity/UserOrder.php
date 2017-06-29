@@ -11,12 +11,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user_order")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\OrderRepository")
+ * @Vich\Uploadable
  */
 class UserOrder
 {
@@ -97,6 +99,20 @@ class UserOrder
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItems",mappedBy="order")
      */
     private $orderItems;
+    /**
+     * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName", size="imageSize")
+     * @var File
+     */
+    private $imageFile;
+
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $imageName;
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    private $imageSize;
 
     function __construct()
     {
@@ -387,6 +403,61 @@ class UserOrder
     {
         $this->paymentStatus = $paymentStatus;
     }
+    /**
+     * @return mixed
+     */
+    public function getImageName()
+    {
+        return $this->imageName;
+    }
 
+    /**
+     * @param mixed $imageName
+     */
+    public function setImageName($imageName)
+    {
+        $this->imageName = $imageName;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
+     * @return UserOrder
+     */
+    public function setImageFile(File $image = null)
+    {
+        $this->imageFile = $image;
+        if ($image) {
+            //Lets make sure at least one field changes so Doctrine can process the file
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImageSize()
+    {
+        return $this->imageSize;
+    }
+
+    /**
+     * @param integer $imageSize
+     * @return UserOrder
+     */
+    public function setImageSize($imageSize)
+    {
+        $this->imageSize = $imageSize;
+
+        return $this;
+    }
 
 }

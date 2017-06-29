@@ -108,4 +108,43 @@ class LoadFixtures implements FixtureInterface
         return $image[$key];
 
     }
+    public function color(){
+        $cat = [
+            'Pink',
+            'Red',
+            'Yellow',
+            'White',
+            'Peach',
+        ];
+        $key = array_rand($cat);
+
+        return $cat[$key];
+
+    }
+    public function season(){
+        $cat = [
+            'All Seasons',
+            'Winter',
+            'Spring',
+            'Summer',
+            'Fall',
+        ];
+        $key = array_rand($cat);
+
+        return $cat[$key];
+
+    }
+    public function quality(){
+        $cat = [
+            'Good',
+            'Average',
+            'High',
+            'Medium',
+            'Acceptable',
+        ];
+        $key = array_rand($cat);
+
+        return $cat[$key];
+
+    }
 }

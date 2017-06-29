@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+{% block title %} {{ thread.lastMessage.subject }} {% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        // prepare the form when the DOM is ready
+        $(document).ready(function() {
+
+            // bind to the form's submit event
+            $('#reply').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-send')
+                    .removeClass('fa-send')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("reply");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var messageValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: messageValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+                    $(".messages").fadeIn("slow");
+
+                    $("#send")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                })
+
+            });
+
+        });
+
+
+    </script>
+{%  endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+
+{% block body %}
+<div class="category-view">
+    <div class="page-title-wrapper">
+        <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+            <span class="base" data-ui-id="page-title-wrapper">Inbox</span></h1>
+    </div>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item category131">
+                <strong>Messages - Inbox</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+<main id="maincontent" class="page-main">
+    <div class="column main">
+        <div class="page messages"><br/><br/>
+            <div class="alert alert-success">
+                <strong> </strong> <i class="fa fa-check"></i> Message Sent!
+            </div>
+
+        </div>
+        <a id="contentarea" tabindex="-1"></a>
+
+        <h3>{{ thread.lastMessage.subject }}</h3>
+<hr/>
+    {% for message in thread.messages | sort %}
+        <div class="messenger_thread_message">
+            <div class="messenger_thread_message_info">
+                {% if message.sender.id == app.user.id %}
+                    <b>Replied:</b> {{ message.sentAt|date }}
+                    {% else %}
+                <b>From:</b> {{ message.sender }}  <br/>
+                        <b>Sent:</b> {{ message.sentAt|date }}
+                {% endif %}
+
+            </div>
+            <div class="messenger_thread_message_body" id="message_{{ message.id }}">
+                <br/>{{ message.message }}
+            </div>
+        </div>
+        <hr/>
+    {% endfor %}
+
+
+        <hr/>
+
+{{ form_start(replyForm,{'attr': {'id': 'reply'}}) }}
+
+            {{ form_row(replyForm.message) }}
+        <div class="form-group" style="display: block">
+        &nbsp;&nbsp;<button id="sendMessage" class="action subscribe primary" title="Reply" type="submit">
+                <i id="send" class="fa fa-send"></i> &nbsp;<span> Send</span>
+            </button>
+
+        </div>
+    {{ form_end(replyForm) }}
+        <br/><br/>
+    </div>
+
+    {% include(':grower:message-sidebar.htm.twig') %}
+</main>
+
+{% endblock %}

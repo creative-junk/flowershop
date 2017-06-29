@@ -88,6 +88,12 @@
 
 </script>
 
+                            {% else  %}
+                                <p>Upload a Scanned Copy of your Transaction Slip to complete your Order payment.</p>
+                                {{ form_start(transactionForm) }}
+                                {{ form_row(transactionForm.imageFile) }}
+                                <input type="submit" class="action primary" value="Complete">
+                                {{ form_end(transactionForm) }}
                             {% endif %}
                         </div>
 

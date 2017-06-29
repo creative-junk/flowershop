@@ -1,0 +1,12 @@
+{{ form_start(messageForm, {'action': path('new-message'),'method':'POST','attr': {'id': 'newsletter-validate-detail1','class':'form subscribe'}}) }}
+                {{ form_row(messageForm.subject,{'attr':{'id':'newsletter1'}}) }}<br/><br/><br/>
+                {{ form_row(messageForm.message,{'attr':{'id':'newsletter1'}}) }}<br/><br/><br/>
+                <input type="hidden" name="participant" value="{{ participant.id }}"/>
+<div class="actions">
+    <button id="sendMessage" class="action subscribe primary" title="Subscribe" type="submit">
+       <i id="send" class="fa fa-send"></i> &nbsp;<span> Send</span>
+    </button>
+
+</div>
+{{ form_end(messageForm) }}
+

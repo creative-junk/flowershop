@@ -182,4 +182,16 @@ class AdminController extends Controller
     public function settingsAction(){
 
     }
+    /**
+     * @Route("/categories",name="category_list")
+     */
+    public function categoryAction(){
+        $em=$this->getDoctrine()->getManager();
+        $categories = $em->getRepository('AppBundle:Category')
+            ->findAll();
+
+        return $this->render(':partials:categories.html.twig',[
+            'categoryList'=>$categories,
+        ]);
+    }
 }

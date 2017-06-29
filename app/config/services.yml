@@ -17,8 +17,10 @@ services:
         autowire: true
         tags:
             - { name: doctrine.event_subscriber }
+
     app.last_login_subscriber:
         class:  AppBundle\EventListener\LastLoginSubscriber
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: kernel.event_subscriber }
+

@@ -142,9 +142,17 @@ class Product
      */
     private $user;
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="product")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="product",fetch="EXTRA_LAZY")
      */
     private $productList;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rating",mappedBy="rose",fetch="EXTRA_LAZY")
+     */
+    private $reviews;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="product",fetch="EXTRA_LAZY")
+     */
+    private $comments;
 
     public function __construct()
     {
@@ -585,6 +593,22 @@ class Product
     public function getProductList()
     {
         return $this->productList;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 
 

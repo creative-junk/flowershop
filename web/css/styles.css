@@ -2,6 +2,7 @@
 Flexbox Layout
 *******************************/
 
+
 .header, .navi, .sea-creature-container, .genus-details, .notes-container, .footer {
     display: -webkit-flex;
     display: flex;

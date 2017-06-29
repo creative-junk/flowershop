@@ -11,6 +11,7 @@ namespace AppBundle\Entity;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use FOS\MessageBundle\Model\ParticipantInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -89,6 +90,11 @@ class User implements UserInterface
      */
     private $lastLoginTime;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $myCompany;
+    /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product",mappedBy="user",fetch="EXTRA_LAZY")
      */
     private $products;
@@ -142,6 +148,10 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItems",mappedBy="vendor",fetch="EXTRA_LAZY")
      */
     private $myOrderItems;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="user",fetch="EXTRA_LAZY")
+     */
+    private $myComments;
 
     public function __construct()
     {
@@ -159,6 +169,7 @@ class User implements UserInterface
         $this->myRecommendations = new ArrayCollection();
         $this->myReceivedAgencyOrders = new ArrayCollection();
         $this->myOrderItems = new ArrayCollection();
+        $this->myComments = new ArrayCollection();
     }
 
     /**
@@ -602,6 +613,30 @@ class User implements UserInterface
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMyCompany()
+    {
+        return $this->myCompany;
+    }
+
+    /**
+     * @param mixed $myCompany
+     */
+    public function setMyCompany($myCompany)
+    {
+        $this->myCompany = $myCompany;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMyComments()
+    {
+        return $this->myComments;
     }
 
 

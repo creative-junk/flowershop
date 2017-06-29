@@ -27,6 +27,7 @@
                 // get form values
                 var values = $(this).serialize();
 
+
                 $.ajax({
                     url: $(this).data('url'),
                     data: values,
@@ -39,9 +40,114 @@
                        .removeClass('fa-spinner')
                        .removeClass('fa-spin')
                        .addClass('fa-check');
+                   location.reload();
+                })
+
+
+            });
+
+            // bind to the form's submit event
+            $('#newsletter-validate-detail1').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-send')
+                    .removeClass('fa-send')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("newsletter-validate-detail1");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var messageValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: messageValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+                    $(".messages").fadeIn("slow");
+
+                    $("#send")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
                 })
 
             });
+
+            // bind to the form's submit event
+            $('#rating-form').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-telegram')
+                    .removeClass('fa-telegram')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("rating-form");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var ratingValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: ratingValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+
+                    $("#rate")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                })
+
+            });
+
+            $('.tocompare').on('click',function (e) {
+                e.preventDefault();
+
+                $(this).find('#compare')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    $(".result").fadeIn("slow");
+                }).fail(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                    $(".error").fadeIn("slow");
+                });
+            });
+
         });
 
 
@@ -99,7 +205,7 @@
 					</span></div>
                         <div class="product-info-stock-sku">
                             <div class="stock available" title="Availability">
-                                <span>In stock</span></div>
+                                <span>Grower:</span>&nbsp; {{ product.user.fullName }}</div>
                             <div class="product attribute sku">
                                 <strong class="type"></strong>
 
@@ -132,23 +238,42 @@
                             </div>
                         {{ form_end(form) }}
                     </div>
-                    <!--
+
                     <div class="product-social-links">
                         <div class="product-addto-links" data-role="add-to-links">
-                            <a class="action towishlist" data-action="add-to-wishlist"
-                               data-post="{&quot;action&quot;:&quot;http:\/\/plazathemes.com\/demo\/presiden\/english11\/wishlist\/index\/add\/&quot;,&quot;data&quot;:{&quot;product&quot;:&quot;63&quot;,&quot;uenc&quot;:&quot;aHR0cDovL3BsYXphdGhlbWVzLmNvbS9kZW1vL3ByZXNpZGVuL2VuZ2xpc2gxMS9vcmlvbi10d28tdG9uZS1maXR0ZWQuaHRtbA,,&quot;}}"
+                            <div class="result">
+                                <div class="alert alert-success">
+                                   <span class="fa fa-check"></span> <strong>{{ product.title }}</strong> successfully added to your Comparison List.
+                                </div>
+                            </div>
+                            <div class="error">
+                            <div class="alert alert-danger">
+                                <strong>Oops!</strong> <strong>{{ product.title }}</strong> is already in you Comparison List.
+                            </div>
+                            </div>
+                           <!-- <a class="action towishlist" data-action="add-to-wishlist"
+                               data-post=""
                                href="#">
-                                <span>Add to Wish List</span></a>
-                            <a class="action tocompare"
-                               data-post="{&quot;action&quot;:&quot;http:\/\/plazathemes.com\/demo\/presiden\/english11\/catalog\/product_compare\/add\/&quot;,&quot;data&quot;:{&quot;product&quot;:&quot;63&quot;,&quot;uenc&quot;:&quot;aHR0cDovL3BsYXphdGhlbWVzLmNvbS9kZW1vL3ByZXNpZGVuL2VuZ2xpc2gxMS9vcmlvbi10d28tdG9uZS1maXR0ZWQuaHRtbA,,&quot;}}"
-                               data-role="add-to-links" href="#">
-                                <span>Add to Compare</span></a></div>
-                        <a class="action mailto friend"
-                           href="http://plazathemes.com/demo/presiden/english11/sendfriend/product/send/id/63/">
+                                <span>Add to Wish List</span></a> -->
+                            <a class="action tocompare" href="#"
+                               data-url="{{ path('add-rose-to-compare',{
+                                   'id': product.id
+                               }) }}">
+                                <span><span id="compare" class="fa">&nbsp;</span> Add to Compare</span></a></div>
+                        <a class="action mailto friend" href="#"
+                           data-toggle="modal" data-target="#newsletter_pop_up">
                             <span>Email</span></a></div>
-                    -->
+
                     <div class="product attribute overview">
                         <div class="value" itemprop="description">
+
+                            <ul>
+                                <li><b>Season:</b> {{ product.season }}</li>
+                                <li><b>Color:</b> {{ product.color }}</li>
+                                <li><b>Vaselife:</b> {{ product.vaselife }}</li>
+                                <li><b>Stem Length:</b> {{ product.stemLength }}</li>
+                                <li><b>Headsize:</b>{{ product.headsize }}</li>
+                            </ul>
                             <p>{{ product.summary }}</p>
                         </div>
                     </div>
@@ -191,7 +316,7 @@
                                         <div aria-hidden="false"
                                              class="fotorama__stage__frame fotorama_vertical_ratio fotorama__loaded fotorama__loaded--img fotorama__active"
                                              data-active="true"
-                                             href="http://plazathemes.com/demo/presiden/pub/media/catalog/product/cache/image/500x629/e9c3970ab036de70892d86c6d221abfe/1/k/1kid.jpg"
+                                             href="#"
                                              style="left: 0px;">
                                             <img aria-hidden="false" width="500" height="629" class="fotorama__img"
                                                  src="{{ asset('images/products/') }}{{ product.imageName }}"></div>
@@ -224,29 +349,140 @@
                     </div>
 
                 </div>
+
                 <div class="product info detailed">
-                    <div class="product data items" role="tablist">
-                        <div id="tab-label-product.info.description" aria-controls="product.info.description"
-                             aria-expanded="true" aria-labeledby="tab-label-product.info.description-title"
-                             aria-selected="false" class="data item title active" data-collapsible="true"
-                             data-role="collapsible" role="tab" tabindex="0">
-                            <a id="tab-label-product.info.description-title" class="data switch" data-toggle="switch"
-                               href="#product.info.description" tabindex="-1">
-                                Details </a></div>
-                        <div id="product.info.description" aria-hidden="false"
-                             aria-labelledby="tab-label-product.info.description" class="data item content"
-                             data-role="content" role="tabpanel">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#details">Description</a></li>
+                        <li><a data-toggle="tab" href="#reviews">Reviews</a></li>
+                        <li><a data-toggle="tab" href="#comments">Reviews</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="details" class="tab-pane fade in active">
                             <div class="product attribute description">
                                 <div class="value">
-                                    <p>{{ product.description }}</p>
+
+                                {{ product.description }}
                                 </div>
                             </div>
                         </div>
+                        <div id="reviews" class="tab-pane fade"><br/>
+                            <div id="product-review-container" data-role="product-review"><div class="block review-list" id="customer-reviews">
+                                    <div class="block-title">
+                                        <strong>Customer Reviews</strong>
+                                    </div>
+                                    <div class="block-content">
+                                        <ol class="items review-items">
+                                            {% for review in product.reviews %}
+                                                <li class="item review-item">
+                                                    <div class="review-title" itemprop="name">{{ review.summary }}</div>
+                                                    <div class="review-ratings">
+                                                        <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                                            <span class="rating-label"><b>Quality</b></span>
+                                                            {{ review.quality | rating(5, "fa-lg") }}
+                                                        </div>
+                                                        <div class="rating-summary item">
+                                                            <span class="rating-label"><b>Price</b></span>
+                                                            {{ review.price | rating(5, "fa-lg") }}
+                                                        </div>
+                                                        <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                                            <span class="rating-label"><b>Value</b></span>
+                                                            {{ review.value | rating(5, "fa-lg") }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="review-details">
+                                                        <p class="review-author">
+                                                            <span class="review-details-value">{{ review.review }}</span>
+                                                        </p><br/>
+                                                        <p class="review-author">
+                                                            <span class="review-details-label">Review by</span>
+                                                            <strong class="review-details-value" itemprop="author">{{ review.ratedBy }}</strong>
+                                                        </p>
+                                                        <p class="review-date">
+                                                            <span class="review-details-label">Reviewed on</span>
+                                                            <time class="review-details-value" itemprop="datePublished" datetime="{{ review.createdAt | date }}">{{ review.createdAt | date }}</time>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            {% else %}
+                                                <li>No Reviews Found<br/><br/></li>
+                                            {%  endfor %}
+                                        </ol>
 
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            {{ render(controller('AppBundle:Rating/Rating:roseRating',{'roseId':product.id })) }}
+                        </div>
+                        <div id="comments" class="tab-pane fade"><br/>
+                            <div id="product-review-container" data-role="product-review"><div class="block review-list" id="customer-reviews">
+                                    <div class="block-title">
+                                        <strong>Comments</strong>
+                                    </div>
+                                    <div class="block-content">
+                                        <ol class="items review-items">
+                                            {% for comment in product.comments %}
+                                                <li class="item review-item">
+
+                                                    <div class="review-details">
+                                                        <p class="review-author">
+                                                            <span class="review-details-value">{{ comment.commentText }}</span>
+                                                        </p><br/>
+                                                        <p class="review-author">
+
+                                                            <strong class="review-details-value" itemprop="author">{{ comment.author.myCompany }}</strong>
+                                                        </p>
+                                                        <p class="review-date">
+
+                                                            <time class="review-details-value" itemprop="datePublished" datetime="{{ comment.createdAt | date }}">{{ comment.createdAt | date }}</time>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            {% else %}
+                                                <li>No Comments Found<br/><br/></li>
+                                            {%  endfor %}
+                                        </ol>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br/>
+                            {{ render(controller('AppBundle:Comment/Comment:roseComment',{'roseId':product.id })) }}
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </main>
+<!-- Message Box -->
+<div id="newsletter_pop_up" class="pt_newsletterpopup hidden-xs" style="background-image: url(&quot;&quot;); width: 790px; height: 390px; position: absolute; z-index: 9999; opacity: 1; left: 288px; top: 720px;">
+    <span class="b-close" data-dismiss="modal"><span>X</span></span>
+    <div class="title"><strong>DIRECT MESSAGE</strong></div>
+    <div class="content">
 
+        <div class="field newsletter">
+            <div class="" for="newsletter1"><span>This allows you to send a direct message to  <b><i>{{ product.user.fullName }}</i></b>  ,the Grower of <b><i>{{ product.title }}</i></b> .<br/> For a faster response, Keep it short and direct.</span></div>
+            <div class="page messages"><br/><br/>
+                <div class="alert alert-success">
+                    <strong> </strong> <i class="fa fa-check"></i> Message Sent!
+                </div>
+
+            </div>
+            <div class="control">
+                <div class="form">
+              {{ render(controller('AppBundle:Buyer/Home:newMessage',{
+                  'participantId': product.user.id
+              })) }}
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+<!-- End Message Box -->
 {% endblock %}

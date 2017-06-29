@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+{% block title %}iFlora Direct Market - Compare Products{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('iflora/js/jquery.js') }}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.tocart').on('click',function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-agent-item');
+
+                $(this).find('.counter')
+                    .removeClass('counter')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $el.fadeOut("slow");
+                }).error(function () {
+                    $(this).find('.fa-spinner')
+                        .removeClass('fa-spinner')
+                        .addClass('fa-exchange')
+                });
+            });
+            $('.compare-remove').on('click',function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-list-item');
+
+                $(this).find('#compare')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    $(".result").fadeIn("slow");
+                    $el.fadeOut("slow");
+                }).fail(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                    $(".error").fadeIn("slow");
+                });
+            });
+            $('.compare-remove-all').on('click',function (e) {
+                e.preventDefault();
+
+                $(this).find('#compare-all')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare-all")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                });
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('buyer_shop') }}" title="Go to Home Page">
+                    Direct Market </a>
+            </li>
+            <li class="item product">
+                <strong>Compare Products</strong>
+            </li>
+        </ul>
+    </div>
+
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages">
+        </div>
+        <div data-bind="scope: 'messages'">
+            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            </div>
+            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column main">
+
+                <div class="products wrapper grid products-grid">
+                <ol class="products list items product-items">
+                    {% for listItem in productList %}
+                        <li class="item product product-item">
+                            <div class="product-item-info" data-container="product-grid">
+                                <div class=" product-item-images">
+                                    <a class="product photo product-item-photo"
+                                       href="{{ path('buyer_product_details',{
+                                           'id': listItem.product.id
+                                       }) }}" tabindex="-1">
+						<span class="product-image-container" style="width: 350px;">
+						<span class="product-image-wrapper" style="padding-bottom: 126%;">
+						<img alt="{{ listItem.product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ listItem.product.imageName }}" alt="{{ listItem.product.title }}"
+                             width="350"></span>
+						</span></a></div>
+                                <div class="product-item-details">
+
+                                    <div class="product-reviews-summary short">
+                                        <div class="rating-summary">
+                                            <span class="label"><span>Rating:</span></span>
+
+                                            <div class="rating-result" title="80%">
+                                                <span style="width: 80%"><span>80%</span></span>
+                                            </div>
+                                        </div>
+                                        <div class="reviews-actions">
+                                            <a class="action view" href="#">
+                                                1&nbsp;<span>Review</span></a></div>
+                                    </div>
+                                    <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
+							<span class="price-container price-final_price tax weee">
+							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
+							<span class="price">{{ listItem.product.currency }} {{ listItem.product.price }}</span> </span></span>
+                                        <div><p>{{ listItem.product.summary }}</p></div>
+                                        <div>{{ listItem.product.description }}</div>
+                                        <div>
+
+                                            <ul>
+                                                <li><b>Season:</b> {{ listItem.product.season }}</li>
+                                                <li><b>Color:</b> {{ listItem.product.color }}</li>
+                                                <li><b>Vaselife:</b> {{ listItem.product.vaselife }}</li>
+                                                <li><b>Stem Length:</b> {{ listItem.product.stemLength }}</li>
+                                                <li><b>Headsize:</b>{{ listItem.product.headsize }}</li>
+                                            </ul>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="product-item-actions">
+                                        <div class="add-to-cart-primary">
+
+                                            <input name="product" type="hidden" value="{{ listItem.product.id }}">
+                                            <button class="action tocart primary" title="Add to Cart" type="submit">
+                                                <span>Add to Cart</span></button>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+        </div>
+
+
+    </div>
+</main>
+
+{% endblock %}

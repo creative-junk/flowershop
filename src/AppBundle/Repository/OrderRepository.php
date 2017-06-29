@@ -78,9 +78,12 @@ class OrderRepository extends EntityRepository
         }
     }
     public function findNrChangeOrders(){
+        $date = new \DateTime();
+        $date->modify('-7 days');
+
         $nrOrders= $this->createQueryBuilder('user_order')
             ->select('count(user_order.id)')
-            ->andWhere('user_order.createdAt= :createdAt')
+            ->andWhere('user_order.createdAt < :createdAt')
             ->setParameter('createdAt', new \DateTime('-7 days'))
             ->getQuery()
             ->getSingleScalarResult();

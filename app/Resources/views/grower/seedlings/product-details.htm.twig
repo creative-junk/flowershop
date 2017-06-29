@@ -1,200 +1,526 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ product.title }}{% endblock %}
-{% block body %}
-    <div class="breadcrumbs">
-        <ul class="items">
-            <li class="item home">
-                <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
-                    Home </a>
-            </li>
-            <li class="item home">
-                <a href="{{ path('grower_seedlings_list') }}" title="Go to Seedlings">
-                    Seedlings </a>
-            </li>
-            <li class="item product">
-                <strong>{{ product.title }}</strong>
-            </li>
-        </ul>
-    </div>
-    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+{% block javascripts %}
+    <script type="text/javascript">
+        // prepare the form when the DOM is ready
+        $(document).ready(function() {
 
-        <div class="page messages">
-            <div data-placeholder="messages">
-            </div>
-            <div data-bind="scope: 'messages'">
-                <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            // bind to the form's submit event
+            $('#addToCart').submit(function(e) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                e.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-shopping-cart')
+                    .removeClass('fa-shopping-cart')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                $(this).find('.fa-check')
+                    .removeClass('fa-check')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+
+                // get form values
+                var values = $(this).serialize();
+
+
+                $.ajax({
+                    url: $(this).data('url'),
+                    data: values,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".messages").fadeIn("slow");
+
+                    $("#add-t-cart")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                })
+
+
+            });
+
+            // bind to the form's submit event
+            $('#newsletter-validate-detail1').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-send')
+                    .removeClass('fa-send')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("newsletter-validate-detail1");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var messageValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: messageValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+                    $(".messages").fadeIn("slow");
+
+                    $("#send")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                })
+
+            });
+
+            // bind to the form's submit event
+            $('#rating-form').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-telegram')
+                    .removeClass('fa-telegram')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("rating-form");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var ratingValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: ratingValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+
+                    $("#rate")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                })
+
+            });
+            // bind to the form's submit event
+            $('#comment-form').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-telegram')
+                    .removeClass('fa-telegram')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("comment-form");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var ratingValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: ratingValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+
+                    $("#comment")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                })
+
+            });
+
+            $('.tocompare').on('click',function (e) {
+                e.preventDefault();
+
+                $(this).find('#compare')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    $(".result").fadeIn("slow");
+                }).fail(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                    $(".error").fadeIn("slow");
+                });
+            });
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block pageclass %}
+<body data-container="body" itemscope="itemscope"
+      class="catalog-product-view product-{{ product.slug }} page-layout-1column" aria-busy="false">
+{% endblock %}
+{% block body %}
+
+<div class="breadcrumbs">
+    <ul class="items">
+        <li class="item home">
+            <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
+                Home </a>
+        </li>
+        <li class="item home">
+            <a href="{{ path('grower_seedlings_list') }}" title="Go to Home Page">
+                Direct Market </a>
+        </li>
+        <li class="item product">
+            <strong>{{ product.title }}</strong>
+        </li>
+    </ul>
+</div>
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div class="messages" style="">
+            <div class="message-success success message">
+                <div>
+                    You added {{ product.title }} to your shopping cart.
                 </div>
-                <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
-                </div>
             </div>
+
         </div>
-        <div class="columns">
-            <div class="column main">
-                <div class="product-info-main">
-                    <div class="page-title-wrapper product">
-                        <h1 class="page-title">
+    </div>
+
+    <div class="columns">
+        <div class="column main">
+            <div class="product-info-main">
+                <div class="page-title-wrapper product">
+                    <h1 class="page-title">
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
 				{{ product.title }}</span></h1>
-                    </div>
+                </div>
 
-                    <div class="product-info-price">
-                        <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
+                <div class="product-info-price">
+                    <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 					<span class="price-container price-final_price tax weee">
 					<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
 					<span class="price">{{ product.currency }} {{ product.price }}</span></span>
 					<meta content="{{ product.currency }}" itemprop="priceCurrency">
 					</span></div>
-                        <div class="product-info-stock-sku">
-                            <div class="stock available" title="Availability">
-                                <span>In stock</span></div>
-                            <div class="product attribute sku">
-                                <strong class="type"></strong>
+                    <div class="product-info-stock-sku">
+                        <div class="stock available" title="Availability">
+                            <span>Grower:</span>&nbsp; {{ product.user.fullName }}</div>
+                        <div class="product attribute sku">
+                            <strong class="type"></strong>
 
-                                <div class="value" itemprop="sku">
-                                </div>
+                            <div class="value" itemprop="sku">
                             </div>
-                        </div>
-                    </div>
-                    <div class="product-add-form">
-                        {{ form_start(form) }}
-                        <input type="hidden" name="productCurrency" value="{{ product.currency }}"/>
-                        <input type="hidden" name="productPrice" value="{{ product.price }}"/>
-                        <input type="hidden" name="productId" value="{{ product.id }}"/>
-
-                        <div class="box-tocart">
-                            <div class="fieldset">
-                                <div class="field qty">
-                                    <label class="label" for="qty"><span>Qty</span></label>
-
-                                    <div class="control">
-                                        <input id="qty" class="input-text qty"
-                                               data-validate="{&quot;required-number&quot;:true,&quot;validate-item-quantity&quot;:{&quot;minAllowed&quot;:1}}"
-                                               maxlength="12" name="qty" title="Qty" type="number" value="1">
-                                    </div>
-                                </div>
-                                <div class="actions">
-                                    <button id="product-addtocart-button" class="action primary tocart"
-                                            title="Add to Cart" type="submit">
-                                        <span>Add to Cart</span></button>
-                                </div>
-                            </div>
-                        </div>
-                        {{ form_end(form) }}
-                    </div>
-                 <!--
-                    <div class="product-social-links">
-                        <div class="product-addto-links" data-role="add-to-links">
-                            <a class="action towishlist" data-action="add-to-wishlist"
-                               data-post=""
-                               href="#">
-                                <span>Add to Wish List</span></a>
-                            <a class="action tocompare"
-                               data-post=""
-                               data-role="add-to-links" href="#">
-                                <span>Add to Compare</span></a></div>
-                        <a class="action mailto friend"
-                           href="#">
-                            <span>Email</span></a></div>
-                  -->  <div class="product attribute overview">
-                        <div class="value" itemprop="description">
-                            <p>{{ product.summary }}</p>
                         </div>
                     </div>
                 </div>
-                <div class="product media">
-                    <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+                <div class="product-add-form">
+                    {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
+                    <input type="hidden" name="productCurrency" value="{{ product.currency }}"/>
+                    <input type="hidden" name="productPrice" value="{{ product.price }}"/>
+                    <input type="hidden" name="productId" value="{{ product.id }}"/>
+                    <div class="box-tocart">
+                        <div class="fieldset">
+                            <div class="field qty">
+                                <label class="label" for="qty"><span>Qty</span></label>
 
-                        <div class="fotorama--hidden">
-                        </div>
-                        <style>
-                            .fotorama1493313427134 .fotorama__nav--thumbs .fotorama__nav__frame {
-                                padding: 2px;
-                                height: 110px;
-                            }
-
-                            .fotorama1493313427134 .fotorama__thumb-border {
-                                height: 110px;
-                                border-width: 2px;
-                                margin-top: 2px;
-                            }
-                        </style>
-                        <div class="fotorama-item fotorama fotorama1493313427134" data-gallery-role="gallery">
-                            <div data-gallery-role="fotorama__focusable-start" tabindex="-1">
-                            </div>
-                            <div class="fotorama__wrap fotorama__wrap--css3 fotorama__wrap--slide fotorama__wrap--toggle-arrows fotorama__wrap--no-controls"
-                                 style="min-width: 0px; max-width: 100%;">
-                                <div class="fotorama__stage" data-fotorama-stage="fotorama__stage"
-                                     style="width: 491px; height: 618px;">
-                                    <div aria-label="Exit fullscreen" class="fotorama__fullscreen-icon"
-                                         data-gallery-role="fotorama__fullscreen-icon" role="button" tabindex="0">
-                                    </div>
-                                    <div aria-label="Previos" class="fotorama__arr fotorama__arr--prev"
-                                         data-gallery-role="arrow" role="button" tabindex="0">
-                                        <div class="fotorama__arr__arr">
-                                        </div>
-                                    </div>
-                                    <div class="fotorama__stage__shaft fotorama__grab" data-gallery-role="stage-shaft"
-                                         style="width: 491px; margin-left: 0px; transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);"
-                                         tabindex="0">
-                                        <div aria-hidden="false"
-                                             class="fotorama__stage__frame fotorama_vertical_ratio fotorama__loaded fotorama__loaded--img fotorama__active"
-                                             data-active="true"
-                                             href=""
-                                             style="left: 0px;">
-                                            <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                                                 src="{{ asset('images/products/') }}{{ product.imageName }}"></div>
-
-                                    </div>
-                                    <div aria-label="Next" class="fotorama__arr fotorama__arr--next"
-                                         data-gallery-role="arrow" role="button" tabindex="0">
-                                        <div class="fotorama__arr__arr">
-                                        </div>
-                                    </div>
-                                    <div class="fotorama__video-close">
-                                    </div>
-                                    <div aria-label="Zoom in" class="fotorama__zoom-in zoom-in-loaded"
-                                         data-gallery-role="fotorama__zoom-in" role="button" tabindex="0">
-                                    </div>
-                                    <div aria-label="Zoom out" class="fotorama__zoom-out zoom-out-loaded"
-                                         data-gallery-role="fotorama__zoom-out" role="button" tabindex="0">
-                                    </div>
-                                    <div class="fotorama__spinner">
-                                    </div>
+                                <div class="control">
+                                    <input id="qty" class="input-text qty" maxlength="12" name="qty"
+                                           title="Qty" type="number" value="1">
                                 </div>
-
                             </div>
-                            <div data-gallery-role="fotorama__focusable-end" tabindex="-1">
+                            <div class="actions">
+                                &nbsp;<button  class="action primary"
+                                               title="Add to Cart" type="submit">
+                                    <span id="add-t-cart" class="fa fa-shopping-cart"></span>&nbsp;&nbsp; <span>Add to Cart</span></button>
                             </div>
-                        </div>
-                        <div id="preview" class="magnifier-preview magnify-hidden" data-gallery-role="magnifier"
-                             style="display: none;">
                         </div>
                     </div>
-
+                    {{ form_end(form) }}
                 </div>
-                <div class="product info detailed">
-                    <div class="product data items" role="tablist">
-                        <div id="tab-label-product.info.description" aria-controls="product.info.description"
-                             aria-expanded="true" aria-labeledby="tab-label-product.info.description-title"
-                             aria-selected="false" class="data item title active" data-collapsible="true"
-                             data-role="collapsible" role="tab" tabindex="0">
-                            <a id="tab-label-product.info.description-title" class="data switch" data-toggle="switch"
-                               href="#product.info.description" tabindex="-1">
-                                Details </a></div>
-                        <div id="product.info.description" aria-hidden="false"
-                             aria-labelledby="tab-label-product.info.description" class="data item content"
-                             data-role="content" role="tabpanel">
-                            <div class="product attribute description">
-                                <div class="value">
-                                    <p>{{ product.description }}</p>
-                                </div>
+
+                <div class="product-social-links">
+                    <div class="product-addto-links" data-role="add-to-links">
+                        <div class="result">
+                            <div class="alert alert-success">
+                                <span class="fa fa-check"></span> <strong>{{ product.title }}</strong> successfully added to your Comparison List.
                             </div>
                         </div>
+                        <div class="error">
+                            <div class="alert alert-danger">
+                                <strong>Oops!</strong> <strong>{{ product.title }}</strong> is already in you Comparison List.
+                            </div>
+                        </div>
+                        <!-- <a class="action towishlist" data-action="add-to-wishlist"
+                            data-post=""
+                            href="#">
+                             <span>Add to Wish List</span></a> -->
+                        <a class="action tocompare" href="#"
+                           data-url="{{ path('add-rose-to-compare',{
+                               'id': product.id
+                           }) }}">
+                            <span><span id="compare" class="fa">&nbsp;</span> Add to Compare</span></a></div>
+                    <a class="action mailto friend" href="#"
+                       data-toggle="modal" data-target="#newsletter_pop_up">
+                        <span>Email</span></a></div>
 
+                <div class="product attribute overview">
+                    <div class="value" itemprop="description">
+
+                        <ul>
+                            <li><b>Season:</b> {{ product.season }}</li>
+                            <li><b>Color:</b> {{ product.color }}</li>
+                            <li><b>Vaselife:</b> {{ product.vaselife }}</li>
+                            <li><b>Stem Length:</b> {{ product.stemLength }}</li>
+                            <li><b>Headsize:</b>{{ product.headsize }}</li>
+                        </ul>
+                        <p>{{ product.summary }}</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+            <div class="product media">
+                <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
 
+                    <div class="fotorama--hidden">
+                    </div>
+                    <style>
+                        .fotorama1493313427134 .fotorama__nav--thumbs .fotorama__nav__frame {
+                            padding: 2px;
+                            height: 110px;
+                        }
+
+                        .fotorama1493313427134 .fotorama__thumb-border {
+                            height: 110px;
+                            border-width: 2px;
+                            margin-top: 2px;
+                        }
+                    </style>
+                    <div class="fotorama-item fotorama fotorama1493313427134" data-gallery-role="gallery">
+                        <div data-gallery-role="fotorama__focusable-start" tabindex="-1">
+                        </div>
+                        <div class="fotorama__wrap fotorama__wrap--css3 fotorama__wrap--slide fotorama__wrap--toggle-arrows fotorama__wrap--no-controls"
+                             style="min-width: 0px; max-width: 100%;">
+                            <div class="fotorama__stage" data-fotorama-stage="fotorama__stage"
+                                 style="width: 491px; height: 618px;">
+                                <div aria-label="Exit fullscreen" class="fotorama__fullscreen-icon"
+                                     data-gallery-role="fotorama__fullscreen-icon" role="button" tabindex="0">
+                                </div>
+                                <div aria-label="Previos" class="fotorama__arr fotorama__arr--prev"
+                                     data-gallery-role="arrow" role="button" tabindex="0">
+                                    <div class="fotorama__arr__arr">
+                                    </div>
+                                </div>
+                                <div class="fotorama__stage__shaft fotorama__grab" data-gallery-role="stage-shaft"
+                                     style="width: 491px; margin-left: 0px; transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);"
+                                     tabindex="0">
+                                    <div aria-hidden="false"
+                                         class="fotorama__stage__frame fotorama_vertical_ratio fotorama__loaded fotorama__loaded--img fotorama__active"
+                                         data-active="true"
+                                         href="#"
+                                         style="left: 0px;">
+                                        <img aria-hidden="false" width="500" height="629" class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ product.imageName }}"></div>
+
+                                </div>
+                                <div aria-label="Next" class="fotorama__arr fotorama__arr--next"
+                                     data-gallery-role="arrow" role="button" tabindex="0">
+                                    <div class="fotorama__arr__arr">
+                                    </div>
+                                </div>
+                                <div class="fotorama__video-close">
+                                </div>
+                                <div aria-label="Zoom in" class="fotorama__zoom-in zoom-in-loaded"
+                                     data-gallery-role="fotorama__zoom-in" role="button" tabindex="0">
+                                </div>
+                                <div aria-label="Zoom out" class="fotorama__zoom-out zoom-out-loaded"
+                                     data-gallery-role="fotorama__zoom-out" role="button" tabindex="0">
+                                </div>
+                                <div class="fotorama__spinner">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div data-gallery-role="fotorama__focusable-end" tabindex="-1">
+                        </div>
+                    </div>
+                    <div id="preview" class="magnifier-preview magnify-hidden" data-gallery-role="magnifier"
+                         style="display: none;">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="product info detailed">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#details">Description</a></li>
+                    <li><a data-toggle="tab" href="#reviews">Reviews</a></li>
+                    <li><a data-toggle="tab" href="#comments">Comments</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="details" class="tab-pane fade in active">
+                        <div class="product attribute description">
+                            <div class="value">
+
+                                {{ product.description }}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="reviews" class="tab-pane fade"><br/>
+                        <div id="product-review-container" data-role="product-review"><div class="block review-list" id="customer-reviews">
+                                <div class="block-title">
+                                    <strong>Customer Reviews</strong>
+                                </div>
+                                <div class="block-content">
+                                    <ol class="items review-items">
+                                        {% for review in product.reviews %}
+                                            <li class="item review-item">
+                                                <div class="review-title" itemprop="name">{{ review.summary }}</div>
+                                                <div class="review-ratings">
+                                                    <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                                        <span class="rating-label"><b>Quality</b></span>
+                                                        {{ review.quality | rating(5, "fa-lg") }}
+                                                    </div>
+                                                    <div class="rating-summary item">
+                                                        <span class="rating-label"><b>Price</b></span>
+                                                        {{ review.price | rating(5, "fa-lg") }}
+                                                    </div>
+                                                    <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                                        <span class="rating-label"><b>Value</b></span>
+                                                        {{ review.value | rating(5, "fa-lg") }}
+                                                    </div>
+                                                </div>
+                                                <div class="review-details">
+                                                    <p class="review-author">
+                                                        <span class="review-details-value">{{ review.review }}</span>
+                                                    </p><br/>
+                                                    <p class="review-author">
+                                                        <span class="review-details-label">Review by</span>
+                                                        <strong class="review-details-value" itemprop="author">{{ review.ratedBy.myCompany }}</strong>
+                                                    </p>
+                                                    <p class="review-date">
+                                                        <span class="review-details-label">Reviewed on</span>
+                                                        <time class="review-details-value" itemprop="datePublished" datetime="{{ review.createdAt | date }}">{{ review.createdAt | date }}</time>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        {% else %}
+                                            <li>No Reviews Found<br/><br/></li>
+                                        {%  endfor %}
+                                    </ol>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {{ render(controller('AppBundle:Rating/Rating:roseRating',{'roseId':product.id })) }}
+                    </div>
+                    <div id="comments" class="tab-pane fade"><br/>
+                        <div id="product-review-container" data-role="product-review"><div class="block review-list" id="customer-reviews">
+                                <div class="block-title">
+                                    <strong>Comments</strong>
+                                </div>
+                                <div class="block-content">
+                                    <ol class="items review-items">
+                                        {% for comment in product.comments %}
+                                            <li class="item review-item">
+
+                                                <div class="review-details">
+                                                    <p class="review-author">
+                                                        <span class="review-details-value">{{ comment.commentText }}</span>
+                                                    </p><br/>
+                                                    <p class="review-author">
+
+                                                        <strong class="review-details-value" itemprop="author">{{ comment.author.myCompany }}</strong>
+                                                    </p>
+                                                    <p class="review-date">
+
+                                                        <time class="review-details-value" itemprop="datePublished" datetime="{{ comment.createdAt | date }}">{{ comment.createdAt | date }}</time>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        {% else %}
+                                            <li>No Comments Found<br/><br/></li>
+                                        {%  endfor %}
+                                    </ol>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <br/>
+                        {{ render(controller('AppBundle:Comment/Comment:roseComment',{'roseId':product.id })) }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+<!-- Message Box -->
+<div id="newsletter_pop_up" class="pt_newsletterpopup hidden-xs" style="background-image: url(&quot;&quot;); width: 790px; height: 390px; position: absolute; z-index: 9999; opacity: 1; left: 288px; top: 720px;">
+    <span class="b-close" data-dismiss="modal"><span>X</span></span>
+    <div class="title"><strong>DIRECT MESSAGE</strong></div>
+    <div class="content">
+
+        <div class="field newsletter">
+            <div class="" for="newsletter1"><span>This allows you to send a direct message to  <b><i>{{ product.user.fullName }}</i></b>  ,the Grower of <b><i>{{ product.title }}</i></b> .<br/> For a faster response, Keep it short and direct.</span></div>
+            <div class="page messages"><br/><br/>
+                <div class="alert alert-success">
+                    <strong> </strong> <i class="fa fa-check"></i> Message Sent!
+                </div>
+
+            </div>
+            <div class="control">
+                <div class="form">
+                    {{ render(controller('AppBundle:Messaging/Messaging:newMessage',{
+                        'participantId': product.user.id
+                    })) }}
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+<!-- End Message Box -->
 {% endblock %}

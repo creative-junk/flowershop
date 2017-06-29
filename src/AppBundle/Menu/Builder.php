@@ -70,7 +70,7 @@ class Builder implements ContainerAwareInterface
 
         $menu = $factory->createItem('root');
 
-        $menu->addChild('Home',array('route'=>'agent_dashboard'));
+        $menu->addChild('Home',array('route'=>'grower_dashboard'));
 
 
         $menu->addChild('My Products',array('route'=>'my_grower_product_list'));
@@ -88,8 +88,9 @@ class Builder implements ContainerAwareInterface
         $menu->addChild('Breeders',array('route'=>'breeder_list'));
         $menu['Breeders']->addChild('My Breeders',array('route'=>'my_breeder_list'));
 
-        $menu->addChild('Agents',array('route'=>'breeder_list'));
+        $menu->addChild('Agents',array('route'=>'grower_agent_list'));
         $menu['Agents']->addChild('My Agents',array('route'=>'my_grower_agent_list'));
+
 
          return $menu;
     }

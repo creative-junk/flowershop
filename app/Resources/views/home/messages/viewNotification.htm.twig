@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% block title %} {{ notification.subject }} {% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+
+{% block body %}
+<div class="category-view">
+    <div class="page-title-wrapper">
+        <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+            <span class="base" data-ui-id="page-title-wrapper">Notifications</span></h1>
+    </div>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item category131">
+                <strong>Messages - Notifications</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+<main id="maincontent" class="page-main">
+    <div class="column main">
+        <a id="contentarea" tabindex="-1"></a>
+
+        <h3>{{ notification.subject }}</h3>
+<hr/>
+        <div class="messenger_thread_message">
+            <div class="messenger_thread_message_info">
+                {% if notification.sender.id == app.user.id %}
+                    <b>Replied:</b> {{ notification.sentAt|date }}
+                    {% else %}
+                <b>From:</b> {{ notification.sender }}  <br/>
+                        <b>Sent:</b> {{ notification.sentAt|date }}
+                {% endif %}
+
+            </div>
+            <div class="messenger_thread_message_body" id="message_{{ notification.id }}">
+                <br/>{{ notification.message }}
+            </div>
+        </div>
+        <hr/>
+    
+
+        <hr/>
+    <br/><br/>
+    </div>
+
+    {% include(':grower:message-sidebar.htm.twig') %}
+</main>
+
+{% endblock %}

@@ -24,6 +24,49 @@
                         .addClass('fa-exchange')
                 });
             });
+            $('.compare-remove').on('click',function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-list-item');
+
+                $(this).find('#compare')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    $(".result").fadeIn("slow");
+                    $el.fadeOut("slow");
+                }).fail(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                    $(".error").fadeIn("slow");
+                });
+            });
+            $('.compare-remove-all').on('click',function (e) {
+                e.preventDefault();
+
+                $(this).find('#compare-all')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare-all")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                });
+            });
         })
     </script>
 {% endblock %}
@@ -117,20 +160,44 @@
                                                    'id': product.id
                                                }) }}">
                                                 {{ product.title }} </a></strong>
-                                        <a aria-label="WishList" class="wishlist" data-action="add-to-wishlist" href="#"
+                                       <!-- <a aria-label="WishList" class="wishlist" data-action="add-to-wishlist" href="#"
                                            role="button" title="WishList">
-                                            <span>WishList</span> </a></div>
-                                    <div class="product-reviews-summary short">
+                                            <span>WishList</span> </a> --></div>
+                                    <div class="">
                                         <div class="rating-summary">
-                                            <span class="label"><span>Rating:</span></span>
 
-                                            <div class="rating-result" title="80%">
-                                                <span style="width: 80%"><span>80%</span></span>
-                                            </div>
+                                                    {% if product.reviews | length > 0 %}
+
+                                                    {% set sumQualityratings = 0 %}
+                                                    {% set avgQualityRatings=0 %}
+                                                        {% for rating in product.reviews %}
+                                                          {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                                        {% endfor %}
+                                                     {% set avgQualityRatings= (sumQualityratings / product.reviews|length) | round %}
+
+                                                    {% set sumValueratings = 0 %}
+                                                    {% set avgValueRatings=0 %}
+                                                    {% for rating in product.reviews %}
+                                                        {% set sumValueratings = sumValueratings + rating.value %}
+                                                    {% endfor %}
+                                                    {% set avgValueRatings= (sumValueratings / product.reviews|length) | round %}
+
+                                                    {% set sumPriceratings = 0 %}
+                                                    {% set avgPriceRatings=0 %}
+                                                    {% for rating in product.reviews %}
+                                                        {% set sumPriceratings = sumPriceratings + rating.price %}
+                                                    {% endfor %}
+                                                    {% set avgPriceRatings= (sumQualityratings / product.reviews|length) | round %}
+
+                                                    {% set avgrating=0 %}
+                                                    {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                                    {{ avgrating | rating(5, "fa-lg")   }}
+
+                                                    {% endif %}
+
                                         </div>
-                                        <div class="reviews-actions">
-                                            <a class="action view" href="#">
-                                                1&nbsp;<span>Review</span></a></div>
+
                                     </div>
                                     <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
@@ -146,9 +213,9 @@
 
                                         </div>
                                         <div class="add-to-links-secondary" data-role="add-to-links">
-                                            <a aria-label="WishList" class="action wishlist"
+                                          <!--  <a aria-label="WishList" class="action wishlist"
                                                data-action="add-to-wishlist" href="#" role="button" title="WishList">
-                                                <span>WishList</span> </a>
+                                                <span>WishList</span> </a> -->
                                             <a aria-label="Compare" class="action compare" href="#" role="button"
                                                title="Compare">
                                                 <span>Compare</span> </a></div>

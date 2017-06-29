@@ -1,3 +1,9 @@
+AppBundle\Entity\Company:
+    company{1..30}:
+        companyName: '<company()>'
+        companyType: '<userType()>'
+        isActive: '<boolean(95)>'
+
 AppBundle\Entity\User:
     user{1..30}:
         firstName: "<firstName($gender = null|'male'|'female')>"
@@ -7,6 +13,7 @@ AppBundle\Entity\User:
         roles: '<userRole()>'
         userType: '<userType()>'
         isActive: '<boolean(95)>'
+        myCompany: '@company*'
 
 AppBundle\Entity\Category:
     category{1..10}:
@@ -31,6 +38,12 @@ AppBundle\Entity\Product:
         isOnSale: '<boolean(10)>'
         isActive: '<boolean(75)>'
         isSeedling: '<boolean(25)>'
+        color:  '<color()>'
+        season: '<season()>'
+        vaselife: '<numberBetween($min = 10, $max = 100)>'
+        stemLength: '<numberBetween($min = 10, $max = 100)>'
+        headsize:   '<numberBetween($min = 10, $max = 100)>'
+        quality:    '<quality()>'
         category:   '@category*'
         user:       '@user*'
         createdAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"

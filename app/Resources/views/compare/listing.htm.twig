@@ -1,0 +1,19 @@
+{%  for listItem in productList %}
+
+<li class="product-item last js-list-item">
+    <input type="hidden" class="compare-item-id" data-bind="value: id" value="65">
+    <strong class="product-item-name">
+        <a data-bind="attr: {href: product_url}, html: name" class="product-item-link"
+           href="{{ path('buyer_product_details',{'id':listItem.product.id }) }}">{{ listItem.product.title }}</a>
+    </strong>
+    <a class="compare-remove" href="#"
+       data-url="{{ path('remove-rose-from-compare',{
+           'id': listItem.id
+       }) }}">
+        <span><span id="compare"  style="color: black" class="fa fa-times">&nbsp;</span> Remove this item </span></a>
+
+<hr/>
+</li>
+    {% else %}
+        <li>No Products to Compare</li>
+{%  endfor %}

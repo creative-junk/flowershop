@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Lexik\Bundle\FormFilterBundle\LexikFormFilterBundle(),
+            new blackknight467\StarRatingBundle\StarRatingBundle(),
             new AppBundle\AppBundle(),
         ];
 

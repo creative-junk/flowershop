@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MyListRepository")
  * @ORM\Table(name="my_list")
+ * @ORM\HasLifecycleCallbacks
  */
 class MyList
 {
@@ -58,6 +59,23 @@ class MyList
      */
     private $updatedAt;
 
+    public function __construct()
+    {
+        // we set up "created"+"modified"
+        $this->setCreatedAt(new \DateTime());
+        if ($this->getUpdatedAt() == null) {
+            $this->setUpdatedAt(new \DateTime());
+        }
+    }
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateModifiedDatetime()
+    {
+        // update the modified time
+        $this->setUpdatedAt(new \DateTime());
+    }
     /**
      * @return mixed
      */

@@ -22,8 +22,13 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('iflora/css/ionicons.min.css') }}"/>
         <link rel="stylesheet" type="text/css"
               href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/starrating/css/rating.css') }}" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" />
     {% endblock %}
-    <script type="text/javascript" src="{{ asset('iflora/js/jquery.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('bundles/starrating/js/rating.js') }}"></script>
     <script type="text/javascript">
         /*global $ */
         $(document).ready(function() {
@@ -84,12 +89,12 @@
             <div class="container-inner">
                 <div class="container-size">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="switcher currency switcher-currency" id="switcher-currency">
                                 <strong class="label switcher-label"><span>Currency:</span></strong>
 
                                 {% if app.user %}
-                                    Welcome to Iflora,  <span style="color:#e93838;font-weight: bold">{{ app.user.fullName }}</span>
+                                    Welcome to Iflora,  <span style="color:#e93838;font-weight: bold">{{ app.user.myCompany }}</span>
                                 {% else %}
                                     Welcome to Iflora
                                 {% endif %}
@@ -97,7 +102,7 @@
 
 
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             {% if is_granted('ROLE_BUYER') %}
                                 {% include(':nav/subNav:buyer.htm.twig') %}
                             {% elseif is_granted('ROLE_GROWER') %}
@@ -154,22 +159,22 @@
                                 <div data-block="minicart" class="minicart-wrapper my-acount">
                                     <a class="action showcart" href='javascript:;' onclick='show_cart();'>
                                         <span class="text">Shopping Cart</span>
-                                        {{ render(controller('AppBundle:Cart:cart')) }}
+                                        {{ render(controller('AppBundle:Checkout/Cart:cart')) }}
                                     </a>
 
                                     <div id="macrocart">
-                                        {{ render(controller('AppBundle:Cart:buyerIndex')) }}
+                                        {{ render(controller('AppBundle:Checkout/Cart:buyerIndex')) }}
                                     </div>
                                 </div>
                             {% elseif is_granted('ROLE_GROWER') %}
                                 <div data-block="minicart" class="minicart-wrapper my-acount">
                                     <a class="action showcart" href='javascript:;' onclick='show_cart();'>
                                         <span class="text">Shopping Cart</span>
-                                        {{ render(controller('AppBundle:Cart:cart')) }}
+                                        {{ render(controller('AppBundle:Checkout/Cart:cart')) }}
                                     </a>
 
                                     <div id="macrocart">
-                                        {{ render(controller('AppBundle:Cart:growerIndex')) }}
+                                        {{ render(controller('AppBundle:Checkout/Cart:growerIndex')) }}
                                     </div>
                                 </div>
                             {% else %}

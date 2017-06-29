@@ -11,11 +11,15 @@ namespace AppBundle\Controller\Breeder;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\Message;
+use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
 use AppBundle\Form\AuctionProductForm;
+use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\SeedlingFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -458,5 +462,119 @@ class BreederController extends Controller
         ]);
 
     }
+    /**
+     * @Route("/inbox",name="buyer-inbox")
+     */
+    public function inboxAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $em = $this->getDoctrine()->getManager();
+
+
+        $threads = $em->getRepository("AppBundle:Thread")
+            ->getInboxThreads($user);
+
+        return $this->render(':breeder/messages:inbox.htm.twig',[
+            'threads'=> $threads
+        ]);
+    }
+
+    /**
+     * @Route("/inbox/{id}/view",name="buyer-thread-view")
+     */
+    public function threadViewAction(Request $request,Thread $thread){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $lastMessage = $thread->getLastMessage();
+
+        if ($lastMessage->getSender()!= $user) {
+            $lastMessage->setIsRead(true);
+            $em->persist($lastMessage);
+            $em->flush();
+        }
+
+        $message = new Message();
+        $message->setSender($user);
+        if ($user==$lastMessage->getSender()){
+            $sender = $lastMessage->getParticipant();
+        }else{
+            $sender = $lastMessage->getSender();
+        }
+        $message->setParticipant($sender);
+        $message->setIsSpam(false);
+        $message->setIsRead(false);
+        $message->setThread($thread);
+        $message->setIsDeleted(false);
+        $message->setSubject($lastMessage->getSubject());
+
+
+        $form = $this->createForm(MessageReplyForm::class,$message);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+
+            $dateTime = new \DateTime();
+
+            $message=$form->getData();
+
+            $thread->setLastMessage($message);
+            $message->setSentAt($dateTime);
+            $thread->setLastMessageDate($dateTime);
+            $thread->setLastParticipantMessageDate($dateTime);
+
+            $em->persist($message);
+            $em->persist($thread);
+            $em->flush();
+            return new Response(null,200);
+        }
+        return $this->render(':breeder/messages:thread.htm.twig',[
+            'replyForm'=>$form->createView(),
+            'thread'=>$thread
+        ]);
+    }
+    /**
+     * @Route("/sent",name="buyer-sent")
+     */
+    public function sentAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $threads = $em->getRepository("AppBundle:Thread")
+            ->getSentThreads($user);
+
+        return $this->render(':breeder/messages:sent.htm.twig',[
+            'threads'=> $threads
+        ]);
+    }
+    /**
+     * @Route("/notifications",name="buyer-notifications")
+     */
+    public function deletedAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $messages = $em->getRepository("AppBundle:Notification")
+            ->getNotifications($user);
+
+        return $this->render(':breeder/messages:notification.htm.twig',[
+            'messages'=> $messages
+        ]);
+    }
+
+    /**
+     * @Route("/notifications/{id}/view",name="view-notification")
+     */
+    public function viewNotificationAction(Request $request,Notification $notification){
+        return $this->render(':breeder/messages:viewNotification.htm.twig',[
+            'notification'=>$notification
+        ]);
+    }
 }

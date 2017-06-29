@@ -75,5 +75,23 @@ class MyListRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+    public function getNrItemsToCompare(User $user){
+        $builder = $this->createQueryBuilder('m');
+
+        return (int) $builder
+            ->select($builder->expr()->count('m.id'))
+
+            ->where('m.listOwner = :listOwner')
+            ->setParameter('listOwner', $user)
+
+            ->andWhere('m.listType = :listType')
+            ->setParameter('listType', 'Product-Compare')
+
+            ->andWhere('m.productType = :productType')
+            ->setParameter('productType', 'Rose')
+
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
 }

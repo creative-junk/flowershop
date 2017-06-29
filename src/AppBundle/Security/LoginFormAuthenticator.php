@@ -56,7 +56,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         if ($request->request->get('_failure_path')) {
             $this->redirectFailureUrl = $request->request->get('_failure_path');
         }else{
-            $this->redirectFailureUrl ='login';
+            $this->redirectFailureUrl ='security_login';
         }
         $this->redirectSuccessUrl = $request->request->get('_target_path');
 
@@ -77,7 +77,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
        $username = $credentials['_username'];
 
         return $this->em->getRepository('AppBundle:User')
-            ->findOneBy(['email'=> $username]);
+            ->findOneBy(
+                [
+                    'email'=> $username,
+                    'isActive'=>true
+                ]
+            );
 
     }
 
@@ -94,6 +99,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     protected function getLoginUrl()
     {
+        if($this->redirectFailureUrl==""){
+            $this->redirectFailureUrl='security_login';
+        }
+
         return $this->router->generate($this->redirectFailureUrl);
     }
     protected function getDefaultSuccessRedirectUrl(){
