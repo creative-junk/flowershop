@@ -69,29 +69,50 @@ class RatingController extends Controller
     /**
      * @Route("rate/user",name="rate-user")
      */
-    public function userRatingAction(Request $request,$userId)
+    public function userRatingAction(Request $request,$companyId=null)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em= $this->getDoctrine()->getManager();
 
-        $userToReview = $em->getRepository("AppBundle:Product")
+        $company = $em->getRepository("AppBundle:Company")
             ->findOneBy([
-                'id'=>$userId
+                'id'=>$companyId
             ]);
 
         $rating = new Rating();
-        $rating->setUser($userToReview);
+        $rating->setVendor($company);
         $rating->setRatedBy($user);
 
         $form = $this->createForm(RatingFormType::class,$rating);
 
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $rating = $form->getData();
+
+            $grower_id =  $request->request->get('grower');
+
+            $grower = $em->getRepository("AppBundle:Company")
+                ->findOneBy([
+                    'id'=>$grower_id
+                ]);
+
+            $rating->setVendor($grower);
+
+            $em->persist($rating);
+            $em->flush();
+
+            return new Response(null,204);
+        }
         $reviews = $em->getRepository("AppBundle:Rating")
             ->findUserReviews($user);
 
-        return $this->render('rating/rating.htm.twig',[
+        return $this->render('rating/company-rating.htm.twig',[
             'reviews'=>$reviews,
-            'ratingForm'=>$form->createView()
+            'ratingForm'=>$form->createView(),
+            'grower'=>$company
         ]);
     }
     /**

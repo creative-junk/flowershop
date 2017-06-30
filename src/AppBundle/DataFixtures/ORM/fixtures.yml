@@ -46,6 +46,7 @@ AppBundle\Entity\Product:
         quality:    '<quality()>'
         category:   '@category*'
         user:       '@user*'
+        vendor:     '@company*'
         createdAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"
         updatedAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"
 
@@ -62,6 +63,7 @@ AppBundle\Entity\Auction:
         isAuthorized: '<boolean(75)>'
         imageName: '<imageurl()>'
         user:       '@user*'
-        agent:       '@user*'
+        agent:      '@user*'
+        vendor:     '@company*'
         createdAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"
         updatedAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"

@@ -31,7 +31,7 @@ class GrowerAgent
      */
     private $agent;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="growerAgents")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="growerAgents")
      * @ORM\JoinColumn(nullable=false)
      */
     private $grower;

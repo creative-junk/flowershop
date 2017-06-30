@@ -75,7 +75,7 @@
                     //$el.fadeOut("slow");
                     $(".control").fadeOut("slow");
 
-                    $(".messages").fadeIn("slow");
+                    $(".sent").fadeIn("slow");
 
                     $("#send")
                         .removeClass('fa-spinner')
@@ -148,6 +148,52 @@
                 });
             });
 
+            // bind to the form's submit event
+            $('#comment-form').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-telegram')
+                    .removeClass('fa-telegram')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("comment-form");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var commentValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: commentValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+
+                    $("#comment")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                }).fail(function () {
+                    $(".failure").fadeIn("slow");
+
+                    $("#comment")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                });
+
+            });
+
         });
 
 
@@ -205,7 +251,7 @@
 					</span></div>
                         <div class="product-info-stock-sku">
                             <div class="stock available" title="Availability">
-                                <span>Grower:</span>&nbsp; {{ product.user.fullName }}</div>
+                                <span>Grower:</span>&nbsp; {{ product.vendor }}</div>
                             <div class="product attribute sku">
                                 <strong class="type"></strong>
 
@@ -354,7 +400,7 @@
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" href="#details">Description</a></li>
                         <li><a data-toggle="tab" href="#reviews">Reviews</a></li>
-                        <li><a data-toggle="tab" href="#comments">Reviews</a></li>
+                        <li><a data-toggle="tab" href="#comments">Comments</a></li>
                     </ul>
                     <div class="tab-content">
                         <div id="details" class="tab-pane fade in active">
@@ -395,7 +441,7 @@
                                                         </p><br/>
                                                         <p class="review-author">
                                                             <span class="review-details-label">Review by</span>
-                                                            <strong class="review-details-value" itemprop="author">{{ review.ratedBy }}</strong>
+                                                            <strong class="review-details-value" itemprop="author">{{ review.ratedBy.myCompany }}</strong>
                                                         </p>
                                                         <p class="review-date">
                                                             <span class="review-details-label">Reviewed on</span>
@@ -464,8 +510,8 @@
     <div class="content">
 
         <div class="field newsletter">
-            <div class="" for="newsletter1"><span>This allows you to send a direct message to  <b><i>{{ product.user.fullName }}</i></b>  ,the Grower of <b><i>{{ product.title }}</i></b> .<br/> For a faster response, Keep it short and direct.</span></div>
-            <div class="page messages"><br/><br/>
+            <div class="" for="newsletter1"><span>This allows you to send a direct message to  <b><i>{{ product.vendor }}</i></b>  ,the Grower of <b><i>{{ product.title }}</i></b> .<br/> For a faster response, Keep it short and direct.</span></div>
+            <div class="page sent"><br/><br/>
                 <div class="alert alert-success">
                     <strong> </strong> <i class="fa fa-check"></i> Message Sent!
                 </div>
@@ -473,7 +519,7 @@
             </div>
             <div class="control">
                 <div class="form">
-              {{ render(controller('AppBundle:Buyer/Home:newMessage',{
+              {{ render(controller('AppBundle:Messaging/Messaging:newMessage',{
                   'participantId': product.user.id
               })) }}
                 </div>

@@ -71,29 +71,55 @@ class CommentController extends Controller
     /**
      * @Route("comment/user",name="comment-user")
      */
-    public function userCommentAction(Request $request,$userId)
+    public function userCommentAction(Request $request,$companyId=null)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em= $this->getDoctrine()->getManager();
 
-        $userToReview = $em->getRepository("AppBundle:Product")
+        if ($companyId==null){
+            $companyId= $request->request->get('grower');
+        }
+
+        $grower = $em->getRepository("AppBundle:Company")
             ->findOneBy([
-                'id'=>$userId
+                'id'=>$companyId
             ]);
 
-        $rating = new Rating();
-        $rating->setUser($userToReview);
-        $rating->setRatedBy($user);
+        $comments = $em->getRepository("AppBundle:Comment")
+            ->findUserComments($grower);
 
-        $form = $this->createForm(RatingFormType::class,$rating);
+        $comment = new Comment();
+        $comment->setVendor($grower);
+        $comment->setAuthor($user);
 
-        $reviews = $em->getRepository("AppBundle:Rating")
-            ->findUserReviews($user);
+        $form = $this->createForm(CommentFormType::class,$comment);
 
-        return $this->render('rating/rating.htm.twig',[
-            'reviews'=>$reviews,
-            'ratingForm'=>$form->createView()
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $comment = $form->getData();
+
+            $grower_id =  $request->request->get('grower');
+
+            $grower = $em->getRepository("AppBundle:Company")
+                ->findOneBy([
+                    'id'=>$grower_id
+                ]);
+
+            $comment->setVendor($grower);
+
+            $em->persist($comment);
+            $em->flush();
+
+            return new Response(null,204);
+        }
+
+        return $this->render('comments/company-comment.htm.twig',[
+            'comments'=>$comments,
+            'commentForm'=>$form->createView(),
+            'company'=>$grower
         ]);
     }
     /**

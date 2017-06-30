@@ -48,9 +48,9 @@ class Rating
      */
     private $rose;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
-    private $user;
+    private $vendor;
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Auction")
      */
@@ -144,17 +144,17 @@ class Rating
     /**
      * @return mixed
      */
-    public function getUser()
+    public function getVendor()
     {
-        return $this->user;
+        return $this->vendor;
     }
 
     /**
      * @param mixed $user
      */
-    public function setUser($user)
+    public function setVendor($vendor)
     {
-        $this->user = $user;
+        $this->vendor = $vendor;
     }
 
     /**

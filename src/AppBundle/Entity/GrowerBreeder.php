@@ -26,17 +26,17 @@ class GrowerBreeder
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="growerBreeders")
+     * @ORM\ManyToOne(targetEntity="Company",inversedBy="growerBreeders")
      * @ORM\JoinColumn(nullable=false)
      */
     private $grower;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="breederGrowers")
+     * @ORM\ManyToOne(targetEntity="Company",inversedBy="breederGrowers")
      * @ORM\JoinColumn(nullable=false)
      */
     private $breeder;
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="Company")
      * @ORM\JoinColumn(nullable=false)
      */
     private $listOwner;

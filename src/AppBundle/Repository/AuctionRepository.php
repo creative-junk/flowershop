@@ -11,6 +11,7 @@ namespace AppBundle\Repository;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
@@ -31,23 +32,23 @@ class AuctionRepository extends EntityRepository
     /**
      * @return Auction[]
      */
-    public function findAllMyActiveAuctionProductsOrderByDate(User $user){
+    public function findAllMyActiveAuctionProductsOrderByDate(Company $user){
 
         return $this->createQueryBuilder('product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.user= :createdBy')
+            ->andWhere('product.vendor= :createdBy')
             ->setParameter('createdBy',$user)
             ->orderBy('product.createdAt','DESC')
             ->getQuery()
             ->execute();
     }
-    public function findMyActiveAuctionProducts(User $user){
+    public function findMyActiveAuctionProducts(Company $user){
         $nrProducts= $this->createQueryBuilder('product')
             ->select('count(product.id)')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.user= :createdBy')
+            ->andWhere('product.vendor= :createdBy')
             ->setParameter('createdBy',$user)
             ->getQuery()
             ->getSingleScalarResult();

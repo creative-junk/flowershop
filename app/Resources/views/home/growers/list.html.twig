@@ -69,7 +69,6 @@
                     <thead>
                     <tr>
                         <th class="col item" scope="col"><span>Grower</span></th>
-                        <th class="col price" scope="col"><span>Products</span></th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
@@ -78,29 +77,19 @@
                         <tr class="item-info js-grower-item">
                             <td data-th="Item" class="col item">
 
-                    <span class="product-image-container" style="width:165px;">
+                    <span class="product-image-container" >
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
                           <a href="{{ path('view_grower',{
                               'id':grower.id
-                          }) }}">{{ grower.fullName }}</a>
+                          }) }}">{{ grower.companyName }}</a>
                         </span>
                     </strong>
 
                     </span>
 
-                            </td>
 
-                            <td class="col price" data-th="Price">
-
-                <span class="price-excluding-tax" data-label="Excl. Tax">
-                        <span class="cart-price">
-                            <span class="price"><a class="action action-edit" href="#"
-                                                   title="View Roses">View Roses</a></span>            </span>
-
-                </span>
-                            </td>
 
                             <td class="col subtotal" data-th="Subtotal">
 

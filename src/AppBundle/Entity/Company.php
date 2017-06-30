@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CompanyRepository")
  * @ORM\Table(name="company")
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(fields={"email"},message="It looks like you already have an account!")
@@ -68,8 +68,39 @@ class Company
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ShippingAddress",mappedBy="company",fetch="EXTRA_LAZY")
      */
     private $shippingAddress;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product",mappedBy="vendor",fetch="EXTRA_LAZY")
+     */
+    private $roses;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Auction",mappedBy="vendor",fetch="EXTRA_LAZY")
+     */
+    private $auctionProducts;
+    /**
+     * @ORM\OneToMany(targetEntity="BuyerGrower",mappedBy="buyer",fetch="EXTRA_LAZY")
+     */
+    private $buyerGrowers;
+    /**
+     * @ORM\OneToMany(targetEntity="BuyerGrower",mappedBy="grower",fetch="EXTRA_LAZY")
+     */
+    private $growerBuyers;
 
-
+    /**
+     * @ORM\OneToMany(targetEntity="GrowerBreeder",mappedBy="grower",fetch="EXTRA_LAZY")
+     */
+    private $growerBreeders;
+    /**
+     * @ORM\OneToMany(targetEntity="GrowerBreeder",mappedBy="breeder",fetch="EXTRA_LAZY")
+     */
+    private $breederGrowers;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="vendor",fetch="EXTRA_LAZY")
+     */
+    private $comments;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rating",mappedBy="vendor",fetch="EXTRA_LAZY")
+     */
+    private $reviews;
 
     public function __construct()
     {
@@ -81,6 +112,12 @@ class Company
         $this->users = new ArrayCollection();
         $this->billingAddress =  new ArrayCollection();
         $this->shippingAddress =  new ArrayCollection();
+        $this->growerBreeders = new ArrayCollection();
+        $this->growerBuyers =  new ArrayCollection();
+        $this->breederGrowers = new ArrayCollection();
+        $this->buyerGrowers = new ArrayCollection();
+        $this->roses = new ArrayCollection();
+        $this->auctionProducts = new ArrayCollection();
 
     }
 
@@ -255,6 +292,70 @@ class Company
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRoses()
+    {
+        return $this->roses;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBuyerGrowers()
+    {
+        return $this->buyerGrowers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGrowerBuyers()
+    {
+        return $this->growerBuyers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGrowerBreeders()
+    {
+        return $this->growerBreeders;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBreederGrowers()
+    {
+        return $this->breederGrowers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAuctionProducts()
+    {
+        return $this->auctionProducts;
     }
 
 }

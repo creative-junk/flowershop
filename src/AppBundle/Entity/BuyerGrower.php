@@ -3,7 +3,7 @@
  * Developed by Maxx Ng'ang'a
  * (C) 2017 Crysoft Dynamics Ltd
  * Karbon V 2.1
- * User: Maxx
+ * Company: Maxx
  * Date: 5/9/2017
  * Time: 4:58 PM
  ********************************************************************************/
@@ -26,17 +26,17 @@ class BuyerGrower
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="buyerGrowers")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="buyerGrowers")
      * @ORM\JoinColumn(nullable=false)
      */
     private $buyer;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="growerBuyers")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="growerBuyers")
      * @ORM\JoinColumn(nullable=false)
      */
     private $grower;
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      * @ORM\JoinColumn(nullable=false)
      */
     private $listOwner;
@@ -63,7 +63,7 @@ class BuyerGrower
     }
 
     /**
-     * @return User
+     * @return Company
      */
     public function getBuyer()
     {
@@ -71,15 +71,15 @@ class BuyerGrower
     }
 
     /**
-     * @param User $buyer
+     * @param Company $buyer
      */
-    public function setBuyer(User $buyer)
+    public function setBuyer(Company $buyer)
     {
         $this->buyer = $buyer;
     }
 
     /**
-     * @return User
+     * @return Company
      */
     public function getGrower()
     {
@@ -87,15 +87,15 @@ class BuyerGrower
     }
 
     /**
-     * @param User $grower
+     * @param Company $grower
      */
-    public function setGrower(User $grower)
+    public function setGrower(Company $grower)
     {
         $this->grower = $grower;
     }
 
     /**
-     * @return User
+     * @return Company
      */
     public function getListOwner()
     {
@@ -103,9 +103,9 @@ class BuyerGrower
     }
 
     /**
-     * @param User $listOwner
+     * @param Company $listOwner
      */
-    public function setListOwner(User $listOwner)
+    public function setListOwner(Company $listOwner)
     {
         $this->listOwner = $listOwner;
     }

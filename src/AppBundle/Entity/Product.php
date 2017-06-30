@@ -142,6 +142,11 @@ class Product
      */
     private $user;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="roses")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $vendor;
+    /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="product",fetch="EXTRA_LAZY")
      */
     private $productList;
@@ -609,6 +614,22 @@ class Product
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * @return Company
+     */
+    public function getVendor()
+    {
+        return $this->vendor;
+    }
+
+    /**
+     * @param Company $vendor
+     */
+    public function setVendor($vendor)
+    {
+        $this->vendor = $vendor;
     }
 
 

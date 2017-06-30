@@ -106,14 +106,7 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="BuyerAgent",mappedBy="agent",fetch="EXTRA_LAZY")
      */
     private $agentBuyers;
-    /**
-     * @ORM\OneToMany(targetEntity="BuyerGrower",mappedBy="buyer",fetch="EXTRA_LAZY")
-     */
-    private $buyerGrowers;
-    /**
-     * @ORM\OneToMany(targetEntity="BuyerGrower",mappedBy="grower",fetch="EXTRA_LAZY")
-     */
-    private $growerBuyers;
+
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\GrowerAgent",mappedBy="grower",fetch="EXTRA_LAZY")
@@ -123,15 +116,6 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\GrowerAgent",mappedBy="agent",fetch="EXTRA_LAZY")
      */
     private $agentGrowers;
-
-    /**
-     * @ORM\OneToMany(targetEntity="GrowerBreeder",mappedBy="grower",fetch="EXTRA_LAZY")
-     */
-    private $growerBreeders;
-    /**
-     * @ORM\OneToMany(targetEntity="GrowerBreeder",mappedBy="breeder",fetch="EXTRA_LAZY")
-     */
-    private $breederGrowers;
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="listOwner",fetch="EXTRA_LAZY")
      */

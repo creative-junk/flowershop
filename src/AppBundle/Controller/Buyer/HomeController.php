@@ -16,6 +16,7 @@ use AppBundle\Entity\AuctionOrderItems;
 use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\CartItems;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\GrowersList;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
@@ -300,9 +301,10 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        //Get All Growers in this Buyers List
         $buyerGrowers = $em->getRepository('AppBundle:BuyerGrower')
             ->findBy([
-                'listOwner' => $buyer
+                'listOwner' => $buyer->getMyCompany()
             ]);
         $growerIds = array();
 
@@ -315,13 +317,13 @@ class HomeController extends Controller
             $growerIds[] = 1;
         }
 
-        $queryBuilder = $em->getRepository('AppBundle:User')
-            ->createQueryBuilder('user')
-            ->andWhere('user.id NOT IN (:growers)')
+        $queryBuilder = $em->getRepository('AppBundle:Company')
+            ->createQueryBuilder('company')
+            ->andWhere('company.id NOT IN (:growers)')
             ->setParameter('growers',$growerIds)
-            ->andWhere('user.isActive = :isActive')
+            ->andWhere('company.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
+            ->andWhere('company.companyType = :userType')
             ->setParameter('userType', 'grower');
 
         $query = $queryBuilder->getQuery();
@@ -374,24 +376,29 @@ class HomeController extends Controller
     /**
      * @Route("/growers/{id}/view",name="view_grower")
      */
-    public function viewGrowerAction(Request $request, User $grower)
+    public function viewGrowerAction(Request $request, Company $grower)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em = $this->getDoctrine()->getManager();
 
+        $products = $em->getRepository("AppBundle:Product")
+            ->findAllMyActiveProductsOrderByDate($grower);
+        $auctionProducts = $em->getRepository("AppBundle:Auction")
+            ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
-        $products = $grower->getProducts();
         $nrproducts = $em->getRepository('AppBundle:Product')
             ->findMyActiveProducts($grower);
-         $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
+
+        $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
              ->findMyActiveAuctionProducts($grower);
 
-        return $this->render('home/growers/grower-details.htm.twig', [
+        return $this->render('home/growers/details.htm.twig', [
             'grower' => $grower,
             'products'=>$products,
             'nrProducts' => $nrproducts,
-            'nrAuctionProducts' => $nrAuctionProducts
+            'nrAuctionProducts' => $nrAuctionProducts,
+            'auctionProducts' => $auctionProducts
         ]);
 
     }

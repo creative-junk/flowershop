@@ -11,6 +11,7 @@ namespace AppBundle\Repository;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
@@ -48,13 +49,13 @@ class ProductRepository extends EntityRepository
     /**
      * @return Product[]
      */
-    public function findAllMyActiveProductsOrderByDate(User $user){
+    public function findAllMyActiveProductsOrderByDate(Company $user){
         return $this->createQueryBuilder('product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
             ->andWhere('product.isSeedling= :isSeedling')
             ->setParameter('isSeedling',false)
-            ->andWhere('product.user= :createdBy')
+            ->andWhere('product.vendor= :createdBy')
             ->setParameter('createdBy',$user)
             ->andWhere('product.isSeedling= :isSeedling')
             ->setParameter('isSeedling',false)
@@ -89,12 +90,12 @@ class ProductRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
-    public function findMyActiveProducts(User $user){
+    public function findMyActiveProducts(Company $user){
         $nrProducts= $this->createQueryBuilder('product')
             ->select('count(product.id)')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.user= :createdBy')
+            ->andWhere('product.vendor= :createdBy')
             ->setParameter('createdBy',$user)
             ->andWhere('product.isSeedling= :isSeedling')
             ->setParameter('isSeedling',false)
@@ -106,12 +107,12 @@ class ProductRepository extends EntityRepository
             return 0;
         }
     }
-    public function findNrActiveBreederSeedlings(User $user){
+    public function findNrActiveBreederSeedlings(Company $user){
         $nrProducts= $this->createQueryBuilder('product')
             ->select('count(product.id)')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.user= :createdBy')
+            ->andWhere('product.vendor= :createdBy')
             ->setParameter('createdBy',$user)
             ->andWhere('product.isSeedling= :isSeedling')
             ->setParameter('isSeedling',true)
@@ -126,27 +127,27 @@ class ProductRepository extends EntityRepository
     /**
      * @return Product[]
      */
-    public function findAllUserActiveSeedlingsOrderByDate(User $user){
+    public function findAllUserActiveSeedlingsOrderByDate(Company $breeder){
         return $this->createQueryBuilder('product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
             ->andWhere('product.isSeedling= :isSeedling')
             ->setParameter('isSeedling',false)
-            ->andWhere('product.user= :createdBy')
-            ->setParameter('createdBy',$user)
+            ->andWhere('product.vendor= :createdBy')
+            ->setParameter('createdBy',$breeder)
             ->andWhere('product.isSeedling= :isSeedling')
             ->setParameter('isSeedling',true)
             ->orderBy('product.createdAt','DESC')
             ->getQuery()
             ->execute();
     }
-    public function findNrAllMyActiveProducts(User $user){
+    public function findNrAllMyActiveProducts(Company $grower){
         $nrProducts= $this->createQueryBuilder('product')
             ->select('count(product.id)')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.user= :createdBy')
-            ->setParameter('createdBy',$user)
+            ->andWhere('product.vendor= :createdBy')
+            ->setParameter('createdBy',$grower)
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrProducts){

@@ -44,9 +44,9 @@ class Comment
      */
     private $product;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
-    private $user;
+    private $vendor;
     /**
      * @ORM\Column(type="boolean",nullable=true)
      */
@@ -236,6 +236,22 @@ class Comment
     public function setUser($user)
     {
         $this->user = $user;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVendor()
+    {
+        return $this->vendor;
+    }
+
+    /**
+     * @param mixed $vendor
+     */
+    public function setVendor($vendor)
+    {
+        $this->vendor = $vendor;
     }
 
 

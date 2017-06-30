@@ -36,6 +36,23 @@
         transform: scale(1);
     }
 }
+.failure{
+    display:none;
+}
+button:active {
+    background: #e93838;
+    color: #fff;
+    padding: 0 18px;
+    line-height: 38px;
+    height: 38px;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 0;
+    border: 0;
+}
 button.accept{
     background: #36B954;
     color:white;
@@ -130,6 +147,9 @@ Screen style's
 
     padding: 0;
     margin: 0;
+}
+.sent{
+    display: none;
 }
 .menu > ul > li a {
     text-decoration: none;

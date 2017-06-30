@@ -107,6 +107,11 @@ class Auction
      */
     private $user;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $vendor;
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      *
      */
@@ -466,6 +471,22 @@ class Auction
     public function getAuctionList()
     {
         return $this->auctionList;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVendor()
+    {
+        return $this->vendor;
+    }
+
+    /**
+     * @param mixed $vendor
+     */
+    public function setVendor($vendor)
+    {
+        $this->vendor = $vendor;
     }
 
 }

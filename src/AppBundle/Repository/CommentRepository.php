@@ -9,6 +9,7 @@
  ********************************************************************************/
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityRepository;
 
@@ -29,9 +30,9 @@ class CommentRepository extends EntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
-    public function findUserComments($user){
+    public function findUserComments(Company $user){
         return $this->createQueryBuilder('t')
-            ->where('t.user=:user')
+            ->where('t.vendor=:user')
             ->setParameter(':user',$user)
             ->orderBy('t.createdAt','DESC');
     }

@@ -26,7 +26,7 @@ class BuyerAgent
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="buyerAgents")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="buyerAgents")
      * @ORM\JoinColumn(nullable=false)
      */
     private $buyer;
