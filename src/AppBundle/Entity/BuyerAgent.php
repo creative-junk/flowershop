@@ -37,10 +37,12 @@ class BuyerAgent
     private $agent;
     /**
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=false)
+     */
+    private $agentListOwner;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
     private $listOwner;
-
     /**
      * @ORM\Column(type="string")
      */
@@ -162,4 +164,21 @@ class BuyerAgent
         $buyer = $this->buyer;
 
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAgentListOwner()
+    {
+        return $this->agentListOwner;
+    }
+
+    /**
+     * @param mixed $agentListOwner
+     */
+    public function setAgentListOwner($agentListOwner)
+    {
+        $this->agentListOwner = $agentListOwner;
+    }
+
 }

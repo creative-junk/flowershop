@@ -66,32 +66,12 @@
         <div class="column main">
 
             <div class="toolbar toolbar-products">
-                <div class="modes">
-                    <strong id="modes-label" class="modes-label">View as</strong>
-                    <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
-                        <span>Grid</span> </strong>
-                    <a id="mode-list" aria-labelledby="modes-label mode-list" class="modes-mode mode-list"
-                       data-role="mode-switcher" data-value="list" href="#" title="List">
-                        <span>List</span> </a></div>
+
                 <p id="toolbar-amount" class="toolbar-amount">Items
                     <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
                     of <span class="toolbar-number">{{ products.getTotalItemCount }}</span></p>
 
 
-                <div class="toolbar-sorter sorter">
-                    <label class="sorter-label" for="sorter">Sort By</label>
-                    <table>
-                        <tr>
-                            {# sorting of properties based on query components #}
-                            <th>{{ knp_pagination_sortable(products, 'Price', 'product.price') }}</th>
-                            <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Title', 'product.title') }}</th>
-
-                        </tr>
-                    </table>
-
-                    <a class="action sorter-action sort-asc" data-role="direction-switcher" data-value="desc" href="#"
-                       title="Set Descending Direction">
-                        <span>Set Descending Direction</span> </a></div>
             </div>
             <div class="products wrapper grid products-grid">
                 <ol class="products list items product-items">

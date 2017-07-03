@@ -52,6 +52,10 @@ class Rating
      */
     private $vendor;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $agent;
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Auction")
      */
     private $auctionProduct;
@@ -235,6 +239,22 @@ class Rating
     public function setReview($review)
     {
         $this->review = $review;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAgent()
+    {
+        return $this->agent;
+    }
+
+    /**
+     * @param mixed $agent
+     */
+    public function setAgent($agent)
+    {
+        $this->agent = $agent;
     }
 
 }

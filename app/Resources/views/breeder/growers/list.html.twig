@@ -65,7 +65,7 @@
                     <thead>
                     <tr>
                         <th class="col item" scope="col"><span>Grower</span></th>
-                        <th class="col price" scope="col"><span>Products</span></th>
+
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
@@ -80,22 +80,13 @@
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
                           <a href="{{ path('grower_profile',{
                               'id':grower.id
-                          }) }}">{{ grower.fullName }}</a>
-                           <!-- <img class="product-image-photo" src="" width="165" height="165" alt="Orion Two-Tone Fitted"> --></span>
+                          }) }}">{{ grower.companyName }}</a>
+                           </span>
                     </strong>
 
                     </span>
                             </td>
 
-                            <td class="col price" data-th="Price">
-
-                <span class="price-excluding-tax" data-label="Excl. Tax">
-                        <span class="cart-price">
-                            <span class="price"><a class="action action-edit" href="#"
-                                                   title="View Roses">View Roses</a></span>            </span>
-
-                </span>
-                            </td>
 
                             <td class="col subtotal" data-th="Subtotal">
 <span class="price-excluding-tax" data-label="Excl. Tax">

@@ -61,7 +61,7 @@
                                             <span class="product-image-wrapper" style="padding-bottom: 100%;">
                                               <a href="{{ path('view_grower',{
                                                   'id':buyerGrower.grower.id
-                                              }) }}">{{ buyerGrower.grower.fullName }}</a>
+                                              }) }}">{{ buyerGrower.grower.companyName }}</a>
                                         </span>
                                         </strong>
                                         </span>
@@ -76,16 +76,7 @@
 
                                     </span>
                                 </td>
-                                <td class="col subtotal" data-th="Subtotal">
-                                    <span class="price-excluding-tax" data-label="Excl. Tax">
-                                            <span class="cart-price">
-                                                <span class="price">
-                                                    <a class="action action-edit" href="{{ path('view_grower_roses',{'id': buyerGrower.grower.id }) }}"
-                                                       title="View Roses">View Roses</a></span>
-                                            </span>
 
-                                    </span>
-                                </td>
 
 
                             </tr>

@@ -37,7 +37,7 @@
         <div class="breadcrumbs">
             <ul class="items">
                 <li class="item home">
-                    <a href="{{ path('home') }}" title="Go to Home Page">
+                    <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
                         Home </a>
                 </li>
                 <li class="item category131">
@@ -87,7 +87,7 @@
                         <span class="product-image-wrapper" >
                           <a href="{{ path('agent_grower_profile',{
                               'id': growerRequest.grower.id
-                          }) }}">{{ growerRequest.grower.fullName }}</a></span>
+                          }) }}">{{ growerRequest.grower.companyName }}</a></span>
                     </strong>
 
                     </span>

@@ -2,10 +2,12 @@
 
 namespace AppBundle\Controller\Grower;
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\GrowerBreeder;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class GrowerBreederController extends Controller
@@ -14,9 +16,11 @@ class GrowerBreederController extends Controller
      * @Route("/grower/breeder/{id}/request",name="request-breeder-grower")
      */
 
-    public function requestBreederAction(User $breeder)
+    public function requestBreederAction(Request $request,Company $breeder)
     {
-        $grower = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
 
         if ($this->growerBreederExists($grower,$breeder,$grower)){
             return new Response(null,500);
@@ -38,8 +42,10 @@ class GrowerBreederController extends Controller
     /**
      * @Route("/breeder/grower/{id}/request",name="request-grower-breeder")
      */
-    public function requestGrowerAction(User $grower){
-        $breeder = $this->get('security.token_storage')->getToken()->getUser();
+    public function requestGrowerAction(Company $grower){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $breeder = $user->getMyCompany();
 
         if ($this->growerBreederExists($grower,$breeder,$grower)){
             return new Response(null,500);
@@ -58,7 +64,7 @@ class GrowerBreederController extends Controller
             return new Response(null, 204);
         }
     }
-    public function growerBreederExists(User $grower, User $breeder,User $whoseList){
+    public function growerBreederExists(Company $grower, Company $breeder,Company $whoseList){
         $em = $this->getDoctrine()->getManager();
 
         $growerBreeder = $em->getRepository('AppBundle:GrowerBreeder')

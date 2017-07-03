@@ -29,6 +29,10 @@ class UserOrder
      */
     private $id;
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $prettyId;
+    /**
      * @ORM\Column(type="boolean")
      */
     private $isAuctionOrder;
@@ -118,6 +122,7 @@ class UserOrder
     {
         // we set up "created"+"modified"
         $this->setCreatedAt(new \DateTime());
+        $this->setPrettyId(time());
         if ($this->getUpdatedAt() == null) {
             $this->setUpdatedAt(new \DateTime());
         }
@@ -458,6 +463,22 @@ class UserOrder
         $this->imageSize = $imageSize;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrettyId()
+    {
+        return $this->prettyId;
+    }
+
+    /**
+     * @param mixed $prettyId
+     */
+    public function setPrettyId($prettyId)
+    {
+        $this->prettyId = $prettyId;
     }
 
 }

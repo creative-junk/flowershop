@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ grower.companyName }}{% endblock %}
+{% block title %}{{ agent.fullName }}{% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         // prepare the form when the DOM is ready
@@ -135,11 +135,11 @@
                 Home </a>
         </li>
         <li class="item home">
-            <a href="{{ path('buyer_growers') }}" title="Go to Home Page">
-                Growers </a>
+            <a href="{{ path('buyer_agents') }}" title="Go to Home Page">
+                Agents </a>
         </li>
         <li class="item product">
-            <strong>{{ grower.companyName }}</strong>
+            <strong>{{ agent.fullName }}</strong>
         </li>
     </ul>
 </div>
@@ -149,7 +149,7 @@
         <div class="messages" style="">
             <div class="message-success success message">
                 <div>
-                    You added {{ grower.companyName }} to your List of Growers.
+                    You added {{ agent.fullName }} to your List of Agents.
                 </div>
             </div>
 
@@ -168,7 +168,7 @@
                 <div class="page-title-wrapper product">
                     <h1 class="page-title">
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
-				{{ grower.companyName }}</span></h1>
+				{{ agent.fullName }}</span></h1>
                 </div>
 
 
@@ -179,10 +179,10 @@
 
                             <div class="actions">
                                 &nbsp; <a href="#"  class="action request js-request-user"
-                                          data-url="{{ path('request-grower-buyer',{
-                                              'id': grower.id
+                                          data-url="{{ path('request-agent-buyer',{
+                                              'id': agent.id
                                           }) }}"
-                                          title="Request Grower"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Grower</a>
+                                          title="Request Agent"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Agent</a>
                             </div>
                         </div>
                     </div>
@@ -194,9 +194,8 @@
                     <div class="value" itemprop="description">
 
                         <ul>
-                            <li><b>Full Name:</b> {{ grower.companyName }}</li>
-                            <li>{{ nrProducts }} Active Rose(s) in Direct Market</li>
-                            <li>{{ nrAuctionProducts }} Active Rose(s) in Auction</li>
+                            <li><b>Agent Name:</b> {{ agent.fullName }}</li>
+                             <li>{{ nrProducts }} Active Rose(s) in Auction</li>
                         </ul>
                         <p></p>
                     </div>
@@ -276,14 +275,13 @@
 
             <div class="product info detailed">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#roses"><b>Roses in Market</b></a> </li>
-                    <li><a data-toggle="tab" href="#auction"><b>Roses in Auction</b></a></li>
+                    <li class="active"><a data-toggle="tab" href="#auction"><b>Roses in Auction</b></a> </li>
                     <li><a data-toggle="tab" href="#reviews"><b>Reviews</b></a></li>
                     <li><a data-toggle="tab" href="#comments"><b>Comments</b></a></li>
                 </ul>
                 <div class="tab-content">
 
-                    <div id="roses" class="tab-pane fade in active">
+                    <div id="auction" class="tab-pane fade  in active">
                         <div id="product-review-container" data-role="product-review">
                             <div class="block review-list" id="customer-reviews">
                                 <div class="block-content">
@@ -294,9 +292,7 @@
                                                     <div class="product-item-info" data-container="product-grid">
                                                         <div class=" product-item-images">
                                                             <a class="product photo product-item-photo"
-                                                               href="{{ path('buyer_product_details',{
-                                                                   'id': product.id
-                                                               }) }}" tabindex="-1">
+                                                               href="#" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
 						<img alt="{{ product.title }}" class="product-image-photo" height="441"
@@ -307,9 +303,7 @@
                                                             <div class="content-name">
                                                                 <strong class="product name product-item-name">
                                                                     <a class="product-item-link"
-                                                                       href="{{ path('buyer_product_details',{
-                                                                           'id': product.id
-                                                                       }) }}">
+                                                                       href="#">
                                                                         {{ product.title }} </a></strong>
                                                             </div>
                                                             <div class="product-reviews-summary short">
@@ -334,67 +328,7 @@
                                                     </div>
                                                 </li>
                                             {% else %}
-                                                <p style="text-align: center;width:100%">This Grower has no Roses in Direct Market</p>
-                                            {% endfor %}
-                                        </ol>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="auction" class="tab-pane fade">
-                        <div id="product-review-container" data-role="product-review">
-                            <div class="block review-list" id="customer-reviews">
-                                <div class="block-content">
-                                    <div class="products wrapper grid products-grid">
-                                        <ol class="products list items product-items">
-                                            {% for product in auctionProducts %}
-                                                <li class="item product product-item">
-                                                    <div class="product-item-info" data-container="product-grid">
-                                                        <div class=" product-item-images">
-                                                            <a class="product photo product-item-photo"
-                                                               href="{{ path('buyer_auction_product_details',{
-                                                                   'id': product.id
-                                                               }) }}" tabindex="-1">
-						<span class="product-image-container" style="width: 350px;">
-						<span class="product-image-wrapper" style="padding-bottom: 126%;">
-						<img alt="{{ product.title }}" class="product-image-photo" height="441"
-                             src="{{ asset('images/products/') }}{{ product.imageName }}" alt="{{ product.title }}"
-                             width="350"></span>
-						</span></a></div>
-                                                        <div class="product-item-details">
-                                                            <div class="content-name">
-                                                                <strong class="product name product-item-name">
-                                                                    <a class="product-item-link"
-                                                                       href="{{ path('buyer_product_details',{
-                                                                           'id': product.id
-                                                                       }) }}">
-                                                                        {{ product.title }} </a></strong>
-                                                            </div>
-                                                            <div class="product-reviews-summary short">
-                                                                <div class="rating-summary">
-                                                                    <span class="label"><span>Rating:</span></span>
-
-                                                                    <div class="rating-result" title="80%">
-                                                                        <span style="width: 80%"><span>80%</span></span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="reviews-actions">
-                                                                    <a class="action view" href="#">
-                                                                        1&nbsp;<span>Review</span></a></div>
-                                                            </div>
-                                                            <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
-							<span class="price-container price-final_price tax weee">
-							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-							<span class="price">{{ product.currency }} {{ product.price }}</span> </span></span>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            {% else %}
-                                                <p style="text-align: center;width:100%">This Grower has no Roses in Direct Market</p>
+                                                <p style="text-align: center;width:100%">This Agent has no Roses in Auction</p>
                                             {% endfor %}
                                         </ol>
                                     </div>
@@ -411,7 +345,7 @@
                                 </div>
                                 <div class="block-content">
                                     <ol class="items review-items">
-                                        {% for review in grower.reviews %}
+                                        {% for review in agent.agentReviews %}
                                             <li class="item review-item">
                                                 <div class="review-title" itemprop="name">{{ review.summary }}</div>
                                                 <div class="review-ratings">
@@ -452,7 +386,7 @@
                             </div>
                         </div>
 
-                        {{ render(controller('AppBundle:Rating/Rating:userRating',{'companyId':grower.id })) }}
+                        {{ render(controller('AppBundle:Rating/Rating:agentRating',{'agentId':agent.id })) }}
                     </div>
                     <div id="comments" class="tab-pane fade"><br/>
                         <div id="product-review-container" data-role="product-review">
@@ -462,7 +396,7 @@
                                 </div>
                                 <div class="block-content">
                                     <ol class="items review-items">
-                                        {% for comment in grower.comments %}
+                                        {% for comment in agent.agentComments %}
                                             <li class="item review-item">
 
                                                 <div class="review-details">
@@ -489,7 +423,7 @@
                             </div>
                         </div>
                         <br/>
-                        {{ render(controller('AppBundle:Comment/Comment:userComment',{'companyId':grower.id })) }}
+                        {{ render(controller('AppBundle:Comment/Comment:agentComment',{'agentId':agent.id })) }}
                     </div>
                 </div>
 

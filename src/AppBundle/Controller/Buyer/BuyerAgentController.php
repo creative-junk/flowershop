@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Buyer;
 
 use AppBundle\Entity\BuyerAgent;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,9 +18,11 @@ class BuyerAgentController extends Controller
 
     public function requestAgentAction(User $agent)
     {
-        $buyer = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        if ($this->buyerAgentExists($buyer,$agent,$buyer)){
+        $buyer = $user->getMyCompany();
+
+        if ($this->buyerAgentExists($buyer,$agent)){
             return new Response(null,500);
         }else {
             $buyerAgent = new BuyerAgent();
@@ -39,17 +42,17 @@ class BuyerAgentController extends Controller
     /**
      * @Route("/agent/agent/{id}/request",name="request-buyer-agent")
      */
-    public function requestBuyerAction(User $buyer){
+    public function requestBuyerAction(Company $buyer){
         $agent = $this->get('security.token_storage')->getToken()->getUser();
 
-        if ($this->buyerAgentExists($buyer,$agent,$agent)){
+        if ($this->buyerAgentExists($buyer,$agent)){
             return new Response(null,500);
         }else {
             $buyerAgent = new BuyerAgent();
             $buyerAgent->setAgent($agent);
             $buyerAgent->setBuyer($buyer);
             $buyerAgent->setStatus('Requested');
-            $buyerAgent->setListOwner($agent);
+            $buyerAgent->setAgentListOwner($agent);
             $buyerAgent->setUpdatedAt(new \DateTime());
 
             $em = $this->getDoctrine()->getManager();
@@ -59,14 +62,13 @@ class BuyerAgentController extends Controller
             return new Response(null, 204);
         }
     }
-    public function buyerAgentExists(User $buyer, User $agent,User $whoseList){
+    public function buyerAgentExists(Company $buyer, User $agent){
         $em = $this->getDoctrine()->getManager();
 
         $buyerAgent = $em->getRepository('AppBundle:BuyerAgent')
             ->findOneBy([
                 'buyer'=>$buyer,
-                'agent'=>$agent,
-                'listOwner'=> $whoseList
+                'agent'=>$agent
             ]);
         if ($buyerAgent){
             return true;

@@ -38,13 +38,7 @@
             <div class="column main">
 
                 <div class="toolbar toolbar-products">
-                    <div class="modes">
-                        <strong id="modes-label" class="modes-label">View as</strong>
-                        <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
-                            <span>Grid</span> </strong>
-                        <a id="mode-list" aria-labelledby="modes-label mode-list" class="modes-mode mode-list"
-                           data-role="mode-switcher" data-value="list" href="#" title="List">
-                            <span>List</span> </a></div>
+
                     <p id="toolbar-amount" class="toolbar-amount">Items
                         <span class="toolbar-number">1</span>-<span class="toolbar-number">
                             {% if products.getTotalItemCount > 9 %}
@@ -61,15 +55,30 @@
                         <table>
                             <tr>
                                 {# sorting of properties based on query components #}
+                                <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Rose Name', 'product.title') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Price', 'product.price',{'direction': 'asc'}) }}</th>
                                 <th>{{ knp_pagination_sortable(products, 'Price', 'product.price') }}</th>
-                                <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Title', 'product.title') }}</th>
+                                <th>{{ knp_pagination_sortable(products,'Season','product.season') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Color','product.color') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Vaselife','product.vaselife') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Stem Length','product.stemLength') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Head Size','product.headsize') }}</th>
 
                             </tr>
                         </table>
 
-                        <a class="action sorter-action sort-asc" data-role="direction-switcher" data-value="desc"
-                           href="#" title="Set Descending Direction">
-                            <span>Set Descending Direction</span> </a></div>
+                        {% if app.request.get('direction')=='desc' %}
+                            <a class="action sort-desc" data-role="direction-switcher" data-value="desc" href="#"
+                               title="Set Descending Direction">
+                                <span><i style="color: black" class="fa fa-sort-desc fa-2x"></i> </span> </a>
+                        {% elseif(app.request.get('direction')=='asc') %}
+                            <a class="action sort-asc" data-role="direction-switcher" data-value="desc" href="#"
+                               title="Set Descending Direction">
+                                <span><i style="color: black" class="fa fa-sort-asc  fa-2x"></i></span> </a>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="products wrapper list products-list">
                     <ol class="products list items product-items">

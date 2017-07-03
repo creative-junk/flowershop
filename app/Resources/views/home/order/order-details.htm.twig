@@ -38,7 +38,7 @@
                                 <div class="brand">
                                 </div>
                                 <div class="title">
-                                    <a href="{{ path('product_details',{
+                                    <a href="{{ path('buyer_product_details',{
                                         'id': orderItem.product.id
                                     }) }}">{{ orderItem.product.title }}</a>
                                 </div>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">
-                        <p><strong>Order number: </strong> #46 </p>
+                        <p><strong>Order number: </strong> {{ order.prettyId }} </p>
                         <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
                         <p><strong>Payment Status: </strong> {{ order.paymentStatus }}</p>
                         <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>

@@ -123,6 +123,60 @@ class CommentController extends Controller
         ]);
     }
     /**
+     * @Route("comment/agent",name="comment-agent")
+     */
+    public function agentCommentAction(Request $request,$agentId=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        if ($agentId==null){
+            $agentId= $request->request->get('grower');
+        }
+
+        $agent = $em->getRepository("AppBundle:User")
+            ->findOneBy([
+                'id'=>$agentId
+            ]);
+
+        $comments = $em->getRepository("AppBundle:Comment")
+            ->findAgentComments($agent);
+
+        $comment = new Comment();
+        $comment->setAgent($agent);
+        $comment->setAuthor($user);
+
+        $form = $this->createForm(CommentFormType::class,$comment);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $comment = $form->getData();
+
+            $agent_id =  $request->request->get('grower');
+
+            $agent = $em->getRepository("AppBundle:User")
+                ->findOneBy([
+                    'id'=>$agent_id
+                ]);
+
+            $comment->setAgent($agent);
+
+            $em->persist($comment);
+            $em->flush();
+
+            return new Response(null,204);
+        }
+
+        return $this->render('comments/agent-comment.htm.twig',[
+            'comments'=>$comments,
+            'commentForm'=>$form->createView(),
+            'agent'=>$agent
+        ]);
+    }
+    /**
      * @Route("comment/listing/rose",name="comment-rose-listing")
      */
     public function roseRatingListingAction(Request $request,$roseId)

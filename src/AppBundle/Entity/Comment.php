@@ -48,6 +48,10 @@ class Comment
      */
     private $vendor;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $agent;
+    /**
      * @ORM\Column(type="boolean",nullable=true)
      */
     private $isApproved;
@@ -252,6 +256,22 @@ class Comment
     public function setVendor($vendor)
     {
         $this->vendor = $vendor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAgent()
+    {
+        return $this->agent;
+    }
+
+    /**
+     * @param mixed $agent
+     */
+    public function setAgent($agent)
+    {
+        $this->agent = $agent;
     }
 
 

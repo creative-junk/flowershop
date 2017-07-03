@@ -11,6 +11,7 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
 use Doctrine\ORM\EntityRepository;
@@ -53,5 +54,13 @@ class OrderItemsRepository extends EntityRepository
         }else{
             return 0;
         }
+    }
+
+    public function findVendorReceivedOrders(Company $user){
+        return $this->createQueryBuilder('order_items')
+            ->andWhere('order_items.vendor= :createdBy')
+            ->setParameter('createdBy',$user)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -11,12 +11,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="auction_order")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuctionOrderRepository")
+ * @Vich\Uploadable
  */
 class AuctionOrder
 {
@@ -26,7 +28,10 @@ class AuctionOrder
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $prettyId;
     /**
      * @ORM\Column(type="string")
      */
@@ -101,12 +106,26 @@ class AuctionOrder
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User",inversedBy="myReceivedAgencyOrders")
      */
     private $receivingAgent;
+    /**
+     * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName", size="imageSize")
+     * @var File
+     */
+    private $imageFile;
 
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $imageName;
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    private $imageSize;
 
     function __construct()
     {
         // we set up "created"+"modified"
         $this->setCreatedAt(new \DateTime());
+        $this->setPrettyId(time());
         if ($this->getUpdatedAt() == null) {
             $this->setUpdatedAt(new \DateTime());
         }
@@ -412,5 +431,76 @@ class AuctionOrder
         $this->paymentStatus = $paymentStatus;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getPrettyId()
+    {
+        return $this->prettyId;
+    }
+
+    /**
+     * @param mixed $prettyId
+     */
+    public function setPrettyId($prettyId)
+    {
+        $this->prettyId = $prettyId;
+    }
+    /**
+     * @return mixed
+     */
+    public function getImageName()
+    {
+        return $this->imageName;
+    }
+
+    /**
+     * @param mixed $imageName
+     */
+    public function setImageName($imageName)
+    {
+        $this->imageName = $imageName;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
+     * @return AuctionOrder
+     */
+    public function setImageFile(File $image = null)
+    {
+        $this->imageFile = $image;
+        if ($image) {
+            //Lets make sure at least one field changes so Doctrine can process the file
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImageSize()
+    {
+        return $this->imageSize;
+    }
+
+    /**
+     * @param integer $imageSize
+     * @return UserOrder
+     */
+    public function setImageSize($imageSize)
+    {
+        $this->imageSize = $imageSize;
+
+        return $this;
+    }
 
 }

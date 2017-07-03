@@ -57,6 +57,7 @@
                 <table id="datatable" class="table table-striped table-bordered">
                     <thead>
                     <tr>
+                        <th>Order ID</th>
                         <th>Order Date</th>
                         <th>Order Amount</th>
                         <th>Order Status</th>
@@ -67,6 +68,9 @@
                     <tbody>
                     {% for order in orders %}
                         <tr>
+                            <td><a style="color: #e93838" href="{{ path('order-details',{
+                                    'id': order.id
+                                }) }}">{{ order.prettyId }}</a> </td>
                             <td><a style="color: #e93838" href="{{ path('order-details',{
                                     'id': order.id
                                 }) }}">{{ order.createdAt | date('d-m-Y H:i:s') }}</a> </td>

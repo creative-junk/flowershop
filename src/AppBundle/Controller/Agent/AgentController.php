@@ -421,13 +421,13 @@ class AgentController extends Controller
         }else{
             $growerIds[] = 1;
         }
-        $queryBuilder = $em->getRepository('AppBundle:User')
-            ->createQueryBuilder('user')
-            ->andWhere('user.id NOT IN (:growers)')
+        $queryBuilder = $em->getRepository('AppBundle:Company')
+            ->createQueryBuilder('company')
+            ->andWhere('company.id NOT IN (:growers)')
             ->setParameter('growers',$growerIds)
-            ->andWhere('user.isActive = :isActive')
+            ->andWhere('company.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
+            ->andWhere('company.companyType = :userType')
             ->setParameter('userType', 'grower');
 
         $query = $queryBuilder->getQuery();

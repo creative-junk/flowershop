@@ -35,7 +35,7 @@
     <div class="breadcrumbs">
         <ul class="items">
             <li class="item home">
-                <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
+                <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
                     Home </a>
             </li>
             <li class="item category131">
@@ -64,7 +64,9 @@
                     <thead>
                     <tr>
                         <th class="col item" scope="col"><span>Buyer</span></th>
+                        <th>&nbsp;</th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
+
                     </tr>
                     </thead>
                     <tbody class="cart item">
@@ -72,17 +74,48 @@
                         <tr class="item-info js-buyer-item">
                             <td data-th="Item" class="col item">
 
-                    <span class="product-image-container" style="width:165px;">
+                    <span class="product-image-container" style="">
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
                           <a href="{{ path('grower_buyer_profile',{
                               'id':buyer.id
-                          }) }}">{{ buyer.fullName }}</a>
+                          }) }}">{{ buyer.companyName }}</a>
    </span>
                     </strong>
 
                     </span>
+                            </td>
+                            <td class="col subtotal" data-th="Subtotal">
+                                {% if buyer.reviews | length > 0 %}
+
+                                    {% set sumQualityratings = 0 %}
+                                    {% set avgQualityRatings=0 %}
+                                    {% for rating in buyer.reviews %}
+                                        {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                    {% endfor %}
+                                    {% set avgQualityRatings= (sumQualityratings / buyer.reviews|length) | round %}
+
+                                    {% set sumValueratings = 0 %}
+                                    {% set avgValueRatings=0 %}
+                                    {% for rating in buyer.reviews %}
+                                        {% set sumValueratings = sumValueratings + rating.value %}
+                                    {% endfor %}
+                                    {% set avgValueRatings= (sumValueratings / buyer.reviews|length) | round %}
+
+                                    {% set sumPriceratings = 0 %}
+                                    {% set avgPriceRatings=0 %}
+                                    {% for rating in buyer.reviews %}
+                                        {% set sumPriceratings = sumPriceratings + rating.price %}
+                                    {% endfor %}
+                                    {% set avgPriceRatings= (sumQualityratings / buyer.reviews|length) | round %}
+
+                                    {% set avgrating=0 %}
+                                    {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                    {{ avgrating | rating(5, "fa-lg")   }}
+
+                                {% endif %}
                             </td>
 
                             <td class="col subtotal" data-th="Subtotal">

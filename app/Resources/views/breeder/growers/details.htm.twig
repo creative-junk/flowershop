@@ -131,11 +131,11 @@
 <div class="breadcrumbs">
     <ul class="items">
         <li class="item home">
-            <a href="{{ path('home') }}" title="Go to Home Page">
+            <a href="{{ path('breeder_dashboard') }}" title="Go to Home Page">
                 Home </a>
         </li>
         <li class="item home">
-            <a href="{{ path('buyer_growers') }}" title="Go to Home Page">
+            <a href="{{ path('breeder_growers_list') }}" title="Go to Home Page">
                 Growers </a>
         </li>
         <li class="item product">
@@ -179,7 +179,7 @@
 
                             <div class="actions">
                                 &nbsp; <a href="#"  class="action request js-request-user"
-                                          data-url="{{ path('request-grower-buyer',{
+                                          data-url="{{ path('request-grower-breeder',{
                                               'id': grower.id
                                           }) }}"
                                           title="Request Grower"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Grower</a>
@@ -294,9 +294,7 @@
                                                     <div class="product-item-info" data-container="product-grid">
                                                         <div class=" product-item-images">
                                                             <a class="product photo product-item-photo"
-                                                               href="{{ path('buyer_product_details',{
-                                                                   'id': product.id
-                                                               }) }}" tabindex="-1">
+                                                               href="#" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
 						<img alt="{{ product.title }}" class="product-image-photo" height="441"
@@ -307,9 +305,7 @@
                                                             <div class="content-name">
                                                                 <strong class="product name product-item-name">
                                                                     <a class="product-item-link"
-                                                                       href="{{ path('buyer_product_details',{
-                                                                           'id': product.id
-                                                                       }) }}">
+                                                                       href="#">
                                                                         {{ product.title }} </a></strong>
                                                             </div>
                                                             <div class="product-reviews-summary short">
@@ -354,9 +350,7 @@
                                                     <div class="product-item-info" data-container="product-grid">
                                                         <div class=" product-item-images">
                                                             <a class="product photo product-item-photo"
-                                                               href="{{ path('buyer_auction_product_details',{
-                                                                   'id': product.id
-                                                               }) }}" tabindex="-1">
+                                                               href="#" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
 						<img alt="{{ product.title }}" class="product-image-photo" height="441"

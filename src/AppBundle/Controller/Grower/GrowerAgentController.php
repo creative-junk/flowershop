@@ -2,10 +2,12 @@
 
 namespace AppBundle\Controller\Grower;
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\GrowerAgent;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class GrowerAgentController extends Controller
@@ -16,9 +18,11 @@ class GrowerAgentController extends Controller
 
     public function requestAgentAction(User $agent)
     {
-        $grower = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        if ($this->growerAgentExists($grower,$agent,$grower)){
+        $grower = $user->getMyCompany();
+
+        if ($this->growerAgentExists($grower,$agent)){
             return new Response(null,500);
         }else {
             $growerAgent = new GrowerAgent();
@@ -38,17 +42,17 @@ class GrowerAgentController extends Controller
     /**
      * @Route("/agent/grower/{id}/request",name="request-grower-agent")
      */
-    public function requestGrowerAction(User $grower){
+    public function requestGrowerAction(Company $grower){
         $agent = $this->get('security.token_storage')->getToken()->getUser();
 
-        if ($this->growerAgentExists($grower,$agent,$agent)){
+        if ($this->growerAgentExists($grower,$agent)){
             return new Response(null,500);
         }else {
             $growerAgent = new GrowerAgent();
             $growerAgent->setAgent($agent);
             $growerAgent->setGrower($grower);
             $growerAgent->setStatus('Requested');
-            $growerAgent->setListOwner($agent);
+            $growerAgent->setAgentListOwner($agent);
             $growerAgent->setUpdatedAt(new \DateTime());
 
             $em = $this->getDoctrine()->getManager();
@@ -59,14 +63,13 @@ class GrowerAgentController extends Controller
         }
     }
 
-    public function growerAgentExists(User $grower, User $agent,User $whoseList){
+    public function growerAgentExists(Company $grower, User $agent){
         $em = $this->getDoctrine()->getManager();
 
         $growerAgent = $em->getRepository('AppBundle:growerAgent')
             ->findOneBy([
                 'grower'=>$grower,
-                'agent'=>$agent,
-                'listOwner'=> $whoseList
+                'agent'=>$agent
             ]);
         if ($growerAgent){
             return true;

@@ -69,7 +69,10 @@ class BillingAddress
      * @ORM\JoinColumn(nullable=false)
      */
     private $company;
-
+    /**
+     * @ORM\Column(type="boolean",nullable=false)
+     */
+    private $isDefault;
 
     /**
      * @return mixed
@@ -230,6 +233,25 @@ class BillingAddress
     {
         $this->user = $user;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getIsDefault()
+    {
+        return $this->isDefault;
+    }
+
+    /**
+     * @param mixed $isDefault
+     */
+    public function setIsDefault($isDefault)
+    {
+        $this->isDefault = $isDefault;
+    }
+
+
+
     public function __toString(){
         return $this->getFirstName().$this->getLastName();
     }

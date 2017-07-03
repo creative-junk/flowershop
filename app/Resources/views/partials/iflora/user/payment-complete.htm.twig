@@ -11,11 +11,11 @@
 <div class="breadcrumbs">
     <ul class="items">
         <li class="item home">
-            <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
+            <a href="{{ path('home') }}" title="Go to Home Page">
                 Home </a>
         </li>
         <li class="item home">
-            <a href="{{ path('grower_seedlings_list') }}" title="Go to Home Page">
+            <a href="{{ path('buyer_shop') }}" title="Go to Home Page">
                 Direct Market </a>
         </li>
         <li class="item product">
@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">
-                        <p><strong>Order number: </strong> #46 </p>
+                        <p><strong>Order number: </strong> {{ order.prettyId }} </p>
                         <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
                         <p><strong>Payment status: </strong> {{ order.paymentStatus }}</p>
                         <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>

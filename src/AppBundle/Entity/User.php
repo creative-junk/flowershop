@@ -137,6 +137,15 @@ class User implements UserInterface
      */
     private $myComments;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="agent",fetch="EXTRA_LAZY")
+     */
+    private $agentComments;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rating",mappedBy="agent",fetch="EXTRA_LAZY")
+     */
+    private $agentReviews;
+
     public function __construct()
     {
         // we set up "created"+"modified"
@@ -154,6 +163,7 @@ class User implements UserInterface
         $this->myReceivedAgencyOrders = new ArrayCollection();
         $this->myOrderItems = new ArrayCollection();
         $this->myComments = new ArrayCollection();
+
     }
 
     /**
@@ -431,37 +441,7 @@ class User implements UserInterface
         $this->agentBuyers = $agentBuyers;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBuyerGrowers()
-    {
-        return $this->buyerGrowers;
-    }
 
-    /**
-     * @param mixed $buyerGrowers
-     */
-    public function setBuyerGrowers($buyerGrowers)
-    {
-        $this->buyerGrowers = $buyerGrowers;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getGrowerBuyers()
-    {
-        return $this->growerBuyers;
-    }
-
-    /**
-     * @param mixed $growerBuyers
-     */
-    public function setGrowerBuyers($growerBuyers)
-    {
-        $this->growerBuyers = $growerBuyers;
-    }
 
     /**
      * @return mixed
@@ -495,37 +475,7 @@ class User implements UserInterface
         $this->agentGrowers = $agentGrowers;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getGrowerBreeders()
-    {
-        return $this->growerBreeders;
-    }
 
-    /**
-     * @param mixed $growerBreeders
-     */
-    public function setGrowerBreeders($growerBreeders)
-    {
-        $this->growerBreeders = $growerBreeders;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBreederGrowers()
-    {
-        return $this->breederGrowers;
-    }
-
-    /**
-     * @param mixed $breederGrowers
-     */
-    public function setBreederGrowers($breederGrowers)
-    {
-        $this->breederGrowers = $breederGrowers;
-    }
 
     /**
      * @return ArrayCollection[Products]
@@ -621,6 +571,22 @@ class User implements UserInterface
     public function getMyComments()
     {
         return $this->myComments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAgentComments()
+    {
+        return $this->agentComments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAgentReviews()
+    {
+        return $this->agentReviews;
     }
 
 

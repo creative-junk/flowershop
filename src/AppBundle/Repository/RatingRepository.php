@@ -56,9 +56,15 @@ class RatingRepository extends EntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
-    public function findUserReviews($user){
+    public function findVendorReviews($user){
         return $this->createQueryBuilder('t')
-            ->where('t.user=:user')
+            ->where('t.vendor=:user')
+            ->setParameter(':user',$user)
+            ->orderBy('t.createdAt','DESC');
+    }
+    public function findAgentReviews($user){
+        return $this->createQueryBuilder('t')
+            ->where('t.agent=:user')
             ->setParameter(':user',$user)
             ->orderBy('t.createdAt','DESC');
     }

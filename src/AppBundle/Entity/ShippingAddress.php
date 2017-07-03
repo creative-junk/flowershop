@@ -70,7 +70,10 @@ class ShippingAddress
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="shippingAddress")
      */
     private $company;
-
+    /**
+     * @ORM\Column(type="boolean",nullable=true)
+     */
+    private $isDefault;
     /**
      * @return mixed
      */
@@ -230,6 +233,24 @@ class ShippingAddress
     {
         $this->user = $user;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getIsDefault()
+    {
+        return $this->isDefault;
+    }
+
+    /**
+     * @param mixed $isDefault
+     */
+    public function setIsDefault($isDefault)
+    {
+        $this->isDefault = $isDefault;
+    }
+
+
     public function __toString(){
         return $this->getFirstName().$this->getLastName();
     }

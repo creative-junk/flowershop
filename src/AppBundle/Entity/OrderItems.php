@@ -53,7 +53,7 @@ class OrderItems
      */
     private $product;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User",inversedBy="myOrderItems")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="myOrderItems")
      */
     private $vendor;
 

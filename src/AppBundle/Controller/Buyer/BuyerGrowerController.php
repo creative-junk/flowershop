@@ -4,9 +4,11 @@ namespace AppBundle\Controller\Buyer;
 
 use AppBundle\Entity\BuyerAgent;
 use AppBundle\Entity\BuyerGrower;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class BuyerGrowerController extends Controller
@@ -15,9 +17,11 @@ class BuyerGrowerController extends Controller
      * @Route("/home/grower/{id}/request",name="request-grower-buyer")
      */
 
-    public function requestGrowerAction(User $grower)
+    public function requestGrowerAction(Request $request,Company $grower)
     {
-        $buyer = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyer = $user->getMyCompany();
 
         if ($this->buyerGrowerExists($buyer,$grower,$buyer)){
             return new Response(null,500);
@@ -39,8 +43,10 @@ class BuyerGrowerController extends Controller
     /**
      * @Route("/grower/buyer/{id}/request",name="request-buyer-grower")
      */
-    public function requestBuyerAction(User $buyer){
-        $grower = $this->get('security.token_storage')->getToken()->getUser();
+    public function requestBuyerAction(Request $request,Company $buyer){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
 
         if ($this->buyerGrowerExists($buyer,$grower,$grower)){
             return new Response(null,500);
@@ -59,7 +65,7 @@ class BuyerGrowerController extends Controller
             return new Response(null, 204);
         }
     }
-    public function buyerGrowerExists(User $buyer, User $grower,User $whoseList){
+    public function buyerGrowerExists(Company $buyer, Company $grower,Company $whoseList){
         $em = $this->getDoctrine()->getManager();
 
         $buyerGrower = $em->getRepository('AppBundle:BuyerGrower')

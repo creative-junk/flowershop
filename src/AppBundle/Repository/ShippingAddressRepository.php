@@ -11,14 +11,15 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 class ShippingAddressRepository extends EntityRepository
 {
-    public function findMyShippingAddress(User $user){
+    public function findMyShippingAddress(Company $user){
         return $this->createQueryBuilder('shipping')
-            ->andWhere('shipping.user= :ownedBy')
+            ->andWhere('shipping.company= :ownedBy')
             ->setParameter('ownedBy',$user)
             ->getQuery()
             ->execute();

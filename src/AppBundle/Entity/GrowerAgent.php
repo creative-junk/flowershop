@@ -36,10 +36,13 @@ class GrowerAgent
      */
     private $grower;
     /**
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
     private $listOwner;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $agentListOwner;
 
     /**
      * @ORM\Column(type="string")
@@ -156,6 +159,22 @@ class GrowerAgent
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAgentListOwner()
+    {
+        return $this->agentListOwner;
+    }
+
+    /**
+     * @param mixed $agentListOwner
+     */
+    public function setAgentListOwner($agentListOwner)
+    {
+        $this->agentListOwner = $agentListOwner;
     }
 
 

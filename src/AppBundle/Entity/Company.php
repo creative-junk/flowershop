@@ -101,6 +101,10 @@ class Company
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rating",mappedBy="vendor",fetch="EXTRA_LAZY")
      */
     private $reviews;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItems",mappedBy="vendor",fetch="EXTRA_LAZY")
+     */
+    private $myOrderItems;
 
     public function __construct()
     {
@@ -118,6 +122,7 @@ class Company
         $this->buyerGrowers = new ArrayCollection();
         $this->roses = new ArrayCollection();
         $this->auctionProducts = new ArrayCollection();
+        $this->myOrderItems = new ArrayCollection();
 
     }
 
@@ -356,6 +361,14 @@ class Company
     public function getAuctionProducts()
     {
         return $this->auctionProducts;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMyOrderItems()
+    {
+        return $this->myOrderItems;
     }
 
 }

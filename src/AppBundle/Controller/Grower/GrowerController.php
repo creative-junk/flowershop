@@ -11,6 +11,7 @@ namespace AppBundle\Controller\Grower;
 
 use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\CartItems;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
@@ -318,8 +319,12 @@ class GrowerController extends Controller
     {
 
         $user = $this->get('security.token_storage')->getToken()->getUser();
+        $vendor = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
-        $orderItems = $user->getMyOrderItems();
+        $orderItems = $em->getRepository("AppBundle:OrderItems")
+            ->findVendorReceivedOrders($vendor);
+
         return $this->render('grower/order/list.html.twig', [
             'orderItems' => $orderItems,
         ]);
@@ -532,15 +537,37 @@ class GrowerController extends Controller
      */
     public function breederListAction(Request $request)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $grower = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
-        $queryBuilder = $em->getRepository('AppBundle:User')
-            ->createQueryBuilder('user')
-            ->andWhere('user.isActive = :isActive')
+
+        $growerBreeders = $em->getRepository('AppBundle:GrowerBreeder')
+            ->findBy([
+                'listOwner' => $grower
+            ]);
+        $breederIds = array();
+
+        if ($growerBreeders) {
+
+            foreach ($growerBreeders as $growerBreeder) {
+                $breederIds[] = $growerBreeder->getBreeder();
+            }
+        } else {
+            $breederIds[] = 1;
+        }
+
+        $queryBuilder = $em->getRepository('AppBundle:Company')
+            ->createQueryBuilder('company')
+            ->andWhere('company.id NOT IN (:breeders)')
+            ->setParameter('breeders', $breederIds)
+            ->andWhere('company.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
+            ->andWhere('company.companyType = :userType')
             ->setParameter('userType', 'breeder');
 
         $query = $queryBuilder->getQuery();
+
         /**
          * @var $paginator \Knp\Component\Pager\Paginator
          */
@@ -588,17 +615,18 @@ class GrowerController extends Controller
     /**
      * @Route("/breeders/{id}/view",name="breeder_profile")
      */
-    public function breederProfileAction(Request $request, User $breeder)
+    public function breederProfileAction(Request $request, Company $breeder)
     {
         $em = $this->getDoctrine()->getManager();
 
         $products = $em->getRepository("AppBundle:Product")
             ->findAllUserActiveSeedlingsOrderByDate($breeder);
         $nrProducts = $em->getRepository("AppBundle:Product")
-            ->findNrActiveBreederSeedlings($breeder);
-        return $this->render(':grower/breeders:profile.html.twig', [
+            ->findNrActiveBreederSeedlings($breeder);;
+
+        return $this->render('grower/breeders/details.htm.twig', [
             'breeder' => $breeder,
-            'products' => $products,
+            'products'=>$products,
             'nrProducts' => $nrProducts,
         ]);
 
@@ -607,7 +635,7 @@ class GrowerController extends Controller
     /**
      * @Route("/buyer/{id}/view",name="grower_buyer_profile")
      */
-    public function buyerProfileAction(User $buyer)
+    public function buyerProfileAction(Request $request,Company $buyer)
     {
         $em = $this->getDoctrine()->getManager();
         $billingAddress = $em->getRepository('AppBundle:BillingAddress')
@@ -620,7 +648,7 @@ class GrowerController extends Controller
         if ($shippingAddress) {
             $shippingAddress = $shippingAddress[0];
         }
-        return $this->render('grower/buyers/buyer-profile.htm.twig', [
+        return $this->render('grower/buyers/details.htm.twig', [
             'buyer' => $buyer,
             'billingAddress' => $billingAddress,
             'shippingAddress' => $shippingAddress,
@@ -730,7 +758,7 @@ class GrowerController extends Controller
         $nrProducts = $em->getRepository("AppBundle:Auction")
             ->findNrMyActiveProductsAgent($agent);
 
-        return $this->render(':grower/agents:profile.html.twig', [
+        return $this->render(':grower/agents:details.htm.twig', [
             'agent' => $agent,
             'products' => $products,
             'nrProducts' => $nrProducts,
@@ -762,12 +790,34 @@ class GrowerController extends Controller
      */
     public function buyerListAction(Request $request = null)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $grower = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
-        $queryBuilder = $em->getRepository('AppBundle:User')
-            ->createQueryBuilder('user')
-            ->andWhere('user.isActive = :isActive')
+
+        $buyerGrowers = $em->getRepository('AppBundle:BuyerGrower')
+            ->findBy([
+                'listOwner' => $grower
+            ]);
+
+        $buyerIds = array();
+
+        if ($buyerGrowers) {
+
+            foreach ($buyerGrowers as $buyerGrower) {
+                $buyerIds[] = $buyerGrower->getBuyer();
+            }
+        } else {
+            $buyerIds[] = 1;
+        }
+
+        $queryBuilder = $em->getRepository('AppBundle:Company')
+            ->createQueryBuilder('company')
+            ->andWhere('company.id NOT IN (:buyers)')
+            ->setParameter('buyers', $buyerIds)
+            ->andWhere('company.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
+            ->andWhere('company.companyType = :userType')
             ->setParameter('userType', 'buyer');
 
         $query = $queryBuilder->getQuery();
@@ -824,10 +874,11 @@ class GrowerController extends Controller
     public function billingAddressAction(Request $request)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
+        $vendor = $user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
         $billingAddressArray = $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($vendor);
         if ($billingAddressArray){
             $billingAddress= $billingAddressArray[0];
         }else {
@@ -869,15 +920,17 @@ class GrowerController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $vendor = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
         $cart = $em->getRepository('AppBundle:Cart')
             ->findMyCart($user);
 
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($vendor);
 
         $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user);
+            ->findMyShippingAddress($vendor);
 
         if ($shippingAddress){
 
@@ -902,6 +955,7 @@ class GrowerController extends Controller
             $shippingAddress->setFirstName($user->getFirstName());
             $shippingAddress->setLastName($user->getLastName());
             $shippingAddress->setEmailAddress($user->getUserName());
+            $shippingAddress->setCompany($vendor);
 
         }
 
@@ -933,6 +987,8 @@ class GrowerController extends Controller
     public function shippingMethodAction(Request $request)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
+
+
 
         $em = $this->getDoctrine()->getManager();
         $cart = $em->getRepository('AppBundle:Cart')
@@ -969,11 +1025,14 @@ class GrowerController extends Controller
     public function paymentAction(Request $request)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $vendor = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($vendor);
         $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user);
+            ->findMyShippingAddress($vendor);
         $cart = $em->getRepository('AppBundle:Cart')
             ->findMyCart($user);
 
@@ -1000,12 +1059,17 @@ class GrowerController extends Controller
 
 
         foreach ( $cartItems as $cartItem){
+
+            $product = $cartItem->getProduct();
+            $vendor=$product->getVendor();
+
             $orderItem = new OrderItems();
             $orderItem->setProduct($cartItem->getProduct());
             $orderItem->setUnitPrice($cartItem->getUnitPrice());
             $orderItem->setQuantity($cartItem->getQuantity());
             $orderItem->setLineTotal($cartItem->getLineTotal());
-            $orderItem->setVendor($cartItem->getProduct()->getUser());
+            $orderItem->setVendor($vendor);
+
             $orderItem->setOrder($myOrder);
             $orderItem->setItemStatus("Pending");
             $em->persist($orderItem);

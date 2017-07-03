@@ -36,6 +36,7 @@ use AppBundle\Form\FilterFormType;
 use AppBundle\Form\MessageFormType;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PaymentMethodFormType;
+use AppBundle\Form\PaymentProofFormType;
 use AppBundle\Form\ShippingAddressFormType;
 use AppBundle\Form\ShippingMethodFormType;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -61,13 +62,26 @@ class HomeController extends Controller
     }
 
     /**
-     * @Route("/home/profile",name="my_profile")
+     * @Route("/account",name="my-profile")
      */
     public function profileAction()
     {
-        return $this->render('home.htm.twig');
+        return $this->render('account/account.htm.twig');
     }
-
+    /**
+     * @Route("/account/address/billing/{id}/edit",name="edit-my-billing-address")
+     */
+    public function editBillingAddressAction(Request $request, BillingAddress $address)
+    {
+        return $this->render('account/billing.htm.twig');
+    }
+    /**
+     * @Route("/account/address/shipping/{id}/edit",name="edit-my-shipping-address")
+     */
+    public function editShippingAddressAction(Request $request, ShippingAddress $address)
+    {
+        return $this->render('account/shipping.htm.twig');
+    }
     /**
      * @Route("/home/wishlist",name="my_wishlist")
      */
@@ -490,18 +504,16 @@ class HomeController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $products = $agent->getProducts();
-        $nrproducts = $em->getRepository('AppBundle:Product')
-            ->findMyActiveProducts($agent);
-        $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
-            ->findMyActiveAuctionProducts($agent);
+        $products = $em->getRepository("AppBundle:Auction")
+            ->findAllMyActiveAgentProductsOrderByDate($agent);
 
-        return $this->render('home/agents/view.htm.twig',[
+        $nrProducts = $em->getRepository("AppBundle:Auction")
+            ->findNrMyActiveProductsAgent($agent);
+
+        return $this->render(':home/agents:details.htm.twig', [
             'agent' => $agent,
-            'products'=>$products,
-            'nrProducts' => $nrproducts,
-            'nrAuctionProducts' => $nrAuctionProducts
-
+            'products' => $products,
+            'nrProducts' => $nrProducts,
         ]);
 
     }
@@ -705,13 +717,14 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $billingAddressArray = $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($user->getMyCompany());
         if ($billingAddressArray){
             $billingAddress= $billingAddressArray[0];
         }else {
 
             $billingAddress = new BillingAddress();
             $billingAddress->setUser($user);
+            $billingAddress->setCompany($user->getMyCompany());
             $billingAddress->setFirstName($user->getFirstName());
             $billingAddress->setLastName($user->getLastName());
             $billingAddress->setEmailAddress($user->getUserName());
@@ -747,10 +760,10 @@ class HomeController extends Controller
 
 
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-                ->findMyBillingAddress($user);
+                ->findMyBillingAddress($user->getMyCompany());
 
         $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user);
+            ->findMyShippingAddress($user->getMyCompany());
 
         if ($shippingAddress){
 
@@ -759,6 +772,7 @@ class HomeController extends Controller
         }else if (!$shippingAddress && $billingAddress){
             $shippingAddress = new ShippingAddress();
             $shippingAddress->setUser($user);
+            $shippingAddress->setCompany($user->getMyCompany());
             $shippingAddress->setFirstName($billingAddress[0]->getFirstName());
             $shippingAddress->setLastName($billingAddress[0]->getLastName());
             $shippingAddress->setEmailAddress($billingAddress[0]->getEmailAddress());
@@ -840,9 +854,9 @@ class HomeController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($user->getMyCompany());
         $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user);
+            ->findMyShippingAddress($user->getMyCompany());
         $cart = $em->getRepository('AppBundle:Cart')
             ->findMyCart($user);
 
@@ -851,6 +865,7 @@ class HomeController extends Controller
         $myOrder->setCreatedAt(new \DateTime());
         $myOrder->setBillingAddress($billingAddress[0]);
         $myOrder->setShippingAddress($shippingAddress[0]);
+
         $myOrder->setUser($user);
         $myOrder->setOrderStatus("Pending");
         $myOrder->setOrderNotes("None");
@@ -868,12 +883,18 @@ class HomeController extends Controller
 
 
         foreach ( $cartItems as $cartItem){
+            $product = $cartItem->getProduct();
+            $vendor=$product->getVendor();
+
             $orderItem = new OrderItems();
-            $orderItem->setProduct($cartItem->getProduct());
+
+            $orderItem->setProduct($product);
             $orderItem->setUnitPrice($cartItem->getUnitPrice());
             $orderItem->setQuantity($cartItem->getQuantity());
             $orderItem->setLineTotal($cartItem->getLineTotal());
+            $orderItem->setVendor($vendor);
             $orderItem->setOrder($myOrder);
+
             $em->persist($orderItem);
             $em->remove($cartItem);
         }
@@ -906,10 +927,36 @@ class HomeController extends Controller
     public function checkoutCompleteAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $order = $this->container->get('session')->get('order');
+        $em = $this->getDoctrine()->getManager();
+
+        $savedOrder = $this->container->get('session')->get('order');
+
+        $order = $em->getRepository("AppBundle:UserOrder")
+            ->findOneBy(
+                [
+                    'id'=>$savedOrder->getId()
+                ]
+            );
+
+        $form = $this->createForm(PaymentProofFormType::class,$order);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+
+            $em->persist($order);
+
+            $em->flush();
+
+            return $this->redirectToRoute('buyer-payment-complete');
+
+        }
 
         return $this->render(':partials/iflora/user:checkout-complete.htm.twig',[
-            'order'=>$order
+            'order'=>$order,
+            'transactionForm'=>$form->createView()
         ]);
     }
     /**
@@ -924,44 +971,23 @@ class HomeController extends Controller
 
         $orderId= $order->getId();
 
-        $userOrder = $em->getRepository('AppBundle:AuctionOrder')
-            ->findBy([
-                'id'=>$orderId
-            ]);
-
-        $userOrder[0]->setPaymentStatus("Complete");
-
-        $em->persist($userOrder[0]);
-        $em->flush();
-
-        return $this->render('partials/iflora/user/auction/payment-complete.htm.twig',[
-            'order'=>$userOrder[0]
-        ]);
-    }
-    /**
-     * @Route("/auction/payment/complete",name="buyer-auction-payment-complete")
-     */
-    public function auctionPaymentCompleteAction(Request $request){
-        $user = $this->get('security.token_storage')->getToken()->getUser();
-
-        $em= $this->getDoctrine()->getManager();
-
-        $order = $this->container->get('session')->get('order');
-        $orderId= $order->getId();
         $userOrder = $em->getRepository('AppBundle:UserOrder')
-            ->findBy([
+            ->findOneBy([
                 'id'=>$orderId
             ]);
 
-        $userOrder[0]->setPaymentStatus("Complete");
+        $userOrder->setPaymentStatus("Complete");
 
-        $em->persist($userOrder[0]);
+        $em->persist($userOrder);
         $em->flush();
 
-        return $this->render(':partials:payment-complete.htm.twig',[
-            'order'=>$userOrder[0]
+
+
+        return $this->render('partials/iflora/user/payment-complete.htm.twig',[
+            'order'=>$userOrder
         ]);
     }
+
     /**
      * @Route("/auction/",name="buyer_auction")
      */
@@ -969,6 +995,8 @@ class HomeController extends Controller
     {
 
         $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(FilterFormType::class);
 
         $queryBuilder = $em->getRepository('AppBundle:Auction')
             ->createQueryBuilder('product')
@@ -989,6 +1017,7 @@ class HomeController extends Controller
 
         return $this->render('buyer/auction/list.htm.twig', [
             'products' => $result,
+            'form'  =>$form->createView()
         ]);
 
 
@@ -1012,9 +1041,13 @@ class HomeController extends Controller
     public function buyAuctionProductAction(Request $request, Auction $product){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $this->container->get('session')->set('auction_order','');
+
         $em = $this->getDoctrine()->getManager();
+
         $billingAddressArray = $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($user->getMyCompany());
+
         if ($billingAddressArray){
             $billingAddress= $billingAddressArray[0];
         }else {
@@ -1025,6 +1058,7 @@ class HomeController extends Controller
             $billingAddress->setLastName($user->getLastName());
             $billingAddress->setEmailAddress($user->getUserName());
         }
+
         $form = $this->createForm(AuctionBuyForm::class, $billingAddress);
 
 
@@ -1039,7 +1073,7 @@ class HomeController extends Controller
             return $this->redirectToRoute('auction_buyer_shipping');
 
         }
-
+        $this->container->get('session')->remove('auction_order');
 
         return$this->render(':partials/iflora/user/auction:checkout.htm.twig',[
             'buyerCheckoutForm'=>$form->createView(),
@@ -1059,7 +1093,7 @@ class HomeController extends Controller
         $shippingAddress = new ShippingAddress();
 
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($user->getMyCompany());
 
         if ($billingAddress){
             $shippingAddress->setUser($user);
@@ -1137,13 +1171,15 @@ class HomeController extends Controller
     public function auctionAgentAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $vendor = $user->getMyCompany();
+
         $product = $this->container->get('session')->get('product');
 
         $em = $this->getDoctrine()->getManager();
 
         $buyerAgents = $em->getRepository("AppBundle:BuyerAgent")
             ->findBy([
-                'buyer'=>$user,
+                'buyer'=>$vendor,
                 'status'=>"Accepted"
             ]);
         $agents=array();
@@ -1185,10 +1221,10 @@ class HomeController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($user->getMyCompany());
 
         $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user);
+            ->findMyShippingAddress($user->getMyCompany());
 
 
         $myOwner = $em->getRepository('AppBundle:User')
@@ -1247,11 +1283,14 @@ class HomeController extends Controller
 
             $em->flush();
 
-            $this->container->get('session')->set('agent', '');
-            $this->container->get('session')->set('product', '');
-            $this->container->get('session')->set('shippingCost', '');
+            $this->container->get('session')->remove('agent');
+            $this->container->get('session')->remove('product');
+            $this->container->get('session')->remove('shippingCost');
+            $this->container->get('session')->remove('auction_order');
 
-            $this->container->get('session')->set('order', $myOrder);
+
+            $this->container->get('session')->set('auction_order', $myOrder);
+
             return $this->redirectToRoute('auction-checkout-complete');
 
         }
@@ -1270,13 +1309,65 @@ class HomeController extends Controller
     public function auctionCheckoutCompleteAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $order = $this->container->get('session')->get('order');
+        $em = $this->getDoctrine()->getManager();
+
+        $savedOrder = $this->container->get('session')->get('auction_order');
+
+        $order = $em->getRepository("AppBundle:AuctionOrder")
+            ->findOneBy(
+                [
+                    'id'=>$savedOrder->getId()
+                ]
+            );
+
+        $form = $this->createForm(PaymentMethodFormType::class,$order);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+
+            $em->persist($order);
+
+            $em->flush();
+
+            return $this->redirectToRoute('buyer-auction-payment-complete');
+
+        }
 
         return $this->render(':partials/iflora/user/auction:checkout-complete.htm.twig',[
-            'order'=>$order
+            'order'=>$order,
+            'transactionForm'=>$form->createView()
         ]);
     }
 
+    /**
+     * @Route("/auction/payment/complete",name="buyer-auction-payment-complete")
+     */
+    public function auctionPaymentCompleteAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $order = $this->container->get('session')->get('auction_order');
+        $orderId= $order->getId();
+        $userOrder = $em->getRepository('AppBundle:AuctionOrder')
+            ->findOneBy([
+                'id'=>$orderId
+            ]);
+
+        $userOrder->setPaymentStatus("Complete");
+
+        $em->persist($userOrder);
+        $em->flush();
+
+        $this->container->get('session')->clear();
+
+        return $this->render(':partials:payment-complete.htm.twig',[
+            'order'=>$userOrder
+        ]);
+    }
 
 
     public function getTotalRequestsAction(){

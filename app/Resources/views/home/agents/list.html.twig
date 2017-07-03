@@ -18,10 +18,12 @@
                     method: 'GET'
                 }).done(function () {
                     $el.fadeOut("slow");
-                }).error(function () {
-                    $(this).find('.fa-spinner')
+                }).fail(function () {
+                    $("#link")
                         .removeClass('fa-spinner')
-                        .addClass('fa-exchange')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                    $(".messages").fadeIn("slow");
                 });
             });
         })
@@ -55,10 +57,8 @@
 
     </div>
     <div class="page messages">
-        <div data-placeholder="messages"></div>
-        <div data-bind="scope: 'messages'">
-            <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
-            <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+        <div class="alert alert-danger">
+            <strong>:( oops!</strong> Something went wrong and your reuest was not completed. Refresh the page and try again
         </div>
 
     </div>
@@ -69,7 +69,7 @@
                     <thead>
                     <tr>
                         <th class="col item" scope="col"><span>Agent</span></th>
-                        <th class="col price" scope="col"><span>Roses in Auction</span></th>
+                        <th class="col item" scope="col"><span></span></th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
@@ -78,7 +78,7 @@
                         <tr class="item-info js-agent-item">
                             <td data-th="Item" class="col item">
 
-                                <span class="product-image-container" style="width:165px;">
+                                <span class="product-image-container" style="">
                                 <strong class="product-item-name">
 
                                     <span class="product-image-wrapper" style="padding-bottom: 100%;">
@@ -92,13 +92,38 @@
 
                             </td>
 
-                            <td class="col price" data-th="Price">
-                                <a class="action action-edit" href="{{ path('buyer_view_agent_roses',{
-                                    'id':agent.id
-                                }) }}"
-                                                   title="View Roses in Auction">View Roses</a>
-                            </td>
+                            <td class="col subtotal" data-th="Subtotal">
+                                {% if agent.agentReviews | length > 0 %}
 
+                                    {% set sumQualityratings = 0 %}
+                                    {% set avgQualityRatings=0 %}
+                                    {% for rating in agent.agentReviews %}
+                                        {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                    {% endfor %}
+                                    {% set avgQualityRatings= (sumQualityratings / agent.agentReviews|length) | round %}
+
+                                    {% set sumValueratings = 0 %}
+                                    {% set avgValueRatings=0 %}
+                                    {% for rating in agent.agentReviews %}
+                                        {% set sumValueratings = sumValueratings + rating.value %}
+                                    {% endfor %}
+                                    {% set avgValueRatings= (sumValueratings / agent.agentReviews|length) | round %}
+
+                                    {% set sumPriceratings = 0 %}
+                                    {% set avgPriceRatings=0 %}
+                                    {% for rating in agent.agentReviews %}
+                                        {% set sumPriceratings = sumPriceratings + rating.price %}
+                                    {% endfor %}
+                                    {% set avgPriceRatings= (sumQualityratings / agent.agentReviews|length) | round %}
+
+                                    {% set avgrating=0 %}
+                                    {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                    {{ avgrating | rating(5, "fa-lg") }}
+
+                                {% endif %}
+
+                            </td>
                             <td class="col subtotal" data-th="Subtotal">
 
                 <span class="price-excluding-tax" data-label="Excl. Tax">
@@ -110,7 +135,7 @@
                                         'id': agent.id
                                     }) }}"
                                      title="Request Agent">
-                                <span class="fa fa-exchange"></span>  Request
+                                <span id="link" class="fa fa-exchange"></span>  Request
 
                             </a>
                         </span>

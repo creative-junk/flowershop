@@ -11,14 +11,14 @@
 namespace AppBundle\Repository;
 
 
-use AppBundle\Entity\User;
+use AppBundle\Entity\Company;
 use Doctrine\ORM\EntityRepository;
 
 class BillingAddressRepository extends EntityRepository
 {
-    public function findMyBillingAddress(User $user){
+    public function findMyBillingAddress(Company $user){
         return $this->createQueryBuilder('billing')
-            ->andWhere('billing.user= :ownedBy')
+            ->andWhere('billing.company = :ownedBy')
             ->setParameter('ownedBy',$user)
             ->getQuery()
             ->execute();

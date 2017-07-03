@@ -39,6 +39,9 @@
 .failure{
     display:none;
 }
+th a.asc,th a.desc{
+    color: #e93838;
+}
 button:active {
     background: #e93838;
     color: #fff;

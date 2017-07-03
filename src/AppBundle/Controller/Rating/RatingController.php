@@ -66,9 +66,9 @@ class RatingController extends Controller
             'rose'=>$rose
         ]);
     }
-    /**
-     * @Route("rate/user",name="rate-user")
-     */
+ /**
+ * @Route("rate/user",name="rate-user")
+ */
     public function userRatingAction(Request $request,$companyId=null)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -107,7 +107,7 @@ class RatingController extends Controller
             return new Response(null,204);
         }
         $reviews = $em->getRepository("AppBundle:Rating")
-            ->findUserReviews($user);
+            ->findVendorReviews($company);
 
         return $this->render('rating/company-rating.htm.twig',[
             'reviews'=>$reviews,
@@ -115,6 +115,59 @@ class RatingController extends Controller
             'grower'=>$company
         ]);
     }
+
+    /**
+     * @Route("rate/agent",name="rate-agent")
+     */
+    public function agentRatingAction(Request $request,$agentId=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $agent = $em->getRepository("AppBundle:User")
+            ->findOneBy([
+                'id'=>$agentId
+            ]);
+        $reviews = $em->getRepository("AppBundle:Rating")
+            ->findAgentReviews($agent);
+
+
+        $rating = new Rating();
+        $rating->setAgent($agent);
+        $rating->setRatedBy($user);
+
+        $form = $this->createForm(RatingFormType::class,$rating);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $rating = $form->getData();
+
+            $agent_id =  $request->request->get('grower');
+
+            $agent = $em->getRepository("AppBundle:User")
+                ->findOneBy([
+                    'id'=>$agent_id
+                ]);
+
+            $rating->setAgent($agent);
+
+            $em->persist($rating);
+            $em->flush();
+
+            return new Response(null,204);
+        }
+
+        return $this->render('rating/agent-rating.htm.twig',[
+            'reviews'=>$reviews,
+            'ratingForm'=>$form->createView(),
+            'agent'=>$agent
+        ]);
+    }
+
+
     /**
      * @Route("rate/listing/rose",name="rate-rose-listing")
      */
