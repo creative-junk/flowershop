@@ -103,8 +103,10 @@ class Company
     private $reviews;
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItems",mappedBy="vendor",fetch="EXTRA_LAZY")
+     *
      */
     private $myOrderItems;
+
 
     public function __construct()
     {

@@ -1,23 +1,45 @@
 <div class="my-acount">
-    <strong class="label" style="color:black;"><span>My Account<i style="color:#000;"
-                    class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <strong class="label" style="color:black;"><span>My Account<i style="color:#d61818"
+                                                                  class="fa fa-angle-down">&nbsp;</i></span></strong>
     <ul class="header links">
-        <li><a href="#">My Account</a></li>
-        <li class="link wishlist" data-bind="scope: 'wishlist'">
-            <a href="{{ path('breeder_order_list') }}">Orders
-            </a>
-        </li>
-
+        <li><a href="{{ path('my-breeder-profile') }}">Profile</a></li>
+        <li><a href="{{ path('breeder_order_list') }}">My Orders</a></li>
         <li class="authorization-link" data-label="or">
             <a href="{{ path('security_logout') }}">
                 Logout </a>
         </li>
     </ul>
 </div>
+<div class="my-acount">
+    <strong class="label" style="color:black;"><span>Product Management<i
+                    style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <ul class="header links">
+        <li><a href="{{ path('breeder_seedlings_new') }}">New Product</a></li>
+        <li><a href="{{ path('breeder_order_list') }}">Received Orders</a></li>
+    </ul>
+</div>
+<div class="my-acount">
+    <strong class="label" style="color:black;"><span>My Growers<i
+                    style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <ul class="header links">
+        <li><a href="{{ path('my_breeder_growers') }}">My Growers</a></li>
 
+    </ul>
+</div>
+<div class="my-acount" style="margin-right: 60px;height:20px">
+    <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Messaging/Messaging:getTotalUnread')) }}">
+    <i style="color: black" class="fa fa-envelope fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;left:-100px;margin-top:9px"></strong>
+    <ul class="header links" style="left:-100px;margin-top:5px">
+        <li class="top">Messages</li>
+        <li><a href="{{ path('breeder-inbox') }}">Inbox ( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadMessages')) }} )</a></li>
+        <li><a href="{{ path('breeder-notifications') }}">Notifications( 0 )</a></li>
+    </ul>
+</div>
 <div class="my-acount" style="margin-right: 60px;height:20px">
     <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Breeder/Breeder:getTotalGrowerRequests')) }}">
-    <i style="color: black" class="fa fa-envelope fa-1x fa-inverse"></i>
+    <i style="color: black" class="fa fa-arrow-circle-o-left fa-1x fa-inverse"></i>
 </span>
     <strong class="label" style="color:black;"></strong>
     <ul class="header links" style="left:-100px;margin-top:5px">
@@ -29,7 +51,7 @@
 
 <div class="my-acount" style="margin-right: 60px;height:20px">
     <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Breeder/Breeder:getMyTotalGrowerRequests')) }}">
-    <i style="color: black" class="fa fa-exchange fa-1x fa-inverse"></i>
+    <i style="color: black" class="fa fa-arrow-circle-o-right fa-1x fa-inverse"></i>
 </span>
     <strong class="label" style="color:black;"></strong>
     <ul class="header links" style="left:-100px;margin-top:5px">

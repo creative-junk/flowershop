@@ -67,7 +67,7 @@
                                         <td> <img class="" src="{{ asset('images/products/') }}{{ recommendation.auctionProduct.imageName }}" width="150"
                                                   height="141" alt="{{ recommendation.auctionProduct.title }}"></td>
                                         <td>{{ recommendation.auctionProduct.title }}</td>
-                                        <td>{{ recommendation.listOwner.firstName }}&nbsp;{{ recommendation.listOwner.lastName }}</td>
+                                        <td>{{ recommendation.listOwner.companyName }}</td>
                                         <td>{{ recommendation.createdAt |date("d/m/Y") }}</td>
                                     </tr>
                                 {% else %}

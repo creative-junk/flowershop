@@ -5,7 +5,7 @@
 </span>
     <strong class="label" style="color:black;"></strong>
     <ul class="header links" style="left:-100px;margin-top:25px">
-        <li><a href="#">My Account</a></li>
+        <li><a href="{{ path('my-agent-profile') }}">Profile</a></li>
 
         <li class="authorization-link" data-label="or">
             <a href="{{ path('security_logout') }}">
@@ -25,10 +25,20 @@
         </li>
     </ul>
 </div>
-
+<div class="my-acount" style="margin-right: 60px;height:20px">
+    <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Messaging/Messaging:getTotalUnread')) }}">
+    <i style="color: black" class="fa fa-envelope fa-1x fa-inverse"></i>
+</span>
+    <strong class="label" style="color:black;left:-100px;margin-top:9px"></strong>
+    <ul class="header links" style="left:-100px;margin-top:5px">
+        <li class="top">Messages</li>
+        <li><a href="{{ path('agent-inbox') }}">Inbox ( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadMessages')) }} )</a></li>
+        <li><a href="{{ path('agent-notifications') }}">Notifications( 0 )</a></li>
+    </ul>
+</div>
 <div class="my-acount" style="margin-right: 60px;height:20px">
 <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Agent/Agent:getTotalRequests')) }}">
-    <i style="color: black" class="fa fa-envelope fa-1x fa-inverse"></i>
+    <i style="color: black" class="fa fa-arrow-circle-o-left fa-1x fa-inverse"></i>
 </span>
 <strong class="label" style="color:black;"></strong>
 <ul class="header links" style="left:-100px;margin-top:9px">
@@ -41,7 +51,7 @@
 
 <div class="my-acount" style="margin-right: 60px;height:20px">
     <span class="fa-stack fa-2x has-badge" style="color: black;position:absolute" data-count="{{ render(controller('AppBundle:Agent/Agent:getMyTotalRequests')) }}">
-    <i style="color: black" class="fa fa-exchange fa-1x fa-inverse"></i>
+    <i style="color: black" class="fa fa-arrow-circle-o-right fa-1x fa-inverse"></i>
 </span>
     <strong class="label" style="color:black;"></strong>
     <ul class="header links" style="left:-100px;margin-top:9px">

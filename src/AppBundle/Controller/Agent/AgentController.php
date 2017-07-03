@@ -13,6 +13,7 @@ namespace AppBundle\Controller\Agent;
 use AppBundle\Entity\Auction;
 use AppBundle\Entity\AuctionOrder;
 use AppBundle\Entity\Cart;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\MyList;
 use AppBundle\Entity\Notification;
@@ -69,7 +70,13 @@ class AgentController extends Controller
         ]);
 
     }
-
+    /**
+     * @Route("/account",name="my-agent-profile")
+     */
+    public function profileAction()
+    {
+        return $this->render('account/account.htm.twig');
+    }
     /**
      * @Route("/product/my",name="my_assigned_product_list")
      */
@@ -409,7 +416,7 @@ class AgentController extends Controller
 
         $agentGrowers = $em->getRepository('AppBundle:GrowerAgent')
             ->findBy([
-                'listOwner' => $agent
+                'agentListOwner' => $agent
             ]);
         $growerIds = array();
 
@@ -450,24 +457,29 @@ class AgentController extends Controller
     /**
      * @Route("/growers/{id}/view",name="agent_grower_profile")
      */
-    public function growerProfileAction(Request $request, User $grower)
+    public function growerProfileAction(Request $request, Company $grower)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em = $this->getDoctrine()->getManager();
 
+        $products = $em->getRepository("AppBundle:Product")
+            ->findAllMyActiveProductsOrderByDate($grower);
+        $auctionProducts = $em->getRepository("AppBundle:Auction")
+            ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
-        $products = $grower->getProducts();
         $nrproducts = $em->getRepository('AppBundle:Product')
             ->findMyActiveProducts($grower);
+
         $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
             ->findMyActiveAuctionProducts($grower);
 
-        return $this->render('agent/growers/view.htm.twig', [
+        return $this->render('agent/growers/details.htm.twig', [
             'grower' => $grower,
             'products'=>$products,
             'nrProducts' => $nrproducts,
-            'nrAuctionProducts' => $nrAuctionProducts
+            'nrAuctionProducts' => $nrAuctionProducts,
+            'auctionProducts' => $auctionProducts
         ]);
 
     }
@@ -483,7 +495,7 @@ class AgentController extends Controller
 
         $agentBuyers = $em->getRepository('AppBundle:BuyerAgent')
             ->findBy([
-                'listOwner' => $agent
+                'agentListOwner' => $agent
             ]);
         $buyerIds = array();
 
@@ -496,13 +508,13 @@ class AgentController extends Controller
             $buyerIds[] = 1;
         }
 
-        $queryBuilder = $em->getRepository('AppBundle:User')
+        $queryBuilder = $em->getRepository('AppBundle:Company')
             ->createQueryBuilder('user')
             ->andWhere('user.id NOT IN (:buyers)')
             ->setParameter('buyers',$buyerIds)
             ->andWhere('user.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
+            ->andWhere('user.companyType = :userType')
             ->setParameter('userType', 'buyer');
 
         $query = $queryBuilder->getQuery();
@@ -587,7 +599,7 @@ class AgentController extends Controller
             ->createQueryBuilder('user')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
-            ->andWhere('user.listOwner = :whoOwnsList')
+            ->andWhere('user.agentListOwner = :whoOwnsList')
             ->setParameter('whoOwnsList', $user);
 
         $query = $queryBuilder->getQuery();
@@ -619,7 +631,7 @@ class AgentController extends Controller
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.agent = :whoIsAgent')
             ->setParameter('whoIsAgent', $user)
-            ->andWhere('user.listOwner NOT IN (:agents)')
+            ->andWhere('user.agentListOwner NOT IN (:agents)')
             ->setParameter('agents',$whoseListIds);
 
         $query = $queryBuilder->getQuery();
@@ -691,9 +703,24 @@ class AgentController extends Controller
     /**
      * @Route("/buyers/{id}/view",name="agent_buyer_profile")
      */
-    public function buyerProfileAction()
+    public function buyerProfileAction(Request $request,Company $buyer)
     {
-        return $this->render('agent/buyers/view.htm.twig');
+        $em = $this->getDoctrine()->getManager();
+        $billingAddress = $em->getRepository('AppBundle:BillingAddress')
+            ->findMyBillingAddress($buyer);
+        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
+            ->findMyShippingAddress($buyer);
+        if ($billingAddress) {
+            $billingAddress = $billingAddress[0];
+        }
+        if ($shippingAddress) {
+            $shippingAddress = $shippingAddress[0];
+        }
+        return $this->render('agent/buyers/details.htm.twig', [
+            'buyer' => $buyer,
+            'billingAddress' => $billingAddress,
+            'shippingAddress' => $shippingAddress,
+        ]);
     }
 
     /**
@@ -866,7 +893,7 @@ class AgentController extends Controller
     /**
      * @Route("/recommend/buyer/{id}/product/{product}",name="agent-recommend-product")
      */
-    public function recommendProduct(User $buyer,Product $product){
+    public function recommendProduct(Company $buyer,Product $product){
         $agent = $this->get('security.token_storage')->getToken()->getUser();
 
         $myList = new MyList();
@@ -887,7 +914,7 @@ class AgentController extends Controller
     /**
      * @Route("/recommend/buyer/{id}/auction/{auction}",name="agent-recommend-auction")
      */
-    public function recommendAuction(User $buyer,Auction $auction){
+    public function recommendAuction(Company $buyer,Auction $auction){
         $agent = $this->get('security.token_storage')->getToken()->getUser();
 
         $myList = new MyList();
@@ -1035,7 +1062,7 @@ class AgentController extends Controller
     }
 
     /**
-     * @Route("/inbox",name="buyer-inbox")
+     * @Route("/inbox",name="agent-inbox")
      */
     public function inboxAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -1052,7 +1079,7 @@ class AgentController extends Controller
     }
 
     /**
-     * @Route("/inbox/{id}/view",name="buyer-thread-view")
+     * @Route("/inbox/{id}/view",name="agent-thread-view")
      */
     public function threadViewAction(Request $request,Thread $thread){
 
@@ -1109,7 +1136,7 @@ class AgentController extends Controller
         ]);
     }
     /**
-     * @Route("/sent",name="buyer-sent")
+     * @Route("/sent",name="agent-sent")
      */
     public function sentAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -1125,7 +1152,7 @@ class AgentController extends Controller
         ]);
     }
     /**
-     * @Route("/notifications",name="buyer-notifications")
+     * @Route("/notifications",name="agent-notifications")
      */
     public function deletedAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();

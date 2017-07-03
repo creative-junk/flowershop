@@ -48,13 +48,13 @@
 
                         <td>
                             <a class="{% if not message.isRead %}new{% endif %}"
-                               href="{{ url('grower-thread-view', {'id': message.id}) }}">
+                               href="{{ url('agent-thread-view', {'id': message.id}) }}">
                             {{ message.sender }}
                             </a>
                         </td>
                         <td>
                             <a class="{% if not message.isRead %}new{% endif %}"
-                               href="{{ url('grower-thread-view', {'id': message.id}) }}">
+                               href="{{ url('agent-thread-view', {'id': message.id}) }}">
                                 {{ message.subject }}
                             </a>
 
@@ -62,7 +62,7 @@
 
                         <td>
                             <a class="{% if not message.isRead %}new{% endif %}"
-                               href="{{ url('grower-thread-view', {'id': message.id}) }}">
+                               href="{{ url('agent-thread-view', {'id': message.id}) }}">
                             {{ messageDate | date }}
                             </a>
                         </td>
@@ -91,7 +91,7 @@
         });
 
     </script>
-    {% include(':grower:message-sidebar.htm.twig') %}
+    {% include(':agent:message-sidebar.htm.twig') %}
 </main>
 
 {% endblock %}

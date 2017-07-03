@@ -27,7 +27,7 @@ class MyList
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User",inversedBy="myLists")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="myLists")
      */
     private $listOwner;
     /**
@@ -93,7 +93,7 @@ class MyList
     }
 
     /**
-     * @param User $listOwner
+     * @param Company $listOwner
      */
     public function setListOwner($listOwner)
     {

@@ -58,13 +58,13 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrMyReceivedOrders = $em->getRepository('AppBundle:OrderItems')
-            ->findNrAllMyReceivedOrders($user);
+            ->findNrAllMyReceivedOrders($user->getMyCompany());
         $nrMyOrders = $em->getRepository('AppBundle:UserOrder')
             ->findNrAllMyOrdersAgent($user);
         $nrMyBuyers = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrMyGrowerBuyers($user);
+            ->getNrMyGrowerBuyers($user->getMyCompany());
         $nrMyAgents = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrMyGrowerAgents($user);
+            ->getNrMyGrowerAgents($user->getMyCompany());
 
 
 
@@ -77,7 +77,13 @@ class GrowerController extends Controller
         ]);
 
     }
-
+    /**
+     * @Route("/account",name="my-grower-profile")
+     */
+    public function profileAction()
+    {
+        return $this->render('account/account.htm.twig');
+    }
     /**
      * @Route("/product/",name="grower_product_list")
      */
@@ -718,7 +724,7 @@ class GrowerController extends Controller
             ->andWhere('gb.status = :isAccepted')
             ->setParameter('isAccepted', 'Accepted')
             ->andWhere('gb.grower = :whoIsGrower')
-            ->setParameter('whoIsGrower', $grower);
+            ->setParameter('whoIsGrower', $grower->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -850,7 +856,7 @@ class GrowerController extends Controller
             ->andWhere('gb.status = :isAccepted')
             ->setParameter('isAccepted', 'Accepted')
             ->andWhere('gb.grower = :whoIsGrower')
-            ->setParameter('whoIsGrower', $grower);
+            ->setParameter('whoIsGrower', $grower->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1195,7 +1201,7 @@ class GrowerController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.listOwner = :whoOwnsList')
-            ->setParameter('whoOwnsList', $user);
+            ->setParameter('whoOwnsList', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1208,7 +1214,7 @@ class GrowerController extends Controller
             $request->query->getInt('limit', 9)
         );
 
-        return $this->render('grower/breeders/requests.html.twig', [
+        return $this->render('grower/breeders/myRequests.htm.twig', [
             'breederRequests' => $result,
         ]);
     }
@@ -1257,7 +1263,7 @@ class GrowerController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.listOwner = :whoOwnsList')
-            ->setParameter('whoOwnsList', $user);
+            ->setParameter('whoOwnsList', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1270,7 +1276,7 @@ class GrowerController extends Controller
             $request->query->getInt('limit', 9)
         );
 
-        return $this->render('grower/agents/requests.html.twig', [
+        return $this->render('grower/agents/myrequests.html.twig', [
             'agentRequests' => $result,
         ]);
     }
@@ -1288,7 +1294,7 @@ class GrowerController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.grower = :whoIsGrower')
-            ->setParameter('whoIsGrower', $user);
+            ->setParameter('whoIsGrower', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1319,7 +1325,7 @@ class GrowerController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.grower = :whoIsGrower')
-            ->setParameter('whoIsGrower', $user);
+            ->setParameter('whoIsGrower', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1350,7 +1356,7 @@ class GrowerController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.grower = :whoIsGrower')
-            ->setParameter('whoIsGrower', $user);
+            ->setParameter('whoIsGrower', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1374,11 +1380,11 @@ class GrowerController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
-            ->getNrBreederRequests($user);
+            ->getNrBreederRequests($user->getMyCompany());
         $nrBuyerRequests = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrBuyerRequests($user);
+            ->getNrBuyerRequests($user->getMyCompany());
         $nrAgentRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrAgentRequests($user);
+            ->getNrAgentRequests($user->getMyCompany());
         $totalRequests += $nrBreederRequests;
         $totalRequests += $nrBuyerRequests;
         $totalRequests += $nrAgentRequests;
@@ -1396,7 +1402,7 @@ class GrowerController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
-            ->getNrBreederRequests($user);
+            ->getNrBreederRequests($user->getMyCompany());
 
         $totalRequests += $nrBreederRequests;
 
@@ -1415,7 +1421,7 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrBuyerRequests = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrBuyerRequests($user);
+            ->getNrBuyerRequests($user->getMyCompany());
         $totalRequests += $nrBuyerRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -1432,7 +1438,7 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrAgentRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrAgentRequests($user);
+            ->getNrAgentRequests($user->getMyCompany());
         $totalRequests += $nrAgentRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -1448,10 +1454,10 @@ class GrowerController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
-            ->getNrMyBreederRequests($user);
+            ->getNrMyBreederRequests($user->getMyCompany());
 
         $nrAgentRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrMyAgentRequests($user);
+            ->getNrMyAgentRequests($user->getMyCompany());
         $totalRequests += $nrBreederRequests;
         $totalRequests += $nrAgentRequests;
 
@@ -1468,7 +1474,7 @@ class GrowerController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
-            ->getNrMyBreederRequests($user);
+            ->getNrMyBreederRequests($user->getMyCompany());
 
         $totalRequests += $nrBreederRequests;
 
@@ -1487,7 +1493,7 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrAgentRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrMyAgentRequests($user);
+            ->getNrMyAgentRequests($user->getMyCompany());
         $totalRequests += $nrAgentRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -1503,7 +1509,7 @@ class GrowerController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBuyerRequests = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrMyBuyerRequests($user);
+            ->getNrMyBuyerRequests($user->getMyCompany());
 
         $totalRequests += $nrBuyerRequests;
 

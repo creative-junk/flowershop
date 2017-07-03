@@ -1,14 +1,39 @@
 {% extends 'base.html.twig' %}
-{% block title %} Agent Requests {% endblock %}
+
+{% block title %} Breeder Requests {% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         jQuery(document).ready(function () {
-            $('.js-request-user').on('click',function (e) {
+            $('.js-request-user').on('click', function (e) {
                 e.preventDefault();
 
-                var $el = $(this).closest('.js-agent-item');
+                var $el = $(this).closest('.js-breeder-item');
 
-                $(this).find('.fa-exchange')
+                $(this).find('.fa-thumbs-o-up')
+                    .removeClass('fa-thumbs-o-up')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".messages").fadeIn("slow");
+
+                    $("#accept")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+
+                    $el.fadeOut("slow");
+                });
+            });
+            $('.js-reject-user').on('click', function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-breeder-item');
+
+                $(this).find('.fa-times')
                     .removeClass('fa-times')
                     .addClass('fa-spinner')
                     .addClass('fa-spin');
@@ -16,13 +41,20 @@
                     url: $(this).data('url'),
                     method: 'GET'
                 }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".messages").fadeIn("slow");
+
+                    $("#reject")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+
                     $el.fadeOut("slow");
                 });
             });
         })
     </script>
 {% endblock %}
-
 
 {% block pageclass %}
 <body data-container="body"
@@ -32,7 +64,7 @@
     <div class="category-view">
         <div class="page-title-wrapper">
             <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-                <span class="base" data-ui-id="page-title-wrapper">Agent Requests</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">Breeders</span></h1>
         </div>
         <div class="breadcrumbs">
             <ul class="items">
@@ -41,7 +73,10 @@
                         Home </a>
                 </li>
                 <li class="item category131">
-                    <strong>Agent Requests</strong>
+                    <strong>Breeders</strong>
+                </li>
+                <li class="item category131">
+                    <strong>Breeder Requests</strong>
                 </li>
             </ul>
         </div>
@@ -52,12 +87,14 @@
 
         </div>
         <div class="page messages">
-            <div data-placeholder="messages"></div>
-            <div data-bind="scope: 'messages'">
-                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
-                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
-            </div>
+            <div class="messages" style="">
+                <div class="message-success success message">
+                    <div>
+                        You request has been processed.
+                    </div>
+                </div>
 
+            </div>
         </div>
         <div class="columns">
             <div class="column main">
@@ -65,29 +102,30 @@
                     <table id="shopping-cart-table" class="cart items data table">
                         <thead>
                         <tr>
-                            <th class="col item" scope="col"><span>Agent</span></th>
+                            <th class="col item" scope="col"><span>Breeder</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
-                            <th class="col price" scope="col"><span>Roses</span></th>
+                            <th></th>
+
                             <th class="col subtotal" scope="col"><span>Requested On</span></th>
-                            <th class="col subtotal" scope="col"><span>Cancel</span></th>
+                            <th class="col subtotal" scope="col"><span>Accept / Reject</span></th>
                         </tr>
                         </thead>
                         <tbody class="cart item">
                         {% for agentRequest in agentRequests %}
-                            <tr class="item-info js-agent-item">
+                            <tr class="item-info js-breeder-item">
                                 <td data-th="Item" class="col item">
-
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="{{ path('agent_profile',{
-                              'id':agentRequest.agent.id
-                          }) }}">{{ agentRequest.agent.fullName }}</a>
-   </span>
+                          <a href="{{ path('breeder_profile',{
+                              'id':agentRequest.breeder.id
+                          }) }}">{{ agentRequest.breeder.companyName }}</a>
+                    </span>
                     </strong>
 
                     </span>
+
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
 
@@ -102,6 +140,38 @@
                                     </span>
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
+                                    {% if agentRequest.agent.agentReviews | length > 0 %}
+
+                                        {% set sumQualityratings = 0 %}
+                                        {% set avgQualityRatings=0 %}
+                                        {% for rating in agentRequest.agent.agentReviews %}
+                                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                        {% endfor %}
+                                        {% set avgQualityRatings= (sumQualityratings / agentRequest.agent.agentReviews|length) | round %}
+
+                                        {% set sumValueratings = 0 %}
+                                        {% set avgValueRatings=0 %}
+                                        {% for rating in agentRequest.agent.agentReviews %}
+                                            {% set sumValueratings = sumValueratings + rating.value %}
+                                        {% endfor %}
+                                        {% set avgValueRatings= (sumValueratings / agentRequest.agent.agentReviews|length) | round %}
+
+                                        {% set sumPriceratings = 0 %}
+                                        {% set avgPriceRatings=0 %}
+                                        {% for rating in agentRequest.agent.agentReviews %}
+                                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                                        {% endfor %}
+                                        {% set avgPriceRatings= (sumQualityratings / agentRequest.agent.agentReviews|length) | round %}
+
+                                        {% set avgrating=0 %}
+                                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                        {{ avgrating | rating(5, "fa-lg") }}
+
+                                    {% endif %}
+
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
 
 
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
@@ -113,39 +183,39 @@
 
                                     </span>
                                 </td>
+
                                 <td class="col price" data-th="Price">
-
-                <span class="price-excluding-tax" data-label="Excl. Tax">
-                        <span class="cart-price">
-                            <span class="price"><a class="action action-edit" href="#"
-                                                   title="View Roses">View Roses</a></span>            </span>
-
-                </span>
-                                </td>
-
-                                <td class="col subtotal" data-th="Subtotal">
                                     <a
                                             href="#"
-                                            class="action request js-request-user"
-                                            data-url="{{ path('cancel-grower-agent-request',{
+                                            class="action accept  js-request-user"
+                                            data-url="{{ path('accept_grower-breeder-request',{
                                                 'id': agentRequest.id
                                             }) }}"
-                                            title="Request Breeder">
-                                        <span class="fa fa-times"></span> Cancel
+                                            title="Accept Request">
+                                        <span id="accept" class="fa fa-thumbs-o-up"></span>
 
+                                    </a>&nbsp;
+                                    <a
+                                            href="#"
+                                            class="action request js-reject-user"
+                                            data-url="{{ path('reject-grower-breeder-request',{
+                                                'id': agentRequest.id
+                                            }) }}"
+                                            title="Cancel Request">
+                                        <span id="reject" class="fa fa-times"></span>
 
                                     </a>
 
-                </span>
+
                                 </td>
                             </tr>
-                            {% else %}
-                        <tr class="item-info js-agent-item">
-                            <td data-th="Item" class="col item">
-                            You have no Pending Agent Requests
-                            </td>
-                        </tr>
-                            {% endfor %}
+                        {% else %}
+                            <tr class="item-info">
+                                <td data-th="Item" class="col item">
+                                    There are no Pending Breeder Requests
+                                </td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
 

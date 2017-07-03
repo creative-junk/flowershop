@@ -11,12 +11,13 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 class GrowerBreederRepository extends EntityRepository
 {
-    public function getNrBreederRequests(User $user){
+    public function getNrBreederRequests(Company $user){
         $nrBreederRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -33,7 +34,7 @@ class GrowerBreederRepository extends EntityRepository
             return 0;
         }
     }
-    public function getBreederRequestsQuery(User $user){
+    public function getBreederRequestsQuery(Company $user){
         return $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -45,7 +46,7 @@ class GrowerBreederRepository extends EntityRepository
             ->getQuery();
     }
 
-    public function getNrMyBreederRequests(User $user){
+    public function getNrMyBreederRequests(Company $user){
         $nrBreederRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -62,7 +63,7 @@ class GrowerBreederRepository extends EntityRepository
             return 0;
         }
     }
-    public function getMyBreederRequestsQuery(User $user){
+    public function getMyBreederRequestsQuery(Company $user){
         return $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -74,7 +75,7 @@ class GrowerBreederRepository extends EntityRepository
             ->getQuery();
     }
 
-    public function getNrGrowerRequests(User $user){
+    public function getNrGrowerRequests(Company $user){
         $nrBreederRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -91,7 +92,7 @@ class GrowerBreederRepository extends EntityRepository
             return 0;
         }
     }
-    public function getGrowerRequestsQuery(User $user){
+    public function getGrowerRequestsQuery(Company $user){
         return $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -103,7 +104,7 @@ class GrowerBreederRepository extends EntityRepository
             ->getQuery();
     }
 
-    public function getNrMyGrowerRequests(User $user){
+    public function getNrMyGrowerRequests(Company $user){
         $nrBreederRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -120,7 +121,7 @@ class GrowerBreederRepository extends EntityRepository
             return 0;
         }
     }
-    public function getMyGrowerRequestsQuery(User $user){
+    public function getMyGrowerRequestsQuery(Company $user){
         return $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -131,7 +132,7 @@ class GrowerBreederRepository extends EntityRepository
             ->setParameter('whoOwnsList', $user)
             ->getQuery();
     }
-    public function getNrMyGrowers(User $user){
+    public function getNrMyGrowers(Company $user){
         $nrGrowers= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')

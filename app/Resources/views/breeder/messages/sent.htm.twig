@@ -48,13 +48,13 @@
 
                         <td>
                             <a class="{% if not thread.lastMessage.isRead %}new{% endif %}"
-                               href="{{ url('grower-thread-view', {'id': thread.id}) }}">
+                               href="{{ url('breeder-thread-view', {'id': thread.id}) }}">
                             {{ thread.lastMessage.sender }}
                             </a>
                         </td>
                         <td>
                             <a class="{% if not thread.lastMessage.isRead %}new{% endif %}"
-                               href="{{ url('grower-thread-view', {'id': thread.id}) }}">
+                               href="{{ url('breeder-thread-view', {'id': thread.id}) }}">
                                 {{ thread.lastMessage.subject }}
                             </a>
 
@@ -62,7 +62,7 @@
 
                         <td>
                             <a class="{% if not thread.lastMessage.isRead %}new{% endif %}"
-                               href="{{ url('grower-thread-view', {'id': thread.id}) }}">
+                               href="{{ url('breeder-thread-view', {'id': thread.id}) }}">
                             {{ thread.lastMessageDate | date }}
                             </a>
                         </td>
@@ -90,7 +90,7 @@ No Messages                    </td>
         });
 
     </script>
-    {% include(':grower:message-sidebar.htm.twig') %}
+    {% include(':breeder:message-sidebar.htm.twig') %}
 </main>
 
 {% endblock %}

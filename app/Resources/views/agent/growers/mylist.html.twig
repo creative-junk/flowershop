@@ -112,7 +112,7 @@
                             <th class="col item" scope="col"><span>Grower</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
 
-
+                            <th></th>
                             <th class="col subtotal" scope="col"><span>Connected On</span></th>
 
                         </tr>
@@ -125,7 +125,9 @@
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="#">{{ agentGrower.grower.companyName }}</a>
+                          <a href="{{ path('agent_grower_profile',{
+                              'id': agentGrower.grower.id
+                          }) }}">{{ agentGrower.grower.companyName }}</a>
                     </span>
                     </strong>
 
@@ -144,7 +146,38 @@
 
                                     </span>
                                 </td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                    {% if agentGrower.grower.reviews | length > 0 %}
 
+                                        {% set sumQualityratings = 0 %}
+                                        {% set avgQualityRatings=0 %}
+                                        {% for rating in agentGrower.grower.reviews %}
+                                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                        {% endfor %}
+                                        {% set avgQualityRatings= (sumQualityratings / agentGrower.grower.reviews|length) | round %}
+
+                                        {% set sumValueratings = 0 %}
+                                        {% set avgValueRatings=0 %}
+                                        {% for rating in agentGrower.grower.reviews %}
+                                            {% set sumValueratings = sumValueratings + rating.value %}
+                                        {% endfor %}
+                                        {% set avgValueRatings= (sumValueratings / agentGrower.grower.reviews|length) | round %}
+
+                                        {% set sumPriceratings = 0 %}
+                                        {% set avgPriceRatings=0 %}
+                                        {% for rating in agentGrower.grower.reviews %}
+                                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                                        {% endfor %}
+                                        {% set avgPriceRatings= (sumQualityratings / agentGrower.grower.reviews|length) | round %}
+
+                                        {% set avgrating=0 %}
+                                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                        {{ avgrating | rating(5, "fa-lg") }}
+
+                                    {% endif %}
+
+                                </td>
                                 <td class="col subtotal" data-th="Subtotal">
 
 

@@ -27,7 +27,7 @@ class OrderItemsRepository extends EntityRepository
             ->execute();
     }
 
-    public function findNrAllMyReceivedOrders(User $user){
+    public function findNrAllMyReceivedOrders(Company $user){
         $nrReceivedOrders= $this->createQueryBuilder('order_items')
             ->select('count(order_items.id)')
             ->andWhere('order_items.vendor= :createdBy')

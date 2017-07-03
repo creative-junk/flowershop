@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} My Agent Requests {% endblock %}
+{% block title %} My Breeder Requests {% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         jQuery(document).ready(function () {
             $('.js-request-user').on('click', function (e) {
                 e.preventDefault();
 
-                var $el = $(this).closest('.js-agent-item');
+                var $el = $(this).closest('.js-grower-item');
 
                 $(this).find('.fa-exchange')
                     .removeClass('fa-times')
@@ -32,19 +32,19 @@
     <div class="category-view">
         <div class="page-title-wrapper">
             <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-                <span class="base" data-ui-id="page-title-wrapper">My agents</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">My Growers</span></h1>
         </div>
         <div class="breadcrumbs">
             <ul class="items">
                 <li class="item home">
-                    <a href="{{ path('home') }}" title="Go to Home Page">
+                    <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
                         Home </a>
                 </li>
                 <li class="item category131">
-                    <strong>Agents</strong>
+                    <strong>Breeders</strong>
                 </li>
                 <li class="item category131">
-                    <strong>My Agent Requests</strong>
+                    <strong>My Breeder Requests</strong>
                 </li>
             </ul>
         </div>
@@ -68,7 +68,7 @@
                     <table id="shopping-cart-table" class="cart items data table">
                         <thead>
                         <tr>
-                            <th class="col item" scope="col"><span>Agent</span></th>
+                            <th class="col item" scope="col"><span>Breeder</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
                             <th class="col price" scope="col"><span></span></th>
 
@@ -77,14 +77,16 @@
                         </tr>
                         </thead>
                         <tbody class="cart item">
-                        {% for agentRequest in agentRequests %}
-                            <tr class="item-info js-agent-item">
+                        {% for breederRequest in breederRequests %}
+                            <tr class="item-info js-grower-item">
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
 
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                          <a href="#">{{ agentRequest.agent.fullName }}</a>
+                          <a href="{{ path('breeder_profile',{
+                              'id':breederRequest.grower.id
+                          }) }}">{{ breederRequest.grower.companyName }}</a>
                     </span>
                     </strong>
 
@@ -97,35 +99,35 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ agentRequest.status }}
+                                                {{ breederRequest.status }}
                                                 </span>
                                             </span>
 
                                     </span>
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
-                                    {% if agentRequest.agent.agentReviews | length > 0 %}
+                                    {% if breederRequest.grower.reviews | length > 0 %}
 
                                         {% set sumQualityratings = 0 %}
                                         {% set avgQualityRatings=0 %}
-                                        {% for rating in agentRequest.agent.agentReviews %}
+                                        {% for rating in breederRequest.grower.reviews %}
                                             {% set sumQualityratings = sumQualityratings + rating.quality %}
                                         {% endfor %}
-                                        {% set avgQualityRatings= (sumQualityratings / agentRequest.agent.agentReviews|length) | round %}
+                                        {% set avgQualityRatings= (sumQualityratings / breederRequest.grower.reviews|length) | round %}
 
                                         {% set sumValueratings = 0 %}
                                         {% set avgValueRatings=0 %}
-                                        {% for rating in agentRequest.agent.agentReviews %}
+                                        {% for rating in breederRequest.grower.reviews %}
                                             {% set sumValueratings = sumValueratings + rating.value %}
                                         {% endfor %}
-                                        {% set avgValueRatings= (sumValueratings / agentRequest.agent.agentReviews|length) | round %}
+                                        {% set avgValueRatings= (sumValueratings / breederRequest.grower.reviews|length) | round %}
 
                                         {% set sumPriceratings = 0 %}
                                         {% set avgPriceRatings=0 %}
-                                        {% for rating in agentRequest.agent.agentReviews %}
+                                        {% for rating in breederRequest.grower.reviews %}
                                             {% set sumPriceratings = sumPriceratings + rating.price %}
                                         {% endfor %}
-                                        {% set avgPriceRatings= (sumQualityratings / agentRequest.agent.agentReviews|length) | round %}
+                                        {% set avgPriceRatings= (sumQualityratings / breederRequest.grower.reviews|length) | round %}
 
                                         {% set avgrating=0 %}
                                         {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
@@ -141,7 +143,7 @@
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">
                                                 <span class="price">
-                                                {{ agentRequest.updatedAt |date("d/m/Y") }}
+                                                {{ breederRequest.updatedAt |date("d/m/Y") }}
                                                 </span>
                                             </span>
 
@@ -153,8 +155,8 @@
                                     <a
                                             href="#"
                                             class="action request js-request-user"
-                                            data-url="{{ path('cancel-buyer-agent-request',{
-                                                'id': agentRequest.id
+                                            data-url="{{ path('cancel-buyer-grower-request',{
+                                                'id': breederRequest.id
                                             }) }}"
                                             title="Cancel Request">
                                         <span class="fa fa-times"></span> Cancel
@@ -166,7 +168,7 @@
                         {% else %}
                             <tr class="item-info">
                                 <td data-th="Item" class="col item">
-                                    You have no Pending Agent Requests
+                                    You have no Pending Grower Requests
                                 </td>
                             </tr>
                         {% endfor %}

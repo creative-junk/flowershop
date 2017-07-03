@@ -191,7 +191,7 @@
                     <legend>Please select Buyers to recommend to</legend>
                 {% for agentBuyer in agentBuyers %}
                     <p class="js-recommend-item">
-                        <span  style="display:inline-block;width:180px;"><strong>{{ agentBuyer.buyer.fullName }}</strong></span>
+                        <span  style="display:inline-block;width:180px;"><strong>{{ agentBuyer.buyer.companyName }}</strong></span>
                         <a href="#"
                                 class="action request js-recommend-user"
                            data-url="{{ path('agent-recommend-auction',{

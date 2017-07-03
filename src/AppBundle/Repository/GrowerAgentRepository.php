@@ -11,13 +11,14 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\GrowerAgent;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 class GrowerAgentRepository extends EntityRepository
 {
-    public function getNrAgentRequests(User $user){
+    public function getNrAgentRequests(Company $user){
         $nrAgentRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -34,7 +35,7 @@ class GrowerAgentRepository extends EntityRepository
             return 0;
         }
     }
-    public function getNrMyAgentRequests(User $user){
+    public function getNrMyAgentRequests(Company $user){
         $nrAgentRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -75,7 +76,7 @@ class GrowerAgentRepository extends EntityRepository
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.agent = :whoIsAgent')
             ->setParameter('whoIsAgent', $user)
-            ->andWhere('user.listOwner = :whoOwnsList')
+            ->andWhere('user.agentListOwner = :whoOwnsList')
             ->setParameter('whoOwnsList', $user)
             ->getQuery()
             ->getSingleScalarResult();
@@ -90,7 +91,7 @@ class GrowerAgentRepository extends EntityRepository
      * @param User $user
      * @return GrowerAgent
      */
-    public function findMyAgents(User $user){
+    public function findMyAgents(Company $user){
         return $this->createQueryBuilder('grower_agent')
             ->andWhere('grower_agent.status = :isAccepted')
             ->setParameter('isAccepted',true)
@@ -115,7 +116,7 @@ class GrowerAgentRepository extends EntityRepository
             return 0;
         }
     }
-    public function getNrMyGrowerAgents(User $user){
+    public function getNrMyGrowerAgents(Company $user){
         $nrAgentRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')

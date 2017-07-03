@@ -51,7 +51,7 @@ class Builder implements ContainerAwareInterface
 
         $menu->addChild('Auction Market',array('route'=>'agent_auction_product_list'));
         $menu['Auction Market']->addChild('Assigned Products',array('route'=>'my_assigned_product_list'));
-        $menu['Auction Market']->addChild('My WishList',array('route'=>'my-agent-auction-wishlist'));
+        //$menu['Auction Market']->addChild('My WishList',array('route'=>'my-agent-auction-wishlist'));
 
         $menu->addChild('Buyers',array('route'=>'agent_buyer_list'));
         $menu['Buyers']->addChild('My Buyers',array('route'=>'my-agent-buyers'));

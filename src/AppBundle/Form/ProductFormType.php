@@ -26,6 +26,7 @@ class ProductFormType extends AbstractType
                     'Kenya Shillings - Ksh'=>'Ksh',
                     'Euros - Eur'=>'Eur',
                 ),
+
             ))
             ->add('price',NumberType::class)
             ->add('vaselife', NumberType::class, [

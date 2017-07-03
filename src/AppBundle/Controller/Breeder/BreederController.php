@@ -11,6 +11,7 @@ namespace AppBundle\Controller\Breeder;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
@@ -46,13 +47,13 @@ class BreederController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrMyReceivedOrders = $em->getRepository('AppBundle:OrderItems')
-            ->findNrAllMyReceivedOrders($user);
+            ->findNrAllMyReceivedOrders($user->getMyCompany());
 
         $nrMyGrowers = $em->getRepository('AppBundle:GrowerBreeder')
-            ->getNrMyGrowers($user);
+            ->getNrMyGrowers($user->getMyCompany());
 
         $nrMyProducts = $em->getRepository('AppBundle:Product')
-            ->findNrAllMyActiveProducts($user);
+            ->findNrAllMyActiveProducts($user->getMyCompany());
 
 
 
@@ -63,7 +64,13 @@ class BreederController extends Controller
         ]);
 
     }
-
+    /**
+     * @Route("/account",name="my-breeder-profile")
+     */
+    public function profileAction()
+    {
+        return $this->render('account/account.htm.twig');
+    }
     /**
      * @Route("/seedling/my",name="my_breeder_seedling_list")
      */
@@ -99,13 +106,18 @@ class BreederController extends Controller
      */
     public function newAction(Request $request)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $vendor = $user->getMyCompany();
+
         $product = new Product();
-        $product->setUser($this->get('security.token_storage')->getToken()->getUser());
+        $product->setUser($user);
         $product->setIsActive(true);
         $product->setIsAuthorized(true);
         $product->setIsFeatured(false);
         $product->setIsOnSale(false);
         $product->setIsSeedling(true);
+        $product->setVendor($vendor);
 
         $form = $this->createForm(SeedlingFormType::class, $product);
 
@@ -166,7 +178,7 @@ class BreederController extends Controller
 
         $breederGrowers = $em->getRepository('AppBundle:GrowerBreeder')
             ->findBy([
-                'listOwner' => $breeder
+                'listOwner' => $breeder->getMyCompany()
             ]);
         $growerIds = array();
 
@@ -179,13 +191,13 @@ class BreederController extends Controller
             $growerIds[] = 1;
         }
 
-        $queryBuilder = $em->getRepository('AppBundle:User')
+        $queryBuilder = $em->getRepository('AppBundle:Company')
             ->createQueryBuilder('user')
             ->andWhere('user.id NOT IN (:growers)')
             ->setParameter('growers',$growerIds)
             ->andWhere('user.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
+            ->andWhere('user.companyType = :userType')
             ->setParameter('userType', 'grower');
 
         $query = $queryBuilder->getQuery();
@@ -218,7 +230,7 @@ class BreederController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Accepted')
             ->andWhere('user.breeder = :whoIsBreeder')
-            ->setParameter('whoIsBreeder', $user);
+            ->setParameter('whoIsBreeder', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -238,11 +250,14 @@ class BreederController extends Controller
     /**
      * @Route("/growers/{id}/view",name="grower_profile")
      */
-    public function breederProfileAction(Request $request,User $grower)
+    public function breederProfileAction(Request $request,Company $grower)
     {
         $em= $this->getDoctrine()->getManager();
 
-        $products = $grower->getProducts();
+        $products = $em->getRepository("AppBundle:Product")
+            ->findAllMyActiveProductsOrderByDate($grower);
+        $auctionProducts = $em->getRepository("AppBundle:Auction")
+            ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
         $nrproducts = $em->getRepository('AppBundle:Product')
             ->findMyActiveProducts($grower);
@@ -250,11 +265,12 @@ class BreederController extends Controller
         $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
             ->findMyActiveAuctionProducts($grower);
 
-        return $this->render('breeder/growers/view.htm.twig',[
+        return $this->render('breeder/growers/details.htm.twig',[
             'grower'=>$grower,
             'nrProducts'=>$nrproducts,
             'products'=>$products,
-            'nrAuctionProducts' => $nrAuctionProducts
+            'nrAuctionProducts' => $nrAuctionProducts,
+            'auctionProducts' => $auctionProducts
         ]);
     }
 
@@ -263,9 +279,16 @@ class BreederController extends Controller
      */
     public function ordersListAction(){
 
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+
         $em = $this->getDoctrine()->getManager();
-        $orderItems = $user->getMyOrderItems();
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $vendor = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+        $orderItems = $em->getRepository("AppBundle:OrderItems")
+            ->findVendorReceivedOrders($vendor);
+
         return $this->render('breeder/order/list.html.twig', [
             'orderItems' => $orderItems,
         ]);
@@ -279,7 +302,7 @@ class BreederController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em=$this->getDoctrine()->getManager();
         $orders = $em->getRepository('AppBundle:UserOrder')
-            ->findAllMyOrdersOrderByDate($user);
+            ->findAllMyOrdersOrderByDate($user->getMyCompany());
         return $this->render('breeder/order/mylist.html.twig', [
             'orders' => $orders,
         ]);
@@ -380,7 +403,7 @@ class BreederController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.breeder = :whoIsBreeder')
-            ->setParameter('whoIsBreeder', $user);
+            ->setParameter('whoIsBreeder', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -410,7 +433,7 @@ class BreederController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.listOwner = :whoOwnsList')
-            ->setParameter('whoOwnsList', $user);
+            ->setParameter('whoOwnsList', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -434,7 +457,7 @@ class BreederController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
-            ->getNrMyGrowerRequests($user);
+            ->getNrMyGrowerRequests($user->getMyCompany());
 
         $totalRequests += $nrBreederRequests;
 
@@ -451,7 +474,7 @@ class BreederController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:GrowerBreeder')
-            ->getNrGrowerRequests($user);
+            ->getNrGrowerRequests($user->getMyCompany());
 
         $totalRequests += $nrBreederRequests;
 
@@ -463,7 +486,7 @@ class BreederController extends Controller
 
     }
     /**
-     * @Route("/inbox",name="buyer-inbox")
+     * @Route("/inbox",name="breeder-inbox")
      */
     public function inboxAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -480,7 +503,7 @@ class BreederController extends Controller
     }
 
     /**
-     * @Route("/inbox/{id}/view",name="buyer-thread-view")
+     * @Route("/inbox/{id}/view",name="breeder-thread-view")
      */
     public function threadViewAction(Request $request,Thread $thread){
 
@@ -537,7 +560,7 @@ class BreederController extends Controller
         ]);
     }
     /**
-     * @Route("/sent",name="buyer-sent")
+     * @Route("/sent",name="breeder-sent")
      */
     public function sentAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -553,7 +576,7 @@ class BreederController extends Controller
         ]);
     }
     /**
-     * @Route("/notifications",name="buyer-notifications")
+     * @Route("/notifications",name="breeder-notifications")
      */
     public function deletedAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();

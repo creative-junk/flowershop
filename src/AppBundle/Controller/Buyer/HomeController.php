@@ -366,8 +366,8 @@ class HomeController extends Controller
 
         $queryBuilder = $em->getRepository('AppBundle:BuyerGrower')
             ->createQueryBuilder('buyer_grower')
-            ->andWhere('buyer_grower.listOwner = :whoOwns')
-            ->setParameter('whoOwns',$buyer)
+            ->andWhere('buyer_grower.buyer = :whoOwns')
+            ->setParameter('whoOwns',$buyer->getMyCompany())
             ->andWhere('buyer_grower.status = :whatStatus')
             ->setParameter('whatStatus','Accepted');
 
@@ -427,7 +427,7 @@ class HomeController extends Controller
 
         $buyerAgents = $em->getRepository('AppBundle:BuyerAgent')
             ->findBy([
-                'listOwner' => $buyer
+                'listOwner' => $buyer->getMyCompany()
             ]);
         $agentIds = array();
 
@@ -474,8 +474,8 @@ class HomeController extends Controller
 
         $queryBuilder = $em->getRepository('AppBundle:BuyerAgent')
             ->createQueryBuilder('buyer_agent')
-            ->andWhere('buyer_agent.listOwner = :whoOwns')
-            ->setParameter('whoOwns',$buyer)
+            ->andWhere('buyer_agent.buyer = :whoOwns')
+            ->setParameter('whoOwns',$buyer->getMyCompany())
             ->andWhere('buyer_agent.status = :whatStatus')
             ->setParameter('whatStatus','Accepted');
 
@@ -599,7 +599,7 @@ class HomeController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.listOwner = :whoOwnsList')
-            ->setParameter('whoOwnsList', $user);
+            ->setParameter('whoOwnsList', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -624,7 +624,7 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $query = $em->getRepository('AppBundle:BuyerAgent')
-                                ->getMyAgentRequests($user);
+                                ->getMyAgentRequests($user->getMyCompany());
         /**
          * @var $paginator \Knp\Component\Pager\Paginator
          */
@@ -648,7 +648,7 @@ class HomeController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $query = $em->getRepository('AppBundle:BuyerGrower')
-                    ->getGrowerRequestsQuery($user);
+                    ->getGrowerRequestsQuery($user->getMyCompany());
         /**
          * @var $paginator \Knp\Component\Pager\Paginator
          */
@@ -671,7 +671,7 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $query = $em->getRepository('AppBundle:BuyerAgent')
-                        ->getAgentRequestsQuery($user);
+                        ->getAgentRequestsQuery($user->getMyCompany());
 
         /**
          * @var $paginator \Knp\Component\Pager\Paginator
@@ -1375,10 +1375,10 @@ class HomeController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrGrowerRequests($user);
+            ->getNrGrowerRequests($user->getMyCompany());
 
         $nrAgentRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrAgentRequests($user);
+            ->getNrAgentRequests($user->getMyCompany());
         $totalRequests += $nrBreederRequests;
         $totalRequests += $nrAgentRequests;
 
@@ -1393,7 +1393,7 @@ class HomeController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrGrowerRequests = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrGrowerRequests($user);
+            ->getNrGrowerRequests($user->getMyCompany());
 
         $totalRequests += $nrGrowerRequests;
 
@@ -1410,7 +1410,7 @@ class HomeController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrAgentRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrAgentRequests($user);
+            ->getNrAgentRequests($user->getMyCompany());
         $totalRequests += $nrAgentRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -1424,10 +1424,10 @@ class HomeController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrMyGrowerRequests($user);
+            ->getNrMyGrowerRequests($user->getMyCompany());
 
         $nrAgentRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrMyAgentRequests($user);
+            ->getNrMyAgentRequests($user->getMyCompany());
         $totalRequests += $nrBreederRequests;
         $totalRequests += $nrAgentRequests;
 
@@ -1442,7 +1442,7 @@ class HomeController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrBreederRequests = $em->getRepository('AppBundle:BuyerGrower')
-            ->getNrMyGrowerRequests($user);
+            ->getNrMyGrowerRequests($user->getMyCompany());
 
         $totalRequests += $nrBreederRequests;
 
@@ -1459,7 +1459,7 @@ class HomeController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrAgentRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrMyAgentRequests($user);
+            ->getNrMyAgentRequests($user->getMyCompany());
         $totalRequests += $nrAgentRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [

@@ -150,7 +150,7 @@
                 </div>
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">
-                        <p><strong>Order number: </strong> #46 </p>
+                        <p><strong>Order number: </strong> {{ orderItem.order.prettyId }} </p>
                         <p><strong>Payment method: </strong> {{ orderItem.order.processingFee }}</p>
                         <p><strong>Payment status: </strong> {{ orderItem.order.paymentStatus }}</p>
                         <p><strong>Order Date: </strong> {{ orderItem.order.createdAt | date('d-m-Y H:i:s')  }}</p>
