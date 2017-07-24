@@ -12,11 +12,15 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CompanyRepository")
  * @ORM\Table(name="company")
  * @ORM\HasLifecycleCallbacks
+ * @Vich\Uploadable
  * @UniqueEntity(fields={"email"},message="It looks like you already have an account!")
  */
 class Company
@@ -30,6 +34,11 @@ class Company
     /**
      * @ORM\Column(type="string")
      */
+    private $companyCode;
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Company name MUST be provided")
+     */
     private $companyName;
 
     /**
@@ -40,6 +49,86 @@ class Company
      * @ORM\Column(type="boolean",nullable=true)
      */
     private $isActive;
+    /**
+     * @ORM\Column(type="boolean",nullable=true)
+     */
+    private $isPaid;
+    /**
+     * @Vich\UploadableField(mapping="product_image", fileNameProperty="logoName", size="logoSize")
+     * @var File
+     */
+    private $logoFile;
+
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $logoName;
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    private $logoSize;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $altitude;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank(message="Country MUST be selected")
+     */
+    private $country;
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Currency MUST be provided")
+     */
+    private $currency;
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    private $numberOfVarieties;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $aboutCompany;
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    private $numberOfEmployees;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank(message="Telephone number MUST be provided")
+     */
+    private $telephoneNumber;
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Email Address MUST be provided")
+     */
+    private $email;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $website;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $emailAddress;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $facebookPage;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $twitterPage;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $instagramPage;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\NotBlank(message="Kindly tell us how you first heard about us")
+     */
+    private $reference;
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -69,7 +158,7 @@ class Company
      */
     private $shippingAddress;
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product",mappedBy="vendor",fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Direct",mappedBy="vendor",fetch="EXTRA_LAZY")
      */
     private $roses;
     /**
@@ -94,6 +183,22 @@ class Company
      */
     private $breederGrowers;
     /**
+     * @ORM\OneToMany(targetEntity="BuyerAgent",mappedBy="buyer",fetch="EXTRA_LAZY")
+     */
+    private $buyerAgents;
+    /**
+     * @ORM\OneToMany(targetEntity="BuyerAgent",mappedBy="agent",fetch="EXTRA_LAZY")
+     */
+    private $agentBuyers;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GrowerAgent",mappedBy="grower",fetch="EXTRA_LAZY")
+     */
+    private $growerAgents;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GrowerAgent",mappedBy="agent",fetch="EXTRA_LAZY")
+     */
+    private $agentGrowers;
+    /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="vendor",fetch="EXTRA_LAZY")
      */
     private $comments;
@@ -106,6 +211,16 @@ class Company
      *
      */
     private $myOrderItems;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="recommendedBy",fetch="EXTRA_LAZY")
+     */
+    private $myRecommendations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="listOwner",fetch="EXTRA_LAZY")
+     */
+    private $myLists;
 
 
     public function __construct()
@@ -124,6 +239,14 @@ class Company
         $this->buyerGrowers = new ArrayCollection();
         $this->roses = new ArrayCollection();
         $this->auctionProducts = new ArrayCollection();
+        $this->myOrderItems = new ArrayCollection();
+        $this->buyerAgents = new ArrayCollection();
+        $this->agentBuyers = new ArrayCollection();
+        $this->growerAgents = new ArrayCollection();
+        $this->agentGrowers = new ArrayCollection();
+        $this->myLists = new ArrayCollection();
+        $this->myRecommendations = new ArrayCollection();
+        $this->myReceivedAgencyOrders = new ArrayCollection();
         $this->myOrderItems = new ArrayCollection();
 
     }
@@ -148,6 +271,22 @@ class Company
     /**
      * @return mixed
      */
+    public function getCompanyCode()
+    {
+        return $this->companyCode;
+    }
+
+    /**
+     * @param mixed $companyCode
+     */
+    public function setCompanyCode($companyCode)
+    {
+        $this->companyCode = $companyCode;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getCompanyName()
     {
         return $this->companyName;
@@ -159,6 +298,319 @@ class Company
     public function setCompanyName($companyName)
     {
         $this->companyName = $companyName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLogoName()
+    {
+        return $this->logoName;
+    }
+
+    /**
+     * @param mixed $imageName
+     */
+    public function setLogoName($logoName)
+    {
+        $this->logoName = $logoName;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getLogoFile()
+    {
+        return $this->logoFile;
+    }
+
+    /**
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
+     * @return Company
+     */
+    public function setLogoFile(File $image = null)
+    {
+        $this->imageFile = $image;
+        if ($image) {
+            //Lets make sure at least one field changes so Doctrine can process the file
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLogoSize()
+    {
+        return $this->logoSize;
+    }
+
+    /**
+     * @param integer $logoSize
+     * @return Company
+     */
+    public function setLogoSize($logoSize)
+    {
+        $this->logoSize = $logoSize;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAltitude()
+    {
+        return $this->altitude;
+    }
+
+    /**
+     * @param mixed $altitude
+     */
+    public function setAltitude($altitude)
+    {
+        $this->altitude = $altitude;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param mixed $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getNumberOfVarieties()
+    {
+        return $this->numberOfVarieties;
+    }
+
+    /**
+     * @param integer $numberOfVarieties
+     */
+    public function setNumberOfVarieties($numberOfVarieties)
+    {
+        $this->numberOfVarieties = $numberOfVarieties;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAboutCompany()
+    {
+        return $this->aboutCompany;
+    }
+
+    /**
+     * @param mixed $aboutCompany
+     */
+    public function setAboutCompany($aboutCompany)
+    {
+        $this->aboutCompany = $aboutCompany;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getNumberOfEmployees()
+    {
+        return $this->numberOfEmployees;
+    }
+
+    /**
+     * @param integer $numberOfEmployees
+     */
+    public function setNumberOfEmployees($numberOfEmployees)
+    {
+        $this->numberOfEmployees = $numberOfEmployees;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTelephoneNumber()
+    {
+        return $this->telephoneNumber;
+    }
+
+    /**
+     * @param mixed $telephoneNumber
+     */
+    public function setTelephoneNumber($telephoneNumber)
+    {
+        $this->telephoneNumber = $telephoneNumber;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * @param mixed $website
+     */
+    public function setWebsite($website)
+    {
+        $this->website = $website;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmailAddress()
+    {
+        return $this->emailAddress;
+    }
+
+    /**
+     * @param mixed $emailAddress
+     */
+    public function setEmailAddress($emailAddress)
+    {
+        $this->emailAddress = $emailAddress;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFacebookPage()
+    {
+        return $this->facebookPage;
+    }
+
+    /**
+     * @param mixed $facebookPage
+     */
+    public function setFacebookPage($facebookPage)
+    {
+        $this->facebookPage = $facebookPage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTwitterPage()
+    {
+        return $this->twitterPage;
+    }
+
+    /**
+     * @param mixed $twitterPage
+     */
+    public function setTwitterPage($twitterPage)
+    {
+        $this->twitterPage = $twitterPage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInstagramPage()
+    {
+        return $this->instagramPage;
+    }
+
+    /**
+     * @param mixed $instagramPage
+     */
+    public function setInstagramPage($instagramPage)
+    {
+        $this->instagramPage = $instagramPage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @param mixed $reference
+     */
+    public function setReference($reference)
+    {
+        $this->reference = $reference;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsPaid()
+    {
+        return $this->isPaid;
+    }
+
+    /**
+     * @param mixed $isPaid
+     */
+    public function setIsPaid($isPaid)
+    {
+        $this->isPaid = $isPaid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param mixed $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
     }
 
     /**
@@ -285,21 +737,6 @@ class Company
         $this->shippingAddress = $shippingAddress;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
-    }
-
-    /**
-     * @param mixed $isActive
-     */
-    public function setIsActive($isActive)
-    {
-        $this->isActive = $isActive;
-    }
 
     /**
      * @return mixed
@@ -372,5 +809,96 @@ class Company
     {
         return $this->myOrderItems;
     }
+    /**
+     * @return ArrayCollection|BuyerAgent[]
+     */
+    public function getBuyerAgents()
+    {
+        return $this->buyerAgents;
+    }
+
+    /**
+     * @param mixed $buyerAgents
+     */
+    public function setBuyerAgents($buyerAgents)
+    {
+        $this->buyerAgents = $buyerAgents;
+    }
+
+    /**
+     * @return ArrayCollection|BuyerAgent[]
+     */
+    public function getAgentBuyers()
+    {
+        return $this->agentBuyers;
+    }
+
+    /**
+     * @param mixed $agentBuyers
+     */
+    public function setAgentBuyers($agentBuyers)
+    {
+        $this->agentBuyers = $agentBuyers;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getGrowerAgents()
+    {
+        return $this->growerAgents;
+    }
+
+    /**
+     * @param mixed $growerAgents
+     */
+    public function setGrowerAgents($growerAgents)
+    {
+        $this->growerAgents = $growerAgents;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAgentGrowers()
+    {
+        return $this->agentGrowers;
+    }
+
+    /**
+     * @param mixed $agentGrowers
+     */
+    public function setAgentGrowers($agentGrowers)
+    {
+        $this->agentGrowers = $agentGrowers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMyLists()
+    {
+        return $this->myLists;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMyRecommendations()
+    {
+        return $this->myRecommendations;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMyReceivedAgencyOrders()
+    {
+        return $this->myReceivedAgencyOrders;
+    }
+
+
 
 }

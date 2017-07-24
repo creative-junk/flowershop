@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+{% import ":Macros:form_elements.htm.twig" as formElements %}
+{% block title %} Login / Register {% endblock %}
+{% block javascripts %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}
+{% block body %}
+    <style>
+        .g-recaptcha{
+            margin-left: 27%;
+        }
+    </style>
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Breeder Registration</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('homepage') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item home">
+                    <a href="{{ path('breeder_login') }}" title="">
+                        Breeder </a>
+                </li>
+                <li class="item category121">
+                    <strong>Register</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">Create New Breeder Account</span></h1>
+        </div>
+
+        <div class="columns">
+            <div class="column main">
+                {{ form_start(form) }}
+                <fieldset class="fieldset create info">
+                    <legend class="legend"><span>Company Information</span></legend>
+                    <br>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.companyName) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.email) }}
+                    </div>
+                    <div class="field field-name-lastname required">
+                        {{ form_row(form.telephoneNumber) }}
+                    </div>
+
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.currency) }}
+                    </div>
+                    <div class="field field-name-lastname required">
+                        {{ form_row(form.country) }}
+                    </div>
+                    <div class="field field-name-lastname required">
+                        {{ form_row(form.reference) }}
+                    </div>
+                    {% if error %}
+                        <div class="page message">
+                            <div data-placeholder="messages">
+                                <div class="alert alert-danger">
+                                    {{ errorMessage }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="field confirmation required">
+                        <div class="form-group">
+                            <label class="control-label required">Verification</label>
+                            {{formElements.recaptcha("6LdU2CkUAAAAAM5ZcstsLYNYe6qkU1HExIR2q6fb")}}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <input type="hidden" name="_target_path" value="breeder_login"/>
+                <input type="hidden" name="_failure_path" value="breeder_login"/>
+
+                <div class="actions-toolbar">
+                    <div class="secondary">
+                        <button type="submit" class="action submit primary" title="Create an Account" formnovalidate>
+                            <span>Create an Account</span></button>
+                    </div>
+                    <div class="primary">
+                        <a class="action back primary" href="{{ path('breeder_login') }}"><span>Back</span></a>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+
+
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

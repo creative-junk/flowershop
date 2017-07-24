@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+{% block title %} Login / Register {% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        // prepare the form when the DOM is ready
+        $(document).ready(function() {
+
+            // bind to the form's submit event
+            $('#companyCode').submit(function(e) {
+                var ajaxRequest;
+
+                //Prevent Normal Submit
+                e.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-send-o')
+                    .removeClass('fa-send-o')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                $(this).find('.fa-check')
+                    .removeClass('fa-check')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("companyCode");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var values = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).data('url'),
+                    data: values,
+                    method: 'POST'
+                }).done(function (company) {
+                    $("#add-t-cart")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+
+                    window.location.href=company;
+
+                }).fail(function () {
+
+                    $(".messages").fadeIn("slow");
+
+                    document.getElementById("companyCodeTxt").disabled = true;
+                    $("#add-t-cart")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                })
+
+
+
+            });
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block body %}
+
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">New User Account</span></h1>
+        </div>
+
+        <div class="columns">
+            <div class="column main">
+                <div class="login-container">
+                    <div class="block block-customer-login">
+                        <div class="block-title">
+                            <strong id="block-customer-login-heading" role="heading" aria-level="2">Request User Account</strong>
+                        </div>
+                        <div class="block-content" aria-labelledby="block-customer-login-heading">
+                            {{ form_start(form,{'attr': {'id': 'companyCode'}}) }}
+                            <fieldset class="fieldset login" data-hasrequired="* Required Fields">
+                                <div class="field note">Enter your Company Code to proceed.</div>
+                                <div class="field email required">
+                                    <div class="form-group">
+                                        <label class="control-label required" for="login_form__username">Company Code</label>
+                                        <input type="text" id="companyCodeTxt" name="companyCode" required="required" class="form-control"></div>
+
+                                </div>
+                                <div class="page messages">
+                                    <div data-placeholder="messages">
+
+                                        <div class="alert alert-danger">
+                                            The provided Company code does not exist or the Company is not fully registered.
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="actions-toolbar">
+                                    <div class="primary">
+                                        <button type="submit" class="primary" formnovalidate>
+                                            <span id="add-t-cart" class="fa fa-send-o"></span> &nbsp;<span>Check</span></button>
+                                    </div>
+
+                                </div>
+                            </fieldset>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                    <div class="block block-new-customer">
+                        <div class="block-title">
+                            <strong id="block-new-customer-heading" role="heading" aria-level="2">Instructions</strong>
+                        </div>
+                        <div class="block-content" aria-labelledby="block-new-customer-heading">
+                            <p>Enter your Company Code to start your Request for a User Account. Request your Company administrator for your iFlora Company Code.</p>
+                        <br/><br/>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+{% endblock %}

@@ -2,227 +2,225 @@
 
 namespace AppBundle\Controller\Security;
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
+use AppBundle\Form\CompanyCodeFormType;
+use AppBundle\Form\CompanyRegistrationForm;
 use AppBundle\Form\UserRegistrationForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use ReCaptcha\ReCaptcha;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
     /**
-     * @Route("/register",name="user_register")
+     * @Route("/register/buyer",name="register-buyer")
      */
-    public function registerAction(Request $request)
+    public function registerBuyerAction(Request $request)
     {
-        $user = new User();
-        $user->setUserType('buyer');
-        $user->setRoles(["ROLE_BUYER"]);
-        $user->setIsActive(true);
-        $user->setCurrency('KSH');
-
-        $form = $this->createForm(UserRegistrationForm::class, $user);
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            /** @var User $user */
-            $user = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            // $this->addFlash('success','Welcome '.$user->getEmail().' to Iflora');
-
-            /*return $this->get('security.authentication.guard_handler')
-                ->authenticateUserAndHandleSuccess(
-                    $user,
-                    $request,
-                    $this->get('app.security.login_form_authenticator'),
-                    'main'
-                );*/
-            return $this->redirectToRoute('user-registered');
-        }
-        return $this->render('user/register.htm.twig', [
-            'form' => $form->createView()
-        ]);
+        //Create a Form Array or Handle the Submitted Request
+        $formArray = $this->registerCompany($request, 'Buyer');
+        return $this->render('user/register-buyer.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
     }
 
     /**
-     * @Route("/user/registered",name="user-registered")
+     * @Route("/register/grower",name="register-grower")
      */
-    public function userRegisteredAction()
+    public function registerGrowerAction(Request $request)
+    {
+        //Create a Form Array or Handle the Submitted Request
+        $formArray = $this->registerCompany($request, 'Grower');
+        return $this->render('user/register-grower.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
+    }
+
+    /**
+     * @Route("/register/breeder",name="register-breeder")
+     */
+    public function registerBreederAction(Request $request)
+    {
+        //Create a Form Array or Handle the Submitted Request
+        $formArray = $this->registerCompany($request, 'Breeder');
+        return $this->render('user/register-breeder.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
+    }
+
+    /**
+     * @Route("/register/agent",name="register-agent")
+     */
+    public function registerAgentAction(Request $request)
+    {
+        //Create a Form Array or Handle the Submitted Request
+        $formArray = $this->registerCompany($request, 'Agent');
+        return $this->render('user/register-agent.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
+    }
+
+    /**
+     * @Route("/registered",name="company-registered")
+     */
+    public function companyRegisteredAction()
     {
         return $this->render('user/user-registered.htm.twig');
     }
 
     /**
-     * @Route("/register/grower",name="grower_register")
+     * @Route("/company/user/register",name="register-user")
      */
-    public function registerGrowerAction(Request $request)
+    public function registerUserAction(Request $request)
     {
+        $form = $this->createForm(CompanyCodeFormType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $companyCode = $request->request->get('companyCode');
+            $user = $em->getRepository("AppBundle:Company")->findOneBy(['companyCode' => $companyCode]);
+            if ($user) {
+                // return $this->redirectToRoute('new-user',['id'=>$user->getId()]);
+                $route = $this->generateUrl('new-user', ['id' => $user->getId()]);
+                return new Response($route, 200);
+            } else {
+                return new Response(null, 500);
+            }
+        }
+        return $this->render('user/user-register-code.htm.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/company/{id}/new-user",name="new-user")
+     */
+    public function newUserAction(Request $request, Company $company)
+    {
+        $error = false;
+        $errorMessage = '';
         $user = new User();
-        $user->setUserType('grower');
-        $user->setRoles(["ROLE_GROWER"]);
-        $user->setIsActive(true);
-        $user->setCurrency('KSH');
+        $role = $company->getCompanyType();
+        if ($role == "Buyer") {
+            $user->setRoles(["ROLE_BUYER"]);
+        } elseif ($role == "Grower") {
+            $user->setRoles(["ROLE_GROWER"]);
+        } elseif ($role == "Breeder") {
+            $user->setRoles(["ROLE_BREEDER"]);
+        } elseif ($role == "Agent") {
+            $user->setRoles(["ROLE_AGENT"]);
+        }
+        $user->setIsActive(false);
+        $user->setMyCompany($company);
+        $user->setIsMainAccount(false);
 
         $form = $this->createForm(UserRegistrationForm::class, $user);
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            /** @var User $user */
-            $user = $form->getData();
+        // Verify the Recaptcha
+        $recaptcha = new ReCaptcha('6LdU2CkUAAAAAN9xccXst7YbBiyqMp1_h1WV0wB0');
+        $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            /*  $this->addFlash('success','Welcome '.$user->getEmail().' to Iflora');
-
-              return $this->get('security.authentication.guard_handler')
-                  ->authenticateUserAndHandleSuccess(
-                      $user,
-                      $request,
-                      $this->get('app.security.login_form_authenticator'),
-                      'main'
-                  );*/
-            return $this->redirectToRoute('grower-registered');
+        //But only if the form is submitted
+        if ($form->isSubmitted() && !$resp->isSuccess()) {
+            // Do something if the submit wasn't valid ! Use the message to show something
+            $error = true;
+            $errorMessage = "Verification Failed. The reCAPTCHA wasn't entered correctly.";
+        } else {
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var User $user */
+                $user = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                return $this->redirectToRoute('company-registered');
+            }
         }
-        return $this->render('user/grower-register.htm.twig', [
-            'form' => $form->createView()
-        ]);
+        return $this->render(':user:register-user.htm.twig', ['form' => $form->createView(), 'company' => $company, 'error' => $error, 'errorMessage' => $errorMessage]);
     }
 
-    /**
-     * @Route("/grower/registered",name="grower-registered")
-     */
-    public function growerRegisteredAction()
-    {
-        return $this->render('user/grower-registered.htm.twig');
-    }
-
-    /**
-     * @Route("/register/breeder",name="breeder_register")
-     */
-    public function registerBreederAction(Request $request)
-    {
-        $user = new User();
-        $user->setUserType('breeder');
-        $user->setRoles(["ROLE_BREEDER"]);
-        $user->setIsActive(true);
-        $user->setCurrency('KSH');
-
-        $form = $this->createForm(UserRegistrationForm::class, $user);
-
-
-        $form->handleRequest($request);
-
-        if($form->isValid()){
-            /** @var User $user */
-            $user = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            /*     $this->addFlash('success','Welcome '.$user->getEmail().' to Iflora');
-
-                 return $this->get('security.authentication.guard_handler')
-                     ->authenticateUserAndHandleSuccess(
-                         $user,
-                         $request,
-                         $this->get('app.security.login_form_authenticator'),
-                         'main'
-                     );
-            */
-            return $this->redirectToRoute('breeder-registered');
-        }
-        return $this->render('user/breeder-register.htm.twig', [
-            'form' =>$form->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/breeder/registered",name="breeder-registered")
-     */
-    public function breederRegisteredAction()
-    {
-        return $this->render('user/breeder-registered.htm.twig');
-    }
-    /**
-     * @Route("/register/agent",name="agent_register")
-     */
-    public function registerAgentAction(Request $request)
-    {
-        $user = new User();
-        $user->setUserType('agent');
-        $user->setRoles(["ROLE_AGENT"]);
-        $user->setIsActive(true);
-        $user->setCurrency('KSH');
-
-        $form = $this->createForm(UserRegistrationForm::class, $user);
-
-
-        $form->handleRequest($request);
-        if ($form->isValid()) {
-            /** @var User $user */
-            $user = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            /*  $this->addFlash('success', 'Welcome ' . $user->getEmail() . ' to Iflora');
-
-             return $this->get('security.authentication.guard_handler')
-                  ->authenticateUserAndHandleSuccess(
-                      $user,
-                      $request,
-                      $this->get('app.security.login_form_authenticator'),
-                      'main'
-                  );
-             */
-            return $this->redirectToRoute('agent-registered');
-        }
-        return $this->render('user/agent-register.htm.twig', [
-            'form' => $form->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/agent/registered",name="agent-registered")
-     */
-    public function agentRegisteredAction()
-    {
-        return $this->render('user/agent-registered.htm.twig');
-    }
     /**
      * @Route("/forgot-password",name="password_restore")
      */
-    public function forgotPasswordAction(){
+    public function forgotPasswordAction()
+    {
         return $this->render('home.htm.twig');
     }
+
     /**
      * @Route("/",name="homepage")
      */
-    public function homeAction(){
+    public function homeAction()
+    {
         return $this->render('home.htm.twig');
     }
+
     /**
      * @Route("/about",name="about")
      */
-    public function aboutAction(){
+    public function aboutAction()
+    {
         return $this->render('about.htm.twig');
     }
+
     /**
      * @Route("/contact",name="contact")
      */
-    public function contactAction(){
+    public function contactAction()
+    {
         return $this->render('contact.htm.twig');
     }
 
+    private function generateCode()
+    {
+        $unique = FALSE;
+        $length = 7;
+        $chrDb = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+        $str = '';
+        while (!$unique) {
+            for ($count = 0; $count < $length; $count++) {
+                $chr = $chrDb[rand(0, count($chrDb) - 1)];
+                if (rand(0, 1) == 0) {
+                    $chr = strtolower($chr);
+                }
+                $str .= $chr;
+            }
+            /* check if unique */
+            $em = $this->getDoctrine()->getManager();
+            $existingCode = $em->getRepository("AppBundle:Company")->findOneBy(['companyCode' => $str]);
+            if (!$existingCode) {
+                $unique = TRUE;
+            }
+        }
+        return $str;
+    }
+
+    protected function registerCompany(Request $request, $type)
+    {
+        $error = false;
+        $errorMessage = '';
+        $company = new Company();
+        $company->setCompanyCode($this->generateCode());
+        $company->setCompanyType($type);
+        $company->setIsActive(false);
+        $form = $this->createForm(CompanyRegistrationForm::class, $company);
+        $form->handleRequest($request);
+        // Verify the Recaptcha
+        $recaptcha = new ReCaptcha('6LdU2CkUAAAAAN9xccXst7YbBiyqMp1_h1WV0wB0');
+        $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
+        //But only if the form is submitted
+        if ($form->isSubmitted() && !$resp->isSuccess()) {
+            // Do something if the submit wasn't valid ! Use the message to show something
+            $error = true;
+            $errorMessage = "Verification Failed. The reCAPTCHA wasn't entered correctly.";
+        } else {
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var User $user */
+                $user = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                return $this->redirectToRoute('company-registered');
+            }
+        }
+        $formArray['form'] = $form;
+        $formArray['error'] = $error;
+        $formArray['errorMessage'] = $errorMessage;
+        return $formArray;
+    }
 
 }

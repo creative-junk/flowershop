@@ -59,10 +59,7 @@ class User implements UserInterface
 
     private $plainPassword;
 
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $userType;
+
     /**
      * @ORM\Column(type="json_array")
      */
@@ -73,9 +70,10 @@ class User implements UserInterface
      */
     private $isActive;
     /**
-     * @ORM\Column(type="string",nullable=true,options={"default"="$"})
+     * @ORM\Column(type="boolean")
      */
-    private $currency;
+    private $isMainAccount;
+
     /**
      * @ORM\Column(type="datetime",nullable=true)
      */
@@ -98,53 +96,12 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Product",mappedBy="user",fetch="EXTRA_LAZY")
      */
     private $products;
-    /**
-     * @ORM\OneToMany(targetEntity="BuyerAgent",mappedBy="buyer",fetch="EXTRA_LAZY")
-     */
-    private $buyerAgents;
-    /**
-     * @ORM\OneToMany(targetEntity="BuyerAgent",mappedBy="agent",fetch="EXTRA_LAZY")
-     */
-    private $agentBuyers;
 
-
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GrowerAgent",mappedBy="grower",fetch="EXTRA_LAZY")
-     */
-    private $growerAgents;
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\GrowerAgent",mappedBy="agent",fetch="EXTRA_LAZY")
-     */
-    private $agentGrowers;
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="listOwner",fetch="EXTRA_LAZY")
-     */
-    private $myLists;
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="recommendedBy",fetch="EXTRA_LAZY")
-     */
-    private $myRecommendations;
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\AuctionOrder",mappedBy="receivingAgent",fetch="EXTRA_LAZY")
-     */
-    private $myReceivedAgencyOrders;
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OrderItems",mappedBy="vendor",fetch="EXTRA_LAZY")
-     */
-    private $myOrderItems;
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="user",fetch="EXTRA_LAZY")
      */
     private $myComments;
 
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="agent",fetch="EXTRA_LAZY")
-     */
-    private $agentComments;
-    /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rating",mappedBy="agent",fetch="EXTRA_LAZY")
-     */
-    private $agentReviews;
 
     public function __construct()
     {
@@ -154,14 +111,6 @@ class User implements UserInterface
             $this->setUpdatedAt(new \DateTime());
         }
         $this->products = new ArrayCollection();
-        $this->buyerAgents = new ArrayCollection();
-        $this->agentBuyers = new ArrayCollection();
-        $this->growerAgents = new ArrayCollection();
-        $this->agentGrowers = new ArrayCollection();
-        $this->myLists = new ArrayCollection();
-        $this->myRecommendations = new ArrayCollection();
-        $this->myReceivedAgencyOrders = new ArrayCollection();
-        $this->myOrderItems = new ArrayCollection();
         $this->myComments = new ArrayCollection();
 
     }
@@ -321,6 +270,22 @@ class User implements UserInterface
     }
 
     /**
+     * @return boolean
+     */
+    public function getIsMainAccount()
+    {
+        return $this->isMainAccount;
+    }
+
+    /**
+     * @param boolean $isMainAccount
+     */
+    public function setIsMainAccount($isMainAccount)
+    {
+        $this->isMainAccount = $isMainAccount;
+    }
+
+    /**
      * @return mixed
      */
     public function getFirstName()
@@ -352,37 +317,6 @@ class User implements UserInterface
         $this->lastName = $lastName;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
-
-    /**
-     * @param mixed $currency
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUserType()
-    {
-        return $this->userType;
-    }
-
-    /**
-     * @param mixed $userType
-     */
-    public function setUserType($userType)
-    {
-        $this->userType = $userType;
-    }
 
     /**
      * @return mixed
@@ -409,72 +343,6 @@ class User implements UserInterface
         return trim($this->getFirstName() . ' ' . $this->getLastName());
     }
 
-    /**
-     * @return ArrayCollection|BuyerAgent[]
-     */
-    public function getBuyerAgents()
-    {
-        return $this->buyerAgents;
-    }
-
-    /**
-     * @param mixed $buyerAgents
-     */
-    public function setBuyerAgents($buyerAgents)
-    {
-        $this->buyerAgents = $buyerAgents;
-    }
-
-    /**
-     * @return ArrayCollection|BuyerAgent[]
-     */
-    public function getAgentBuyers()
-    {
-        return $this->agentBuyers;
-    }
-
-    /**
-     * @param mixed $agentBuyers
-     */
-    public function setAgentBuyers($agentBuyers)
-    {
-        $this->agentBuyers = $agentBuyers;
-    }
-
-
-
-    /**
-     * @return mixed
-     */
-    public function getGrowerAgents()
-    {
-        return $this->growerAgents;
-    }
-
-    /**
-     * @param mixed $growerAgents
-     */
-    public function setGrowerAgents($growerAgents)
-    {
-        $this->growerAgents = $growerAgents;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAgentGrowers()
-    {
-        return $this->agentGrowers;
-    }
-
-    /**
-     * @param mixed $agentGrowers
-     */
-    public function setAgentGrowers($agentGrowers)
-    {
-        $this->agentGrowers = $agentGrowers;
-    }
-
 
 
     /**
@@ -485,37 +353,6 @@ class User implements UserInterface
         return $this->products;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getMyLists()
-    {
-        return $this->myLists;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMyRecommendations()
-    {
-        return $this->myRecommendations;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMyReceivedAgencyOrders()
-    {
-        return $this->myReceivedAgencyOrders;
-    }
-
-    /**
-     * @return ArrayCollection[OrderItems]
-     */
-    public function getMyOrderItems()
-    {
-        return $this->myOrderItems;
-    }
 
     /**
      * @return mixed
@@ -573,21 +410,7 @@ class User implements UserInterface
         return $this->myComments;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAgentComments()
-    {
-        return $this->agentComments;
-    }
 
-    /**
-     * @return mixed
-     */
-    public function getAgentReviews()
-    {
-        return $this->agentReviews;
-    }
 
 
 }

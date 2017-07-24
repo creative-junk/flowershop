@@ -27,23 +27,13 @@ class SecurityController extends Controller
      */
     public function loginAdminAction()
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        $form = $this->createForm(LoginForm::class,[
-            '_username' => $lastUsername
-        ]);
+        $formArray = $this->processLogin();
 
         return $this->render(
             'user/admin-login.htm.twig',
             array(
-                'buyerform' => $form->createView(),
-                'error' => $error,
+                'buyerform' => $formArray['form']->createView(),
+                'error' => $formArray['error'],
             ));
     }
 
@@ -53,23 +43,13 @@ class SecurityController extends Controller
      */
     public function loginUserAction()
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        $form = $this->createForm(LoginForm::class,[
-            '_username' => $lastUsername
-        ]);
+        $formArray = $this->processLogin();
 
         return $this->render(
             'user/login.htm.twig',
             array(
-                'buyerform' => $form->createView(),
-                'error' => $error,
+                'buyerform' => $formArray['form']->createView(),
+                'error' => $formArray['error'],
             ));
     }
 
@@ -79,23 +59,14 @@ class SecurityController extends Controller
      */
     public function loginGrowerAction()
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        $form = $this->createForm(LoginForm::class, [
-            '_username' => $lastUsername
-        ]);
+        $formArray = $this->processLogin();
 
         return $this->render(
-            'user/grower-login.htm.twig',
+            'user/login-grower.htm.twig',
             array(
-                'loginform' => $form->createView(),
-                'error' => $error,
+                'loginform' => $formArray['form']->createView(),
+                'error' => $formArray['error'],
             ));
     }
 
@@ -105,23 +76,13 @@ class SecurityController extends Controller
      */
     public function loginBreederAction()
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        $form = $this->createForm(LoginForm::class, [
-            '_username' => $lastUsername
-        ]);
+        $formArray = $this->processLogin();
 
         return $this->render(
-            'user/breeder-login.htm.twig',
+            'user/login-breeder.htm.twig',
             array(
-                'loginform' => $form->createView(),
-                'error' => $error,
+                'loginform' => $formArray['form']->createView(),
+                'error' => $formArray['error'],
             ));
     }
 
@@ -131,23 +92,13 @@ class SecurityController extends Controller
      */
     public function loginAgentAction()
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        $form = $this->createForm(LoginForm::class, [
-            '_username' => $lastUsername
-        ]);
+        $formArray = $this->processLogin();
 
         return $this->render(
-            'user/agent-login.htm.twig',
+            'user/login-agent.htm.twig',
             array(
-                'loginform' => $form->createView(),
-                'error' => $error,
+                'loginform' => $formArray['form']->createView(),
+                'error' => $formArray['error'],
             ));
     }
 
@@ -226,5 +177,25 @@ class SecurityController extends Controller
      */
     public function logoutAction(){
         throw new \Exception('This should not be reached');
+    }
+
+    //Handle the Login Procedures
+    protected function processLogin(){
+        $authenticationUtils = $this->get('security.authentication_utils');
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        $form = $this->createForm(LoginForm::class, [
+            '_username' => $lastUsername
+        ]);
+
+        $formArray['form']=$form;
+        $formArray['error']=$error;
+
+        return $formArray;
     }
 }

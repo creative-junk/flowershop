@@ -6,7 +6,7 @@
 
         <div class="page-title-wrapper">
             <h1 class="page-title">
-                <span class="base" data-ui-id="page-title-wrapper">Customer Login</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">Buyer Login</span></h1>
         </div>
         <div class="page messages">
             <div data-placeholder="messages">
@@ -24,7 +24,7 @@
                     <div class="block block-customer-login">
                         <div class="block-title">
                             <strong id="block-customer-login-heading" role="heading" aria-level="2">Registered
-                                Customers</strong>
+                                Buyers</strong>
                         </div>
                         <div class="block-content" aria-labelledby="block-customer-login-heading">
                             {{ form_start(buyerform) }}
@@ -55,15 +55,24 @@
                     </div>
                     <div class="block block-new-customer">
                         <div class="block-title">
-                            <strong id="block-new-customer-heading" role="heading" aria-level="2">New Customers</strong>
+                            <strong id="block-new-customer-heading" role="heading" aria-level="2">New Buyers</strong>
                         </div>
                         <div class="block-content" aria-labelledby="block-new-customer-heading">
-                            <p>Creating an account has many benefits: check out faster, keep more than one address,
-                                track orders and more.</p>
+                            <p>Are you a buyer? Create an Iflora Company account and get the many benefits: check out faster, track orders and more.</p>
 
                             <div class="actions-toolbar">
                                 <div class="primary">
-                                    <a href="{{ path('user_register') }}" class="action create primary"><span>Create an Account</span></a>
+                                    <a href="{{ path('register-buyer') }}" class="action create primary"><span>Create an Account</span></a>
+                                </div>
+                            </div><br/><br/>
+                            <div class="block-title">
+                                <strong id="block-new-customer-heading" role="heading" aria-level="2">New User Account</strong>
+                            </div>
+                            <p>If your company has an Account, Click below to request for a User Account.</p>
+
+                            <div class="actions-toolbar">
+                                <div class="primary">
+                                    <a href="{{ path('register-user') }}" class="action create primary"><span>Request an Account</span></a>
                                 </div>
                             </div>
                         </div>

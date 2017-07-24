@@ -555,9 +555,9 @@ a.accept{
     letter-spacing: 0;
     line-height: 18px;
 }
-.messages{
+/*.messages{
     display: none;
-}
+}*/
 a#product-addtocart-button{
     margin-left:25px;
 }
@@ -2926,12 +2926,13 @@ button:focus {
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-button {
+button,button:active {
     display: inline-block;
-    background: #d8d8d8;
+    background: #e93838;
     padding: 0 18px;
     line-height: 38px;
     height: 38px;
+    color:#fff;
     text-align: center;
     white-space: nowrap;
     font-size: 1.3rem;

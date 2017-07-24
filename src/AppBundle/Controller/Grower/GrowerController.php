@@ -180,12 +180,14 @@ class GrowerController extends Controller
      */
     public function newAction(Request $request)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         $product = new Product();
-        $product->setUser($this->get('security.token_storage')->getToken()->getUser());
+        $product->setUser($user);
         $product->setIsActive(true);
         $product->setIsAuthorized(true);
         $product->setIsFeatured(false);
         $product->setIsOnSale(false);
+        $product->setVendor($user->getMyCompany());
         $product->setIsSeedling(false);
         $form = $this->createForm(ProductFormType::class, $product);
 
@@ -462,6 +464,7 @@ class GrowerController extends Controller
         $product->setIsActive(true);
         $product->setIsAuthorized(true);
         $product->setUser($user);
+        $product->setVendor($user->getMyCompany());
         $product->setStatus("Pending Agent");
 
         $em = $this->getDoctrine()->getManager();

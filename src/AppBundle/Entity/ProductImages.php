@@ -10,10 +10,15 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use AppBundle\Entity;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 
 /**
  * @ORM\Entity
+ * @Vich\Uploadable
  * @ORM\Table(name="product_images")
  */
 class ProductImages
@@ -25,29 +30,145 @@ class ProductImages
      */
     private $id;
     /**
-     * @ORM\Column(type="string")
+     * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName", size="imageSize")
+     * @var File
      */
-    private $imageUrl;
+    private $imageFile;
+
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $imageName;
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    private $imageSize;
+
     /**
      * @ORM\ManyToOne(targetEntity="Product")
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $createdBy;
+
+    public function __construct()
+    {
+        // we set up "created"+"modified"
+        $this->setCreatedAt(new \DateTime());
+
+
+    }
+    /**
+     * @return mixed
+     */
+    public function getImageName()
+    {
+        return $this->imageName;
+    }
+
+    /**
+     * @param mixed $imageName
+     */
+    public function setImageName($imageName)
+    {
+        $this->imageName = $imageName;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
+     * @return ProductImages
+     */
+    public function setImageFile(File $image = null)
+    {
+        $this->imageFile = $image;
+        if ($image) {
+            //Lets make sure at least one field changes so Doctrine can process the file
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $this;
+    }
 
     /**
      * @return mixed
      */
-    public function getImageUrl()
+    public function getImageSize()
     {
-        return $this->imageUrl;
+        return $this->imageSize;
     }
 
     /**
-     * @param mixed $imageUrl
+     * @param integer $imageSize
+     * @return ProductImages
      */
-    public function setImageUrl($imageUrl)
+    public function setImageSize($imageSize)
     {
-        $this->imageUrl = $imageUrl;
+        $this->imageSize = $imageSize;
+
+        return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param mixed $product
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param mixed $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @param mixed $createdBy
+     */
+    public function setCreatedBy($createdBy)
+    {
+        $this->createdBy = $createdBy;
+    }
+
 
 }

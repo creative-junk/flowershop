@@ -20,7 +20,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AuctionRepository")
  * @ORM\Table(name="auction")
  * @ORM\HasLifecycleCallbacks
- * @Vich\Uploadable
  */
 class Auction
 {
@@ -31,96 +30,58 @@ class Auction
      */
     private $id;
     /**
-     * @Assert\NotBlank()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
+     */
+    private $product;
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $numberOfStems;
+    /**
      * @ORM\Column(type="string")
      */
-    private $title;
+    private $pricePerStem;
     /**
-     * @Gedmo\Slug(fields={"title"},updatable=false)
-     * @ORM\Column(length=255, unique=true)
+     * @ORM\Column(type="string")
      */
-    private $slug;
+    private $quality;
     /**
-     * @Assert\NotBlank()
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="boolean")
      */
-    private $description;
+    private $announceToAgents;
     /**
      * @Assert\NotBlank()
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="boolean")
      */
-    private $summary;
-    /**
-     * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName", size="imageSize")
-     * @var File
-     */
-    private $imageFile;
-
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $imageName;
+    private $isInStock;
     /**
      * @ORM\Column(type="integer",nullable=true)
      */
-    private $imageSize;
+    private $numberOfAgentStems;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $quantity;
+    private $addedBy;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     *
+     */
+    private $sellingAgent;
     /**
      * @ORM\Column(type="string")
      */
     private $currency;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="auctionProducts")
      */
-    private $bundlePrice;
-    /**
-     * @ORM\Column(type="string")
-     */
-    private $finalPrice;
-
-    /**
-     * @Assert\NotBlank()
-     * @ORM\Column(type="boolean")
-     */
-    private $isActive;
-    /**
-     * @Assert\NotBlank()
-     * @ORM\Column(type="boolean")
-     */
-    private $isAuthorized;
-
+    private $vendor;
     /**
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $vendor;
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     *
-     */
-    private $agent;
-
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $status;
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="auctionProduct",fetch="EXTRA_LAZY")
      */
@@ -130,9 +91,7 @@ class Auction
     {
         // we set up "created"+"modified"
         $this->setCreatedAt(new \DateTime());
-        if ($this->getUpdatedAt() == null) {
-            $this->setUpdatedAt(new \DateTime());
-        }
+
         $this->auctionList= new ArrayCollection();
 
     }
@@ -146,167 +105,131 @@ class Auction
     }
 
     /**
-     * @return mixed
+     * @return Product
      */
-    public function getSlug()
+    public function getProduct()
     {
-        return $this->slug;
+        return $this->product;
     }
 
     /**
-     * @param mixed $slug
+     * @param Product $product
      */
-    public function setSlug($slug)
+    public function setProduct($product)
     {
-        $this->slug = $slug;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getPrice()
-    {
-        return $this->finalPrice;
-    }
-
-
-    /**
-     * @param mixed $price
-     */
-    public function setPrice($price)
-    {
-        $this->finalPrice = $price;
-    }
-    /**
-     * @return mixed
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
+        $this->product = $product;
     }
 
     /**
-     * @param mixed $isActive
+     * @return integer
      */
-    public function setIsActive($isActive)
+    public function getNumberOfStems()
     {
-        $this->isActive = $isActive;
+        return $this->numberOfStems;
+    }
+
+    /**
+     * @param integer $numberOfStems
+     */
+    public function setNumberOfStems($numberOfStems)
+    {
+        $this->numberOfStems = $numberOfStems;
     }
 
     /**
      * @return mixed
      */
-    public function getIsAuthorized()
+    public function getPricePerStem()
     {
-        return $this->isAuthorized;
+        return $this->pricePerStem;
     }
 
     /**
-     * @param mixed $isAuthorized
+     * @param mixed $pricePerStem
      */
-    public function setIsAuthorized($isAuthorized)
+    public function setPricePerStem($pricePerStem)
     {
-        $this->isAuthorized = $isAuthorized;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param mixed $createdAt
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
+        $this->pricePerStem = $pricePerStem;
     }
 
     /**
      * @return mixed
      */
-    public function getUpdatedAt()
+    public function getQuality()
     {
-        return $this->updatedAt;
+        return $this->quality;
     }
 
     /**
-     * @param mixed $updatedAt
+     * @param mixed $quality
      */
-    public function setUpdatedAt($updatedAt)
+    public function setQuality($quality)
     {
-        $this->updatedAt = $updatedAt;
+        $this->quality = $quality;
     }
 
     /**
-     * @return User $user
-     *
+     * @return boolean
      */
-    public function getUser()
+    public function getAnnounceToAgents()
     {
-        return $this->user;
+        return $this->announceToAgents;
     }
 
     /**
-     * @param User $user
+     * @param boolean $announceToAgents
      */
-    public function setUser($user)
+    public function setAnnounceToAgents($announceToAgents)
     {
-        $this->user = $user;
-    }
-
-
-
-    /**
-     * @return mixed
-     */
-    public function getFinalPrice()
-    {
-        return $this->finalPrice;
+        $this->announceToAgents = $announceToAgents;
     }
 
     /**
-     * @param mixed $finalPrice
+     * @return boolean
      */
-    public function setFinalPrice($finalPrice)
+    public function getIsInStock()
     {
-        $this->finalPrice = $finalPrice;
+        return $this->isInStock;
+    }
+
+    /**
+     * @param boolean $isInStock
+     */
+    public function setIsInStock($isInStock)
+    {
+        $this->isInStock = $isInStock;
     }
 
     /**
      * @return User
      */
-    public function getAgent()
+    public function getSellingAgent()
     {
-        return $this->agent;
+        return $this->sellingAgent;
     }
 
     /**
-     * @param mixed $agent
+     * @param User $sellingAgent
      */
-    public function setAgent(User $agent)
+    public function setSellingAgent($sellingAgent)
     {
-        $this->agent = $agent;
+        $this->sellingAgent = $sellingAgent;
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
-    public function getQuantity()
+    public function getNumberOfAgentStems()
     {
-        return $this->quantity;
+        return $this->numberOfAgentStems;
     }
 
     /**
-     * @param mixed $quantity
+     * @param integer $numberOfAgentStems
      */
-    public function setQuantity($quantity)
+    public function setNumberOfAgentStems($numberOfAgentStems)
     {
-        $this->quantity = $quantity;
+        $this->numberOfAgentStems = $numberOfAgentStems;
     }
 
     /**
@@ -325,145 +248,42 @@ class Auction
         $this->currency = $currency;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBundlePrice()
-    {
-        return $this->bundlePrice;
-    }
 
     /**
-     * @param mixed $bundlePrice
+     * @param mixed $createdAt
      */
-    public function setBundlePrice($bundlePrice)
+    public function setCreatedAt($createdAt)
     {
-        $this->bundlePrice = $bundlePrice;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param mixed $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
+        $this->createdAt = $createdAt;
     }
 
     /**
      * @return mixed
      */
-    public function getDescription()
+    public function getCreatedAt()
     {
-        return $this->description;
+        return $this->createdAt;
+    }
+
+
+
+    /**
+     * @return User $user
+     *
+     */
+    public function getAddedBy()
+    {
+        return $this->addedBy;
     }
 
     /**
-     * @param mixed $description
+     * @param User $user
      */
-    public function setDescription($description)
+    public function setAddedBy($addedBy)
     {
-        $this->description = $description;
+        $this->addedBy = $addedBy;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSummary()
-    {
-        return $this->summary;
-    }
-
-    /**
-     * @param mixed $summary
-     */
-    public function setSummary($summary)
-    {
-        $this->summary = $summary;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getImageName()
-    {
-        return $this->imageName;
-    }
-
-    /**
-     * @param mixed $imageName
-     */
-    public function setImageName($imageName)
-    {
-        $this->imageName = $imageName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getImageSize()
-    {
-        return $this->imageSize;
-    }
-
-    /**
-     * @param mixed $imageSize
-     */
-    public function setImageSize($imageSize)
-    {
-        $this->imageSize = $imageSize;
-    }
-
-    /**
-     * @return File|null
-     */
-    public function getImageFile()
-    {
-        return $this->imageFile;
-    }
-
-    /**
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
-     * @return Product
-     */
-    public function setImageFile(File $image = null)
-    {
-        $this->imageFile = $image;
-        if ($image) {
-            //Lets make sure at least one field changes so Doctrine can process the file
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-        return $this;
-    }
-    function __toString()
-    {
-
-       return $this->title;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param mixed $status
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
 
     /**
      * @return ArrayCollection[MyList]
@@ -473,20 +293,13 @@ class Auction
         return $this->auctionList;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getVendor()
+
+    function __toString()
     {
-        return $this->vendor;
+
+        return $this->product->getTitle;
     }
 
-    /**
-     * @param mixed $vendor
-     */
-    public function setVendor($vendor)
-    {
-        $this->vendor = $vendor;
-    }
+
 
 }

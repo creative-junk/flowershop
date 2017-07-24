@@ -115,3 +115,4 @@ knp_menu:
     # the renderer to use, list is also available by default
     default_renderer: twig
 
+gregwar_captcha: ~

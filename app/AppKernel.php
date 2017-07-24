@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Lexik\Bundle\FormFilterBundle\LexikFormFilterBundle(),
             new blackknight467\StarRatingBundle\StarRatingBundle(),
+            new Gregwar\CaptchaBundle\GregwarCaptchaBundle(),
             new AppBundle\AppBundle(),
         ];
 
