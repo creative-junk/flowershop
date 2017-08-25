@@ -22,7 +22,17 @@ class UserController extends Controller
     {
         //Create a Form Array or Handle the Submitted Request
         $formArray = $this->registerCompany($request, 'Buyer');
-        return $this->render('user/register-buyer.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
+        if (empty($formArray)){
+           return $this->redirectToRoute('company-registered');
+        }
+        return $this->render('user/register-buyer.htm.twig',
+            [
+                'form' => $formArray['form']->createView(),
+                'error' => $formArray['error'],
+                'errorMessage' => $formArray['errorMessage']
+
+            ]
+        );
     }
 
     /**
@@ -32,7 +42,16 @@ class UserController extends Controller
     {
         //Create a Form Array or Handle the Submitted Request
         $formArray = $this->registerCompany($request, 'Grower');
-        return $this->render('user/register-grower.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
+        if (empty($formArray)){
+           return $this->redirectToRoute('company-registered');
+        }
+        return $this->render('user/register-grower.htm.twig',
+            [
+                'form' => $formArray['form']->createView(),
+                'error' => $formArray['error'],
+                'errorMessage' => $formArray['errorMessage']
+            ]
+        );
     }
 
     /**
@@ -42,6 +61,9 @@ class UserController extends Controller
     {
         //Create a Form Array or Handle the Submitted Request
         $formArray = $this->registerCompany($request, 'Breeder');
+        if (empty($formArray)){
+           return $this->redirectToRoute('company-registered');
+        }
         return $this->render('user/register-breeder.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
     }
 
@@ -52,6 +74,9 @@ class UserController extends Controller
     {
         //Create a Form Array or Handle the Submitted Request
         $formArray = $this->registerCompany($request, 'Agent');
+        if (empty($formArray)){
+          return  $this->redirectToRoute('company-registered');
+        }
         return $this->render('user/register-agent.htm.twig', ['form' => $formArray['form']->createView(), 'error' => $formArray['error'], 'errorMessage' => $formArray['errorMessage']]);
     }
 
@@ -61,6 +86,13 @@ class UserController extends Controller
     public function companyRegisteredAction()
     {
         return $this->render('user/user-registered.htm.twig');
+    }
+    /**
+     * @Route("/registered/active",name="company-active")
+     */
+    public function companyActiveAction()
+    {
+        return $this->render('user/user-active.htm.twig');
     }
 
     /**
@@ -132,12 +164,63 @@ class UserController extends Controller
         }
         return $this->render(':user:register-user.htm.twig', ['form' => $form->createView(), 'company' => $company, 'error' => $error, 'errorMessage' => $errorMessage]);
     }
+    /**
+     * @Route("/company/{id}/new-manager-user",name="new-manager-user")
+     */
+    public function newManagerUserAction(Request $request, Company $company)
+    {
+        $error = false;
+        $errorMessage = '';
+        $user = new User();
+        $role = $company->getCompanyType();
+        if ($role == "Buyer") {
+            $user->setRoles(["ROLE_BUYER"]);
+        } elseif ($role == "Grower") {
+            $user->setRoles(["ROLE_GROWER"]);
+        } elseif ($role == "Breeder") {
+            $user->setRoles(["ROLE_BREEDER"]);
+        } elseif ($role == "Agent") {
+            $user->setRoles(["ROLE_AGENT"]);
+        }
+        $user->setIsActive(true);
+        $user->setMyCompany($company);
+        $user->setIsMainAccount(true);
+
+        $form = $this->createForm(UserRegistrationForm::class, $user);
+
+        $form->handleRequest($request);
+
+        // Verify the Recaptcha
+        $recaptcha = new ReCaptcha('6LdU2CkUAAAAAN9xccXst7YbBiyqMp1_h1WV0wB0');
+        $resp = $recaptcha->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
+
+        //But only if the form is submitted
+        if ($form->isSubmitted() && !$resp->isSuccess()) {
+            // Do something if the submit wasn't valid ! Use the message to show something
+            $error = true;
+            $errorMessage = "Verification Failed. The reCAPTCHA wasn't entered correctly.";
+        } else {
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var User $user */
+                $user = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                return $this->redirectToRoute('company-active');
+            }
+        }
+        return $this->render(':user:register-user.htm.twig', ['form' => $form->createView(), 'company' => $company, 'error' => $error, 'errorMessage' => $errorMessage]);
+    }
 
     /**
      * @Route("/forgot-password",name="password_restore")
      */
     public function forgotPasswordAction()
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        if ($user){
+            $this->redirectToRoute("user_logout");
+        }
         return $this->render('home.htm.twig');
     }
 
@@ -146,6 +229,10 @@ class UserController extends Controller
      */
     public function homeAction()
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        if ($user){
+            $this->redirectToRoute("user_logout");
+        }
         return $this->render('home.htm.twig');
     }
 
@@ -207,14 +294,14 @@ class UserController extends Controller
             // Do something if the submit wasn't valid ! Use the message to show something
             $error = true;
             $errorMessage = "Verification Failed. The reCAPTCHA wasn't entered correctly.";
-        } else {
+        } else if($form->isSubmitted() && $resp->isSuccess()) {
             if ($form->isSubmitted() && $form->isValid()) {
                 /** @var User $user */
                 $user = $form->getData();
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
                 $em->flush();
-                return $this->redirectToRoute('company-registered');
+                return $formArray=[];
             }
         }
         $formArray['form'] = $form;
@@ -222,5 +309,10 @@ class UserController extends Controller
         $formArray['errorMessage'] = $errorMessage;
         return $formArray;
     }
-
+    /**
+     * @Route("/logout",name="user_logout")
+     */
+    public function logoutAction(){
+        throw new \Exception('This should not be reached');
+    }
 }

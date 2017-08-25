@@ -46,8 +46,9 @@
                     <table id="shopping-cart-table" class="cart items data table">
                         <thead>
                         <tr>
-                            <th class="col item" scope="col"><span>Agent</span></th>
                             <th></th>
+                            <th class="col item" scope="col"><span>Agent</span></th>
+                            <th>Rating</th>
                             <th class="col price" scope="col"><span>Connected Since</span></th>
 
                         </tr>
@@ -55,41 +56,43 @@
                         <tbody class="cart item">
                         {% for buyerAgent in buyerAgents %}
                             <tr class="item-info js-grower-item">
+                                <td><img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/products/') }}{{ buyerAgent.agent.logoName }}"></td>
                                 <td data-th="Item" class="col item">
                                         <span class="product-image-container" style="width:165px;">
                                         <strong class="product-item-name">
 
                                             <span class="product-image-wrapper" style="padding-bottom: 100%;">
-                                              <a href="{{ path('view_grower',{
+                                              <a href="{{ path('view_agent',{
                                                   'id':buyerAgent.agent.id
-                                              }) }}">{{ buyerAgent.agent.fullName }}</a>
+                                              }) }}">{{ buyerAgent.agent.companyName }}</a>
                                         </span>
                                         </strong>
                                         </span>
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
-                                    {% if buyerAgent.agent.agentReviews | length > 0 %}
+                                    {% if buyerAgent.agent.reviews | length > 0 %}
 
                                         {% set sumQualityratings = 0 %}
                                         {% set avgQualityRatings=0 %}
-                                        {% for rating in buyerAgent.agent.agentReviews %}
+                                        {% for rating in buyerAgent.agent.reviews %}
                                             {% set sumQualityratings = sumQualityratings + rating.quality %}
                                         {% endfor %}
-                                        {% set avgQualityRatings= (sumQualityratings / buyerAgent.agent.agentReviews|length) | round %}
+                                        {% set avgQualityRatings= (sumQualityratings / buyerAgent.agent.reviews|length) | round %}
 
                                         {% set sumValueratings = 0 %}
                                         {% set avgValueRatings=0 %}
-                                        {% for rating in buyerAgent.agent.agentReviews %}
+                                        {% for rating in buyerAgent.agent.reviews %}
                                             {% set sumValueratings = sumValueratings + rating.value %}
                                         {% endfor %}
-                                        {% set avgValueRatings= (sumValueratings / buyerAgent.agent.agentReviews|length) | round %}
+                                        {% set avgValueRatings= (sumValueratings / buyerAgent.agent.reviews|length) | round %}
 
                                         {% set sumPriceratings = 0 %}
                                         {% set avgPriceRatings=0 %}
-                                        {% for rating in buyerAgent.agent.agentReviews %}
+                                        {% for rating in buyerAgent.agent.reviews %}
                                             {% set sumPriceratings = sumPriceratings + rating.price %}
                                         {% endfor %}
-                                        {% set avgPriceRatings= (sumQualityratings / buyerAgent.agent.agentReviews|length) | round %}
+                                        {% set avgPriceRatings= (sumQualityratings / buyerAgent.agent.reviews|length) | round %}
 
                                         {% set avgrating=0 %}
                                         {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}

@@ -8,7 +8,7 @@
     <div class="category-view">
         <div class="page-title-wrapper">
             <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-                <span class="base" data-ui-id="page-title-wrapper">Direct Market</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">Roses</span></h1>
         </div>
         <div class="breadcrumbs">
             <ul class="items">
@@ -17,7 +17,7 @@
                         Home </a>
                 </li>
                 <li class="item category131">
-                    <strong>Direct Market - My Products</strong>
+                    <strong>My Roses</strong>
                 </li>
             </ul>
         </div>
@@ -56,8 +56,6 @@
                             <tr>
                                 {# sorting of properties based on query components #}
                                 <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Rose Name', 'product.title') }}</th>
-                                <th>{{ knp_pagination_sortable(products, 'Price', 'product.price',{'direction': 'asc'}) }}</th>
-                                <th>{{ knp_pagination_sortable(products, 'Price', 'product.price') }}</th>
                                 <th>{{ knp_pagination_sortable(products,'Season','product.season') }}</th>
                                 <th>{{ knp_pagination_sortable(products, 'Color','product.color') }}</th>
                                 <th>{{ knp_pagination_sortable(products, 'Vaselife','product.vaselife') }}</th>
@@ -83,25 +81,19 @@
                 <div class="products wrapper list products-list">
                     <ol class="products list items product-items">
                         {% for product in products %}
-                            <li class="item product product-item">
+                            <li class="item product product-item" style="float: left;max-width:450px">
                                 <div class="product-item-info" data-container="product-grid">
                                     <div class=" product-item-images">
-                                        <a href="/grower/product/{{ product.id }}/edit""
+                                        <a href="{{ path('grower_edit_rose',{'id': product.id}) }}"
                                            class="product photo product-item-photo" tabindex="-1">
-
-<span class="product-image-container" style="width:350px;">
-    <span class="product-image-wrapper" style="padding-bottom: 126%;">
-        <img class="product-image-photo" src="{{ asset('images/products/') }}{{ product.imageName }}" width="350"
-             height="441" alt="{{ product.title }}"></span>
-</span>
+                                            <img src="{{ asset('images/products') }}/{{ product.mainImage }}">
                                         </a>
                                     </div>
-
                                     <div class="product-item-details">
                                         <div class="content-name">
                                             <strong class="product name product-item-name">
                                                 <a class="product-item-link"
-                                                   href="/grower/product/{{ product.id }}/edit">
+                                                   href="{{ path('grower_edit_rose',{'id': product.id}) }}">
                                                     {{ product.title }}                            </a>
                                             </strong>
 
@@ -111,28 +103,30 @@
                                             </a>
                                         </div>
 
-                                        <div class="price-box price-final_price" data-role="priceBox"
-                                             data-product-id="63">
-
-
-<span class="price-container price-final_price tax weee">
-        <span data-price-amount="{{ product.price }}" data-price-type="finalPrice" class="price-wrapper ">
-        <span class="price">{{ product.currency }} {{ product.price }}</span>    </span>
-        </span>
-
-                                        </div>
 
                                         <div class="product description product-item-description">
-                                            <p>{{ product.summary }}</p>
-                                            <a href="/grower/product/{{ product.id }}" title="{{ product.id }}"
-                                               class="action more">Learn More</a>
+
+                                            <table class="attributes">
+                                                <tr>
+                                                    <td><strong>Color:</strong> {{ product.color }}</td>
+                                                    <td><strong>Season:</strong> {{ product.season }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Vaselife: </strong>{{ product.vaselife }}</td>
+                                                    <td><strong>Stem Length:</strong> {{ product.stemLength }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Headsize:</strong> {{ product.headsize }}</td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
                                         </div>
 
                                         <div class="product-item-actions">
                                             <div class="add-to-cart-primary">
                                                 <a title="Edit Product" class="action tocart primary"
-                                                   href="/grower/product/{{ product.id }}/edit">
-                                                    <span><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Product</span>
+                                                   href="{{ path('grower_edit_rose',{'id': product.id}) }}">
+                                                    <span><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Rose</span>
                                                 </a>
 
                                             </div>
@@ -178,10 +172,10 @@
                            href="#" title="Set Descending Direction">
                             <span>Set Descending Direction</span> </a></div>
                 </div>
-                </div>
+            </div>
             {% include(':grower:sidebar.htm.twig') %}
 
-            </div>
+        </div>
     </main>
 
 {% endblock %}

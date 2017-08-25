@@ -25,7 +25,7 @@ class RatingController extends Controller
             $roseId= $request->request->get('rose');
         }
 
-        $rose = $em->getRepository("AppBundle:Product")
+        $rose = $em->getRepository("AppBundle:Direct")
             ->findOneBy([
                 'id'=>$roseId
             ]);
@@ -47,7 +47,7 @@ class RatingController extends Controller
 
             $rose_id =  $request->request->get('rose');
 
-            $rose = $em->getRepository("AppBundle:Product")
+            $rose = $em->getRepository("AppBundle:Direct")
                 ->findOneBy([
                     'id'=>$rose_id
                 ]);
@@ -61,6 +61,114 @@ class RatingController extends Controller
         }
 
         return $this->render('rating/rating.htm.twig',[
+            'reviews'=>$reviews,
+            'ratingForm'=>$form->createView(),
+            'rose'=>$rose
+        ]);
+    }
+    /**
+     * @Route("rate/auction",name="rate-auction")
+     */
+    public function auctionRatingAction(Request $request,$roseId=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        if ($roseId==null){
+            $roseId= $request->request->get('rose');
+        }
+
+        $rose = $em->getRepository("AppBundle:Auction")
+            ->findOneBy([
+                'id'=>$roseId
+            ]);
+
+        $reviews = $em->getRepository("AppBundle:Rating")
+            ->findAuctionReviews($rose);
+
+        $rating = new Rating();
+        $rating->setAuction($rose);
+        $rating->setRatedBy($user);
+
+        $form = $this->createForm(RatingFormType::class,$rating);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $fullRating = $form->getData();
+
+            $rose_id =  $request->request->get('rose');
+
+            $rose = $em->getRepository("AppBundle:Auction")
+                ->findOneBy([
+                    'id'=>$rose_id
+                ]);
+
+            $rating->setAuction($rose);
+
+            $em->persist($fullRating);
+            $em->flush();
+
+            return new Response(null,204);
+        }
+
+        return $this->render('rating/auction-rating.htm.twig',[
+            'reviews'=>$reviews,
+            'ratingForm'=>$form->createView(),
+            'rose'=>$rose
+        ]);
+    }
+    /**
+     * @Route("rate/auction-product",name="rate-auction-product")
+     */
+    public function auctionProductRatingAction(Request $request,$roseId=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        if ($roseId==null){
+            $roseId= $request->request->get('rose');
+        }
+
+        $rose = $em->getRepository("AppBundle:AuctionProduct")
+            ->findOneBy([
+                'id'=>$roseId
+            ]);
+
+        $reviews = $em->getRepository("AppBundle:Rating")
+            ->findAuctionProductReviews($rose);
+
+        $rating = new Rating();
+        $rating->setAuctionProduct($rose);
+        $rating->setRatedBy($user);
+
+        $form = $this->createForm(RatingFormType::class,$rating);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $fullRating = $form->getData();
+
+            $rose_id =  $request->request->get('rose');
+
+            $rose = $em->getRepository("AppBundle:AuctionProduct")
+                ->findOneBy([
+                    'id'=>$rose_id
+                ]);
+
+            $rating->setAuctionProduct($rose);
+
+            $em->persist($fullRating);
+            $em->flush();
+
+            return new Response(null,204);
+        }
+
+        return $this->render('rating/auction-product-rating.htm.twig',[
             'reviews'=>$reviews,
             'ratingForm'=>$form->createView(),
             'rose'=>$rose

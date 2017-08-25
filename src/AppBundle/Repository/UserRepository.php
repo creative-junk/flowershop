@@ -111,58 +111,6 @@ class UserRepository extends EntityRepository
             return 0;
         }
     }
-    public function getNrBuyers(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
-    public function getNrGrowers(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'grower')
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
-    public function getNrBreeders(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
-    public function getNrAgents(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
 
     public function getNrChangeUsersThisWeek(){
         $nrUsers= $this->createQueryBuilder('user')
@@ -177,68 +125,42 @@ class UserRepository extends EntityRepository
             return 0;
         }
     }
-    public function getNrChangeBuyersThisWeek(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
-            ->andWhere('user.createdAt= :createdAt')
-            ->setParameter('createdAt', new \DateTime('-7 days'))
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
-    public function getNrChangeGrowersThisWeek(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'grower')
-            ->andWhere('user.createdAt= :createdAt')
-            ->setParameter('createdAt', new \DateTime('-7 days'))
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
-    public function getNrChangeBreedersThisWeek(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
-            ->andWhere('user.createdAt= :createdAt')
-            ->setParameter('createdAt', new \DateTime('-7 days'))
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
-    public function getNrChangeAgentsThisWeek(){
-        $nrUsers= $this->createQueryBuilder('user')
-            ->select('count(user.id)')
-            ->andWhere('user.userType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
-            ->andWhere('user.createdAt= :createdAt')
-            ->setParameter('createdAt', new \DateTime('-7 days'))
-            ->getQuery()
-            ->getSingleScalarResult();
-        if ($nrUsers){
-            return $nrUsers;
-        }else{
-            return 0;
-        }
-    }
 
+    /**
+     * @return User[]
+     */
+    public function findAllPendingAdminUsers(){
 
+        return $this->createQueryBuilder('user')
+            ->andWhere('user.isPasswordCreated = :passwordCreated')
+            ->setParameter(':passwordCreated',false)
+            ->andWhere('user.roles = :isAdmin')
+            ->setParameter(':isAdmin','["ROLE_ADMIN"]')
+            ->getQuery()
+            ->execute();
+    }
+    /**
+     * @return User[]
+     */
+    public function findAllUsers(){
+
+        return $this->createQueryBuilder('user')
+            ->andWhere('user.roles != :userRole')
+            ->setParameter(':userRole','["ROLE_ADMIN"]')
+            ->getQuery()
+            ->execute();
+    }
+    /**
+     * @return User[]
+     */
+    public function findAllAdministratorUsers(){
+
+        return $this->createQueryBuilder('user')
+            ->orWhere('user.roles = :isAdmin')
+            ->setParameter(':isAdmin','["ROLE_ADMIN"]')
+            ->getQuery()
+            ->execute();
+    }
 
 
 

@@ -1,0 +1,87 @@
+<div id="aside" class="app-aside modal fade nav-dropdown">
+    <!-- fluid app aside -->
+    <div class="left navside dark dk" layout="column">
+        <div class="navbar no-radius">
+            <!-- brand -->
+            <a class="navbar-brand">
+                <div ui-include="'{{ asset('axa/assets/images/logo.svg') }}'"></div>
+                <img src="{{ asset('axa/assets/images/logo.png') }}" alt="." class="hide">
+                <span class="hidden-folded inline">PRISK</span>
+            </a>
+            <!-- / brand -->
+        </div>
+        <div flex class="hide-scroll">
+            <nav class="scroll nav-light">
+
+                <ul class="nav" ui-nav>
+                    <li class="nav-header hidden-folded">
+                        <small class="text-muted">Main</small>
+                    </li>
+
+                    <li>
+                        <a href="{{ path('admin-home') }}" >
+                    <span class="nav-icon">
+                    <i class="material-icons">&#xE871;</i>
+                    </span>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a>
+                    <span class="nav-caret">
+                      <i class="fa fa-caret-down"></i>
+                    </span>
+                            <span class="nav-label">
+
+                    </span>
+                            <span class="nav-icon">
+                      <i class="material-icons">&#xE853;</i>
+                    </span>
+                            <span class="nav-text">Applications</span>
+                        </a>
+                        <ul class="nav-sub">
+
+                            <li>
+                                <a href="{{ path('membership-approved-actor-profiles') }}" >
+                                    <span class="nav-text">Membership Approved Applications</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('board-approved-users') }}" >
+                                    <span class="nav-text">Board Approved Applications</span>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ path('rejected-users') }}" >
+                                    <span class="nav-text">Rejected Applications</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('pending-accounts') }}" >
+                                    <span class="nav-text">Pending Accounts</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+        <div flex-no-shrink class="b-t">
+            <div class="nav-fold">
+                <a href="profile.html">
+        	    <span class="pull-left">
+        	      <img src="{{ asset('loko/images/PRISK_Logo_v_2.2_website.png') }}" alt="..." class="w-40 img-circle">
+        	    </span>
+                    <span class="clear hidden-folded p-x">
+        	      <span class="block _500">{{ app.user.firstName }} {{ app.user.lastName }}</span>
+        	      <small class="block text-muted"><i class="fa fa-circle text-success m-r-sm"></i>online</small>
+        	    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

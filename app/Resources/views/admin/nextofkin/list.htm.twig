@@ -1,0 +1,117 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Next of Kin{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        jQuery('#js-remind-account').on('click',function (e)  {
+            //Prevent Normal Submit
+            e.preventDefault();
+
+            $(".messages").fadeOut("slow");
+
+            $(this).find('.fa-envelope')
+                .removeClass('fa-envelope')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+            $(this).find('.fa-check')
+                .removeClass('fa-check')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+
+            // get form values
+            var values = $(this).serialize();
+
+            $.ajax({
+                url: $(this).data('url'),
+                method: 'GET'
+            }).done(function () {
+                //$el.fadeOut("slow");
+                $(".messages").fadeIn("slow");
+
+                $("#remind")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-check');
+            }).error(function () {
+                //$el.fadeOut("slow");
+                $(".errors").fadeIn("slow");
+
+                $("#remind")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-times');
+            })
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block body %}
+    <div id="content" class="app-content box-shadow-z0" role="main">
+
+
+        <div ui-view class="app-body" id="view">
+            {{ include(':admin/partials:top.htm.twig') }}
+            <div class="padding">
+                <div class="page messages">
+                    <div class="messages" style="">
+                        <div class="alert alert-success">
+                            <div>
+                                User reminded successfully.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="page errors">
+                    <div class="errors" style="">
+                        <div class="alert alert-danger">
+                            <div>
+                                :-( Something went wrong.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="box-header">
+                        <h2>Next of Kin for {{ user.fullName }} </h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="data" class="table table-striped b-t b-b">
+                            <thead>
+
+                            <th>Full Names</th>
+                            <th>Relationship</th>
+                            <th>Percent</th>
+                            <th>&nbsp;ID/Passport No.</th>
+                            <th>&nbsp;Phone</th>
+                            <th>Email</th>
+                            </thead>
+                            <tbody>
+                            {% for kin in kinsList  %}
+                                <tr>
+                                    <td><a style="color: #fd9614" href="{{ path('admin-view-kin-details',{
+                                            'id':kin.id
+                                        }) }}"> {{ kin.firstName }} {{ kin.lastName }}</a></td>
+
+                                    <td>{{ kin.relationship }}</td>
+                                    <td>{{ kin.percent }}</td>
+                                    <td>{{ kin.idNumber }}</td>
+                                    <td>{{ kin.phoneNumber }}</td>
+                                    <td>{{ kin.email }}</td>
+                                </tr>
+                            {% endfor  %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ############ PAGE END-->
+
+        </div>
+    </div>
+{% endblock %}

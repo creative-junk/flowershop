@@ -1,0 +1,28 @@
+<h3>Required Membership Documents</h3>
+<p>
+    Dear {{ name }}!
+</p>
+<p>
+    You recently successfully submitted your PRISK Membership Application. However, before we review your application you have to submit the required documents listed below:
+</p>
+<p>1. A Coloured Passport Size photograph </p>
+
+<p>2. Valid National Identity Card, Passport or Birth Certificate </p>
+
+<p>3. Kenya Revenue Authority ITAX Pin Certificate.</p>
+
+<p>4. Valid National Identity Card, Passport or Birth Certificate of Next of Kin.</p>
+<p>When you are ready, use the link below to upload the documents.</p>
+<p>
+    <a href="http://localhost:8000/documents/{{ code }}/add">Click Here</a>.
+</p><p>
+    Thank you!
+</p><p>
+
+    --PRISK Team
+</p><p>
+    {# Makes an absolute URL to the loko/images/PRISK_Logo_v_2.2_website.png file #}
+    <img src="{{ absolute_url(asset('loko/images/PRISK_Logo_v_2.2_website.png')) }}">
+<hr/>
+Note: This is a system generated mail. Please do NOT reply to it.
+</p>

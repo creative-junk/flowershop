@@ -73,15 +73,15 @@ class BuyerAgentRepository extends EntityRepository
             ->getQuery();
     }
 
-    public function getNrBuyerRequests(User $user){
+    public function getNrBuyerRequests(Company $user){
         $nrAgentRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.listOwner <> :whoOwnsList')
             ->setParameter('whoOwnsList', $user)
-            ->andWhere('user.agent = :buyer')
-            ->setParameter('buyer', $user)
+            ->andWhere('user.agent = :agent')
+            ->setParameter('agent', $user)
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrAgentRequests){
@@ -90,7 +90,7 @@ class BuyerAgentRepository extends EntityRepository
             return 0;
         }
     }
-    public function getBuyerRequestsQuery(User $user){
+    public function getBuyerRequestsQuery(Company $user){
         return $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -101,14 +101,14 @@ class BuyerAgentRepository extends EntityRepository
             ->setParameter('agent', $user)
             ->getQuery();
     }
-    public function getNrMyBuyerRequests(User $user){
+    public function getNrMyBuyerRequests(Company $user){
         $nrAgentRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.agent = :whoIsAgent')
             ->setParameter('whoIsAgent', $user)
-            ->andWhere('user.agentListOwner = :whoOwnsList')
+            ->andWhere('user.listOwner = :whoOwnsList')
             ->setParameter('whoOwnsList', $user)
             ->getQuery()
             ->getSingleScalarResult();
@@ -118,17 +118,17 @@ class BuyerAgentRepository extends EntityRepository
             return 0;
         }
     }
-    public function getMyBuyerRequests(User $user){
+    public function getMyBuyerRequests(Company $user){
         return $this->createQueryBuilder('user')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.agent = :whoIsAgent')
             ->setParameter('whoIsAgent', $user)
-            ->andWhere('user.agentListOwner = :whoOwnsList')
+            ->andWhere('user.listOwner = :whoOwnsList')
             ->setParameter('whoOwnsList', $user)
             ->getQuery();
     }
-    public function getMyAgentBuyers(User $user){
+    public function getMyAgentBuyers(Company $user){
         return $this->createQueryBuilder('user')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Accepted')
@@ -138,7 +138,7 @@ class BuyerAgentRepository extends EntityRepository
             ->execute();
     }
 
-    public function getNrMyAgentBuyers(User $user){
+    public function getNrMyAgentBuyers(Company $user){
         $nrAgentRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')

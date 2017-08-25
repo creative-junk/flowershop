@@ -12,6 +12,7 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\CartItems;
+use AppBundle\Entity\Direct;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
@@ -34,7 +35,7 @@ class CartItemsRepository extends EntityRepository
      * @param Product $product
      * @return CartItems[]
      */
-    public function findItemInCart(Product $product){
+    public function findItemInCart(Direct $product){
 
         return $this->createQueryBuilder('cartItem')
             ->andWhere('cartItem.product= :cartProduct')

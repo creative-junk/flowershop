@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ product.title }}{% endblock %}
+{% block title %}{{ direct.product.title }}{% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         // prepare the form when the DOM is ready
@@ -41,6 +41,13 @@
                        .removeClass('fa-spin')
                        .addClass('fa-check');
                    location.reload();
+                }).fail(function(){
+                    $(".errors").fadeIn("slow");
+
+                    $("#add-t-cart")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
                 })
 
 
@@ -201,7 +208,7 @@
 {% endblock %}
 {% block pageclass %}
 <body data-container="body" itemscope="itemscope"
-      class="catalog-product-view product-{{ product.slug }} page-layout-1column" aria-busy="false">
+      class="catalog-product-view product-{{ direct.product.slug }} page-layout-1column" aria-busy="false">
 {% endblock %}
 {% block body %}
 
@@ -216,7 +223,7 @@
                     Direct Market </a>
             </li>
             <li class="item product">
-                <strong>{{ product.title }}</strong>
+                <strong>{{ direct.product.title }}</strong>
             </li>
         </ul>
     </div>
@@ -226,32 +233,41 @@
             <div class="messages" style="">
                 <div class="message-success success message">
                     <div>
-                    You added {{ product.title }} to your shopping cart.
+                    You added {{ direct.product.title }} to your shopping cart.
                     </div>
                     </div>
 
             </div>
         </div>
+        <div class="page errors">
+            <div class="errors" style="">
+                <div class="alert alert-danger">
+                    <div>
+                      :-(  Something went wrong. {{ direct.product.title }} was NOT added to your shopping cart.
+                    </div>
+                </div>
 
+            </div>
+        </div>
         <div class="columns">
             <div class="column main">
                 <div class="product-info-main">
                     <div class="page-title-wrapper product">
                         <h1 class="page-title">
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
-				{{ product.title }}</span></h1>
+				{{ direct.product.title }}</span></h1>
                     </div>
 
                     <div class="product-info-price">
                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 					<span class="price-container price-final_price tax weee">
 					<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-					<span class="price">{{ product.currency }} {{ product.price }}</span></span>
-					<meta content="{{ product.currency }}" itemprop="priceCurrency">
+					<span class="price">{{ app.user.myCompany.currency }} {{ direct.pricePerStem | number_format(2,'.') }}</span></span>
+					<meta content="{{ direct.currency }}" itemprop="priceCurrency">
 					</span></div>
                         <div class="product-info-stock-sku">
                             <div class="stock available" title="Availability">
-                                <span>Grower:</span>&nbsp; {{ product.vendor }}</div>
+                                <span>Grower:</span>&nbsp; <a href="{{ path('view_grower',{'id':direct.product.vendor.id }) }}">{{ direct.product.vendor }}</a></div>
                             <div class="product attribute sku">
                                 <strong class="type"></strong>
 
@@ -262,9 +278,9 @@
                     </div>
                     <div class="product-add-form">
                         {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
-                        <input type="hidden" name="productCurrency" value="{{ product.currency }}"/>
-                        <input type="hidden" name="productPrice" value="{{ product.price }}"/>
-                        <input type="hidden" name="productId" value="{{ product.id }}"/>
+                        <input type="hidden" name="productCurrency" value="{{ app.user.myCompany.currency }}"/>
+                        <input type="hidden" name="productPrice" value="{{ direct.pricePerStem }}"/>
+                        <input type="hidden" name="productId" value="{{ direct.id }}"/>
                             <div class="box-tocart">
                                 <div class="fieldset">
                                     <div class="field qty">
@@ -272,7 +288,7 @@
 
                                         <div class="control">
                                             <input id="qty" class="input-text qty" maxlength="12" name="quantity"
-                                                   title="Qty" type="number" value="1">
+                                                   title="Qty" type="number" value="{{ direct.minimumOrder }}">
                                         </div>
                                     </div>
                                     <div class="actions">
@@ -289,12 +305,12 @@
                         <div class="product-addto-links" data-role="add-to-links">
                             <div class="result">
                                 <div class="alert alert-success">
-                                   <span class="fa fa-check"></span> <strong>{{ product.title }}</strong> successfully added to your Comparison List.
+                                   <span class="fa fa-check"></span> <strong>{{ direct.product.title }}</strong> successfully added to your Comparison List.
                                 </div>
                             </div>
                             <div class="error">
                             <div class="alert alert-danger">
-                                <strong>Oops!</strong> <strong>{{ product.title }}</strong> is already in you Comparison List.
+                                <strong>Oops!</strong> <strong>{{ direct.product.title }}</strong> is already in you Comparison List.
                             </div>
                             </div>
                            <!-- <a class="action towishlist" data-action="add-to-wishlist"
@@ -303,7 +319,7 @@
                                 <span>Add to Wish List</span></a> -->
                             <a class="action tocompare" href="#"
                                data-url="{{ path('add-rose-to-compare',{
-                                   'id': product.id
+                                   'id': direct.id
                                }) }}">
                                 <span><span id="compare" class="fa">&nbsp;</span> Add to Compare</span></a></div>
                         <a class="action mailto friend" href="#"
@@ -313,85 +329,49 @@
                     <div class="product attribute overview">
                         <div class="value" itemprop="description">
 
-                            <ul>
-                                <li><b>Season:</b> {{ product.season }}</li>
-                                <li><b>Color:</b> {{ product.color }}</li>
-                                <li><b>Vaselife:</b> {{ product.vaselife }}</li>
-                                <li><b>Stem Length:</b> {{ product.stemLength }}</li>
-                                <li><b>Headsize:</b>{{ product.headsize }}</li>
-                            </ul>
-                            <p>{{ product.summary }}</p>
+                            <table>
+                               
+                                <tr>
+                                    <td><strong>Color:</strong> {{ direct.product.color }}</td>
+                                    <td><strong>Season:</strong> {{ direct.product.season }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Vaselife: </strong>{{ direct.product.vaselife }}</td>
+                                    <td><strong>Stem Length:</strong> {{ direct.product.stemLength }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Headsize:</strong> {{ direct.product.headsize }}</td>
+                                    <td><strong>Stock: </strong> {{ direct.numberOfStems | number_format }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stems Per Box:</strong> {{ direct.stemsPerBox | number_format }}</td>
+                                    <td><strong>Quality: </strong> {{ direct.quality }}</td>
+                                </tr>
+                            </table>
+
                         </div>
                     </div>
                 </div>
                 <div class="product media">
-                    <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+                    <div >
 
-                        <div class="fotorama--hidden">
-                        </div>
-                        <style>
-                            .fotorama1493313427134 .fotorama__nav--thumbs .fotorama__nav__frame {
-                                padding: 2px;
-                                height: 110px;
-                            }
+                        <img aria-hidden="false" width="500" height="629" class="fotorama__img"
+                             src="{{ asset('images/products/') }}{{ direct.product.mainImage }}">
 
-                            .fotorama1493313427134 .fotorama__thumb-border {
-                                height: 110px;
-                                border-width: 2px;
-                                margin-top: 2px;
-                            }
-                        </style>
-                        <div class="fotorama-item fotorama fotorama1493313427134" data-gallery-role="gallery">
-                            <div data-gallery-role="fotorama__focusable-start" tabindex="-1">
-                            </div>
-                            <div class="fotorama__wrap fotorama__wrap--css3 fotorama__wrap--slide fotorama__wrap--toggle-arrows fotorama__wrap--no-controls"
-                                 style="min-width: 0px; max-width: 100%;">
-                                <div class="fotorama__stage" data-fotorama-stage="fotorama__stage"
-                                     style="width: 491px; height: 618px;">
-                                    <div aria-label="Exit fullscreen" class="fotorama__fullscreen-icon"
-                                         data-gallery-role="fotorama__fullscreen-icon" role="button" tabindex="0">
-                                    </div>
-                                    <div aria-label="Previos" class="fotorama__arr fotorama__arr--prev"
-                                         data-gallery-role="arrow" role="button" tabindex="0">
-                                        <div class="fotorama__arr__arr">
-                                        </div>
-                                    </div>
-                                    <div class="fotorama__stage__shaft fotorama__grab" data-gallery-role="stage-shaft"
-                                         style="width: 491px; margin-left: 0px; transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);"
-                                         tabindex="0">
-                                        <div aria-hidden="false"
-                                             class="fotorama__stage__frame fotorama_vertical_ratio fotorama__loaded fotorama__loaded--img fotorama__active"
-                                             data-active="true"
-                                             href="#"
-                                             style="left: 0px;">
-                                            <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                                                 src="{{ asset('images/products/') }}{{ product.imageName }}"></div>
-
-                                    </div>
-                                    <div aria-label="Next" class="fotorama__arr fotorama__arr--next"
-                                         data-gallery-role="arrow" role="button" tabindex="0">
-                                        <div class="fotorama__arr__arr">
-                                        </div>
-                                    </div>
-                                    <div class="fotorama__video-close">
-                                    </div>
-                                    <div aria-label="Zoom in" class="fotorama__zoom-in zoom-in-loaded"
-                                         data-gallery-role="fotorama__zoom-in" role="button" tabindex="0">
-                                    </div>
-                                    <div aria-label="Zoom out" class="fotorama__zoom-out zoom-out-loaded"
-                                         data-gallery-role="fotorama__zoom-out" role="button" tabindex="0">
-                                    </div>
-                                    <div class="fotorama__spinner">
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div data-gallery-role="fotorama__focusable-end" tabindex="-1">
-                            </div>
-                        </div>
-                        <div id="preview" class="magnifier-preview magnify-hidden" data-gallery-role="magnifier"
-                             style="display: none;">
-                        </div>
+                           <table class="gallery cf">
+                               <tr>
+                                   <td><img class="nim" width="150"
+                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}"></td>
+                                   <td><img class="nim"  width="150"
+                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}"></td>
+                                   <td><img class="nim"  width="150"
+                                            src="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}"></td>
+                                   <td><img class="nim"  width="150"
+                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}"></td>
+                                   <td><img class="nim"  width="150"
+                                            src="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}"></td>
+                               </tr>
+                           </table>
                     </div>
 
                 </div>
@@ -407,7 +387,7 @@
                             <div class="product attribute description">
                                 <div class="value">
 
-                                {{ product.description }}
+                                {{ direct.product.description }}
                                 </div>
                             </div>
                         </div>
@@ -418,7 +398,7 @@
                                     </div>
                                     <div class="block-content">
                                         <ol class="items review-items">
-                                            {% for review in product.reviews %}
+                                            {% for review in direct.reviews %}
                                                 <li class="item review-item">
                                                     <div class="review-title" itemprop="name">{{ review.summary }}</div>
                                                     <div class="review-ratings">
@@ -459,7 +439,7 @@
                                 </div>
                             </div>
 
-                            {{ render(controller('AppBundle:Rating/Rating:roseRating',{'roseId':product.id })) }}
+                            {{ render(controller('AppBundle:Rating/Rating:roseRating',{'roseId':direct.id })) }}
                         </div>
                         <div id="comments" class="tab-pane fade"><br/>
                             <div id="product-review-container" data-role="product-review"><div class="block review-list" id="customer-reviews">
@@ -468,7 +448,7 @@
                                     </div>
                                     <div class="block-content">
                                         <ol class="items review-items">
-                                            {% for comment in product.comments %}
+                                            {% for comment in direct.comments %}
                                                 <li class="item review-item">
 
                                                     <div class="review-details">
@@ -495,7 +475,7 @@
                                 </div>
                             </div>
                             <br/>
-                            {{ render(controller('AppBundle:Comment/Comment:roseComment',{'roseId':product.id })) }}
+                            {{ render(controller('AppBundle:Comment/Comment:roseComment',{'roseId':direct.id })) }}
                         </div>
                     </div>
 
@@ -510,7 +490,7 @@
     <div class="content">
 
         <div class="field newsletter">
-            <div class="" for="newsletter1"><span>This allows you to send a direct message to  <b><i>{{ product.vendor }}</i></b>  ,the Grower of <b><i>{{ product.title }}</i></b> .<br/> For a faster response, Keep it short and direct.</span></div>
+            <div class="" for="newsletter1"><span>This allows you to send a direct message to  <b><i>{{ direct.product.vendor }}</i></b>  ,the Grower of <b><i>{{ direct.product.title }}</i></b> .<br/> For a faster response, Keep it short and direct.</span></div>
             <div class="page sent"><br/><br/>
                 <div class="alert alert-success">
                     <strong> </strong> <i class="fa fa-check"></i> Message Sent!
@@ -520,7 +500,7 @@
             <div class="control">
                 <div class="form">
               {{ render(controller('AppBundle:Messaging/Messaging:newMessage',{
-                  'participantId': product.user.id
+                  'participantId': direct.addedBy.id
               })) }}
                 </div>
             </div>

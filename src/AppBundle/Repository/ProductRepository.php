@@ -50,7 +50,8 @@ class ProductRepository extends EntityRepository
      * @return Product[]
      */
     public function findAllMyActiveProductsOrderByDate(Company $user){
-        return $this->createQueryBuilder('product')
+        return $this->createQueryBuilder('direct')
+            ->innerJoin('direct.product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
             ->andWhere('product.isSeedling= :isSeedling')

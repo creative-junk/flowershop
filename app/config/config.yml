@@ -116,3 +116,13 @@ knp_menu:
     default_renderer: twig
 
 gregwar_captcha: ~
+
+#Currencies
+lexik_currency:
+    currencies:
+        default: USD              # [required] the default currency
+        managed: [EUR, USD, KES, GBP, CAD, JPY ]  # [required] all currencies used in iFlora
+    decimal_part:
+        precision:  2     # number of digits for the decimal part
+        round_mode: up
+    currency_class: AppBundle\Entity\Currency

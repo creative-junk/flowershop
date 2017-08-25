@@ -52,7 +52,7 @@ class GrowerAgentRepository extends EntityRepository
             return 0;
         }
     }
-    public function getNrGrowerRequests(User $user){
+    public function getNrGrowerRequests(Company $user){
         $nrGrowerRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
@@ -69,14 +69,14 @@ class GrowerAgentRepository extends EntityRepository
             return 0;
         }
     }
-    public function getNrMyGrowerRequests(User $user){
+    public function getNrMyGrowerRequests(Company $user){
         $nrGrowerRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.agent = :whoIsAgent')
             ->setParameter('whoIsAgent', $user)
-            ->andWhere('user.agentListOwner = :whoOwnsList')
+            ->andWhere('user.listOwner = :whoOwnsList')
             ->setParameter('whoOwnsList', $user)
             ->getQuery()
             ->getSingleScalarResult();
@@ -101,7 +101,7 @@ class GrowerAgentRepository extends EntityRepository
             ->execute();
     }
 
-    public function getNrMyAgentGrowers(User $user){
+    public function getNrMyAgentGrowers(Company $user){
         $nrAgentRequests= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.status = :isAccepted')

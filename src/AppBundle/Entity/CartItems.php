@@ -19,8 +19,8 @@ class CartItems
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -41,7 +41,7 @@ class CartItems
      */
     private $cart;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product",cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Direct")
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;
@@ -121,7 +121,7 @@ class CartItems
     /**
      * @param mixed $product
      */
-    public function setProduct(Product $product)
+    public function setProduct(Direct $product)
     {
         $this->product = $product;
     }

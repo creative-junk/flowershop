@@ -11,12 +11,15 @@ namespace AppBundle\Controller\Buyer;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\AuctionCart;
 use AppBundle\Entity\AuctionOrder;
 use AppBundle\Entity\AuctionOrderItems;
+use AppBundle\Entity\AuctionProduct;
 use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\CartItems;
 use AppBundle\Entity\Company;
+use AppBundle\Entity\Direct;
 use AppBundle\Entity\GrowersList;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
@@ -27,9 +30,12 @@ use AppBundle\Entity\Thread;
 use AppBundle\Entity\ThreadMetadata;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
+use AppBundle\Form\AccountFormType;
 use AppBundle\Form\AddGrowerForm;
 use AppBundle\Form\addToCartFormType;
 use AppBundle\Form\AuctionBuyForm;
+use AppBundle\Form\AuctionPaymentProofForm;
+use AppBundle\Form\BillingAddressFormType;
 use AppBundle\Form\BuyerAgentFormType;
 use AppBundle\Form\CheckoutForm;
 use AppBundle\Form\FilterFormType;
@@ -62,26 +68,190 @@ class HomeController extends Controller
     }
 
     /**
-     * @Route("/account",name="my-profile")
+     * @Route("/account",name="my-buyer-profile")
      */
     public function profileAction()
     {
-        return $this->render('account/account.htm.twig');
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        return $this->render('home/account/account.htm.twig',[
+            'billingAddress'=>$billingAddress,
+            'shippingAddress'=>$shippingAddress
+        ]);
     }
+
     /**
-     * @Route("/account/address/billing/{id}/edit",name="edit-my-billing-address")
+     * @Route("/account/edit",name="buyer-edit-account")
      */
-    public function editBillingAddressAction(Request $request, BillingAddress $address)
-    {
-        return $this->render('account/billing.htm.twig');
+    public function editAccountAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(AccountFormType::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('my-buyer-profile');
+        }
+        return $this->render('home/account/edit-basic.htm.twig',[
+            'form'=>$form->createView()
+        ]);
     }
+
     /**
-     * @Route("/account/address/shipping/{id}/edit",name="edit-my-shipping-address")
+     * @Route("/account/add/billing",name="buyer-add-billing-address")
      */
-    public function editShippingAddressAction(Request $request, ShippingAddress $address)
-    {
-        return $this->render('account/shipping.htm.twig');
+    public function addBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = new BillingAddress();
+        $billingAddress->setCompany($agent);
+        $billingAddress->setCountry($agent->getCountry());
+        $billingAddress->setEmailAddress($agent->getEmail());
+        $billingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $billingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-buyer-profile');
+        }
+
+        return $this->render('home/account/add-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+
     }
+
+    /**
+     * @Route("/account/edit/billing",name="buyer-edit-billing-address")
+     */
+    public function editBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-buyer-profile');
+        }
+
+        return $this->render('home/account/edit-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
+    /**
+     * @Route("/account/add/shipping",name="buyer-add-shipping-address")
+     */
+    public function addShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $shippingAddress = new ShippingAddress();
+        $shippingAddress->setCompany($agent);
+        $shippingAddress->setCountry($agent->getCountry());
+        $shippingAddress->setEmailAddress($agent->getEmail());
+        $shippingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $shippingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-buyer-profile');
+        }
+
+        return $this->render('home/account/add-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/account/edit/shipping",name="buyer-edit-shipping-address")
+     */
+    public function editShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-buyer-profile');
+        }
+
+        return $this->render('home/account/edit-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
     /**
      * @Route("/home/wishlist",name="my_wishlist")
      */
@@ -102,6 +272,25 @@ class HomeController extends Controller
      * @Route("/market/filter",name="filter-products")
      */
     public function filterProductAction(Request $request){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $vendor = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerGrowers = $em->getRepository("AppBundle:BuyerGrower")
+            ->findBy([
+                'buyer'=>$vendor,
+                'status'=>"Accepted"
+            ]);
+        $growers=array();
+        foreach ($buyerGrowers as $buyerGrower) {
+            $growers[]=$buyerGrower->getGrower();
+        }
+
+        $form = $this->createForm(BuyerAgentFormType::class,null, ['growers' => $growers]);
+
 
         $filterValues = Array();
 
@@ -190,6 +379,48 @@ class HomeController extends Controller
         ]);
     }
     /**
+     * @Route("/direct-market/",name="buyer-market")
+     */
+    public function buyerShopListAction(Request $request = null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $cart = new Cart();
+
+        $cart->setOwnedBy($user);
+
+        //$form = $this->createForm(addToCartFormType::class, $cart);
+
+        $form = $this->createForm(FilterFormType::class);
+
+        $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:Direct')
+            ->createQueryBuilder('direct')
+            ->innerJoin('direct.product','product')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('product.isSeedling = :isSeedling')
+            ->setParameter('isSeedling', false)
+            ->orderBy('direct.createdAt', 'DESC');
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+
+        return $this->render('home/list.htm.twig', [
+            'products' => $result,
+            'form' => $form->createView(),
+            'filterValues'=>''
+        ]);
+    }
+    /**
      * @Route("/market/grower/view/roses/{id}",name="view_grower_roses")
      */
     public function viewGrowerRosesAction(Request $request,User $user)
@@ -226,7 +457,7 @@ class HomeController extends Controller
     /**
      * @Route("/market/{id}/view",name="buyer_product_details")
      */
-    public function showAction(Request $request, Product $product)
+    public function showAction(Request $request, Direct $product)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
@@ -249,6 +480,7 @@ class HomeController extends Controller
             $quantity = $request->request->get('quantity');
             $price = $request->request->get('productPrice');
             $currency = $request->request->get('productCurrency');
+            //$price = $this->container->get('lexik_currency.converter')->convert($basePrice, $user->getMyCompany()->getCurrency(), false, $product->getVendor()->getCurrency());
 
             $existingCartItem = $em->getRepository('AppBundle:CartItems')
                 ->findItemInCart($product);
@@ -291,7 +523,7 @@ class HomeController extends Controller
             //return $this->redirectToRoute('buyer_shop');
         }
         return $this->render('home/product-details.htm.twig', [
-            'product' => $product,
+            'direct' => $product,
             'form' => $form->createView()
 
         ]);
@@ -394,14 +626,20 @@ class HomeController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $exists = false;
+
+        $buyer = $user->getMyCompany();
+        if ($this->buyerGrowerExists($buyer,$grower)){
+            $exists=true;
+        }
         $em = $this->getDoctrine()->getManager();
 
-        $products = $em->getRepository("AppBundle:Product")
+        $products = $em->getRepository("AppBundle:Direct")
             ->findAllMyActiveProductsOrderByDate($grower);
-        $auctionProducts = $em->getRepository("AppBundle:Auction")
+        $auctionProducts = $em->getRepository("AppBundle:AuctionProduct")
             ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
-        $nrproducts = $em->getRepository('AppBundle:Product')
+        $nrproducts = $em->getRepository('AppBundle:Direct')
             ->findMyActiveProducts($grower);
 
         $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
@@ -412,7 +650,8 @@ class HomeController extends Controller
             'products'=>$products,
             'nrProducts' => $nrproducts,
             'nrAuctionProducts' => $nrAuctionProducts,
-            'auctionProducts' => $auctionProducts
+            'auctionProducts' => $auctionProducts,
+            'growerExists' => $exists
         ]);
 
     }
@@ -427,7 +666,7 @@ class HomeController extends Controller
 
         $buyerAgents = $em->getRepository('AppBundle:BuyerAgent')
             ->findBy([
-                'listOwner' => $buyer->getMyCompany()
+                'buyer' => $buyer->getMyCompany()
             ]);
         $agentIds = array();
 
@@ -439,14 +678,14 @@ class HomeController extends Controller
         }else{
             $agentIds[] = 1;
         }
-        $queryBuilder = $em->getRepository('AppBundle:User')
+        $queryBuilder = $em->getRepository('AppBundle:Company')
             ->createQueryBuilder('user')
             ->andWhere('user.id NOT IN (:agents)')
             ->setParameter('agents',$agentIds)
             ->andWhere('user.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
-            ->setParameter('userType', 'agent');
+            ->andWhere('user.companyType = :companyType')
+            ->setParameter('companyType', 'Agent');
 
         $query = $queryBuilder->getQuery();
         /**
@@ -500,20 +739,37 @@ class HomeController extends Controller
     /**
      * @Route("/agents/{id}/view",name="view_agent")
      */
-    public function agentProfileActionAction(Request $request, User $agent)
+    public function agentProfileActionAction(Request $request, Company $agent)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $agentExists = false;
+
+        if ($this->buyerAgentExists($buyer,$agent)){
+            $agentExists = true;
+        }
+
+
         $em = $this->getDoctrine()->getManager();
 
-        $products = $em->getRepository("AppBundle:Auction")
+        $nrBuyers = $em->getRepository("AppBundle:BuyerAgent")
+            ->getNrMyAgentBuyers($agent);
+        $nrGrowers = $em->getRepository("AppBundle:GrowerAgent")
+            ->getNrMyAgentGrowers($agent);
+
+        $products = $em->getRepository("AppBundle:AuctionProduct")
             ->findAllMyActiveAgentProductsOrderByDate($agent);
 
-        $nrProducts = $em->getRepository("AppBundle:Auction")
+        $nrProducts = $em->getRepository("AppBundle:AuctionProduct")
             ->findNrMyActiveProductsAgent($agent);
 
         return $this->render(':home/agents:details.htm.twig', [
             'agent' => $agent,
             'products' => $products,
             'nrProducts' => $nrProducts,
+            'agentExists'=>$agentExists,
+            'nrBuyers' => $nrBuyers,
+            'nrGrowers' => $nrGrowers
         ]);
 
     }
@@ -584,7 +840,7 @@ class HomeController extends Controller
 
         return $this->render(':home/order/auction:order-details.htm.twig',[
             'order'=>$order,
-            'orderItems'=>$order->getOrderItems()
+
         ]);
     }
     /**
@@ -645,10 +901,19 @@ class HomeController extends Controller
     public function getGrowerRequestsAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $whoseListIds[]=array();
+        $whoseListIds[]=$user->getMyCompany();
         $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:BuyerGrower')
+            ->createQueryBuilder('user')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.buyer = :whoIsBuyer')
+            ->setParameter('whoIsBuyer', $user->getMyCompany())
+            ->andWhere('user.listOwner NOT IN (:buyers)')
+            ->setParameter('buyers',$whoseListIds);
 
-        $query = $em->getRepository('AppBundle:BuyerGrower')
-                    ->getGrowerRequestsQuery($user->getMyCompany());
+        $query = $queryBuilder->getQuery();
         /**
          * @var $paginator \Knp\Component\Pager\Paginator
          */
@@ -659,8 +924,9 @@ class HomeController extends Controller
             $request->query->getInt('limit', 9)
         );
 
+
         return $this->render('home/growers/requests.html.twig', [
-            'breederRequests' => $result,
+            'growerRequests' => $result,
         ]);
     }
     /**
@@ -668,11 +934,17 @@ class HomeController extends Controller
      */
     public function getAgentRequestsAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
-
         $em = $this->getDoctrine()->getManager();
-        $query = $em->getRepository('AppBundle:BuyerAgent')
-                        ->getAgentRequestsQuery($user->getMyCompany());
+        $queryBuilder = $em->getRepository('AppBundle:BuyerAgent')
+            ->createQueryBuilder('user')
+            ->andWhere('user.status = :isAccepted')
+            ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.listOwner <> :whoOwnsList')
+            ->setParameter('whoOwnsList', $user->getMyCompany())
+            ->andWhere('user.buyer = :whoIsBuyer')
+            ->setParameter('whoIsBuyer', $user->getMyCompany());
 
+        $query = $queryBuilder->getQuery();
         /**
          * @var $paginator \Knp\Component\Pager\Paginator
          */
@@ -710,7 +982,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @Route("/checkout",name="buyer_checkout")
+     * @Route("/checkout/v1",name="shipping_method")
      */
     public function checkoutAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -815,7 +1087,7 @@ class HomeController extends Controller
         ]);
     }
     /**
-     * @Route("/shipping-method",name="buyer_shipping_method")
+     * @Route("/checkout",name="buyer_checkout")
      */
     public function shippingMethodAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -863,8 +1135,8 @@ class HomeController extends Controller
 
         $myOrder = new UserOrder();
         $myOrder->setCreatedAt(new \DateTime());
-        $myOrder->setBillingAddress($billingAddress[0]);
-        $myOrder->setShippingAddress($shippingAddress[0]);
+        //$myOrder->setBillingAddress($billingAddress[0]);
+        //$myOrder->setShippingAddress($shippingAddress[0]);
 
         $myOrder->setUser($user);
         $myOrder->setOrderStatus("Pending");
@@ -894,7 +1166,7 @@ class HomeController extends Controller
             $orderItem->setLineTotal($cartItem->getLineTotal());
             $orderItem->setVendor($vendor);
             $orderItem->setOrder($myOrder);
-
+            $this->updateQuantity($product,$cartItem->getQuantity());
             $em->persist($orderItem);
             $em->remove($cartItem);
         }
@@ -998,11 +1270,13 @@ class HomeController extends Controller
 
         $form = $this->createForm(FilterFormType::class);
 
-        $queryBuilder = $em->getRepository('AppBundle:Auction')
-            ->createQueryBuilder('product')
+        $queryBuilder = $em->getRepository('AppBundle:AuctionProduct')
+            ->createQueryBuilder('auctionProduct')
+            ->innerJoin('auctionProduct.whichAuction','auction')
+            ->innerJoin('auction.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->orderBy('product.createdAt', 'DESC');
+            ->orderBy('auctionProduct.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1026,12 +1300,34 @@ class HomeController extends Controller
     /**
      * @Route("/auction/{id}/view",name="buyer_auction_product_details")
      */
-    public function auctionProductDetailsAction(Request $request, Auction $product)
+    public function auctionProductDetailsAction(Request $request, AuctionProduct $product)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $form = $this->createForm(addToCartFormType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $quantity = $request->request->get('quantity');
+
+            $em = $this->getDoctrine()->getManager();
+
+            $auctionCart = new AuctionCart();
+            $auctionCart->setProduct($product);
+            $auctionCart->setWhoseCart($user);
+            $auctionCart->setCompanyCart($user->getMyCompany());
+            $auctionCart->setCartCurrency($user->getMyCompany()->getCurrency());
+            $auctionCart->setItemPrice($product->getWhichAuction()->getPricePerStem());
+            $auctionCart->setCartQuantity($quantity);
+
+            $em->persist($auctionCart);
+            $em->flush();
+
+            return $this->redirectToRoute('auction_buyer_checkout',['id'=>$auctionCart->getId()]);
+
+        }
         return $this->render('buyer/auction/product-details.htm.twig', [
             'product' => $product,
+            'form'=>$form->createView()
         ]);
     }
 
@@ -1137,12 +1433,12 @@ class HomeController extends Controller
         ]);
     }
     /**
-     * @Route("/auction/shipping-method",name="auction_buyer_shipping_method")
+     * @Route("/auction/checkout/{id}/shipping-method",name="auction_buyer_checkout")
      */
-    public function auctionShippingMethodAction(Request $request){
+    public function auctionShippingMethodAction(Request $request, AuctionCart $cart){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $product = $this->container->get('session')->get('product');
+        $this->container->get('session')->set('cart',$cart);
 
         $em = $this->getDoctrine()->getManager();
 
@@ -1154,7 +1450,7 @@ class HomeController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $shippingCost = $request->request->get('shippingCost');
 
-            $this->container->get('session')->set('product', $product);
+            $this->container->get('session')->set('cart', $cart);
             $this->container->get('session')->set('shippingCost',$shippingCost);
             return $this->redirectToRoute('auction_buyer_agent_checkout');
 
@@ -1162,7 +1458,7 @@ class HomeController extends Controller
 
         return $this->render(':partials/iflora/user/auction:shipping-method.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
-            'product'=> $product
+            'cart'=> $cart
         ]);
     }
     /**
@@ -1173,7 +1469,7 @@ class HomeController extends Controller
 
         $vendor = $user->getMyCompany();
 
-        $product = $this->container->get('session')->get('product');
+        $cart = $this->container->get('session')->get('cart');
 
         $em = $this->getDoctrine()->getManager();
 
@@ -1195,7 +1491,7 @@ class HomeController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $agent =$form["agent"]->getData();
             //var_dump($agent);exit;
-            $this->container->get('session')->set('product', $product);
+            $this->container->get('session')->set('cart', $cart);
             $this->container->get('session')->set('agent',$agent);
 
             return $this->redirectToRoute('auction_buyer_payment_method');
@@ -1204,7 +1500,7 @@ class HomeController extends Controller
 
         return $this->render(':partials/iflora/user/auction:my-agent.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
-            'product'=> $product
+            'cart'=> $cart
         ]);
     }
     /**
@@ -1212,7 +1508,7 @@ class HomeController extends Controller
      */
     public function auctionPaymentAction(Request $request){
 
-        $product = $this->container->get('session')->get('product');
+        $cart = $this->container->get('session')->get('cart');
         $shippingCost = $this->container->get('session')->get('shippingCost');
         $agent = $this->container->get('session')->get('agent');
 
@@ -1220,55 +1516,38 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user->getMyCompany());
-
-        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user->getMyCompany());
-
+        $thisCart = $em->getRepository("AppBundle:AuctionCart")
+            ->findOneBy([
+                'id'=>$cart->getId()
+            ]);
+        $auctionProduct = $thisCart->getProduct();
 
         $myOwner = $em->getRepository('AppBundle:User')
             ->findOneBy([
                 'id'=>$user->getId()
             ]);
 
-        $myAgent = $em->getRepository('AppBundle:User')
+        $myAgent = $em->getRepository('AppBundle:Company')
             ->findOneBy([
                 'id'=>$agent->getId()
             ]);
 
         $myOrder = new AuctionOrder();
         $myOrder->setCreatedAt(new \DateTime());
-        $myOrder->setBillingAddress($billingAddress[0]);
-        $myOrder->setShippingAddress($shippingAddress[0]);
-        //$myOrder->setSoldBy($user);
-        $myOrder->setOrderStatus("Pending Agent");
+        $myOrder->setOrderStatus("Processing");
         $myOrder->setOrderNotes("None");
         $myOrder->setWhoseOrder($myOwner);
+        $myOrder->setProduct($auctionProduct);
+        $myOrder->setItemPrice($thisCart->getItemPrice());
+        $myOrder->setQuantity($thisCart->getCartQuantity());
+        $myOrder->setBuyingAgent($myAgent);
+        $myOrder->setSellingAgent($thisCart->getProduct()->getSellingAgent());
         $myOrder->setCheckoutCompletedAt(new \DateTime());
         $myOrder->setOrderState("Active");
-        $myOrder->setOrderAmount($product->getPrice());
-        $myOrder->setOrderCurrency($product->getCurrency());
+        $myOrder->setOrderAmount(($thisCart->getCartQuantity()*$thisCart->getItemPrice()));
+        $myOrder->setOrderCurrency($thisCart->getCartCurrency());
         $myOrder->setShippingCost($shippingCost);
-        $myOrder->setOrderTotal($product->getPrice()+$shippingCost);
-
-        $myOrder->setAgent($myAgent);
-
-
-        $orderProduct = $em->getRepository("AppBundle:Auction")
-                ->findOneBy([
-                    'id'=>$product->getId()
-                ]);
-
-        $myOrder->setReceivingAgent($orderProduct->getAgent());
-
-        $orderItem = new AuctionOrderItems();
-        $orderItem->setProduct($orderProduct);
-        $orderItem->setUnitPrice($product->getPrice());
-        $orderItem->setQuantity($product->getQuantity());
-        $orderItem->setLineTotal($product->getPrice());
-        $orderItem->setOrder($myOrder);
-        $em->persist($orderItem);
+        $myOrder->setOrderTotal(($thisCart->getCartQuantity()*$thisCart->getItemPrice())+$shippingCost);
 
         $form = $this->createForm(PaymentMethodFormType::class);
 
@@ -1288,8 +1567,9 @@ class HomeController extends Controller
             $this->container->get('session')->remove('shippingCost');
             $this->container->get('session')->remove('auction_order');
 
-
             $this->container->get('session')->set('auction_order', $myOrder);
+            $this->updateAuctionQty($thisCart->getCartQuantity(),$thisCart->getProduct());
+            $this->sendOrderAssignmentNotification($myAgent,$myOrder);
 
             return $this->redirectToRoute('auction-checkout-complete');
 
@@ -1298,7 +1578,7 @@ class HomeController extends Controller
 
         return $this->render(':partials/iflora/user/auction:pay.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
-            'product' => $product,
+            'cart' => $cart,
             'agent' => $agent
         ]);
     }
@@ -1320,7 +1600,7 @@ class HomeController extends Controller
                 ]
             );
 
-        $form = $this->createForm(PaymentMethodFormType::class,$order);
+        $form = $this->createForm(AuctionPaymentProofForm::class,$order);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -1504,8 +1784,9 @@ class HomeController extends Controller
      * @Route("/recommendations/my",name="my_buyer_recommendations")
      */
     public function myRecommendationsAction(){
-        $buyer = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $buyer = $user->getMyCompany();
         $em=$this->getDoctrine()->getManager();
 
         $recommendations = $em->getRepository('AppBundle:MyList')
@@ -1617,7 +1898,7 @@ class HomeController extends Controller
 
 
         $messages = $em->getRepository("AppBundle:Notification")
-            ->getNotifications($user);
+            ->getNotifications($user->getMyCompany());
 
         return $this->render(':home/messages:notification.htm.twig',[
             'messages'=> $messages
@@ -1643,5 +1924,85 @@ class HomeController extends Controller
         $compareList = $em->getRepository("AppBundle:MyList")->findBy(['listOwner' => $user, 'listType' => 'Product-Compare', 'productType' => 'Rose',]);
         return $this->render('compare/compare.htm.twig', ['productList' => $compareList]);
     }
+    public function buyerGrowerExists(Company $buyer, Company $grower){
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerGrower = $em->getRepository('AppBundle:BuyerGrower')
+            ->findOneBy([
+                'buyer'=>$buyer,
+                'grower'=>$grower,
+            ]);
+        if ($buyerGrower){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function buyerAgentExists(Company $buyer, Company $agent){
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerAgent = $em->getRepository('AppBundle:BuyerAgent')
+            ->findOneBy([
+                'buyer'=>$buyer,
+                'agent'=>$agent,
+            ]);
+        if ($buyerAgent){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private function updateQuantity(Direct $product, $quantity)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $existingQty = $product->getNumberOfStems();
+        $newQuantity = $existingQty - $quantity;
+
+        $product->setNumberOfStems($newQuantity);
+
+        $em->persist($product);
+        $em->flush();
+
+    }
+    public function sendOrderAssignmentNotification(Company $agent,AuctionOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p>".$buyer." </b> has assigned Order #".$order->getPrettyId()." in the Auction to you and the order has been Automatically added to your list of Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Order Assignment: ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($agent);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+
+    private function updateAuctionQty($quantity, AuctionProduct $product)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $existingQty = $product->getAvailableStock();
+        $newQuantity = $existingQty - $quantity;
+
+        $product->setAvailableStock($newQuantity);
+
+        $em->persist($product);
+        $em->flush();
+
+    }
+
 
 }

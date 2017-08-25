@@ -8,8 +8,8 @@
             <h1 class="page-title">
                 <span class="base" data-ui-id="page-title-wrapper">Grower Login</span></h1>
         </div>
-        <div class="page messages">
-            <div data-placeholder="messages">
+        <div class="page message">
+            <div data-placeholder="message">
                 {% if error %}
                     <div class="alert alert-danger">
                         {{ error.messageKey|trans(error.messageData, 'security') }}

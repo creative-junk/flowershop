@@ -21,8 +21,8 @@ class Notification
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     protected $id;
     /**
@@ -33,22 +33,14 @@ class Notification
      * @ORM\Column(type="boolean")
      */
     protected $isDeleted;
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    protected $isSpam;
+
     /**
      * @ORM\Column(type="datetime")
      */
     protected $sentAt;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @var User
-     */
-    protected $sender;
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @var User
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
+     * @var Company
      */
     private $participant;
     /**
@@ -56,7 +48,7 @@ class Notification
      */
     protected $subject;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      */
     protected $message;
 
@@ -116,21 +108,7 @@ class Notification
         $this->isDeleted = $isDeleted;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getIsSpam()
-    {
-        return $this->isSpam;
-    }
 
-    /**
-     * @param mixed $isSpam
-     */
-    public function setIsSpam($isSpam)
-    {
-        $this->isSpam = $isSpam;
-    }
 
     /**
      * @return mixed
@@ -148,38 +126,7 @@ class Notification
         $this->sentAt = $sentAt;
     }
 
-    /**
-     * @return User
-     */
-    public function getSender()
-    {
-        return $this->sender;
-    }
 
-    /**
-     * @param User $sender
-     */
-    public function setSender($sender)
-    {
-        $this->sender = $sender;
-    }
-
-
-    /**
-     * @return Thread
-     */
-    public function getThread()
-    {
-        return $this->thread;
-    }
-
-    /**
-     * @param Thread $thread
-     */
-    public function setThread($thread)
-    {
-        $this->thread = $thread;
-    }
 
     /**
      * @return mixed
@@ -197,7 +144,7 @@ class Notification
         $this->subject = $subject;
     }
     /**
-     * @return User
+     * @return Company
      */
     public function getParticipant()
     {
@@ -205,7 +152,7 @@ class Notification
     }
 
     /**
-     * @param User $participant
+     * @param Company $participant
      */
     public function setParticipant($participant)
     {

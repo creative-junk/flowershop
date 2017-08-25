@@ -35,46 +35,306 @@
 
         <div class="columns">
             <div class="column main">
-                <h2>Buyer Profile</h2>
-                <div class="leftProfileColumn col-md-4">
-                    <img src="{{ asset('images/avatar.jpg') }}" width="200px"/>
+                <div class="product-info-main">
+                    <div class="page-title-wrapper product">
+                        <h1 class="page-title">
+				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
+				{{ buyer.companyName }}</span></h1>
+                    </div>
 
-                </div>
-                <div class="rightProfileColumn col-md-5">
+                    {% if buyer.reviews | length > 0 %}
 
-                    <h3>{{ buyer.firstName }} {{ buyer.lastName }}</h3>
-                    {% if billingAddress %}
-                    <h4>Billing Address</h4>
-                    <hr/>
-                    <p><strong>Names: </strong> {{ billingAddress.firstName }} {{ billingAddress.lastName }} </p>
-                    <p><strong>Company: </strong> {{ billingAddress.company }}</p>
-                    <p><strong>Street Address: </strong> {{ billingAddress.streetAddress }}</p>
-                    <p><strong>Town: </strong> {{ billingAddress.town }}</p>
-                    <p><strong>Zip: </strong> {{ billingAddress.zip }}</p>
-                    <p><strong>Country: </strong> {{ billingAddress.country }}</p>
-                    <p><strong>Email: </strong> {{ billingAddress.emailAddress }}</p>
-                    <p><strong>Phone: </strong> {{ billingAddress.phoneNumber }}</p>
-                    <br/>
+                        {% set sumQualityratings = 0 %}
+                        {% set avgQualityRatings=0 %}
+                        {% for rating in buyer.reviews %}
+                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                        {% endfor %}
+                        {% set avgQualityRatings= (sumQualityratings / buyer.reviews|length) | round %}
+
+                        {% set sumValueratings = 0 %}
+                        {% set avgValueRatings=0 %}
+                        {% for rating in buyer.reviews %}
+                            {% set sumValueratings = sumValueratings + rating.value %}
+                        {% endfor %}
+                        {% set avgValueRatings= (sumValueratings / buyer.reviews|length) | round %}
+
+                        {% set sumPriceratings = 0 %}
+                        {% set avgPriceRatings=0 %}
+                        {% for rating in buyer.reviews %}
+                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                        {% endfor %}
+                        {% set avgPriceRatings= (sumQualityratings / buyer.reviews|length) | round %}
+
+                        {% set avgrating=0 %}
+                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                        {{ avgrating | rating(5, "fa-lg")   }}
+                    {% else %}
+                        {{ 0 | rating(5, "fa-lg")   }}
                     {% endif %}
-                    {% if shippingAddress %}
-                    <h4>Shipping Address</h4>
-                    <hr/>
-                    <p><strong>Names: </strong> {{ shippingAddress.firstName }} {{ shippingAddress.lastName }} </p>
-                    <p><strong>Company: </strong> {{ shippingAddress.company }}</p>
-                    <p><strong>Street Address: </strong> {{ shippingAddress.streetAddress }}</p>
-                    <p><strong>Town: </strong> {{ shippingAddress.town }}</p>
-                    <p><strong>Zip: </strong> {{ shippingAddress.zip }}</p>
-                    <p><strong>Country: </strong> {{ shippingAddress.country }}</p>
-                    <p><strong>Email: </strong> {{ shippingAddress.emailAddress }}</p>
-                    <p><strong>Phone: </strong> {{ shippingAddress.phoneNumber }}</p>
-                    {% endif %}
+
+                    <div class="product-add-form">
+                        {% if buyerExists %}
+                        {% else %}
+                            <div class="box-tocart">
+                                <div class="fieldset">
+
+                                    <div class="actions">
+                                        <a href="#"  class="action request js-request-user"
+                                           data-url="{{ path('request-buyer-buyer',{
+                                               'id': buyer.id
+                                           }) }}"
+                                           title="Request buyer"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add buyer</a>          </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+
+                    <div class="product attribute overview">
+                        <div class="value" itemprop="description">
+
+                            <table>
+                                <tr>
+                                    <td><strong>Name:</strong> {{ buyer.companyName }}</td>
+                                    <td><strong>Country:</strong> {{ buyer.country }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No. of Growers:</strong> {{ nrGrowers }}</td>
+                                    <td><strong>No. of Buyers:</strong> {{ nrBuyers }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><strong>About buyer:</strong> <br/>{{ buyer.aboutCompany }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Number of Employees: {{ buyer.numberOfEmployees }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phone Number:</strong> {{ buyer.telephoneNumber }}</td>
+                                    <td><strong>Website:</strong> {{ buyer.website }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong> {{ buyer.email }}</td>
+                                    <td><strong>Social Media:</strong> <br/>
+                                        Facebook: <a href="{{ buyer.facebookPage }}">{{ buyer.facebookPage }}</a><br/>
+                                        Twitter: <a href="{{ buyer.twitterPage }}">{{ buyer.twitterPage }}</a><br/>
+                                        Instagram: <a href="{{ buyer.instagramPage }}">{{ buyer.instagramPage }}</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="clearfix"></div>
-                <div class="clearfix"></div>
+                <div class="product media">
+                    <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/avatar.jpg') }}">
+
+                        <table class="gallery cf">
+                            <tr>
+                                {% if buyer.image1 %}
+                                    <td><img class="nim" width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.image1 }}"></td>
+                                {% endif %}
+                                {% if buyer.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.image2 }}"></td>
+                                {% endif %}
+                                {% if buyer.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.image3 }}"></td>
+                                {% endif %}
+                                {% if buyer.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.image4 }}"></td>
+                                {% endif %}
+                                {% if buyer.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.image5 }}"></td>
+                                {% endif %}
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
             </div>
 
-            {% include(':grower:sidebar.htm.twig') %}
+            <div class="product info detailed">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#roses"><b>Roses in Market</b></a> </li>
+
+                    <li><a data-toggle="tab" href="#reviews"><b>Reviews</b></a></li>
+                    <li><a data-toggle="tab" href="#comments"><b>Comments</b></a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div id="roses" class="tab-pane fade in active">
+                        <div id="product-review-container" data-role="product-review">
+                            <div class="block review-list" id="customer-reviews">
+                                <div class="block-content">
+                                    <div class="products wrapper list products-list">
+                                        <ol class="products list items product-items">
+                                            {% for auction in products %}
+                                                <li class="item product product-item" style="float: left;max-width:450px">
+                                                    <div class="product-item-info" data-container="product-grid">
+                                                        <div class=" product-item-images">
+                                                            <a class="product photo product-item-photo"
+                                                               href="{{ path('buyer_product_details',{
+                                                                   'id': auction.id
+                                                               }) }}" tabindex="-1">
+						<span class="product-image-container" style="width: 350px;">
+						<span class="product-image-wrapper" style="padding-bottom: 126%;">
+						<img alt="{{ auction.product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ auction.product.mainImage }}" alt="{{ auction.product.title }}"
+                             width="350"></span>
+						</span></a></div>
+                                                        <div class="product-item-details">
+                                                            <div class="content-name">
+                                                                <strong class="product name product-item-name">
+                                                                    <a class="product-item-link"
+                                                                       href="{{ path('buyer_product_details',{
+                                                                           'id': auction.id
+                                                                       }) }}">
+                                                                        {{ auction.product.title }} </a></strong>
+                                                            </div>
+                                                            <div class="product-reviews-summary short">
+                                                                <div class="rating-summary">
+                                                                    <span class="label"><span>Rating:</span></span>
+
+                                                                    <div class="rating-result" title="80%">
+                                                                        <span style="width: 80%"><span>80%</span></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="reviews-actions">
+                                                                    <a class="action view" href="#">
+                                                                        1&nbsp;<span>Review</span></a></div>
+                                                            </div>
+                                                            <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
+							<span class="price-container price-final_price tax weee">
+							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
+							<span class="price">{{ auction.currency }} {{ auction.pricePerStem }}</span> </span></span>
+                                                            </div>
+                                                            <table class="attributes">
+                                                                <tr>
+                                                                    <td><strong>Color:</strong> {{ auction.product.color }}</td>
+                                                                    <td><strong>Season:</strong> {{ auction.product.season }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Stem Length: </strong>{{ auction.product.stemLength }}</td>
+                                                                    <td><strong>Quality:</strong> {{ auction.quality }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Stock:</strong> {{ auction.numberOfStems | number_format }}</td>
+                                                                    <td><strong>Packing:</strong> {{ auction.stemsPerBox | number_format }}</td>
+                                                                </tr>
+                                                                <tr><td colspan="2"><strong>buyer: </strong> {{ auction.product.vendor }}</td></tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% else %}
+                                                <p style="text-align: center;width:100%">This buyer has no Roses Assigned</p>
+                                            {% endfor %}
+                                        </ol>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="reviews" class="tab-pane fade"><br/>
+                        <div id="product-review-container" data-role="product-review"><div class="block review-list" id="customer-reviews">
+                                <div class="block-title">
+                                    <strong>Customer Reviews</strong>
+                                </div>
+                                <div class="block-content">
+                                    <ol class="items review-items">
+                                        {% for review in buyer.reviews %}
+                                            <li class="item review-item">
+                                                <div class="review-title" itemprop="name">{{ review.summary }}</div>
+                                                <div class="review-ratings">
+                                                    <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                                        <span class="rating-label"><b>Quality</b></span>
+                                                        {{ review.quality | rating(5, "fa-lg") }}
+                                                    </div>
+                                                    <div class="rating-summary item">
+                                                        <span class="rating-label"><b>Price</b></span>
+                                                        {{ review.price | rating(5, "fa-lg") }}
+                                                    </div>
+                                                    <div class="rating-summary item" itemprop="reviewRating" itemscope="">
+                                                        <span class="rating-label"><b>Value</b></span>
+                                                        {{ review.value | rating(5, "fa-lg") }}
+                                                    </div>
+                                                </div>
+                                                <div class="review-details">
+                                                    <p class="review-author">
+                                                        <span class="review-details-value">{{ review.review }}</span>
+                                                    </p><br/>
+                                                    <p class="review-author">
+                                                        <span class="review-details-label">Review by</span>
+                                                        <strong class="review-details-value" itemprop="author">{{ review.ratedBy.myCompany }}</strong>
+                                                    </p>
+                                                    <p class="review-date">
+                                                        <span class="review-details-label">Reviewed on</span>
+                                                        <time class="review-details-value" itemprop="datePublished" datetime="{{ review.createdAt | date }}">{{ review.createdAt | date }}</time>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        {% else %}
+                                            <li>No Reviews Found<br/><br/></li>
+                                        {%  endfor %}
+                                    </ol>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {{ render(controller('AppBundle:Rating/Rating:userRating',{'companyId':buyer.id })) }}
+                    </div>
+                    <div id="comments" class="tab-pane fade"><br/>
+                        <div id="product-review-container" data-role="product-review">
+                            <div class="block review-list" id="customer-reviews">
+                                <div class="block-title">
+                                    <strong>Comments</strong>
+                                </div>
+                                <div class="block-content">
+                                    <ol class="items review-items">
+                                        {% for comment in buyer.comments %}
+                                            <li class="item review-item">
+
+                                                <div class="review-details">
+                                                    <p class="review-author">
+                                                        <span class="review-details-value">{{ comment.commentText }}</span>
+                                                    </p><br/>
+                                                    <p class="review-author">
+
+                                                        <strong class="review-details-value" itemprop="author">{{ comment.author.myCompany }}</strong>
+                                                    </p>
+                                                    <p class="review-date">
+
+                                                        <time class="review-details-value" itemprop="datePublished" datetime="{{ comment.createdAt | date }}">{{ comment.createdAt | date }}</time>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        {% else %}
+                                            <li>No Comments Found<br/><br/></li>
+                                        {%  endfor %}
+                                    </ol>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <br/>
+                        {{ render(controller('AppBundle:Comment/Comment:userComment',{'companyId':buyer.id })) }}
+                    </div>
+                </div>
+
+            </div>
         </div>
 
     </main>

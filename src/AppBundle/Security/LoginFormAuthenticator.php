@@ -31,11 +31,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     private $passwordEncoder;
     private $redirectFailureUrl;
     private $redirectSuccessUrl;
+    private $role;
 
     /**
      * LoginFormAuthenticator constructor.
      */
-    public function __construct(FormFactoryInterface $formFactory, EntityManager $em, RouterInterface $router, UserPasswordEncoder $passwordEncoder, $redirectFailureUrl = null, $redirectSuccessUrl = null)
+    public function __construct(FormFactoryInterface $formFactory, EntityManager $em, RouterInterface $router, UserPasswordEncoder $passwordEncoder, $redirectFailureUrl = null, $redirectSuccessUrl = null,$role=null)
     {
         $this->formFactory = $formFactory;
         $this->em = $em;
@@ -43,12 +44,27 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $this->passwordEncoder = $passwordEncoder;
         $this->redirectFailureUrl = $redirectFailureUrl;
         $this->redirectSuccessUrl = $redirectSuccessUrl;
+        $this->role = $role;
     }
 
     public function getCredentials(Request $request)
     {
         $isLoginSubmit = ($request->getPathInfo() == '/login/buyer' || $request->getPathInfo() == '/login/grower' || $request->getPathInfo() == '/login/breeder' || $request->getPathInfo() == '/login/admin' || $request->getPathInfo() == '/login/agent')  && $request->isMethod('POST');
         // $isGrowerLoginSubmit = $request->getPathInfo()=='/login/grower' && $request->isMethod('POST');
+
+        if($request->getPathInfo() == '/login/buyer'){
+            $this->role = '["ROLE_BUYER"]';
+        }elseif($request->getPathInfo() == '/login/grower') {
+            $this->role = '["ROLE_GROWER"]';
+        }elseif($request->getPathInfo() == '/login/breeder') {
+            $this->role = '["ROLE_BREEDER"]';
+        }elseif($request->getPathInfo() == '/login/agent') {
+            $this->role = '["ROLE_AGENT"]';
+        }elseif($request->getPathInfo() == '/login/admin') {
+            $this->role = '["ROLE_ADMIN"]';
+        }
+
+
 
         if(!$isLoginSubmit){
             return;
@@ -75,14 +91,31 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
        $username = $credentials['_username'];
+       $user=$this->em->getRepository('AppBundle:User')
+            ->createQueryBuilder('user')
+            ->andWhere('user.email=:email')
+            ->setParameter('email',$username)
+            ->andWhere('user.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('user.roles = :userRole')
+            ->setParameter(':userRole',$this->role)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->execute();
+       if ($user){
+           return $user[0];
+       }else{
+           return null;
+       }
 
-        return $this->em->getRepository('AppBundle:User')
+        /*return $this->em->getRepository('AppBundle:User')
             ->findOneBy(
                 [
                     'email'=> $username,
-                    'isActive'=>true
+                    'isActive'=>true,
+                    'roles'=>$this->role
                 ]
-            );
+            );*/
 
     }
 

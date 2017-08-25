@@ -21,12 +21,12 @@ class GrowerAgent
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="agentGrowers")
+     * @ORM\ManyToOne(targetEntity="Company",inversedBy="agentGrowers")
      * @ORM\JoinColumn(nullable=false)
      */
     private $agent;

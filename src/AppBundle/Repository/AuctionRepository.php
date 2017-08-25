@@ -30,21 +30,99 @@ class AuctionRepository extends EntityRepository
             ->execute();
     }
     /**
-     * @return Auction[]
+     *
      */
     public function findAllMyActiveAuctionProductsOrderByDate(Company $user){
 
-        return $this->createQueryBuilder('product')
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
             ->andWhere('product.vendor= :createdBy')
             ->setParameter('createdBy',$user)
-            ->orderBy('product.createdAt','DESC')
-            ->getQuery()
-            ->execute();
+            ->orderBy('product.createdAt','DESC');
     }
+    /**
+     *
+     */
+    public function findAllMyActiveAuctionOrderByDate(Company $user){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status= :status')
+            ->setParameter('status','Active')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('product.vendor= :createdBy')
+            ->setParameter('createdBy',$user)
+            ->orderBy('product.createdAt','DESC');
+    }
+    /**
+     *
+     */
+    public function findAllMyAcceptedAuctionOrderByDate(Company $user){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status= :status')
+            ->setParameter('status','Accepted')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('product.vendor= :createdBy')
+            ->setParameter('createdBy',$user)
+            ->orderBy('product.createdAt','DESC');
+    }
+    /**
+     *
+     */
+    public function findAllMyUnassignedAuctionOrderByDate(Company $user){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status = :unassigned')
+            ->setParameter('unassigned','Unassigned')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('auction.isInStock = :inStock')
+            ->setParameter('inStock',true)
+            ->andWhere('product.vendor = :isGrower')
+            ->setParameter('isGrower', $user)
+            ->orderBy('product.createdAt', 'DESC');
+    }
+    /**
+     *
+     */
+    public function findAllMyPendingAuctionOrderByDate(Company $user){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status = :pendingAgent')
+            ->setParameter('pendingAgent','Pending Agent')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('product.vendor = :isGrower')
+            ->setParameter('isGrower', $user)
+            ->orderBy('product.createdAt', 'DESC');
+    }
+    /**
+     *
+     */
+    public function findAllMyShippedAuctionOrderByDate(Company $user){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status = :pendingAgent')
+            ->setParameter('pendingAgent','Shipped')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('product.vendor = :isGrower')
+            ->setParameter('isGrower', $user)
+            ->orderBy('product.createdAt', 'DESC');
+    }
+
     public function findMyActiveAuctionProducts(Company $user){
-        $nrProducts= $this->createQueryBuilder('product')
+        $nrProducts= $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
             ->select('count(product.id)')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
@@ -58,14 +136,15 @@ class AuctionRepository extends EntityRepository
             return 0;
         }
     }
-    public function findMyActiveProductRequests(User $user){
-        $nrProducts= $this->createQueryBuilder('product')
-            ->select('count(product.id)')
+    public function findMyActiveProductRequests(Company $user){
+        $nrProducts= $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->select('count(auction.id)')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.agent= :isAgent')
+            ->andWhere('auction.sellingAgent= :isAgent')
             ->setParameter('isAgent',$user)
-            ->andWhere('product.status= :status')
+            ->andWhere('auction.status= :status')
             ->setParameter('status',"Pending Agent")
             ->getQuery()
             ->getSingleScalarResult();
@@ -75,14 +154,15 @@ class AuctionRepository extends EntityRepository
             return 0;
         }
     }
-    public function findNrMyActiveProductsAgent(User $user){
-        $nrProducts= $this->createQueryBuilder('product')
+    public function findNrMyActiveProductsAgent(Company $user){
+        $nrProducts= $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
             ->select('count(product.id)')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.agent= :isAgent')
+            ->andWhere('auction.sellingAgent= :isAgent')
             ->setParameter('isAgent',$user)
-            ->andWhere('product.status= :status')
+            ->andWhere('auction.status= :status')
             ->setParameter('status',"Agent Accepted")
             ->getQuery()
             ->getSingleScalarResult();
@@ -95,14 +175,15 @@ class AuctionRepository extends EntityRepository
     /**
      * @return Auction[]
      */
-    public function findAllMyActiveAgentProductsOrderByDate(User $user){
+    public function findAllMyActiveAgentProductsOrderByDate(Company $user){
 
-        return $this->createQueryBuilder('product')
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive',true)
-            ->andWhere('product.agent= :isAgent')
+            ->andWhere('auction.sellingAgent= :isAgent')
             ->setParameter('isAgent',$user)
-            ->andWhere('product.status= :status')
+            ->andWhere('auction.status= :status')
             ->setParameter('status',"Agent Accepted")
             ->orderBy('product.createdAt','DESC')
             ->getQuery()

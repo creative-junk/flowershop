@@ -68,6 +68,7 @@
                 <table id="shopping-cart-table" class="cart items data table">
                     <thead>
                     <tr>
+                        <th></th>
                         <th class="col item" scope="col"><span>Agent</span></th>
                         <th></th>
                         <th class="col price" scope="col"><span>Connected Since</span></th>
@@ -78,6 +79,8 @@
                     <tbody class="cart item">
                     {% for growerAgent in growerAgents %}
                         <tr class="item-info js-agent-item">
+                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
+                                     src="{{ asset('images/products/') }}{{ growerAgent.agent.logoName }}"></td>
                             <td data-th="Item" class="col item">
 
                     <span class="product-image-container" style="width:165px;">
@@ -86,41 +89,42 @@
                         <span class="product-image-wrapper" style="padding-bottom: 100%;">
                           <a href="{{ path('agent_profile',{
                               'id':growerAgent.agent.id
-                          }) }}">{{ growerAgent.agent.fullName }}</a>
+                          }) }}">{{ growerAgent.agent.companyName }}</a>
    </span>
                     </strong>
 
                     </span>
                             </td>
                             <td class="col subtotal" data-th="Subtotal">
-                                {% if growerAgent.agent.agentReviews | length > 0 %}
+                                {% if growerAgent.agent.reviews | length > 0 %}
 
                                     {% set sumQualityratings = 0 %}
                                     {% set avgQualityRatings=0 %}
-                                    {% for rating in growerAgent.agent.agentReviews %}
+                                    {% for rating in growerAgent.agent.reviews %}
                                         {% set sumQualityratings = sumQualityratings + rating.quality %}
                                     {% endfor %}
-                                    {% set avgQualityRatings= (sumQualityratings / growerAgent.agent.agentReviews|length) | round %}
+                                    {% set avgQualityRatings= (sumQualityratings / growerAgent.agent.reviews|length) | round %}
 
                                     {% set sumValueratings = 0 %}
                                     {% set avgValueRatings=0 %}
-                                    {% for rating in growerAgent.agent.agentReviews %}
+                                    {% for rating in growerAgent.agent.reviews %}
                                         {% set sumValueratings = sumValueratings + rating.value %}
                                     {% endfor %}
-                                    {% set avgValueRatings= (sumValueratings / growerAgent.agent.agentReviews|length) | round %}
+                                    {% set avgValueRatings= (sumValueratings / growerAgent.agent.reviews|length) | round %}
 
                                     {% set sumPriceratings = 0 %}
                                     {% set avgPriceRatings=0 %}
-                                    {% for rating in growerAgent.agent.agentReviews %}
+                                    {% for rating in growerAgent.agent.reviews %}
                                         {% set sumPriceratings = sumPriceratings + rating.price %}
                                     {% endfor %}
-                                    {% set avgPriceRatings= (sumQualityratings / growerAgent.agent.agentReviews|length) | round %}
+                                    {% set avgPriceRatings= (sumQualityratings / growerAgent.agent.reviews|length) | round %}
 
                                     {% set avgrating=0 %}
                                     {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                     {{ avgrating | rating(5, "fa-lg") }}
-
+                                {% else %}
+                                    {{ 0 | rating(5,"fa-lg") }}
                                 {% endif %}
 
                             </td>

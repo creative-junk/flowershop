@@ -1,0 +1,160 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Board Approved Users{% endblock %}
+{% block javascripts %}
+
+    <!-- jqueryui -->
+    <link href="{{ asset('js/jquery-ui-1.12.1/jquery-ui.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jquery-ui-1.12.1/jquery-ui.js') }}"></script>
+
+    <!-- x-editable (jquery) -->
+    <link href="{{ asset('js/jqueryui-editable/css/jqueryui-editable.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jqueryui-editable/js/jqueryui-editable.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.fn.editable.defaults.mode = 'inline';
+
+            //make MemberNumber editable
+            $('#memberNumber').editable({
+
+            });
+        });
+        jQuery('#js-create-account').on('click',function (e)  {
+            //Prevent Normal Submit
+            e.preventDefault();
+
+            $(".messages").fadeOut("slow");
+
+            $(this).find('.fa-plus-circle')
+                .removeClass('fa-plus-circle')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+            $(this).find('.fa-check')
+                .removeClass('fa-check')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+
+            // get form values
+            var values = $(this).serialize();
+
+            $.ajax({
+                url: $(this).data('url'),
+                method: 'GET'
+            }).done(function () {
+                //$el.fadeOut("slow");
+                $(".messages").fadeIn("slow");
+
+                $("#create-account")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-check');
+            }).error(function () {
+                //$el.fadeOut("slow");
+                $(".errors").fadeIn("slow");
+
+                $("#create-account")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-times');
+            })
+
+
+
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block body %}
+    <div id="content" class="app-content box-shadow-z0" role="main">
+
+
+        <div ui-view class="app-body" id="view">
+           {{ include(':admin/partials:top.htm.twig') }}
+            <div class="padding">
+                <div class="page messages">
+                    <div class="messages" style="">
+                        <div class="alert alert-success">
+                            <div>
+                                Account Created successfully.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="page errors">
+                    <div class="errors" style="">
+                        <div class="alert alert-danger">
+                            <div>
+                               :-( Something went wrong. An Account might already exist for this profile.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="box-header">
+                        <h2>Board Approved Profiles</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="data" class="table table-striped b-t b-b">
+                            <thead>
+                            <tr>
+                                <th  style="width:20%">Names</th>
+                                <th  style="width:20%">Member Number</th>
+                                <th  style="width:20%">Stage Name</th>
+                                <th  style="width:15%">Email</th>
+                                <th  style="width:25%">Created At</th>
+                                <th  style="width:25%">Manage</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in users  %}
+                                <tr>
+                                    <td><a style="color:#0cc2aa" href="{{ path('review-profile',{'id': user.id }) }}">{{ user.fullName }}</a></td>
+                                    <td>
+                                        {% if user.memberNumber =="" %}
+                                            <a href="#" id="memberNumber" data-type="text" data-pk="{{ user.id }}" data-url="{{ path('update-member-number') }}" data-title="Enter Member Number">Click to add</a>
+                                        {% else %}
+                                        {{ user.memberNumber }}
+                                            {% endif %}
+                                            </td>
+                                    <td>{{ user.stageName }}</td>
+                                    <td>{{ user.emailAddress }}</td>
+                                    <td>{{ user.createdAt | date("F jS \\a\\t g:ia") }}</td>
+                                    <td>
+
+                                       {% if user.accountCreated=="" %}
+                                           {% if user.memberNumber =="" %}
+
+                                           {% else %}
+
+                                               <a id="js-create-account" href="#" data-url="{{ path('create-account',{'id': user.id }) }}"
+                                                  class="btn btn-xs white btn-icon"><i title="Create Account" id="create-account" class="fa fa-plus-circle"></i></a>
+
+                                           {% endif %}
+
+
+                                       {% else %}
+                                           <a href="{{ path('pdf-profile',{'id': user.id }) }}"
+                                              class="btn btn-xs white btn-icon"><i title="Export" class="fa fa-file-pdf-o"></i></a>
+                                           <a href="{{ path('next-of-kin',{'id': user.id }) }}"
+                                              class="btn btn-xs white btn-icon"><i title="Next of Kin" id="create-account" class="fa fa-id-badge"></i></a>
+                                       {% endif %}
+
+                                    </td>
+                                </tr>
+                            {% endfor  %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ############ PAGE END-->
+
+        </div>
+    </div>
+{% endblock %}

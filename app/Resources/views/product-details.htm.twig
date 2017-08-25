@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ product.title }}{% endblock %}
+{% block title %}{{ direct.product.title }}{% endblock %}
 {% block body %}
     {% block javascripts %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.1/jquery.form.min.js" integrity="sha384-tIwI8+qJdZBtYYCKwRkjxBGQVZS3gGozr3CtI+5JF/oL1JmPEHzCEnIKbDbLTCer" crossorigin="anonymous"></script>
@@ -38,7 +38,7 @@
         <div class="row">
 
             <div id="product-page">
-                <div class="col-lg-6 col-md-12" itemprop="offerDetails" itemscope itemtype="http://data-vocabulary.org/Offer">
+                <div class="col-lg-6 col-md-12">
 
                     <div class="single-product-info-holder">
                         {{ include(':partials:breadcrumb-bar.htm.twig') }}
@@ -49,23 +49,23 @@
                             <div class="col-lg-6 col-md-12">
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <img temprop="image"  class="lazy product-img" alt="{{ product.imageurl }}" src="{{ asset('images/products/') }}{{ product.imageurl }}" />
+                                        <img temprop="image"  class="lazy product-img" alt="{{ direct.product.title }}" src="{{ asset('images/products/') }}{{ product.mainImage }}" />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <h1 itemprop="name">{{ product.title }}</h1>
+                        <h1 itemprop="name">{{ direct.product.title }}</h1>
 
                         <div class="price">
                             {% if product.isOnSale %}
-                                <span class="previous-price">{{ product.currency }} {{ product.price }}</span>
+                                <span class="previous-price">{{ direct.currency }} {{ direct.pricePerStem | number_format }}</span>
                             {% endif %}
-                            <span  itemprop="price">{{ product.currency }} {{ product.price }}</span>
-                            <meta itemprop="currency" content="{{ product.currency }}" />
+                            <span  itemprop="price">{{ direct.currency }} {{ direct.pricePerStem | number_format }}</span>
+
                         </div>
-                        {% if product.description %}
+                        {% if direct.product.description %}
                             <div class="excerpt" itemprop="description">
-                                {{ product.description }}
+                                {{ direct.product.description }}
                             </div>
                         {% endif %}
 
@@ -75,14 +75,14 @@
 
                             <div class="quantitiy inline">
                                 <h5>Quantity</h5>
-                                <input class="md-input quantity" type="text" value="1" name="quantity"/>
+                                <input class="md-input quantity" type="text" value="{{ direct.minimumOrder }}" name="quantity"/>
                             </div>
                         </div>
                         <div class="buttons-holder">
                             <div class="add-cart-holder inline">
-                                <input type="hidden" name="productCurrency" value="{{ product.currency }}"/>
-                                <input type="hidden" name="productPrice" value="{{ product.price }}"/>
-                                <input type="hidden" name="productId" value="{{ product.id }}"/>
+                                <input type="hidden" name="productCurrency" value="{{ direct.currency }}"/>
+                                <input type="hidden" name="productPrice" value="{{ direct.pricePerStem }}"/>
+                                <input type="hidden" name="productId" value="{{ direct.id }}"/>
                                 <button class="md-button">Add to Cart</button>
                                 <!-- <a class="md-button" href="#" data-ajax-handler="shop:onAddToCart" data-ajax-update="#mini-cart=shop-minicart, #product-page=shop-product">Add to Cart</a>
                                 -->

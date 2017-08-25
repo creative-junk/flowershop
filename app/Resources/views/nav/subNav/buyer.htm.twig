@@ -2,7 +2,7 @@
     <strong class="label" style="color:black;"><span>My Account<i style="color: black"
                     class="fa fa-angle-down">&nbsp;</i></span></strong>
     <ul class="header links">
-        <li><a href="{{ path('my-profile') }}">Profile</a></li>
+        <li><a href="{{ path('my-buyer-profile') }}">Profile</a></li>
         <li class="link wishlist" data-bind="scope: 'wishlist'">
             <a href="{{ path('order_list') }}">My Orders
 
@@ -33,7 +33,7 @@
     <ul class="header links" style="left:-100px;margin-top:8px">
         <li class="top">Messages</li>
         <li><a href="{{ path('buyer-inbox') }}">Inbox ( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadMessages')) }} )</a></li>
-        <li><a href="{{ path('my_buyer_agent_requests') }}">Notification ( {{ render(controller('AppBundle:Buyer/Home:getMyTotalAgentRequests')) }} )</a></li>
+        <li><a href="{{ path('buyer-notifications') }}">Notification ( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadNotifications')) }} )</a></li>
 
     </ul>
 </div>

@@ -27,8 +27,8 @@ class Company
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -67,6 +67,35 @@ class Company
      * @ORM\Column(type="integer",nullable=true)
      */
     private $logoSize;
+    /* @Assert\Type("AppBundle\Entity\ProductImages")
+    * @Assert\Valid()
+    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+    */
+    private $image1;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $image2;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $image3;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $image4;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $image5;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -221,7 +250,14 @@ class Company
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="listOwner",fetch="EXTRA_LAZY")
      */
     private $myLists;
-
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $approvedBy;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $approvedOn;
 
     public function __construct()
     {
@@ -897,6 +933,118 @@ class Company
     public function getMyReceivedAgencyOrders()
     {
         return $this->myReceivedAgencyOrders;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApprovedBy()
+    {
+        return $this->approvedBy;
+    }
+
+    /**
+     * @param mixed $approvedBy
+     */
+    public function setApprovedBy($approvedBy)
+    {
+        $this->approvedBy = $approvedBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApprovedOn()
+    {
+        return $this->approvedOn;
+    }
+
+    /**
+     * @param mixed $approvedOn
+     */
+    public function setApprovedOn($approvedOn)
+    {
+        $this->approvedOn = $approvedOn;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImage1()
+    {
+        return $this->image1;
+    }
+
+    /**
+     * @param mixed $image1
+     */
+    public function setImage1($image1)
+    {
+        $this->image1 = $image1;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImage2()
+    {
+        return $this->image2;
+    }
+
+    /**
+     * @param mixed $image2
+     */
+    public function setImage2($image2)
+    {
+        $this->image2 = $image2;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImage3()
+    {
+        return $this->image3;
+    }
+
+    /**
+     * @param mixed $image3
+     */
+    public function setImage3($image3)
+    {
+        $this->image3 = $image3;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImage4()
+    {
+        return $this->image4;
+    }
+
+    /**
+     * @param mixed $image4
+     */
+    public function setImage4($image4)
+    {
+        $this->image4 = $image4;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImage5()
+    {
+        return $this->image5;
+    }
+
+    /**
+     * @param mixed $image5
+     */
+    public function setImage5($image5)
+    {
+        $this->image5 = $image5;
     }
 
 

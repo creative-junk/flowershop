@@ -1,0 +1,178 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Next of Kin Details {% endblock %}
+
+{% block body %}
+    <div id="content" class="app-content box-shadow-z0" role="main">
+    <div class="app-header white box-shadow">
+        <div class="navbar">
+            <!-- Open side - Naviation on mobile -->
+            <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up">
+                <i class="material-icons">&#xe5d2;</i>
+            </a>
+            <!-- / -->
+
+            <!-- Page title - Bind to $state's title -->
+            <div class="navbar-item pull-left h5" ng-bind="$state.current.data.title" id="pageTitle"></div>
+
+            <!-- navbar right -->
+            <ul class="nav navbar-nav pull-right">
+                <li class="nav-item dropdown pos-stc-xs">
+
+
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link clear" href="{{ path('user_logout') }}" data-toggle="dropdown">
+
+                        <i class="fa fa-sign-out"></i>
+                    </a>
+
+                </li>
+                <li class="nav-item hidden-md-up">
+                    <a class="nav-link" data-toggle="collapse" data-target="#collapse">
+                        <i class="material-icons">&#xe5d4;</i>
+                    </a>
+                </li>
+            </ul>
+            <!-- / navbar right -->
+
+            <!-- navbar collapse -->
+            <div class="collapse navbar-toggleable-sm" id="collapse">
+                <div ui-include="'../views/blocks/navbar.form.right.html'"></div>
+                <!-- link and dropdown -->
+                <ul class="nav navbar-nav">
+                    <li class="nav-item"><a href="{{ path('onboarded-users') }}"><i class="fa fa-hand-o-left"> </i></a> </li>
+                    <li class="nav-item dropdown">
+                        <h5>Profile Review - {{ nextOfKin.firstName }} {{ nextOfKin.lastName }}</h5>
+
+                    </li>
+                </ul>
+                <!-- / -->
+            </div>
+            <!-- / navbar collapse -->
+        </div>
+    </div>
+
+    <div ui-view class="app-body" id="view">
+
+    <!-- ############ PAGE START-->
+
+
+
+
+    <div class="padding">
+
+
+    <div class="recording-body">
+
+        <div class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Next of Kin Information</h3>
+                </div>
+                <div class="panel-body" style="min-height: 370px">
+                    <div class="col-md-12" >
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Last Name"><strong>Last Name</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.lastName }}
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="FirstName"><strong>First Name</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.firstName }}
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Relationship"><strong>Relationship</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.relationship }}
+
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Genre"><strong>ID/Passport No.</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.idNumber }}
+
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Percent"><strong>Percent</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.percent }}%
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="PhysicalAddress"><strong>Physical Address</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.physicalAddress  }}
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Duration"><strong>Postal Address</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.postalAddress }}
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="RecordingStudio1"><strong>Postal Code</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.postalCode }}
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Comment"><strong>City</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.city }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Comment"><strong>Country</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.country }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Comment"><strong>Phone No.1</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.phoneNumber }}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 form-group-sm">
+                            <label class="control-label col-md-4" for="Comment"><strong>Email</strong></label>
+                            <div class="col-md-8">
+                                {{ nextOfKin.email }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="form-group col-md-6 form-group-sm">
+            <div>
+                <a href="{{ path('next-of-kin',{'id': profile.id }) }}">Back to List</a>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+        <!-- ############ PAGE END-->
+
+    </div>
+    </div>
+{% endblock %}

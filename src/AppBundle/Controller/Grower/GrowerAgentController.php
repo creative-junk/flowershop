@@ -16,7 +16,7 @@ class GrowerAgentController extends Controller
      * @Route("/grower/agent/{id}/request",name="request-agent-grower")
      */
 
-    public function requestAgentAction(User $agent)
+    public function requestAgentAction(Company $agent)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
@@ -43,7 +43,9 @@ class GrowerAgentController extends Controller
      * @Route("/agent/grower/{id}/request",name="request-grower-agent")
      */
     public function requestGrowerAction(Company $grower){
-        $agent = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
 
         if ($this->growerAgentExists($grower,$agent)){
             return new Response(null,500);
@@ -52,7 +54,7 @@ class GrowerAgentController extends Controller
             $growerAgent->setAgent($agent);
             $growerAgent->setGrower($grower);
             $growerAgent->setStatus('Requested');
-            $growerAgent->setAgentListOwner($agent);
+            $growerAgent->setListOwner($agent);
             $growerAgent->setUpdatedAt(new \DateTime());
 
             $em = $this->getDoctrine()->getManager();
@@ -63,7 +65,7 @@ class GrowerAgentController extends Controller
         }
     }
 
-    public function growerAgentExists(Company $grower, User $agent){
+    public function growerAgentExists(Company $grower, Company $agent){
         $em = $this->getDoctrine()->getManager();
 
         $growerAgent = $em->getRepository('AppBundle:growerAgent')
@@ -116,43 +118,14 @@ class GrowerAgentController extends Controller
 
     public function cancelGrowerAgentRequestAction(GrowerAgent $growerAgent)
     {
-        $growerAgent->setStatus("Cancelled");
-        $growerAgent->setDateSince(new \DateTime());
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($growerAgent);
+        $em->remove($growerAgent);
         $em->flush();
 
         return new Response(null, 204);
     }
 
-    /**
-     * @Route("/grower/accept/{id}/request",name="accept-agent-grower-request")
-     */
-    public function acceptAgentRequest(GrowerAgent $growerAgent){
 
-        $growerAgent->setStatus("Accepted");
-        $growerAgent->setDateSince(new \DateTime());
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($growerAgent);
-        $em->flush();
-
-        return new Response(null, 204);
-    }
-    /**
-     * @Route("/grower/reject/{id}/request",name="reject-agent-grower-request")
-     */
-    public function rejectAgentRequest(GrowerAgent $growerAgent){
-
-        $growerAgent->setStatus("Rejected");
-        $growerAgent->setDateSince(new \DateTime());
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($growerAgent);
-        $em->flush();
-
-        return new Response(null, 204);
-    }
 
 }

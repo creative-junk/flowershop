@@ -22,8 +22,8 @@ class MyList
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -39,7 +39,7 @@ class MyList
      */
     private $productType;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User",inversedBy="myRecommendations")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="myRecommendations")
      */
     private $recommendedBy;
     /**
@@ -47,7 +47,7 @@ class MyList
      */
     private $product;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Auction",inversedBy="auctionList")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\AuctionProduct",inversedBy="auctionList")
      */
     private $auctionProduct;
     /**
@@ -165,7 +165,7 @@ class MyList
     }
 
     /**
-     * @return Auction
+     * @return AuctionProduct
      */
     public function getAuctionProduct()
     {
@@ -173,7 +173,7 @@ class MyList
     }
 
     /**
-     * @param Auction $auctionProduct
+     * @param AuctionProduct $auctionProduct
      */
     public function setAuctionProduct($auctionProduct)
     {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e762096ff41f15b1cd454d1cf134c86",
+    "content-hash": "13161501fdf474b7a130cef8a87e783c",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -2191,6 +2191,53 @@
                 "paginator"
             ],
             "time": "2017-03-21T09:45:46+00:00"
+        },
+        {
+            "name": "lexik/currency-bundle",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lexik/LexikCurrencyBundle.git",
+                "reference": "b8cad62b722a0cc4c4959dd3a80ccd2ddf35d9fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lexik/LexikCurrencyBundle/zipball/b8cad62b722a0cc4c4959dd3a80ccd2ddf35d9fd",
+                "reference": "b8cad62b722a0cc4c4959dd3a80ccd2ddf35d9fd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/framework-bundle": "~2.8|~3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Lexik\\Bundle\\CurrencyBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dev Lexik",
+                    "email": "dev@lexik.fr"
+                },
+                {
+                    "name": "Cedric Girard",
+                    "email": "c.girard@lexik.fr"
+                }
+            ],
+            "description": "This Symfony2 bundle provide a service and a Twig extension to convert and display currencies.",
+            "homepage": "https://github.com/lexik/LexikCurrencyBundle",
+            "keywords": [
+                "Symfony2",
+                "bundle",
+                "currency"
+            ],
+            "time": "2016-08-19T09:00:18+00:00"
         },
         {
             "name": "lexik/form-filter-bundle",

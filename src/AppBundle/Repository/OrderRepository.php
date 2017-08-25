@@ -10,6 +10,7 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
 use Doctrine\ORM\EntityRepository;
@@ -51,7 +52,7 @@ class OrderRepository extends EntityRepository
             ->execute();
     }
 
-    public function findNrAllMyOrdersAgent(User $user){
+    public function findNrAllMyOrdersAgent(Company $user){
 
         $nrReceivedOrders= $this->createQueryBuilder('user_order')
             ->select('count(user_order.id)')

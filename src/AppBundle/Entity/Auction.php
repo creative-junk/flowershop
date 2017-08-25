@@ -25,8 +25,8 @@ class Auction
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -50,7 +50,6 @@ class Auction
      */
     private $announceToAgents;
     /**
-     * @Assert\NotBlank()
      * @ORM\Column(type="boolean")
      */
     private $isInStock;
@@ -63,9 +62,18 @@ class Auction
      * @ORM\JoinColumn(nullable=false)
      */
     private $addedBy;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $shippedAt;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $acceptedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      *
      */
     private $sellingAgent;
@@ -86,6 +94,19 @@ class Auction
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\MyList",mappedBy="auctionProduct",fetch="EXTRA_LAZY")
      */
     private $auctionList;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rating",mappedBy="auction",fetch="EXTRA_LAZY")
+     */
+    private $reviews;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="auction",fetch="EXTRA_LAZY")
+     */
+    private $comments;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $status;
+
 
     public function __construct()
     {
@@ -93,6 +114,7 @@ class Auction
         $this->setCreatedAt(new \DateTime());
 
         $this->auctionList= new ArrayCollection();
+        $this->reviews = new ArrayCollection();
 
     }
 
@@ -201,7 +223,7 @@ class Auction
     }
 
     /**
-     * @return User
+     * @return Company
      */
     public function getSellingAgent()
     {
@@ -209,7 +231,7 @@ class Auction
     }
 
     /**
-     * @param User $sellingAgent
+     * @param Company $sellingAgent
      */
     public function setSellingAgent($sellingAgent)
     {
@@ -294,12 +316,89 @@ class Auction
     }
 
 
-    function __toString()
-    {
 
-        return $this->product->getTitle;
+    /**
+     * @return mixed
+     */
+    public function getVendor()
+    {
+        return $this->vendor;
     }
 
+    /**
+     * @param mixed $vendor
+     */
+    public function setVendor($vendor)
+    {
+        $this->vendor = $vendor;
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param mixed $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShippedAt()
+    {
+        return $this->shippedAt;
+    }
+
+    /**
+     * @param mixed $shippedAt
+     */
+    public function setShippedAt($shippedAt)
+    {
+        $this->shippedAt = $shippedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAcceptedAt()
+    {
+        return $this->acceptedAt;
+    }
+
+    /**
+     * @param mixed $acceptedAt
+     */
+    public function setAcceptedAt($acceptedAt)
+    {
+        $this->acceptedAt = $acceptedAt;
+    }
+
+    public function __toString(){
+        return $this->getProduct()->getTitle();
+    }
 
 }

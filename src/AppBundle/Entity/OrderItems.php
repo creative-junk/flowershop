@@ -19,8 +19,8 @@ class OrderItems
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -48,7 +48,7 @@ class OrderItems
      */
     private $order;
     /**
-     * @ORM\ManyToOne(targetEntity="Product")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Direct")
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;

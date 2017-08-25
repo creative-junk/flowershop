@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+    {% block title %}My Market - iFlora Direct Market{% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">My Market</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('breeder_dashboard') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item category131">
+                    <strong>My Market</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page messages">
+            <div data-placeholder="messages">
+            </div>
+            <div data-bind="scope: 'messages'">
+                <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+                </div>
+                <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column main">
+
+                <div class="toolbar toolbar-products">
+                    <div class="modes">
+                        <strong id="modes-label" class="modes-label">View as</strong>
+                        <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
+                            <span>Grid</span> </strong>
+                        </div>
+                    <p id="toolbar-amount" class="toolbar-amount">Items
+                        <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
+                        of <span class="toolbar-number">{{ products.getTotalItemCount }}</span></p>
+
+
+                    <div class="toolbar-sorter sorter">
+                        <label class="sorter-label" for="sorter">Sort By</label>
+                        <table>
+                            <tr>
+                                {# sorting of properties based on query components #}
+                                <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Rose Name', 'product.title') }}</th>
+                                <th>{{ knp_pagination_sortable(products,'Season','product.product.season') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Color','product.product.color') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Vaselife','product.product.vaselife') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Stem Length','product.product.stemLength') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Head Size','product.product.headsize') }}</th>
+
+                            </tr>
+                        </table>
+
+                        {% if app.request.get('direction')=='desc' %}
+                            <a class="action sort-desc" data-role="direction-switcher" data-value="desc" href="#"
+                               title="Set Descending Direction">
+                                <span><i style="color: black" class="fa fa-sort-desc fa-2x"></i> </span> </a>
+                        {% elseif(app.request.get('direction')=='asc') %}
+                            <a class="action sort-asc" data-role="direction-switcher" data-value="desc" href="#"
+                               title="Set Descending Direction">
+                                <span><i style="color: black" class="fa fa-sort-asc  fa-2x"></i></span> </a>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="products wrapper list products-list">
+                    <ol class="products list items product-items">
+                        {% for product in products %}
+                            <li class="item product product-item" style="float: left;max-width:450px">
+                            <div class="product-item-info" data-container="product-grid">
+                                    <div class=" product-item-images">
+                                        <a href="{{ path('breeder_edit_product',{'id':product.id}) }}"
+                                           class="product photo product-item-photo" tabindex="-1">
+                                        <img style="" src="{{ asset('images/products') }}/{{ product.product.mainImage }}">
+                                        </a>
+                                    </div>
+                                    <div class="product-item-details">
+                                        <div class="content-name">
+                                            <strong class="product name product-item-name">
+                                                <a class="product-item-link"
+                                                   href="{{ path('breeder_edit_product',{'id':product.id}) }}">
+                                                    {{ product.product.title }}                            </a>
+                                            </strong>
+
+
+                                        </div>
+
+
+                                        <div class=" ">
+
+                                         <table class="attributes">
+                                             <tr>
+                                                 <td><strong>Price: </strong> {{ app.user.myCompany.currency }} {{ product.pricePerStem | number_format }}</td>
+                                                 <td><strong>Quality </strong> {{ product.quality }}</td>
+                                             </tr>
+                                             <tr>
+                                                 <td><strong>Color:</strong> {{ product.product.color }}</td>
+                                                 <td><strong>Season:</strong> {{ product.product.season }}</td>
+                                             </tr>
+                                             <tr>
+                                                 <td><strong>Vaselife: </strong>{{ product.product.vaselife }}</td>
+                                                 <td><strong>Stem Length:</strong> {{ product.product.stemLength }}</td>
+                                             </tr>
+                                             <tr>
+                                                 <td><strong>Headsize:</strong> {{ product.product.headsize }}</td>
+                                                 <td><strong>Stock: </strong> {{ product.numberOfStems | number_format }}</td>
+                                             </tr>
+                                             <tr>
+                                                 <td><strong>Stems Per Box:</strong> {{ product.stemsPerBox | number_format }}</td>
+                                                 <td><strong>Quality: </strong> {{ product.quality }}</td>
+                                             </tr>
+                                         </table>
+                                        </div>
+
+                                        <div class="product-item-actions">
+                                            <div class="add-to-cart-primary">
+                                                <a title="Edit Product" class="action tocart primary"
+                                                   href="{{ path('breeder_edit_product',{'id': product.id}) }}">
+                                                    <span><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Product</span>
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+
+
+                <div class="toolbar toolbar-products">
+                    <div class="modes">
+                        <strong id="modes-label" class="modes-label">View as</strong>
+                        <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
+                            <span>Grid</span> </strong>
+                        <a id="mode-list" aria-labelledby="modes-label mode-list" class="modes-mode mode-list"
+                           data-role="mode-switcher" data-value="list" href="#" title="List">
+                            <span>List</span> </a></div>
+                    <p id="toolbar-amount" class="toolbar-amount">Items
+                        <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
+                        of <span class="toolbar-number">10</span></p>
+
+                    <div class="pages">
+                        <strong id="paging-label" class="label pages-label">Page</strong>
+                        {# display navigation #}
+                        <div class="navigation text-center">
+                            {{ knp_pagination_render(products) }}
+                        </div>
+                    </div>
+
+                    <div class="toolbar-sorter sorter">
+                        <label class="sorter-label" for="sorter">Sort By</label>
+                        <select id="sorter" class="sorter-options" data-role="sorter">
+                            <option selected="selected" value="position">Position</option>
+                            <option value="name">Product Name</option>
+                            <option value="price">Price</option>
+                        </select>
+                        <a class="action sorter-action sort-asc" data-role="direction-switcher" data-value="desc"
+                           href="#" title="Set Descending Direction">
+                            <span>Set Descending Direction</span> </a></div>
+                </div>
+                </div>
+            {% include(':breeder:sidebar.htm.twig') %}
+
+            </div>
+    </main>
+
+{% endblock %}

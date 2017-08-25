@@ -12,10 +12,7 @@ class BillingAddressFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName')
-            ->add('lastName')
             ->add('emailAddress')
-            ->add('company')
             ->add('streetAddress')
             ->add('town')
             ->add('zip')

@@ -12,59 +12,12 @@ class ShippingAddressFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'First Name *'
-                ]
-            ])
-            ->add('lastName',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'Last Name *'
-                ]
-            ])
-            ->add('emailAddress',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'Email Address *'
-                ]
-            ])
-            ->add('company',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'Company (Optional)'
-                ]
-            ])
-            ->add('streetAddress',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'Street Address *'
-                ]
-            ])
-            ->add('town',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'Town *'
-                ]
-            ])
-            ->add('zip',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'Zip *'
-                ]
-            ])
-            ->add('country', CountryType::class,[
-                'label' => false,
-                'placeholder' => 'Select a Country *'
-
-            ])
-            ->add('phoneNumber',null,[
-                'label' => false,
-                'attr'=>[
-                    'placeholder' => 'Phone Number *'
-                ]
-            ]);
+        ->add('emailAddress')
+        ->add('streetAddress')
+        ->add('town')
+        ->add('zip')
+        ->add('phoneNumber')
+        ->add('country', CountryType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

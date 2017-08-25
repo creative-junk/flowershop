@@ -35,12 +35,6 @@ class FilterFormType extends AbstractType
 
             ])
             ->add('price',Filters\NumberFilterType::class)
-            ->add('user',Filters\EntityFilterType::class,[
-                'class'=>'AppBundle\Entity\User',
-                'placeholder' => 'Choose a Grower',
-                'label' => 'Grower',
-                'required'=>false
-            ])
             ->add('vaselife', Filters\NumberFilterType::class, [
                 'required' => false,
 
@@ -58,7 +52,8 @@ class FilterFormType extends AbstractType
         $resolver->setDefaults([
 
             'csrf_protection'=>false,
-            'validation_groups' => array('filtering')
+            'validation_groups' => array('filtering'),
+            'growers'=>null
         ]);
     }
 

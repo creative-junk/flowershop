@@ -25,10 +25,11 @@ class ProductImages
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
+
     /**
      * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName", size="imageSize")
      * @var File
@@ -44,11 +45,7 @@ class ProductImages
      */
     private $imageSize;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Product")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $product;
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -122,21 +119,7 @@ class ProductImages
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProduct()
-    {
-        return $this->product;
-    }
 
-    /**
-     * @param mixed $product
-     */
-    public function setProduct($product)
-    {
-        $this->product = $product;
-    }
 
     /**
      * @return mixed
@@ -169,6 +152,10 @@ class ProductImages
     {
         $this->createdBy = $createdBy;
     }
-
+    function __toString()
+    {
+        // TODO: Implement __toString() method.
+        return $this->getImageName();
+    }
 
 }

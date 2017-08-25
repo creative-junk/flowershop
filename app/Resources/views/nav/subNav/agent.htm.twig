@@ -20,7 +20,6 @@
     <strong class="label" style="color:black;"><span><i style="color: black;"
                     class="fa fa-angle-down">&nbsp;</i></span></strong>
     <ul class="header links" style="left:-100px;margin-top:9px">
-        <li><a href="{{ path('my_assigned_product_list') }}">My Wishlist</a></li>
         <li><a href="{{ path('my-agent-recommendations') }}">My Recommendations</a>
         </li>
     </ul>
@@ -33,7 +32,7 @@
     <ul class="header links" style="left:-100px;margin-top:5px">
         <li class="top">Messages</li>
         <li><a href="{{ path('agent-inbox') }}">Inbox ( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadMessages')) }} )</a></li>
-        <li><a href="{{ path('agent-notifications') }}">Notifications( 0 )</a></li>
+        <li><a style="margin-left: -10px" href="{{ path('agent-notifications') }}">Notifications( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadNotifications')) }} )</a></li>
     </ul>
 </div>
 <div class="my-acount" style="margin-right: 60px;height:20px">
@@ -68,7 +67,7 @@
     <strong class="label" style="color:black;"></strong>
     <ul class="header links" style="left:-100px;margin-top:9px">
         <li class="top">Agency Requests</li>
-        <li><a href="{{ path('my_assigned_product_requests') }}">Products ( {{ render(controller('AppBundle:Agent/Agent:getMyAuctionAgencyRequests')) }} )</a></li>
+        <li><a href="{{ path('agent_assigned_auction_list') }}">Products ( {{ render(controller('AppBundle:Agent/Agent:getMyAuctionAgencyRequests')) }} )</a></li>
         <li><a href="{{ path('my_agent_assigned_order_list') }}">Orders ( {{ render(controller('AppBundle:Agent/Agent:getMyOrderAssignmentRequest')) }} )</a></li>
 
     </ul>

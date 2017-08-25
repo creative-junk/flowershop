@@ -11,12 +11,7 @@ class PaymentMethodFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('imageFile',VichFileType::class,[
-            'required'=>true,
-            'allow_delete'=>true,
-            'label'=>false
 
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

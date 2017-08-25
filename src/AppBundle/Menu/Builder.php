@@ -25,7 +25,7 @@ class Builder implements ContainerAwareInterface
 
           $menu->addChild('Home',array('route'=>'home'));
 
-          $menu->addChild('Direct Market',array('route'=>'buyer_shop'));
+          $menu->addChild('Direct Market',array('route'=>'buyer-market'));
         //  $menu['Direct Market']->addChild('Wishlist',array('route'=>'my_buyer_wishlist'));
 
           $menu->addChild('Auction Market',array('route'=>'buyer_auction'));
@@ -48,9 +48,13 @@ class Builder implements ContainerAwareInterface
         $menu['Direct Market']->addChild('Assigned Products',array('route'=>'my_assigned_product_list'));
         $menu['Direct Market']->addChild('My WishList',array('route'=>'my-agent-wishlist'));
 */
-
         $menu->addChild('Auction Market',array('route'=>'agent_auction_product_list'));
-        $menu['Auction Market']->addChild('Assigned Products',array('route'=>'my_assigned_product_list'));
+
+        $menu->addChild('My Products',array('route'=>'my_agent_auction_list'));
+        $menu['My Products']->addChild('Assigned Products',array('route'=>'agent_assigned_auction_list'));
+        $menu['My Products']->addChild('Accepted Products',array('route'=>'agent_accepted_auction_list'));
+        $menu['My Products']->addChild('Shipped Products',array('route'=>'agent_shipped_auction_list'));
+        $menu['My Products']->addChild('My Stock',array('route'=>'agent_active_auction_list'));
         //$menu['Auction Market']->addChild('My WishList',array('route'=>'my-agent-auction-wishlist'));
 
         $menu->addChild('Buyers',array('route'=>'agent_buyer_list'));
@@ -61,7 +65,7 @@ class Builder implements ContainerAwareInterface
 
         $menu->addChild('Orders',array('route'=>'my_agent_order_list'));
         $menu['Orders']->addChild('Assigned Orders',array('route'=>'my_agent_assigned_order_list'));
-        $menu['Orders']->addChild('Received Orders',array('route'=>'my_agent_received_order_list'));
+        $menu['Orders']->addChild('Received Orders',array('route'=>'agent_order_list'));
         $menu['Orders']->addChild('My Orders',array('route'=>'my_agent_order_list'));
 
         return $menu;
@@ -73,10 +77,17 @@ class Builder implements ContainerAwareInterface
         $menu->addChild('Home',array('route'=>'grower_dashboard'));
 
 
-        $menu->addChild('My Products',array('route'=>'my_grower_product_list'));
-        $menu['My Products']->addChild('Direct Market',array('route'=>'my_grower_product_list'));
-        $menu['My Products']->addChild('Auction Market',array('route'=>'my_grower_auction_list'));
+        $menu->addChild('My Products',array('route'=>'my_grower_roses'));
+        $menu['My Products']->addChild('My Roses',array('route'=>'my_grower_roses'));
+        $menu['My Products']->addChild('My Direct Market',array('route'=>'my_grower_direct_market'));
+        $menu['My Products']->addChild('My Auction Market',array('route'=>'my_grower_auction_list'));
 
+        $menu->addChild('My Auction',array('route'=>'my_grower_auction_list'));
+        $menu['My Auction']->addChild('Unassigned',array('route'=>'unassigned_auction_list'));
+        $menu['My Auction']->addChild('Pending Agent',array('route'=>'pending_auction_list'));
+        $menu['My Auction']->addChild('Accepted By Agent',array('route'=>'accepted_auction_list'));
+        $menu['My Auction']->addChild('Shipped',array('route'=>'shipped_auction_list'));
+        $menu['My Auction']->addChild('Active',array('route'=>'active_auction_list'));
 
         $menu->addChild('Seedlings',array('route'=>'grower_seedlings_list'));
        // $menu['Seedlings']->addChild('Wishlist',array('route'=>'my-seedling-wishlist'));
@@ -100,6 +111,8 @@ class Builder implements ContainerAwareInterface
 
         $menu->addChild('Home',array('route'=>'breeder_dashboard'));
         $menu->addChild('My Seedlings',array('route'=>'my_breeder_seedling_list'));
+
+        $menu->addChild('My Market',array('route'=>'my_breeder_direct_list'));
 
         $menu->addChild('Growers',array('route'=>'breeder_growers_list'));
         $menu['Growers']->addChild('My Growers',array('route'=>'my_breeder_growers'));

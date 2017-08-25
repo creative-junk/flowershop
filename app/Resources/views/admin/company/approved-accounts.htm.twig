@@ -1,0 +1,149 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Approved Company Accounts{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        jQuery('#js-remind-account').on('click',function (e)  {
+            //Prevent Normal Submit
+            e.preventDefault();
+
+            $(".messages").fadeOut("slow");
+
+            $(this).find('.fa-envelope')
+                .removeClass('fa-envelope')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+            $(this).find('.fa-check')
+                .removeClass('fa-check')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+
+            // get form values
+            var values = $(this).serialize();
+
+            $.ajax({
+                url: $(this).data('url'),
+                method: 'GET'
+            }).done(function () {
+                //$el.fadeOut("slow");
+                $(".messages").fadeIn("slow");
+
+                $("#remind")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-check');
+            }).error(function () {
+                //$el.fadeOut("slow");
+                $(".errors").fadeIn("slow");
+
+                $("#remind")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-times');
+            })
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block body %}
+    <div id="content" class="app-content box-shadow-z0" role="main">
+
+
+        <div ui-view class="app-body" id="view">
+           {{ include(':admin/partials:top.htm.twig') }}
+            <div class="padding">
+                <div class="page messages">
+                    <div class="messages" style="">
+                        <div class="alert alert-success">
+                            <div>
+                                User reminded successfully.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="page errors">
+                    <div class="errors" style="">
+                        <div class="alert alert-danger">
+                            <div>
+                               :-( Something went wrong.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="box-header">
+                        <h2>Approved Accounts</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="data" class="table table-striped b-t b-b">
+                            <thead>
+                            <tr>
+                                <th  style="width:20%">Company Name</th>
+                                <th  style="width:20%">Company Code</th>
+                                <th  style="width:20%">Company Type</th>
+                                <th  style="width:15%">Email</th>
+                                <th  style="width:20%">Telephone Number</th>
+                                <th  style="width:20%">Account Status</th>
+                                <th  style="width:20%">Membership Status</th>
+                                <th  style="width:25%">Registered On</th>
+                                <th  style="width:25%">Manage</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for company in companies  %}
+                                <tr>
+                                    <td><a style="color:#0cc2aa" href="#">{{ company.companyName }}</a></td>
+                                    <td>{{ company.companyCode }}</td>
+                                    <td>{{ company.companyType }}</td>
+                                    <td>{{ company.email }}</td>
+                                    <td>{{ company.telephoneNumber }}</td>
+                                    <td>
+                                        {% if company.isActive %}
+                                            <div style="padding: 8px;text-align: center;" class="alert alert-success">
+                                                Active
+                                            </div>
+                                        {% else %}
+                                            <div style="padding: 8px;text-align: center;" class="alert alert-danger">
+                                                inactive
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if company.isPaid %}
+                                            <div style="padding: 8px;text-align: center;" class="alert alert-success">
+                                                Paid
+                                            </div>
+                                        {% else %}
+                                            <div style="padding: 8px;text-align: center;" class="alert alert-danger">
+                                                unpaid
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ company.createdAt | date("F jS Y \\a\\t g:ia") }}</td>
+                                    <td>
+                                        {% if company.isActive %}
+                                        <a id="js-remind-account" href="#" data-url="{{ path('suspend-company-account',{'id': company.id }) }}"
+                                           class="btn btn-xs white btn-icon"><i id="remind" title="Suspend Account" class="fa fa-times"></i></a>
+                                        {% else %}
+                                        <a id="js-remind-account" href="#" data-url="{{ path('activate-company-account',{'id': company.id }) }}"
+                                           class="btn btn-xs white btn-icon"><i id="remind" title="Activate Account" class="fa fa-check"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor  %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ############ PAGE END-->
+
+        </div>
+    </div>
+{% endblock %}

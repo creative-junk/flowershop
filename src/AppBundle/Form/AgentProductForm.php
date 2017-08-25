@@ -12,44 +12,18 @@ class AgentProductForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-       /* $builder
-            ->add('title', null, array(
-                'attr' => ['readonly' => true],
-            ))
-            ->add('summary', null, array(
-                'attr' => ['readonly' => true],
-            ))
-            ->add('description', null, array(
-                'attr' => ['readonly' => true],
-            ))
-
-            ->add('quantity', null, array(
-                'label_format' => 'Quantity in Bundle',
-                'attr' => ['readonly' => true],
-            ))
-            ->add('currency', ChoiceType::class, array(
-                'choices' => array(
-                    'US Dollars - $' => '$',
-                    'Kenya Shillings - Ksh' => 'Ksh',
-                    'Euros - Eur' => 'Eur',
-                ),
-                'attr' => ['readonly' => true],
-            ))
-            ->add('bundlePrice', null, array(
-                'attr' => ['readonly' => true],
-            ))
-            ->add('finalPrice')
-            ->add('agent', null, array(
-                'attr' => ['readonly' => true],
-            ));*/
         $builder
-            ->add('finalPrice');
+            ->add('availableStock', null, array(
+                'attr' => ['readonly' => true],
+            ))
+            ->add('pricePerStem');
+
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Auction'
+            'data_class' => 'AppBundle\Entity\AuctionProduct'
         ]);
     }
 

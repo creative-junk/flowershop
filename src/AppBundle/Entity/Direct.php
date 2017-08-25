@@ -14,21 +14,25 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\DirectRepository")
  * @ORM\Table(name="direct")
  */
 class Direct
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
      */
     private $product;
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $consignmentNumber;
     /**
      * @ORM\Column(type="integer")
      */
@@ -80,6 +84,10 @@ class Direct
      */
     private $comments;
     /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -88,6 +96,7 @@ class Direct
     function __construct()
     {
         $this->productList = new ArrayCollection();
+        $this->setConsignmentNumber($this->numberOfStems);
     }
 
     /**
@@ -285,6 +294,54 @@ class Direct
 
     public function __toString(){
         return $this->product->getTitle();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVendor()
+    {
+        return $this->vendor;
+    }
+
+    /**
+     * @param mixed $vendor
+     */
+    public function setVendor($vendor)
+    {
+        $this->vendor = $vendor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param mixed $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConsignmentNumber()
+    {
+        return $this->consignmentNumber;
+    }
+
+    /**
+     * @param mixed $consignmentNumber
+     */
+    public function setConsignmentNumber($consignmentNumber)
+    {
+        $this->consignmentNumber = $consignmentNumber;
     }
 
 

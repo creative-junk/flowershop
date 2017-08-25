@@ -32,8 +32,9 @@
 
             <thead>
             <tr>
-                <th>Sent By</th>
+
                 <th>subject</th>
+                <th>Message</th>
                 <th>Date</th>
 
             </tr>
@@ -41,29 +42,29 @@
 
             <tbody>
 
-            {% if messsages %}
+                {% if messages %}
                 {% for message in messages %}
 
                     <tr>
 
                         <td>
                             <a class="{% if not message.isRead %}new{% endif %}"
-                               href="{{ url('view-notification', {'id': message.id}) }}">
-                            {{ message.sender }}
+                               href="{{ url('grower-view-notification', {'id': message.id}) }}">
+                            {{ message.subject }}
                             </a>
                         </td>
                         <td>
                             <a class="{% if not message.isRead %}new{% endif %}"
-                               href="{{ url('view-notification', {'id': message.id}) }}">
-                                {{ message.subject }}
+                               href="{{ url('grower-view-notification', {'id': message.id}) }}">
+                                {{ message.message | slice(0,50) }}
                             </a>
 
                         </td>
 
                         <td>
                             <a class="{% if not message.isRead %}new{% endif %}"
-                               href="{{ url('view-notification', {'id': message.id}) }}">
-                            {{ messageDate | date }}
+                               href="{{ url('grower-view-notification', {'id': message.id}) }}">
+                            {{ message.sentAt | date }}
                             </a>
                         </td>
 

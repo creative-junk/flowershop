@@ -64,7 +64,7 @@
                 <a href="{{ path('grower_order_list') }}" title="Go to Home Page">
                     Received Orders </a>
             </li>
-            <li class="item product">
+            <li class="item product.product">
                 <strong>Order Details</strong>
             </li>
         </ul>
@@ -120,14 +120,14 @@
                         <div class="cart-item row">
                             <div class="col-sm-2 col-lg-3">
                                 <div class="image">
-                                    <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ orderItem.product.imageName }}">
+                                    <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ orderItem.product.product.mainImage }}">
                                 </div>
                             </div>
                             <div class="col-sm-4 col-lg-4">
                                 <div class="brand">
                                 </div>
                                 <div class="title">
-                                   {{ orderItem.product.title }}
+                                   {{ orderItem.product.product.title }}
                                 </div>
                             </div>
                             <div class="col-sm-6 col-lg-5 details no-edit">

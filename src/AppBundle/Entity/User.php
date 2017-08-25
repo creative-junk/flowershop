@@ -30,8 +30,8 @@ class User implements UserInterface
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -87,6 +87,31 @@ class User implements UserInterface
      * @ORM\Column(type="datetime",nullable=true)
      */
     private $lastLoginTime;
+
+    /**
+     * @ORM\Column(type="boolean",nullable=true)
+     */
+    private $isPasswordCreated;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $accountCreatedAt;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $accountCreatedBy;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $passwordResetToken;
+    /**
+     * @ORM\Column(type="boolean",nullable=true)
+     */
+    private $isResetTokenValid;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $approvedBy;
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
@@ -101,7 +126,10 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="user",fetch="EXTRA_LAZY")
      */
     private $myComments;
-
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $updatedBy;
 
     public function __construct()
     {
@@ -408,6 +436,118 @@ class User implements UserInterface
     public function getMyComments()
     {
         return $this->myComments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsPasswordCreated()
+    {
+        return $this->isPasswordCreated;
+    }
+
+    /**
+     * @param mixed $isPasswordCreated
+     */
+    public function setIsPasswordCreated($isPasswordCreated)
+    {
+        $this->isPasswordCreated = $isPasswordCreated;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAccountCreatedAt()
+    {
+        return $this->accountCreatedAt;
+    }
+
+    /**
+     * @param mixed $accountCreatedAt
+     */
+    public function setAccountCreatedAt($accountCreatedAt)
+    {
+        $this->accountCreatedAt = $accountCreatedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAccountCreatedBy()
+    {
+        return $this->accountCreatedBy;
+    }
+
+    /**
+     * @param mixed $accountCreatedBy
+     */
+    public function setAccountCreatedBy($accountCreatedBy)
+    {
+        $this->accountCreatedBy = $accountCreatedBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPasswordResetToken()
+    {
+        return $this->passwordResetToken;
+    }
+
+    /**
+     * @param mixed $passwordResetToken
+     */
+    public function setPasswordResetToken($passwordResetToken)
+    {
+        $this->passwordResetToken = $passwordResetToken;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsResetTokenValid()
+    {
+        return $this->isResetTokenValid;
+    }
+
+    /**
+     * @param mixed $isResetTokenValid
+     */
+    public function setIsResetTokenValid($isResetTokenValid)
+    {
+        $this->isResetTokenValid = $isResetTokenValid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApprovedBy()
+    {
+        return $this->approvedBy;
+    }
+
+    /**
+     * @param mixed $approvedBy
+     */
+    public function setApprovedBy($approvedBy)
+    {
+        $this->approvedBy = $approvedBy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpdatedBy()
+    {
+        return $this->updatedBy;
+    }
+
+    /**
+     * @param mixed $updatedBy
+     */
+    public function setUpdatedBy($updatedBy)
+    {
+        $this->updatedBy = $updatedBy;
     }
 
 

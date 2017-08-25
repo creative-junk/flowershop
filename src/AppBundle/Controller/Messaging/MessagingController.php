@@ -31,10 +31,24 @@ class MessagingController extends Controller
 
     }
     public function getTotalUnreadNotificationsAction(){
-        return 0;
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $owner = $user->getMyCompany();
+        $totalUnread = 0;
+        $em = $this->getDoctrine()->getManager();
+        $nrUnread = $em->getRepository('AppBundle:Notification')
+            ->getNrUnread($owner);
+
+        $totalUnread += $nrUnread;
+
+
+        return $this->render(':partials:totalRequests.html.twig', [
+            'nrRequests' => $totalUnread,
+
+        ]);
     }
     public function getTotalUnreadAction(){
         $user = $this->get('security.token_storage')->getToken()->getUser();
+        $owner = $user->getMyCompany();
 
         $totalUnread = 0;
 
@@ -42,7 +56,11 @@ class MessagingController extends Controller
         $nrUnread = $em->getRepository('AppBundle:Message')
             ->getNrUnread($user);
 
+        $nrUnreadNotifications = $em->getRepository('AppBundle:Notification')
+            ->getNrUnread($owner);
+
         $totalUnread += $nrUnread;
+        $totalUnread += $nrUnreadNotifications;
 
         return $this->render(':partials:totalRequests.html.twig', [
             'nrRequests' => $totalUnread,

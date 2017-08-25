@@ -64,6 +64,7 @@
                 <table id="shopping-cart-table" class="cart items data table">
                     <thead>
                     <tr>
+                        <th></th>
                         <th class="col item" scope="col"><span>Breeder</span></th>
                         <th>&nbsp;</th>
                         <th class="col subtotal" scope="col"><span>Request</span></th>
@@ -72,6 +73,8 @@
                     <tbody class="cart item">
                     {% for breeder in breeders %}
                         <tr class="item-info js-breeder-item">
+                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
+                                     src="{{ asset('images/products/') }}{{ breeder.logoName }}"></td>
                             <td data-th="Item" class="col item">
                     <span class="product-image-container" style="">
                     <strong class="product-item-name">

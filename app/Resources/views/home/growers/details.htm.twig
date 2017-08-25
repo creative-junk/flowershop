@@ -23,6 +23,7 @@
                         .removeClass('fa-spinner')
                         .removeClass('fa-spin')
                         .addClass('fa-check');
+                        location.reload();
                 }).fail(function () {
                     $(".failure").fadeIn("slow");
 
@@ -171,9 +172,40 @@
 				{{ grower.companyName }}</span></h1>
                 </div>
 
+                {% if grower.reviews | length > 0 %}
+
+                    {% set sumQualityratings = 0 %}
+                    {% set avgQualityRatings=0 %}
+                    {% for rating in grower.reviews %}
+                        {% set sumQualityratings = sumQualityratings + rating.quality %}
+                    {% endfor %}
+                    {% set avgQualityRatings= (sumQualityratings / grower.reviews|length) | round %}
+
+                    {% set sumValueratings = 0 %}
+                    {% set avgValueRatings=0 %}
+                    {% for rating in grower.reviews %}
+                        {% set sumValueratings = sumValueratings + rating.value %}
+                    {% endfor %}
+                    {% set avgValueRatings= (sumValueratings / grower.reviews|length) | round %}
+
+                    {% set sumPriceratings = 0 %}
+                    {% set avgPriceRatings=0 %}
+                    {% for rating in grower.reviews %}
+                        {% set sumPriceratings = sumPriceratings + rating.price %}
+                    {% endfor %}
+                    {% set avgPriceRatings= (sumQualityratings / grower.reviews|length) | round %}
+
+                    {% set avgrating=0 %}
+                    {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                    {{ avgrating | rating(5, "fa-lg")   }}
+                {% else %}
+                    {{ 0 | rating(5, "fa-lg")   }}
+                {% endif %}
 
                 <div class="product-add-form">
-
+                    {% if growerExists %}
+                    {% else %}
                     <div class="box-tocart">
                         <div class="fieldset">
 
@@ -186,18 +218,41 @@
                             </div>
                         </div>
                     </div>
-
+                     {% endif %}
                 </div>
 
 
                 <div class="product attribute overview">
                     <div class="value" itemprop="description">
 
-                        <ul>
-                            <li><b>Full Name:</b> {{ grower.companyName }}</li>
-                            <li>{{ nrProducts }} Active Rose(s) in Direct Market</li>
-                            <li>{{ nrAuctionProducts }} Active Rose(s) in Auction</li>
-                        </ul>
+                        <table>
+                            <tr>
+                                <td><strong>Name:</strong> {{ grower.companyName }}</td>
+                                <td><strong>Country:</strong> {{ grower.country }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Altitude:</strong> {{ grower.altitude }}</td>
+                                <td><strong>No. of Varieties:</strong> {{ grower.numberOfVarieties }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>About Farm:</strong> <br/>{{ grower.aboutCompany }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Number of Employees: {{ grower.numberOfEmployees }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phone Number:</strong> {{ grower.telephoneNumber }}</td>
+                                <td><strong>Website:</strong> {{ grower.website }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email:</strong> {{ grower.email }}</td>
+                                <td><strong>Social Media:</strong> <br/>
+                                    Facebook: <a href="{{ grower.facebookPage }}">{{ grower.facebookPage }}</a><br/>
+                                    Twitter: <a href="{{ grower.twitterPage }}">{{ grower.twitterPage }}</a><br/>
+                                    Instagram: <a href="{{ grower.instagramPage }}">{{ grower.instagramPage }}</a>
+                                </td>
+                            </tr>
+                        </table>
                         <p></p>
                     </div>
                 </div>
@@ -205,72 +260,35 @@
             <div class="product media">
                 <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
 
-                    <div class="fotorama--hidden">
-                    </div>
-                    <style>
-                        .fotorama1493313427134 .fotorama__nav--thumbs .fotorama__nav__frame {
-                            padding: 2px;
-                            height: 110px;
-                        }
+                                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
 
-                        .fotorama1493313427134 .fotorama__thumb-border {
-                            height: 110px;
-                            border-width: 2px;
-                            margin-top: 2px;
-                        }
-                    </style>
-                    <div class="fotorama-item fotorama fotorama1493313427134" data-gallery-role="gallery">
-                        <div data-gallery-role="fotorama__focusable-start" tabindex="-1">
-                        </div>
-                        <div class="fotorama__wrap fotorama__wrap--css3 fotorama__wrap--slide fotorama__wrap--toggle-arrows fotorama__wrap--no-controls"
-                             style="min-width: 0px; max-width: 100%;">
-                            <div class="fotorama__stage" data-fotorama-stage="fotorama__stage"
-                                 style="width: 491px; height: 618px;">
-                                <div aria-label="Exit fullscreen" class="fotorama__fullscreen-icon"
-                                     data-gallery-role="fotorama__fullscreen-icon" role="button" tabindex="0">
-                                </div>
-                                <div aria-label="Previos" class="fotorama__arr fotorama__arr--prev"
-                                     data-gallery-role="arrow" role="button" tabindex="0">
-                                    <div class="fotorama__arr__arr">
-                                    </div>
-                                </div>
-                                <div class="fotorama__stage__shaft fotorama__grab" data-gallery-role="stage-shaft"
-                                     style="width: 491px; margin-left: 0px; transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);"
-                                     tabindex="0">
-                                    <div aria-hidden="false"
-                                         class="fotorama__stage__frame fotorama_vertical_ratio fotorama__loaded fotorama__loaded--img fotorama__active"
-                                         data-active="true"
-                                         href="#"
-                                         style="left: 0px;">
-                                        <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                                             src="{{ asset('images/avatar.jpg') }}"></div>
-
-                                </div>
-                                <div aria-label="Next" class="fotorama__arr fotorama__arr--next"
-                                     data-gallery-role="arrow" role="button" tabindex="0">
-                                    <div class="fotorama__arr__arr">
-                                    </div>
-                                </div>
-                                <div class="fotorama__video-close">
-                                </div>
-                                <div aria-label="Zoom in" class="fotorama__zoom-in zoom-in-loaded"
-                                     data-gallery-role="fotorama__zoom-in" role="button" tabindex="0">
-                                </div>
-                                <div aria-label="Zoom out" class="fotorama__zoom-out zoom-out-loaded"
-                                     data-gallery-role="fotorama__zoom-out" role="button" tabindex="0">
-                                </div>
-                                <div class="fotorama__spinner">
-                                </div>
-                            </div>
-
-                        </div>
-                        <div data-gallery-role="fotorama__focusable-end" tabindex="-1">
-                        </div>
-                    </div>
-                    <div id="preview" class="magnifier-preview magnify-hidden" data-gallery-role="magnifier"
-                         style="display: none;">
-                    </div>
+                    <table class="gallery cf">
+                        <tr>
+                            {% if grower.image1 %}
+                            <td><img class="nim" width="150"
+                                     src="{{ asset('images/products/') }}{{ grower.image1 }}"></td>
+                            {% endif %}
+                            {% if grower.image2 %}
+                            <td><img class="nim"  width="150"
+                                     src="{{ asset('images/products/') }}{{ grower.image2 }}"></td>
+                            {% endif %}
+                            {% if grower.image2 %}
+                            <td><img class="nim"  width="150"
+                                     src="{{ asset('images/products/') }}{{ grower.image3 }}"></td>
+                            {% endif %}
+                            {% if grower.image2 %}
+                            <td><img class="nim"  width="150"
+                                     src="{{ asset('images/products/') }}{{ grower.image4 }}"></td>
+                            {% endif %}
+                            {% if grower.image2 %}
+                            <td><img class="nim"  width="150"
+                                     src="{{ asset('images/products/') }}{{ grower.image5 }}"></td>
+                            {% endif %}
+                        </tr>
+                    </table>
                 </div>
+            </div>
 
             </div>
 
@@ -287,20 +305,20 @@
                         <div id="product-review-container" data-role="product-review">
                             <div class="block review-list" id="customer-reviews">
                                 <div class="block-content">
-                                    <div class="products wrapper grid products-grid">
+                                    <div class="products wrapper list products-list">
                                         <ol class="products list items product-items">
-                                            {% for product in products %}
-                                                <li class="item product product-item">
+                                            {% for auction in products %}
+                                                <li class="item product product-item" style="float: left;max-width:450px">
                                                     <div class="product-item-info" data-container="product-grid">
                                                         <div class=" product-item-images">
                                                             <a class="product photo product-item-photo"
                                                                href="{{ path('buyer_product_details',{
-                                                                   'id': product.id
+                                                                   'id': auction.id
                                                                }) }}" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
-						<img alt="{{ product.title }}" class="product-image-photo" height="441"
-                             src="{{ asset('images/products/') }}{{ product.imageName }}" alt="{{ product.title }}"
+						<img alt="{{ auction.product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ auction.product.mainImage }}" alt="{{ auction.product.title }}"
                              width="350"></span>
 						</span></a></div>
                                                         <div class="product-item-details">
@@ -308,9 +326,9 @@
                                                                 <strong class="product name product-item-name">
                                                                     <a class="product-item-link"
                                                                        href="{{ path('buyer_product_details',{
-                                                                           'id': product.id
+                                                                           'id': auction.id
                                                                        }) }}">
-                                                                        {{ product.title }} </a></strong>
+                                                                        {{ auction.product.title }} </a></strong>
                                                             </div>
                                                             <div class="product-reviews-summary short">
                                                                 <div class="rating-summary">
@@ -327,9 +345,23 @@
                                                             <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
 							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-							<span class="price">{{ product.currency }} {{ product.price }}</span> </span></span>
+							<span class="price">{{ auction.currency }} {{ auction.pricePerStem }}</span> </span></span>
                                                             </div>
-
+                                                            <table class="attributes">
+                                                                <tr>
+                                                                    <td><strong>Color:</strong> {{ auction.product.color }}</td>
+                                                                    <td><strong>Season:</strong> {{ auction.product.season }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Stem Length: </strong>{{ auction.product.stemLength }}</td>
+                                                                    <td><strong>Quality:</strong> {{ auction.quality }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Stock:</strong> {{ auction.numberOfStems | number_format }}</td>
+                                                                    <td><strong>Packing:</strong> {{ auction.stemsPerBox | number_format }}</td>
+                                                                </tr>
+                                                                <tr><td colspan="2"><strong>Grower: </strong> {{ auction.product.vendor }}</td></tr>
+                                                            </table>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -347,20 +379,20 @@
                         <div id="product-review-container" data-role="product-review">
                             <div class="block review-list" id="customer-reviews">
                                 <div class="block-content">
-                                    <div class="products wrapper grid products-grid">
+                                    <div class="products wrapper list products-list">
                                         <ol class="products list items product-items">
-                                            {% for product in auctionProducts %}
-                                                <li class="item product product-item">
+                                            {% for auction in auctionProducts %}
+                                                <li class="item product product-item" style="float: left;max-width:450px">
                                                     <div class="product-item-info" data-container="product-grid">
                                                         <div class=" product-item-images">
                                                             <a class="product photo product-item-photo"
                                                                href="{{ path('buyer_auction_product_details',{
-                                                                   'id': product.id
+                                                                   'id': auction.id
                                                                }) }}" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
-						<img alt="{{ product.title }}" class="product-image-photo" height="441"
-                             src="{{ asset('images/products/') }}{{ product.imageName }}" alt="{{ product.title }}"
+						<img alt="{{ auction.product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ auction.product.mainImage }}" alt="{{ auction.product.title }}"
                              width="350"></span>
 						</span></a></div>
                                                         <div class="product-item-details">
@@ -368,9 +400,9 @@
                                                                 <strong class="product name product-item-name">
                                                                     <a class="product-item-link"
                                                                        href="{{ path('buyer_auction_product_details',{
-                                                                           'id': product.id
+                                                                           'id': auction.id
                                                                        }) }}">
-                                                                        {{ product.title }} </a></strong>
+                                                                        {{ auction.product.title }} </a></strong>
                                                             </div>
                                                             <div class="product-reviews-summary short">
                                                                 <div class="rating-summary">
@@ -387,9 +419,22 @@
                                                             <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
 							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-							<span class="price">{{ product.currency }} {{ product.price }}</span> </span></span>
+							<span class="price">{{ auction.currency }} {{ auction.pricePerStem }}</span> </span></span>
                                                             </div>
+                                                            <table class="attributes">
+                                                                <tr>
+                                                                    <td><strong>Number of Stems:</strong> {{ auction.numberOfStems }} </td>
 
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Quality:</strong> {{ auction.quality }} </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <strong>Grower: </strong> {{ auction.product.vendor }}
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
                                                         </div>
                                                     </div>
                                                 </li>

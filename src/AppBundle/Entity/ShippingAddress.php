@@ -22,20 +22,10 @@ class ShippingAddress
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
-    /**
-     * @Assert\NotBlank()
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $firstName;
-    /**
-     * @Assert\NotBlank()
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $lastName;
 
     /**
      * @ORM\Column(type="string",nullable=true)
@@ -61,11 +51,6 @@ class ShippingAddress
      * @ORM\Column(type="string",nullable=true)
      */
     private $phoneNumber;
-    /**
-     * @ORM\ManyToOne(targetEntity="user")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="shippingAddress")
      */

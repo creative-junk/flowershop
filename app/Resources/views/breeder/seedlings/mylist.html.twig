@@ -83,15 +83,15 @@
                 <div class="products wrapper list products-list">
                     <ol class="products list items product-items">
                         {% for product in products %}
-                            <li class="item product product-item">
+                            <li class="item product product-item" style="float: left;max-width:450px">
                                 <div class="product-item-info" data-container="product-grid">
                                     <div class=" product-item-images">
-                                        <a href="/breeder/seedling/{{ product.id }}/edit"
-                                           class="product photo product-item-photo" tabindex="-1">
+                                        <a class="product-item-link"
+                                           href="{{ path('breeder_edit_rose',{'id':product.id}) }}">
 
 <span class="product-image-container" style="width:350px;">
     <span class="product-image-wrapper" style="padding-bottom: 126%;">
-        <img class="product-image-photo" src="{{ asset('images/products/') }}{{ product.imageName }}" width="350"
+        <img class="product-image-photo" src="{{ asset('images/products/') }}{{ product.mainImage }}" width="350"
              height="441" alt="{{ product.title }}"></span>
 </span>
                                         </a>
@@ -101,7 +101,7 @@
                                         <div class="content-name">
                                             <strong class="product name product-item-name">
                                                 <a class="product-item-link"
-                                                   href="/breeder/seedling/{{ product.id }}/edit">
+                                                   href="{{ path('breeder_edit_rose',{'id':product.id}) }}">
                                                     {{ product.title }}                            </a>
                                             </strong>
 
@@ -110,40 +110,34 @@
                                                 <span>WishList</span>
                                             </a>
                                         </div>
-                                        <!--
-                                                                                <div class="product-reviews-summary" itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating">
-                                                                                    <div class="rating-summary">
-                                                                                        <span class="label"><span>Rating:</span></span>
-                                                                                        <div class="rating-result" title="80%">
-                                                                                            <span style="width:80%"><span><span itemprop="ratingValue">80</span>% of <span itemprop="bestRating">100</span></span></span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="reviews-actions">
-                                                                                        <a class="action view" href="http://plazathemes.com/demo/presiden/english11/orion-two-tone-fitted.html#reviews"><span itemprop="reviewCount">1</span>&nbsp;<span>Review</span></a>
-                                                                                        <a class="action add" href="http://plazathemes.com/demo/presiden/english11/orion-two-tone-fitted.html#review-form">Add Your Review</a>
-                                                                                    </div>
-                                                                                </div> -->
+
                                         <div class="price-box price-final_price" data-role="priceBox"
                                              data-product-id="63">
+                                            <div class="product description product-item-description">
+                                                <p>{{ product.description }}</p>
+                                                <table class="attributes">
+                                                    <tr>
+                                                        <td><strong>Color:</strong> {{ product.color }}</td>
+                                                        <td><strong>Season:</strong> {{ product.season }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Vaselife: </strong>{{ product.vaselife }}</td>
+                                                        <td><strong>Stem Length:</strong> {{ product.stemLength }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Headsize:</strong> {{ product.headsize }}</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
 
 
-<span class="price-container price-final_price tax weee">
-        <span data-price-amount="{{ product.price }}" data-price-type="finalPrice" class="price-wrapper ">
-        <span class="price">{{ product.currency }} {{ product.price }}</span>    </span>
-        </span>
-
-                                        </div>
-
-                                        <div class="product description product-item-description">
-                                            <p>{{ product.summary }}</p>
-                                            <a href="/breeder/seedling/{{ product.id }}/edit" title="{{ product.id }}"
-                                               class="action more">Learn More</a>
                                         </div>
 
                                         <div class="product-item-actions">
                                             <div class="add-to-cart-primary">
                                                 <a title="Edit Product" class="action tocart primary"
-                                                   href="/breeder/seedling/{{ product.id }}/edit">
+                                                   href="{{ path('breeder_edit_rose',{'id':product.id}) }}">
                                                     <span><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Product</span>
                                                 </a>
 

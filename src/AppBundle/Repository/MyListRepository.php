@@ -11,6 +11,7 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Company;
 use AppBundle\Entity\MyList;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
@@ -21,7 +22,7 @@ class MyListRepository extends EntityRepository
      * @param User $user
      * @return MyList
      */
-    public function getMyRecommendations(User $user){
+    public function getMyRecommendations(Company $user){
         return $this->createQueryBuilder('myList')
             ->andWhere('myList.listType = :listType')
             ->setParameter('listType',"Agent Recommendations")
@@ -32,10 +33,10 @@ class MyListRepository extends EntityRepository
             ->execute();
     }
     /**
-     * @param User $user
+     * @param Company $user
      * @return MyList
      */
-    public function getMyUserRecommendations(User $user){
+    public function getMyUserRecommendations(Company $user){
         return $this->createQueryBuilder('myList')
             ->andWhere('myList.listType = :listType')
             ->setParameter('listType',"Agent Recommendations")

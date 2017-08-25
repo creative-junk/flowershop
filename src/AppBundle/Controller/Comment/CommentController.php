@@ -27,7 +27,7 @@ class CommentController extends Controller
             $roseId= $request->request->get('rose');
         }
 
-        $rose = $em->getRepository("AppBundle:Product")
+        $rose = $em->getRepository("AppBundle:Direct")
             ->findOneBy([
                 'id'=>$roseId
             ]);
@@ -49,7 +49,7 @@ class CommentController extends Controller
 
             $rose_id =  $request->request->get('rose');
 
-            $rose = $em->getRepository("AppBundle:Product")
+            $rose = $em->getRepository("AppBundle:Direct")
                 ->findOneBy([
                     'id'=>$rose_id
                 ]);
@@ -63,6 +63,114 @@ class CommentController extends Controller
         }
 
         return $this->render('comments/comment.htm.twig',[
+            'comments'=>$comments,
+            'commentForm'=>$form->createView(),
+            'rose'=>$rose
+        ]);
+    }
+    /**
+     * @Route("comment/auction",name="comment-auction")
+     */
+    public function auctionCommentAction(Request $request,$roseId=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        if ($roseId==null){
+            $roseId= $request->request->get('rose');
+        }
+
+        $rose = $em->getRepository("AppBundle:Auction")
+            ->findOneBy([
+                'id'=>$roseId
+            ]);
+
+        $comments = $em->getRepository("AppBundle:Comment")
+            ->findAuctionComments($rose);
+
+        $comment = new Comment();
+        $comment->setAuction($rose);
+        $comment->setAuthor($user);
+
+        $form = $this->createForm(CommentFormType::class,$comment);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $fullRating = $form->getData();
+
+            $rose_id =  $request->request->get('rose');
+
+            $rose = $em->getRepository("AppBundle:Auction")
+                ->findOneBy([
+                    'id'=>$rose_id
+                ]);
+
+            $comment->setAuction($rose);
+
+            $em->persist($fullRating);
+            $em->flush();
+
+            return new Response(null,204);
+        }
+
+        return $this->render('comments/auction-comment.htm.twig',[
+            'comments'=>$comments,
+            'commentForm'=>$form->createView(),
+            'rose'=>$rose
+        ]);
+    }
+    /**
+     * @Route("comment/auction-product",name="comment-auction-product")
+     */
+    public function auctionProductCommentAction(Request $request,$roseId=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        if ($roseId==null){
+            $roseId= $request->request->get('rose');
+        }
+
+        $rose = $em->getRepository("AppBundle:AuctionProduct")
+            ->findOneBy([
+                'id'=>$roseId
+            ]);
+
+        $comments = $em->getRepository("AppBundle:Comment")
+            ->findAuctionProductComments($rose);
+
+        $comment = new Comment();
+        $comment->setAuctionProduct($rose);
+        $comment->setAuthor($user);
+
+        $form = $this->createForm(CommentFormType::class,$comment);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()&&$form->isSubmitted()){
+
+            $fullRating = $form->getData();
+
+            $rose_id =  $request->request->get('rose');
+
+            $rose = $em->getRepository("AppBundle:AuctionProduct")
+                ->findOneBy([
+                    'id'=>$rose_id
+                ]);
+
+            $comment->setAuctionProduct($rose);
+
+            $em->persist($fullRating);
+            $em->flush();
+
+            return new Response(null,204);
+        }
+
+        return $this->render('comments/auction-product-comment.htm.twig',[
             'comments'=>$comments,
             'commentForm'=>$form->createView(),
             'rose'=>$rose

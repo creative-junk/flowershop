@@ -23,8 +23,8 @@ class Product
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -56,7 +56,42 @@ class Product
      * @ORM\Column(type="text")
      */
     private $description;
-
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $mainImage;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $openHeadTop;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $openHeadSide;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $closedHeadSide;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $openHeadBouquet;
+    /**
+     * @Assert\Type("AppBundle\Entity\ProductImages")
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
+     */
+    private $closedHeadBouquet;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -125,6 +160,7 @@ class Product
 
 
     }
+
     /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
@@ -468,6 +504,102 @@ class Product
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMainImage()
+    {
+        return $this->mainImage;
+    }
+
+    /**
+     * @param mixed $mainImage
+     */
+    public function setMainImage($mainImage)
+    {
+        $this->mainImage = $mainImage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpenHeadTop()
+    {
+        return $this->openHeadTop;
+    }
+
+    /**
+     * @param mixed $openHeadTop
+     */
+    public function setOpenHeadTop($openHeadTop)
+    {
+        $this->openHeadTop = $openHeadTop;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpenHeadSide()
+    {
+        return $this->openHeadSide;
+    }
+
+    /**
+     * @param mixed $openHeadSide
+     */
+    public function setOpenHeadSide($openHeadSide)
+    {
+        $this->openHeadSide = $openHeadSide;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClosedHeadSide()
+    {
+        return $this->closedHeadSide;
+    }
+
+    /**
+     * @param mixed $closedHeadSide
+     */
+    public function setClosedHeadSide($closedHeadSide)
+    {
+        $this->closedHeadSide = $closedHeadSide;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOpenHeadBouquet()
+    {
+        return $this->openHeadBouquet;
+    }
+
+    /**
+     * @param mixed $openHeadBouquet
+     */
+    public function setOpenHeadBouquet($openHeadBouquet)
+    {
+        $this->openHeadBouquet = $openHeadBouquet;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClosedHeadBouquet()
+    {
+        return $this->closedHeadBouquet;
+    }
+
+    /**
+     * @param mixed $closedHeadBouquet
+     */
+    public function setClosedHeadBouquet($closedHeadBouquet)
+    {
+        $this->closedHeadBouquet = $closedHeadBouquet;
     }
 
 

@@ -63,6 +63,7 @@
                         <strong>Address Book</strong>
 
                     </div>
+                    {% if app.user.isMainAccount %}
                     <div class="block-content">
                         <div class="box box-billing-address">
                             <strong class="box-title">
@@ -90,11 +91,16 @@
                             </div>
                             <div class="box-actions">
                                 <a class="action edit"
-                                   href="#"
+                                   href="{{ path('buyer-edit-shipping-address') }}"
                                    data-ui-id="default-shipping-edit-link"><span>Edit Address</span></a>
                             </div>
                         </div>
                     </div>
+                    {% else %}
+                    <div class="block-content">
+                        Address Book can only be modified by the Company Account Manager<br/><br/>
+                    </div>
+                    {% endif %}
                 </div>
 
 

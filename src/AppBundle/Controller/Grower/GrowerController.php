@@ -9,9 +9,12 @@
 
 namespace AppBundle\Controller\Grower;
 
+use AppBundle\Entity\AuctionOrder;
+use AppBundle\Entity\AuctionProduct;
 use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\CartItems;
 use AppBundle\Entity\Company;
+use AppBundle\Entity\Direct;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
@@ -23,10 +26,13 @@ use AppBundle\Entity\Auction;
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\UserOrder;
+use AppBundle\Form\AccountFormType;
 use AppBundle\Form\addToCartFormType;
 use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\BillingAddressFormType;
 use AppBundle\Form\CheckoutForm;
+use AppBundle\Form\DirectProductForm;
+use AppBundle\Form\EditDirectProductForm;
 use AppBundle\Form\LoginForm;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PaymentMethodFormType;
@@ -60,7 +66,7 @@ class GrowerController extends Controller
         $nrMyReceivedOrders = $em->getRepository('AppBundle:OrderItems')
             ->findNrAllMyReceivedOrders($user->getMyCompany());
         $nrMyOrders = $em->getRepository('AppBundle:UserOrder')
-            ->findNrAllMyOrdersAgent($user);
+            ->findNrAllMyOrdersAgent($user->getMyCompany());
         $nrMyBuyers = $em->getRepository('AppBundle:BuyerGrower')
             ->getNrMyGrowerBuyers($user->getMyCompany());
         $nrMyAgents = $em->getRepository('AppBundle:GrowerAgent')
@@ -82,8 +88,186 @@ class GrowerController extends Controller
      */
     public function profileAction()
     {
-        return $this->render('account/account.htm.twig');
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        return $this->render('grower/account/account.htm.twig',[
+            'billingAddress'=>$billingAddress,
+            'shippingAddress'=>$shippingAddress
+        ]);
     }
+
+    /**
+     * @Route("/account/edit",name="grower-edit-account")
+     */
+    public function editAccountAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(AccountFormType::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('my-grower-profile');
+        }
+        return $this->render('grower/account/edit-basic.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/account/add/billing",name="grower-add-billing-address")
+     */
+    public function addBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = new BillingAddress();
+        $billingAddress->setCompany($agent);
+        $billingAddress->setCountry($agent->getCountry());
+        $billingAddress->setEmailAddress($agent->getEmail());
+        $billingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $billingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-grower-profile');
+        }
+
+        return $this->render('grower/account/add-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/account/edit/billing",name="grower-edit-billing-address")
+     */
+    public function editBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-grower-profile');
+        }
+
+        return $this->render('grower/account/edit-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
+    /**
+     * @Route("/account/add/shipping",name="grower-add-shipping-address")
+     */
+    public function addShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $shippingAddress = new ShippingAddress();
+        $shippingAddress->setCompany($agent);
+        $shippingAddress->setCountry($agent->getCountry());
+        $shippingAddress->setEmailAddress($agent->getEmail());
+        $shippingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $shippingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-grower-profile');
+        }
+
+        return $this->render('grower/account/add-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/account/edit/shipping",name="grower-edit-shipping-address")
+     */
+    public function editShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-grower-profile');
+        }
+
+        return $this->render('grower/account/edit-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
     /**
      * @Route("/product/",name="grower_product_list")
      */
@@ -115,8 +299,9 @@ class GrowerController extends Controller
         $form = $this->createForm(addToCartFormType::class, $cart);
 
         $em = $this->getDoctrine()->getManager();
-        $queryBuilder = $em->getRepository('AppBundle:Product')
-            ->createQueryBuilder('product')
+        $queryBuilder = $em->getRepository('AppBundle:Direct')
+            ->createQueryBuilder('direct')
+            ->innerJoin('direct.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
             ->andWhere('product.isSeedling = :isSeedling')
@@ -142,9 +327,9 @@ class GrowerController extends Controller
     }
 
     /**
-     * @Route("/product/my",name="my_grower_product_list")
+     * @Route("/roses/my",name="my_grower_roses")
      */
-    public function myProductListAction(Request $request = null)
+    public function myRosesListAction(Request $request = null)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
@@ -174,7 +359,38 @@ class GrowerController extends Controller
         ]);
 
     }
+    /**
+     * @Route("/products/my",name="my_grower_direct_market")
+     */
+    public function myDirectMarketListAction(Request $request = null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $vendor = $user->getMyCompany();
 
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Direct')
+            ->createQueryBuilder('product')
+         //   ->andWhere('product.isActive = :isActive')
+         //  ->setParameter('isActive', true)
+            ->andWhere('product.vendor = :isGrower')
+            ->setParameter('isGrower', $vendor)
+            ->orderBy('product.createdAt', 'DESC');
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
+        );
+        return $this->render('grower/product/myProductlist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
     /**
      * @Route("/product/new",name="grower_product_new")
      */
@@ -203,7 +419,7 @@ class GrowerController extends Controller
 
             $this->addFlash('success', 'Product Created Successfully!');
 
-            return $this->redirectToRoute('my_grower_product_list');
+            return $this->redirectToRoute('my_grower_direct_market');
         }
 
         return $this->render('grower/product/new.html.twig', [
@@ -226,7 +442,7 @@ class GrowerController extends Controller
     /**
      * @Route("/product/seedlings/{id}/view",name="seedling_details")
      */
-    public function showSeedlingAction(Request $request, Product $product)
+    public function showSeedlingAction(Request $request, Direct $product)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
@@ -246,18 +462,28 @@ class GrowerController extends Controller
 
             $existingCart = $em->getRepository('AppBundle:Cart')
                 ->findMyCart($user);
-            $quantity = $request->request->get('qty');
+            $quantity = $request->request->get('quantity');
             $price = $request->request->get('productPrice');
             $currency = $request->request->get('productCurrency');
 
-            //Create The cart Item
-            $cartItem = new CartItems();
-            $cartItem->setQuantity($quantity);
-            $cartItem->setUnitPrice($price);
-            $cartItem->setProduct($product);
-            $lineTotal = ($price) * ($quantity);
-            $cartItem->setLineTotal($lineTotal);
+            $existingCartItem = $em->getRepository('AppBundle:CartItems')
+                ->findItemInCart($product);
 
+            if ($existingCartItem){
+                $newQty=$existingCartItem[0]->getQuantity()+$quantity;
+                $existingCartItem[0]->setQuantity($newQty);
+                $lineTotal = ($price) * ($newQty);
+                $existingCartItem[0]->setLineTotal($lineTotal);
+                $cartItem = $existingCartItem[0];
+            }else {
+                //Create The cart Item
+                $cartItem = new CartItems();
+                $cartItem->setQuantity($quantity);
+                $cartItem->setUnitPrice($price);
+                $cartItem->setProduct($product);
+                $lineTotal = ($price) * ($quantity);
+                $cartItem->setLineTotal($lineTotal);
+            }
             //Update the Cart
             if ($existingCart) {
                 $existingCart[0]->setCartAmount(($existingCart[0]->getCartAmount()) + ($lineTotal));
@@ -276,19 +502,19 @@ class GrowerController extends Controller
             $em->persist($cartItem);
             $em->flush();
 
-            $this->addFlash('success', 'Seedling Successfully Added to Cart!');
-
-            return $this->redirectToRoute('grower_seedlings_list');
+            $this->addFlash('success', 'Product Successfully Added to Cart!');
+            return new Response(null, 204);
+            //return $this->redirectToRoute('buyer_shop');
         }
         return $this->render('grower/seedlings/product-details.htm.twig', [
-            'product' => $product,
+            'direct' => $product,
             'form' => $form->createView()
 
         ]);
     }
 
     /**
-     * @Route("/product/{id}/edit",name="grower_product_edit")
+     * @Route("/rose/{id}/edit",name="grower_edit_rose")
      */
     public function editAction(Request $request, Product $product)
     {
@@ -310,16 +536,54 @@ class GrowerController extends Controller
             $em->persist($product);
             $em->flush();
 
-            $this->addFlash('success', 'Product Updated Successfully!');
+            $this->addFlash('success', 'Rose Updated Successfully!');
 
-            return $this->redirectToRoute('my_grower_product_list');
+            return $this->redirectToRoute('my_grower_roses');
         }
 
         return $this->render('grower/product/edit.html.twig', [
-            'productForm' => $form->createView()
+            'productForm' => $form->createView(),
+            'product' => $product
         ]);
     }
+    /**
+     * @Route("/product/{id}/edit",name="grower_edit_product")
+     */
+    public function editProductAction(Request $request, Direct $product)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $em = $this->getDoctrine()->getManager();
+        $roses = $em->getRepository("AppBundle:Product")
+            ->findBy([
+                'vendor'=>$user->getMyCompany(),
+                'isActive'=>true,
+                'isAuthorized'=>true
+            ]);
+
+        $form = $this->createForm(EditDirectProductForm::class, $product, ['roses' => $roses]);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
+            $this->addFlash('success', 'Rose Updated Successfully!');
+
+            return $this->redirectToRoute('my_grower_direct_market');
+        }
+
+        return $this->render('grower/market/edit.html.twig', [
+            'productForm' => $form->createView(),
+            'product' => $product,
+            'roses' => $roses
+        ]);
+    }
     /**
      * @Route("/orders/",name="grower_order_list")
      */
@@ -335,6 +599,34 @@ class GrowerController extends Controller
 
         return $this->render('grower/order/list.html.twig', [
             'orderItems' => $orderItems,
+        ]);
+
+    }
+    /**
+     * @Route("/orders/auction/my/view/{id}",name="view_auction_order")
+     */
+    public function viewAuctionOrderAction(Request $request,AuctionOrder $order){
+
+        return $this->render(':grower/auction/order:order-details.htm.twig',[
+            'order'=>$order,
+        ]);
+
+    }
+    /**
+     * @Route("/orders/auction/my/{id}",name="grower_auction_order_list")
+     */
+    public function auctionOrdersListAction(Request $request,AuctionProduct $auction)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $vendor = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+        $orders = $em->getRepository("AppBundle:AuctionOrder")
+            ->findMyAuctionOrders($auction);
+
+        return $this->render('grower/auction/order/list.html.twig', [
+            'orders' => $orders,
+
         ]);
 
     }
@@ -408,17 +700,165 @@ class GrowerController extends Controller
      */
     public function auctionListAction()
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower= $user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
         $products = $em->getRepository('AppBundle:Auction')
-            ->findAllActiveAuctionProductsOrderByDate();
+            ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
-        return $this->render('grower/product/list.html.twig', [
+        return $this->render('grower/product/mylist.html.twig', [
             'products' => $products,
         ]);
 
     }
+    /**
+     * @Route("/auction/unassigned",name="unassigned_auction_list")
+     */
+    public function unassignedAuctionListAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $grower= $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->findAllMyUnassignedAuctionOrderByDate($grower);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
+        );
+        return $this->render('grower/auction/product/myFloatedlist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
+
+    /**
+     * @Route("/auction/pending",name="pending_auction_list")
+     */
+    public function pendingAuctionListAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower= $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->findAllMyPendingAuctionOrderByDate($grower);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
+        );
+        return $this->render('grower/auction/product/myPendinglist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
+    /**
+     * @Route("/auction/accepted",name="accepted_auction_list")
+     */
+    public function acceptedAuctionListAction(Request $request = null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower= $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->findAllMyAcceptedAuctionOrderByDate($grower);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
+        );
+        return $this->render('grower/auction/product/myAcceptedlist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
+    /**
+     * @Route("/auction/shipped",name="shipped_auction_list")
+     */
+    public function shippedAuctionListAction(Request $request=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower= $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->findAllMyShippedAuctionOrderByDate($grower);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
+        );
+
+        return $this->render('grower/auction/product/myShippedlist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
+    /**
+     * @Route("/auction/active",name="active_auction_list")
+     */
+    public function activeAuctionListAction(Request $request=null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower= $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:AuctionProduct')
+            ->findAllMyActiveAuctionProductsOrderByDate($grower);
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
+        );
+
+        return $this->render('grower/auction/product/myActivelist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
     /**
      * @Route("/auction/my/products",name="my_grower_auction_list")
      */
@@ -426,14 +866,17 @@ class GrowerController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $vendor = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
 
         $queryBuilder = $em->getRepository('AppBundle:Auction')
-            ->createQueryBuilder('product')
+            ->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('product.user = :isGrower')
-            ->setParameter('isGrower', $user)
+            ->andWhere('product.vendor = :isGrower')
+            ->setParameter('isGrower', $vendor)
             ->orderBy('product.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
@@ -452,34 +895,28 @@ class GrowerController extends Controller
         ]);
 
     }
-
     /**
-     * @Route("/auction/product/new",name="grower_auction_new")
+     * @Route("/market/product/new",name="grower_direct_new")
      */
-    public function newAuctionProductAction(Request $request)
+    public function newDirectProductAction(Request $request)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $product = new Auction();
-        $product->setIsActive(true);
-        $product->setIsAuthorized(true);
-        $product->setUser($user);
+        $product = new Direct();
+        $product->setCurrency($user->getMyCompany()->getCurrency());
+        $product->setAddedBy($user);
+        $product->setCreatedAt(new \DateTime());
         $product->setVendor($user->getMyCompany());
-        $product->setStatus("Pending Agent");
 
         $em = $this->getDoctrine()->getManager();
-        $growerAgents = $em->getRepository("AppBundle:GrowerAgent")
+        $roses = $em->getRepository("AppBundle:Product")
             ->findBy([
-            'grower'=>$user,
-            'status'=>"Accepted"
-        ]);
-        $agents=array();
-        foreach ($growerAgents as $growerAgent) {
-            $agents[]=$growerAgent->getAgent();
-        }
-        //$product->setAgent($agents);
+                'vendor'=>$user->getMyCompany(),
+                'isActive'=>true,
+                'isAuthorized'=>true
+            ]);
 
-        $form = $this->createForm(AuctionProductForm::class, $product, ['agents' => $agents]);
+        $form = $this->createForm(DirectProductForm::class, $product, ['roses' => $roses]);
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -490,14 +927,115 @@ class GrowerController extends Controller
             $em->persist($product);
             $em->flush();
             //TODO Notify the agent of the Assignment
-            $this->addFlash('success', 'Product Posted to Auction Successfully!');
+            $this->addFlash('success', 'Product Posted to Market Successfully!');
 
-            return $this->redirectToRoute('my_grower_auction_list');
+            return $this->redirectToRoute('my_grower_direct_list');
+        }
+
+        return $this->render('grower/market/new.html.twig', [
+            'productForm' => $form->createView(),
+            'roses'=>$roses
+        ]);
+    }
+    /**
+     * @Route("/direct/my/products",name="my_grower_direct_list")
+     */
+    public function myDirectProductListAction(Request $request = null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Direct')
+            ->createQueryBuilder('product')
+            ->andWhere('product.vendor = :isGrower')
+            ->setParameter('isGrower', $user->getMyCompany())
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render(':grower/product:myProductlist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
+
+    /**
+     * @Route("/auction/product/new",name="grower_auction_new")
+     */
+    public function newAuctionProductAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
+
+        $product = new Auction();
+        $product->setCurrency($user->getMyCompany()->getCurrency());
+        $product->setAddedBy($user);
+        $product->setIsInStock(true);
+        $product->setCreatedAt(new \DateTime());
+        $product->setVendor($user->getMyCompany());
+
+        $em = $this->getDoctrine()->getManager();
+        $roses = $em->getRepository("AppBundle:Product")
+            ->findBy([
+                'vendor'=>$user->getMyCompany(),
+                'isActive'=>true,
+                'isAuthorized'=>true
+            ]);
+
+        $growerAgents = $em->getRepository("AppBundle:GrowerAgent")
+            ->findBy([
+                'grower'=>$user->getMyCompany(),
+                'status' => 'Accepted'
+            ]);
+        $agents=[];
+        foreach ($growerAgents as $growerAgent){
+                $agents[]=$growerAgent->getAgent();
+        }
+        $options['roses'] =$roses;
+        $options['agents'] = $agents;
+
+        $form = $this->createForm(AuctionProductForm::class, $product, ['options' => $options]);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
+
+            $sellingAgent = $form->get('sellingAgent')->getData();
+            $announceToAgents = $form->get('announceToAgents')->getData();
+
+            if ($sellingAgent){
+                $this->sendAssignmentNotification($sellingAgent);
+                $product->setStatus("Pending Agent");
+            }else{
+                $product->setStatus("Unassigned");
+            }
+
+            $em->persist($product);
+            $em->flush();
+
+            if ($announceToAgents){
+                $this->notifyAgents($agents,$grower);
+            }
+
+            return $this->redirectToRoute('my_grower_direct_market');
         }
 
         return $this->render('grower/auction/product/new.html.twig', [
             'productForm' => $form->createView(),
-            'agents' => $agents
+            'roses'=>$roses
         ]);
     }
 
@@ -507,19 +1045,32 @@ class GrowerController extends Controller
     public function editAuctionProductAction(Request $request, Auction $product)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
-
         $em = $this->getDoctrine()->getManager();
+
+        $currentAgent = $product->getSellingAgent();
+
+
+        $roses = $em->getRepository("AppBundle:Product")
+            ->findBy([
+                'vendor'=>$user->getMyCompany(),
+                'isActive'=>true,
+                'isAuthorized'=>true
+            ]);
+
         $growerAgents = $em->getRepository("AppBundle:GrowerAgent")
             ->findBy([
-                'grower'=>$user,
-                'status'=>"Accepted"
+                'grower'=>$user->getMyCompany(),
+                'status' => 'Accepted'
             ]);
-        $agents=array();
-        foreach ($growerAgents as $growerAgent) {
+        $agents=[];
+        foreach ($growerAgents as $growerAgent){
             $agents[]=$growerAgent->getAgent();
         }
+        $options['roses'] =$roses;
+        $options['agents'] = $agents;
 
-        $form = $this->createForm(AuctionProductForm::class, $product, ['agents' => $agents]);
+        $form = $this->createForm(AuctionProductForm::class, $product, ['options' => $options]);
+
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -527,17 +1078,25 @@ class GrowerController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $product = $form->getData();
 
+            $sellingAgent = $form->get('sellingAgent')->getData();
+            //var_dump($sellingAgent);die;
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
 
-            $this->addFlash('success', 'Product in Auction Updated Successfully!');
+            if ($sellingAgent != $currentAgent){
+                $this->sendAssignmentNotification($sellingAgent);
+            }
+
+
+               $this->addFlash('success', 'Product in Auction Updated Successfully!');
 
             return $this->redirectToRoute('my_grower_auction_list');
         }
 
         return $this->render('grower/auction/product/edit.html.twig', [
-            'productForm' => $form->createView()
+            'productForm' => $form->createView(),
+            'product'=>$product
         ]);
     }
 
@@ -596,7 +1155,9 @@ class GrowerController extends Controller
      */
     public function myBreederListAction(Request $request)
     {
-        $grower = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
         $queryBuilder = $em->getRepository('AppBundle:GrowerBreeder')
@@ -628,15 +1189,25 @@ class GrowerController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $products = $em->getRepository("AppBundle:Product")
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
+
+        $breederExists = false;
+
+        if ($this->growerBreederExists($grower,$breeder)){
+            $breederExists=true;
+        }
+        $products = $em->getRepository("AppBundle:Direct")
             ->findAllUserActiveSeedlingsOrderByDate($breeder);
-        $nrProducts = $em->getRepository("AppBundle:Product")
+        $nrProducts = $em->getRepository("AppBundle:Direct")
             ->findNrActiveBreederSeedlings($breeder);;
 
         return $this->render('grower/breeders/details.htm.twig', [
             'breeder' => $breeder,
             'products'=>$products,
             'nrProducts' => $nrProducts,
+            'breederExists'=>$breederExists
         ]);
 
     }
@@ -646,21 +1217,22 @@ class GrowerController extends Controller
      */
     public function buyerProfileAction(Request $request,Company $buyer)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyerExists = false;
+
+        $grower = $user->getMyCompany();
+
+        if ($this->buyerGrowerExists($grower,$buyer)){
+            $buyerExists=true;
+        }
+
         $em = $this->getDoctrine()->getManager();
-        $billingAddress = $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($buyer);
-        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($buyer);
-        if ($billingAddress) {
-            $billingAddress = $billingAddress[0];
-        }
-        if ($shippingAddress) {
-            $shippingAddress = $shippingAddress[0];
-        }
+
+
         return $this->render('grower/buyers/details.htm.twig', [
             'buyer' => $buyer,
-            'billingAddress' => $billingAddress,
-            'shippingAddress' => $shippingAddress,
+            'buyerExists' => $buyerExists
         ]);
     }
 
@@ -669,13 +1241,15 @@ class GrowerController extends Controller
      */
     public function agentListAction(Request $request)
     {
-        $grower = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
 
         $growerAgents = $em->getRepository('AppBundle:GrowerAgent')
             ->findBy([
-                'listOwner' => $grower
+                'grower' => $grower
             ]);
         $agentIds = array();
 
@@ -689,14 +1263,14 @@ class GrowerController extends Controller
         }
 
 
-        $queryBuilder = $em->getRepository('AppBundle:User')
+        $queryBuilder = $em->getRepository('AppBundle:Company')
             ->createQueryBuilder('user')
             ->andWhere('user.id NOT IN (:agents)')
             ->setParameter('agents', $agentIds)
             ->andWhere('user.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('user.userType = :userType')
-            ->setParameter('userType', 'agent');
+            ->andWhere('user.companyType = :userType')
+            ->setParameter('userType', 'Agent');
 
         $query = $queryBuilder->getQuery();
         /**
@@ -757,9 +1331,20 @@ class GrowerController extends Controller
     /**
      * @Route("/agents/{id}/view",name="agent_profile")
      */
-    public function agentProfileAction(User $agent)
+    public function agentProfileAction(Company $agent)
     {
         $em = $this->getDoctrine()->getManager();
+
+        $agentExists = false;
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
+
+        if ($this->growerAgentExists($grower,$agent)){
+            $agentExists=true;
+        }
+
 
         $products = $em->getRepository("AppBundle:Auction")
             ->findAllMyActiveAgentProductsOrderByDate($agent);
@@ -767,17 +1352,25 @@ class GrowerController extends Controller
         $nrProducts = $em->getRepository("AppBundle:Auction")
             ->findNrMyActiveProductsAgent($agent);
 
+        $nrBuyers = $em->getRepository("AppBundle:BuyerAgent")
+            ->getNrMyAgentBuyers($agent);
+        $nrGrowers = $em->getRepository("AppBundle:GrowerAgent")
+            ->getNrMyAgentGrowers($agent);
+
         return $this->render(':grower/agents:details.htm.twig', [
             'agent' => $agent,
             'products' => $products,
             'nrProducts' => $nrProducts,
+            'agentExists' => $agentExists,
+            'nrGrowers' => $nrGrowers,
+            'nrBuyers' => $nrBuyers
         ]);
     }
 
     /**
      * @Route("/agents/profile/{id}/view",name="agent_details")
      */
-    public function agentProfileDetailsAction(User $agent)
+    public function agentProfileDetailsAction(Company $agent)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -877,7 +1470,7 @@ class GrowerController extends Controller
     }
 
     /**
-     * @Route("/checkout/",name="grower-checkout")
+     * @Route("/checkout/",name="grower-checkout_v1")
      *
      */
     public function billingAddressAction(Request $request)
@@ -990,7 +1583,7 @@ class GrowerController extends Controller
     }
 
     /**
-     * @Route("/checkout/shipping-method",name="shipping-method")
+     * @Route("/checkout/shipping-method",name="grower-checkout")
      *
      */
     public function shippingMethodAction(Request $request)
@@ -1048,8 +1641,6 @@ class GrowerController extends Controller
 
         $myOrder = new UserOrder();
         $myOrder->setCreatedAt(new \DateTime());
-        $myOrder->setBillingAddress($billingAddress[0]);
-        $myOrder->setShippingAddress($shippingAddress[0]);
         $myOrder->setUser($user);
         $myOrder->setOrderStatus("Pending");
         $myOrder->setOrderNotes("None");
@@ -1078,6 +1669,8 @@ class GrowerController extends Controller
             $orderItem->setQuantity($cartItem->getQuantity());
             $orderItem->setLineTotal($cartItem->getLineTotal());
             $orderItem->setVendor($vendor);
+
+            $this->updateQuantity($product,$cartItem->getQuantity());
 
             $orderItem->setOrder($myOrder);
             $orderItem->setItemStatus("Pending");
@@ -1358,6 +1951,8 @@ class GrowerController extends Controller
             ->createQueryBuilder('user')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
+            ->andWhere('user.listOwner <> :whoOwnsList')
+            ->setParameter('whoOwnsList', $user->getMyCompany())
             ->andWhere('user.grower = :whoIsGrower')
             ->setParameter('whoIsGrower', $user->getMyCompany());
 
@@ -1683,27 +2278,175 @@ class GrowerController extends Controller
     /**
      * @Route("/notifications",name="grower-notifications")
      */
-    public function deletedAction(Request $request){
+    public function notificationsAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em = $this->getDoctrine()->getManager();
 
-
         $messages = $em->getRepository("AppBundle:Notification")
-            ->getNotifications($user);
+            ->getNotifications($user->getMyCompany());
 
         return $this->render(':grower/messages:notification.htm.twig',[
             'messages'=> $messages
         ]);
     }
     /**
-     * @Route("/notifications/{id}/view",name="view-notification")
+     * @Route("/notifications/{id}/view",name="grower-view-notification")
      */
     public function viewNotificationAction(Request $request,Notification $notification){
-        return $this->render(':home/messages:viewNotification.htm.twig',[
+        $em=$this->getDoctrine()->getManager();
+
+        $notification->setIsRead(true);
+
+        $em->persist($notification);
+        $em->flush();
+
+        return $this->render(':grower/messages:viewNotification.htm.twig',[
             'notification'=>$notification
         ]);
     }
+    public function buyerGrowerExists(Company $grower, Company $buyer){
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerGrower = $em->getRepository('AppBundle:BuyerGrower')
+            ->findOneBy([
+                'buyer'=>$buyer,
+                'grower'=>$grower,
+            ]);
+        if ($buyerGrower){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function growerAgentExists(Company $grower, Company $agent){
+        $em = $this->getDoctrine()->getManager();
+
+        $growerAgent = $em->getRepository('AppBundle:GrowerAgent')
+            ->findOneBy([
+                'agent'=>$agent,
+                'grower'=>$grower,
+            ]);
+        if ($growerAgent){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function growerBreederExists(Company $grower, Company $breeder){
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerGrower = $em->getRepository('AppBundle:GrowerBreeder')
+            ->findOneBy([
+                'breeder'=>$breeder,
+                'grower'=>$grower,
+            ]);
+        if ($buyerGrower){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function sendAssignmentNotification(Company $agent){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message ="You have been assigned a Consignment of Roses for Auction by ".$grower;
+        $message.=" Check your Pending Assignments to Accept or Decline the Assignment";
+
+        $notification = new Notification();
+        $notification->setSubject("Product Assignment by ".$grower);
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+        //$notification->setIsSpam(false);
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($agent);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
 
 
+    }
+    /**
+     * @Route("/agent/ship/{id}/consigment",name="ship-consignment")
+     */
+    public function shipConsignmentAction(Auction $product){
+
+        $product->setStatus("Shipped");
+        $product->setShippedAt(new \DateTime());
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($product);
+        $em->flush();
+
+        $this->sendShippingNotification($product->getSellingAgent(),$product);
+
+        return new Response(null, 204);
+
+    }
+    public function sendShippingNotification(Company $agent,Auction $product){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $grower = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message =$grower." has shipped a consignment of your Product";
+        $message.="<p> The Grower <b>". $grower." </b> has shipped a consignment of the Auction Product <b><a href='/grower/auction/product/".$product->getId()."/edit'>".$product->getProduct()->getTitle()."</a></b></p>";
+
+        $notification = new Notification();
+        $notification->setSubject("Product Shipped: ".$product->getProduct()->getTitle());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($agent);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+
+    private function notifyAgents(Array $agents,Company $grower)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        foreach ($agents as $agent){
+
+            $message="<p> The Grower <b>". $grower." </b> has posted a <b><i>new</i></b> consignment of Auction Products</p>";
+
+            $notification = new Notification();
+            $notification->setSubject("New Auction Products Available");
+            $notification->setIsRead(false);
+            $notification->setIsDeleted(false);
+
+            $notification->setSentAt(new \DateTime());
+            $notification->setParticipant($agent);
+            $notification->setMessage($message);
+
+            $em->persist($notification);
+
+        }
+        $em->flush();
+    }
+    private function updateQuantity(Direct $product, $quantity)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $existingQty = $product->getNumberOfStems();
+        $newQuantity = $existingQty - $quantity;
+
+        $product->setNumberOfStems($newQuantity);
+
+        $em->persist($product);
+        $em->flush();
+
+    }
 }

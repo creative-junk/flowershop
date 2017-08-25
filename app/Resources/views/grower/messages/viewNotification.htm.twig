@@ -28,22 +28,20 @@
         <a id="contentarea" tabindex="-1"></a>
 
         <h3>{{ notification.subject }}</h3>
-<hr/>
+        <hr/>
         <div class="messenger_thread_message">
             <div class="messenger_thread_message_info">
-                <b>From:</b> {{ notification.sender }}  <br/>
+
                         <b>Sent:</b> {{ notification.sentAt|date }}
 
             </div>
             <div class="messenger_thread_message_body" id="message_{{ notification.id }}">
-                <br/>{{ notification.message }}
+                <br/>{{ notification.message | raw }}
             </div>
         </div>
         <hr/>
-    {% endfor %}
 
 
-        <hr/>
 
         <br/><br/>
     </div>

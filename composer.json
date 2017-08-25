@@ -26,6 +26,7 @@
         "incenteev/composer-parameter-handler": "^2.0",
         "knplabs/knp-menu-bundle": "^2.1",
         "knplabs/knp-paginator-bundle": "^2.5",
+        "lexik/currency-bundle": "^2.1",
         "lexik/form-filter-bundle": "~5.0",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",

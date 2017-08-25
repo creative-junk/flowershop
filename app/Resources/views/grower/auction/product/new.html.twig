@@ -53,50 +53,39 @@
                                 <fieldset class="fieldset create info">
                                     <legend class="legend"><span>Basic Information</span></legend>
                                     <br>
-
                                     <div class="field field-name-firstname required">
-                                        {{ form_row(productForm.title) }}
-                                    </div>
-                                    <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.imageFile) }}
-                                    </div>
-                                    <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.quantity) }}
+                                        {{ form_row(productForm.product,{value : roses}) }}
                                     </div>
                                 </fieldset>
                                 <fieldset class="fieldset create info">
-                                    <legend class="legend"><span>Auction Information</span></legend>
+                                    <legend class="legend"><span>Market Information</span></legend>
                                     <br>
-
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.currency) }}
+                                        {{ form_row(productForm.sellingAgent) }}
                                     </div>
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.bundlePrice) }}
+                                        {{ form_row(productForm.numberOfStems) }}
                                     </div>
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.finalPrice) }}
+                                        {{ form_row(productForm.pricePerStem) }}
                                     </div>
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.agent,{value : agents}) }}
+                                        {{ form_row(productForm.quality) }}
                                     </div>
                                 </fieldset>
                                 <fieldset class="fieldset create info">
-                                    <legend class="legend"><span>Product Description</span></legend>
+                                    <legend class="legend"><span>Agent Information</span></legend>
                                     <br>
 
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.summary) }}
-                                    </div>
-                                    <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.description) }}
+                                        {{ form_row(productForm.announceToAgents) }}
                                     </div>
 
 
                                 </fieldset>
                                 <div class="actions-toolbar">
-                                    <div class="primary"><a class="action remind"
-                                                            href="{{ path('my_grower_product_list') }}"><span>Back</span></a>
+                                    <div class="primary"><a class="action login primary"
+                                                            href="{{ path('my_grower_auction_list') }}"><span>Back</span></a>
                                     </div>
                                     <div class="secondary">
                                         <button type="submit" class="action login primary" formnovalidate><span>Add Product</span>

@@ -1,0 +1,283 @@
+{% extends 'base.html.twig' %}
+{% block title %}iFlora Direct Market{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('iflora/js/jquery.js') }}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.tocart').on('click',function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-agent-item');
+
+                $(this).find('.counter')
+                    .removeClass('counter')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $el.fadeOut("slow");
+                }).error(function () {
+                    $(this).find('.fa-spinner')
+                        .removeClass('fa-spinner')
+                        .addClass('fa-exchange')
+                });
+            });
+            $('.compare-remove').on('click',function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-list-item');
+
+                $(this).find('#compare')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    $(".result").fadeIn("slow");
+                    $el.fadeOut("slow");
+                }).fail(function () {
+                    $("#compare")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                    $(".error").fadeIn("slow");
+                });
+            });
+            $('.compare-remove-all').on('click',function (e) {
+                e.preventDefault();
+
+                $(this).find('#compare-all')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $("#compare-all")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                });
+            });
+        })
+    </script>
+{% endblock %}
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+<style>
+    .attributes{
+        font-size: small;
+    }
+    table.attributes tr td{
+        padding: 2px;
+    }
+</style>
+<div class="category-view">
+    <div class="page-title-wrapper">
+        <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+            <span class="base" data-ui-id="page-title-wrapper">Direct Market</span></h1>
+    </div>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item category131">
+                <strong>Direct Market</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages">
+        </div>
+        <div data-bind="scope: 'messages'">
+            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            </div>
+            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column main">
+
+            <div class="toolbar toolbar-products">
+
+                <p id="toolbar-amount" class="toolbar-amount">Items
+                    <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
+                    of <span class="toolbar-number">{{ products.getTotalItemCount }}</span></p>
+
+
+                <div class="toolbar-sorter sorter">
+                    <label class="sorter-label" for="sorter">Sort By</label>
+                    <table>
+                        <tr>
+                            {# sorting of properties based on query components #}
+                            <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Rose Name', 'product.title') }}</th>
+                            <th>{{ knp_pagination_sortable(products, 'Price', 'product.price',{'direction': 'asc'}) }}</th>
+                            <th>{{ knp_pagination_sortable(products, 'Price', 'product.price') }}</th>
+                            <th>{{ knp_pagination_sortable(products,'Season','product.season') }}</th>
+                            <th>{{ knp_pagination_sortable(products, 'Color','product.color') }}</th>
+                            <th>{{ knp_pagination_sortable(products, 'Vaselife','product.vaselife') }}</th>
+                            <th>{{ knp_pagination_sortable(products, 'Stem Length','product.stemLength') }}</th>
+                            <th>{{ knp_pagination_sortable(products, 'Head Size','product.headsize') }}</th>
+
+                        </tr>
+                    </table>
+                    {% if app.request.get('direction')=='desc' %}
+                        <a class="action sort-desc" data-role="direction-switcher" data-value="desc" href="#"
+                           title="Set Descending Direction">
+                            <span><i style="color: black" class="fa fa-sort-desc fa-2x"></i> </span> </a>
+                    {% elseif(app.request.get('direction')=='asc') %}
+                        <a class="action sort-asc" data-role="direction-switcher" data-value="desc" href="#"
+                           title="Set Descending Direction">
+                            <span><i style="color: black" class="fa fa-sort-asc  fa-2x"></i></span> </a>
+                    {% else %}
+
+                    {% endif %}
+                </div>
+            </div>
+            <div class="products wrapper list products-list">
+                <ol class="products list items product-items">
+                    {% for direct in products %}
+                        <li class="item product product-item" style="float: left;max-width:450px">
+                            <div class="product-item-info" data-container="product-grid">
+                                <div class=" product-item-images">
+                                    <a class="product photo product-item-photo"
+                                       href="{{ path('buyer_product_details',{
+                                           'id': direct.id
+                                       }) }}" tabindex="-1">
+						<span class="product-image-container" style="width: 200px;">
+						<span class="product-image-wrapper" style="padding-bottom: 86%;">
+						<img alt="{{ direct.product.title }}" class="product-image-photo" height="200"
+                             src="{{ asset('images/products/') }}{{ direct.product.mainImage }}" alt="{{ direct.product.title }}"
+                             width="350"></span>
+						</span></a></div>
+                                <div class="product-item-details">
+                                    <div class="content-name">
+                                        <strong class="product name product-item-name">
+                                            <a class="product-item-link"
+                                               href="{{ path('buyer_product_details',{
+                                                   'id': direct.id
+                                               }) }}">
+                                                {{ direct.product.title }} </a></strong>
+                                        </div>
+                                    <div class="">
+                                        <div class="rating-summary">
+
+                                            {% if direct.reviews | length > 0 %}
+
+                                                {% set sumQualityratings = 0 %}
+                                                {% set avgQualityRatings=0 %}
+                                                {% for rating in direct.reviews %}
+                                                    {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                                {% endfor %}
+                                                {% set avgQualityRatings= (sumQualityratings / direct.reviews|length) | round %}
+
+                                                {% set sumValueratings = 0 %}
+                                                {% set avgValueRatings=0 %}
+                                                {% for rating in direct.reviews %}
+                                                    {% set sumValueratings = sumValueratings + rating.value %}
+                                                {% endfor %}
+                                                {% set avgValueRatings= (sumValueratings / direct.reviews|length) | round %}
+
+                                                {% set sumPriceratings = 0 %}
+                                                {% set avgPriceRatings=0 %}
+                                                {% for rating in direct.reviews %}
+                                                    {% set sumPriceratings = sumPriceratings + rating.price %}
+                                                {% endfor %}
+                                                {% set avgPriceRatings= (sumQualityratings / direct.reviews|length) | round %}
+
+                                                {% set avgrating=0 %}
+                                                {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                                {{ avgrating | rating(5, "fa-lg")   }}
+                                            {% else %}
+                                                {{ 0 | rating(5, "fa-lg")   }}
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+                                    <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
+							<span class="price-container price-final_price tax weee">
+							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
+
+                                <span class="price"><span style="font-size: smaller"> {{ app.user.myCompany.currency }}</span> {{ direct.pricePerStem }}
+                                    </span> </span></span>
+                                        <table class="attributes">
+                                            <tr>
+                                                <td><strong>Color:</strong> {{ direct.product.color }}</td>
+                                                <td><strong>Season:</strong> {{ direct.product.season }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Stem Length: </strong>{{ direct.product.stemLength }}</td>
+                                                <td><strong>Quality:</strong> {{ direct.quality }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Stock:</strong> {{ direct.numberOfStems | number_format }}</td>
+                                                <td><strong>Packing:</strong> {{ direct.stemsPerBox | number_format }}</td>
+                                            </tr>
+                                            <tr><td colspan="2"><strong>Grower: </strong><a href="{{ path('view_grower',{'id':direct.product.vendor.id}) }}"> {{ direct.product.vendor }}</a></td></tr>
+                                        </table>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class="toolbar toolbar-products">
+                <div class="modes">
+                    <strong id="modes-label" class="modes-label">View as</strong>
+                    <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
+                        <span>Grid</span> </strong>
+                    <a id="mode-list" aria-labelledby="modes-label mode-list" class="modes-mode mode-list"
+                       data-role="mode-switcher" data-value="list" href="#" title="List">
+                        <span>List</span> </a></div>
+                <p id="toolbar-amount" class="toolbar-amount">Items
+                    <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
+                    of <span class="toolbar-number">10</span></p>
+
+                <div class="pages">
+                    <strong id="paging-label" class="label pages-label">Page</strong>
+                    {# display navigation #}
+                    <div class="navigation text-center">
+                        {{ knp_pagination_render(products) }}
+                    </div>
+                </div>
+
+                <div class="toolbar-sorter sorter">
+                    <label class="sorter-label" for="sorter">Sort By</label>
+                    <select id="sorter" class="sorter-options" data-role="sorter">
+                        <option selected="selected" value="position">Position</option>
+                        <option value="name">Product Name</option>
+                        <option value="price">Price</option>
+                    </select>
+                    <a class="action sorter-action sort-asc" data-role="direction-switcher" data-value="desc" href="#"
+                       title="Set Descending Direction">
+                        <span>Set Descending Direction</span> </a></div>
+            </div>
+        </div>
+        {% include(':partials/iflora/user:sidebar.htm.twig') %}
+
+    </div>
+</main>
+
+{% endblock %}

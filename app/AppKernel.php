@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Lexik\Bundle\FormFilterBundle\LexikFormFilterBundle(),
             new blackknight467\StarRatingBundle\StarRatingBundle(),
             new Gregwar\CaptchaBundle\GregwarCaptchaBundle(),
+            new Lexik\Bundle\CurrencyBundle\LexikCurrencyBundle(),
             new AppBundle\AppBundle(),
         ];
 

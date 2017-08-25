@@ -31,16 +31,12 @@
 <hr/>
         <div class="messenger_thread_message">
             <div class="messenger_thread_message_info">
-                {% if notification.sender.id == app.user.id %}
-                    <b>Replied:</b> {{ notification.sentAt|date }}
-                    {% else %}
-                <b>From:</b> {{ notification.sender }}  <br/>
+
                         <b>Sent:</b> {{ notification.sentAt|date }}
-                {% endif %}
 
             </div>
             <div class="messenger_thread_message_body" id="message_{{ notification.id }}">
-                <br/>{{ notification.message }}
+                <br/>{{ notification.message | raw }}
             </div>
         </div>
         <hr/>

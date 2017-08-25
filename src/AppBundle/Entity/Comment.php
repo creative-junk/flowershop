@@ -20,8 +20,8 @@ class Comment
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -39,10 +39,20 @@ class Comment
      */
     private $author;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Direct")
      *
      */
     private $product;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Auction")
+     *
+     */
+    private $auction;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\AuctionProduct")
+     *
+     */
+    private $auctionProduct;
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
@@ -226,21 +236,6 @@ class Comment
         $this->product = $product;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param mixed $user
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-    }
 
     /**
      * @return mixed
@@ -272,6 +267,38 @@ class Comment
     public function setAgent($agent)
     {
         $this->agent = $agent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAuction()
+    {
+        return $this->auction;
+    }
+
+    /**
+     * @param mixed $auction
+     */
+    public function setAuction($auction)
+    {
+        $this->auction = $auction;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAuctionProduct()
+    {
+        return $this->auctionProduct;
+    }
+
+    /**
+     * @param mixed $auctionProduct
+     */
+    public function setAuctionProduct($auctionProduct)
+    {
+        $this->auctionProduct = $auctionProduct;
     }
 
 

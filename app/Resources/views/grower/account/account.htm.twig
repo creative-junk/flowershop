@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+    {% block title %}Account Management{% endblock %}
+{% block pageclass %}
+<body data-container="body" class="account customer-account-index page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
+        <div class="columns">
+            <div class="column main">
+                <div class="page-title-wrapper">
+                    <h1 class="page-title">
+                        <span class="base" data-ui-id="page-title-wrapper">My Dashboard</span></h1>
+                </div>
+
+                <div class="block block-dashboard-info">
+                    <div class="block-title"><strong>Account Information</strong></div>
+                    <div class="block-content">
+                        <div class="box box-information">
+                            <strong class="box-title">
+                                <span>Contact Information</span>
+                            </strong>
+                            <div class="box-content">
+                                <p>
+                                    {{ app.user.myCompany }}<br/>
+                                    {{ app.user.fullName }}<br>
+                                    {{ app.user.email }}<br>
+                                </p>
+                            </div>
+                            <div class="box-actions">
+                                <a class="action edit"
+                                   href="{{ path('grower-edit-account') }}">
+                                    <span>Edit</span>
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="box box-newsletter">
+                            <strong class="box-title">
+                                <span>Login Information</span>
+                            </strong>
+                            <div class="box-content">
+                                <p>
+                                    Use this Link to change your Password. </p>
+                            </div>
+                            <div class="box-actions">
+                                <a href="#"
+                                   class="action change-password">
+                                    Change Password </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="block block-dashboard-addresses">
+                    <div class="block-title">
+                        <strong>Address Book</strong>
+
+                    </div>
+                    {% if app.user.isMainAccount %}
+                    <div class="block-content">
+
+                        <div class="box box-billing-address">
+                            <strong class="box-title">
+                                <span>Default Billing Address</span>
+                            </strong>
+                            {% if billingAddress %}
+                                <div class="box-content">
+                                    <address>
+                                            {{ billingAddress.streetAddress }}<br/>
+                                            {{ billingAddress.town }}<br/>
+                                            {{ billingAddress.country }}<br/>
+                                            {{ billingAddress.emailAddress }}<br/>
+                                            {{ billingAddress.phoneNumber }}<br/>
+                                    </address>
+                                </div>
+                                <div class="box-actions">
+                                    <a class="action edit"
+                                       href="{{ path('grower-edit-billing-address') }}"
+                                       data-ui-id="default-billing-edit-link"><span>Edit Address</span></a>
+                                </div>
+                            {% else %}
+                            <div class="box-content">
+                                <address>
+                                    You have not set a default billing address.
+                                </address>
+                            </div>
+                            <div class="box-actions">
+                                <a class="action edit"
+                                   href="{{ path('grower-add-billing-address') }}"
+                                   data-ui-id="default-billing-edit-link"><span>Add Address</span></a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <strong class="box-title">
+                            <span>Default Shipping Address</span>
+                        </strong>
+                        {% if shippingAddress %}
+                            <div class="box-content">
+
+                                <address>
+                                    {{ shippingAddress.streetAddress }}<br/>
+                                    {{ shippingAddress.town }}<br/>
+                                    {{ shippingAddress.country }}<br/>
+                                    {{ shippingAddress.emailAddress }}<br/>
+                                    {{ shippingAddress.phoneNumber }}<br/>
+                                </address>
+                            </div>
+                            <div class="box-actions">
+                                <a class="action edit"
+                                   href="{{ path('grower-edit-shipping-address') }}"
+                                   data-ui-id="default-billing-edit-link"><span>Edit Address</span></a>
+                            </div>
+                        {% else %}
+                        <div class="box box-shipping-address">
+                            <strong class="box-title">
+                                <span>Default Shipping Address</span>
+                            </strong>
+                            <div class="box-content">
+                                <address>
+                                    You have not set a default shipping address.
+                                </address>
+                            </div>
+                            <div class="box-actions">
+                                <a class="action edit"
+                                   href="{{ path('grower-add-shipping-address') }}"
+                                   data-ui-id="default-shipping-edit-link"><span>Add Address</span></a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="block-content">
+                        Address Book can only be modified by the Company Account Manager<br/><br/>
+                    </div>
+                    {% endif %}
+                </div>
+
+
+            </div>
+            <div class="sidebar sidebar-main">
+                <div class="block block-collapsible-nav">
+                    <div class="title block-collapsible-nav-title">
+                        <strong>Account Dashboard</strong>
+                    </div>
+                    <div class="content block-collapsible-nav-content" id="block-collapsible-nav">
+                        <ul class="nav items">
+                            <li class="nav item current"><strong>Account Dashboard</strong></li>
+                            <li class="nav item"><a
+                                        href="#">Account
+                                    Information</a></li>
+                            <li class="nav item"><a
+                                        href="#">Address
+                                    Book</a></li>
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock body %}

@@ -102,10 +102,9 @@
                     <table id="shopping-cart-table" class="cart items data table">
                         <thead>
                         <tr>
+                            <th></th>
                             <th class="col item" scope="col"><span>Grower</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
-
-
                             <th class="col subtotal" scope="col"><span>Requested On</span></th>
                             <th class="col subtotal" scope="col"><span>Accept / Reject</span></th>
                         </tr>
@@ -113,6 +112,8 @@
                         <tbody class="cart item">
                         {% for breederRequest in breederRequests %}
                             <tr class="item-info js-breeder-item">
+                                <td><img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/products/') }}{{ breederRequest.grower.logoName }}"></td>
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">

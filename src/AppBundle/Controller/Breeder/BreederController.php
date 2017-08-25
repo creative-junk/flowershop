@@ -11,18 +11,26 @@ namespace AppBundle\Controller\Breeder;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\Company;
+use AppBundle\Entity\Direct;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\ShippingAddress;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
+use AppBundle\Form\AccountFormType;
 use AppBundle\Form\AuctionProductForm;
+use AppBundle\Form\BillingAddressFormType;
+use AppBundle\Form\DirectProductForm;
+use AppBundle\Form\EditDirectProductForm;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\SeedlingFormType;
+use AppBundle\Form\ShippingAddressFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -69,8 +77,367 @@ class BreederController extends Controller
      */
     public function profileAction()
     {
-        return $this->render('account/account.htm.twig');
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        return $this->render('breeder/account/account.htm.twig',[
+            'billingAddress'=>$billingAddress,
+            'shippingAddress'=>$shippingAddress
+        ]);
     }
+
+    /**
+     * @Route("/account/edit",name="breeder-edit-account")
+     */
+    public function editAccountAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(AccountFormType::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('my-breeder-profile');
+        }
+        return $this->render('breeder/account/edit-basic.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/account/add/billing",name="breeder-add-billing-address")
+     */
+    public function addBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = new BillingAddress();
+        $billingAddress->setCompany($agent);
+        $billingAddress->setCountry($agent->getCountry());
+        $billingAddress->setEmailAddress($agent->getEmail());
+        $billingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $billingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-breeder-profile');
+        }
+
+        return $this->render('breeder/account/add-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/account/edit/billing",name="breeder-edit-billing-address")
+     */
+    public function editBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-breeder-profile');
+        }
+
+        return $this->render('breeder/account/edit-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
+    /**
+     * @Route("/account/add/shipping",name="breeder-add-shipping-address")
+     */
+    public function addShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $shippingAddress = new ShippingAddress();
+        $shippingAddress->setCompany($agent);
+        $shippingAddress->setCountry($agent->getCountry());
+        $shippingAddress->setEmailAddress($agent->getEmail());
+        $shippingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $shippingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-breeder-profile');
+        }
+
+        return $this->render('breeder/account/add-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/account/edit/shipping",name="breeder-edit-shipping-address")
+     */
+    public function editShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-breeder-profile');
+        }
+
+        return $this->render('breeder/account/edit-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
+    /**
+     * @Route("/seedling/new",name="breeder_product_new")
+     */
+    public function newRoseAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $product = new Product();
+        $product->setUser($user);
+        $product->setIsActive(true);
+        $product->setIsAuthorized(true);
+        $product->setIsFeatured(false);
+        $product->setIsOnSale(false);
+        $product->setVendor($user->getMyCompany());
+        $product->setIsSeedling(true);
+        $form = $this->createForm(ProductFormType::class, $product);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
+            $this->addFlash('success', 'Product Created Successfully!');
+
+            return $this->redirectToRoute('my_breeder_seedling_list');
+        }
+
+        return $this->render('breeder/product/new.html.twig', [
+            'productForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/market/product/new",name="breeder_direct_new")
+     */
+    public function newDirectProductAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $product = new Direct();
+        $product->setCurrency($user->getMyCompany()->getCurrency());
+        $product->setAddedBy($user);
+        $product->setCreatedAt(new \DateTime());
+        $product->setVendor($user->getMyCompany());
+
+        $em = $this->getDoctrine()->getManager();
+        $roses = $em->getRepository("AppBundle:Product")
+            ->findBy([
+                'vendor'=>$user->getMyCompany(),
+                'isActive'=>true,
+                'isAuthorized'=>true
+            ]);
+
+        $form = $this->createForm(DirectProductForm::class, $product, ['roses' => $roses]);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
+
+            $em->persist($product);
+            $em->flush();
+            //TODO Notify the agent of the Assignment
+            $this->addFlash('success', 'Product Posted to Market Successfully!');
+
+            return $this->redirectToRoute('my_breeder_direct_list');
+        }
+
+        return $this->render('breeder/market/new.html.twig', [
+            'productForm' => $form->createView(),
+            'roses'=>$roses
+        ]);
+    }
+    /**
+     * @Route("/direct/my/products",name="my_breeder_direct_list")
+     */
+    public function myDirectMarketListAction(Request $request = null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $vendor = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Direct')
+            ->createQueryBuilder('product')
+            //->andWhere('product.isActive = :isActive')
+            //->setParameter('isActive', true)
+            ->andWhere('product.vendor = :isBreeder')
+            ->setParameter('isBreeder', $vendor)
+            ->orderBy('product.createdAt', 'DESC');
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 20)
+        );
+        return $this->render('breeder/market/myProductlist.html.twig', [
+            'products' => $result,
+        ]);
+
+    }
+    /**
+     * @Route("/product/{id}/edit",name="breeder_edit_product")
+     */
+    public function editProductAction(Request $request, Direct $product)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $roses = $em->getRepository("AppBundle:Product")
+            ->findBy([
+                'vendor'=>$user->getMyCompany(),
+                'isActive'=>true,
+                'isAuthorized'=>true
+            ]);
+
+        $form = $this->createForm(EditDirectProductForm::class, $product, ['roses' => $roses]);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
+            $this->addFlash('success', 'Rose Updated Successfully!');
+
+            return $this->redirectToRoute('my_breeder_direct_list');
+        }
+
+        return $this->render('breeder/market/edit.html.twig', [
+            'productForm' => $form->createView(),
+            'product' => $product,
+            'roses' => $roses
+        ]);
+    }
+    /**
+     * @Route("/seedling/{id}/edit",name="breeder_edit_rose")
+     */
+    public function editRoseAction(Request $request, Product $product)
+    {
+        $product->setIsActive(true);
+        $product->setIsAuthorized(true);
+        $product->setIsFeatured(false);
+        $product->setIsOnSale(false);
+        $product->setIsSeedling(true);
+
+        $form = $this->createForm(ProductFormType::class, $product);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
+            $this->addFlash('success', 'Rose Updated Successfully!');
+
+            return $this->redirectToRoute('my_grower_roses');
+        }
+
+        return $this->render('breeder/seedlings/edit.html.twig', [
+            'productForm' => $form->createView(),
+            'product' => $product
+        ]);
+    }
+
     /**
      * @Route("/seedling/my",name="my_breeder_seedling_list")
      */
@@ -252,25 +619,34 @@ class BreederController extends Controller
      */
     public function breederProfileAction(Request $request,Company $grower)
     {
-        $em= $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $products = $em->getRepository("AppBundle:Product")
+        $exists = false;
+
+        $buyer = $user->getMyCompany();
+        if ($this->breederGrowerExists($buyer,$grower)){
+            $exists=true;
+        }
+        $em = $this->getDoctrine()->getManager();
+
+        $products = $em->getRepository("AppBundle:Direct")
             ->findAllMyActiveProductsOrderByDate($grower);
         $auctionProducts = $em->getRepository("AppBundle:Auction")
             ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
-        $nrproducts = $em->getRepository('AppBundle:Product')
+        $nrproducts = $em->getRepository('AppBundle:Direct')
             ->findMyActiveProducts($grower);
 
         $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
             ->findMyActiveAuctionProducts($grower);
 
-        return $this->render('breeder/growers/details.htm.twig',[
-            'grower'=>$grower,
-            'nrProducts'=>$nrproducts,
+        return $this->render('breeder/growers/details.htm.twig', [
+            'grower' => $grower,
             'products'=>$products,
+            'nrProducts' => $nrproducts,
             'nrAuctionProducts' => $nrAuctionProducts,
-            'auctionProducts' => $auctionProducts
+            'auctionProducts' => $auctionProducts,
+            'growerExists' => $exists
         ]);
     }
 
@@ -403,7 +779,9 @@ class BreederController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.breeder = :whoIsBreeder')
-            ->setParameter('whoIsBreeder', $user->getMyCompany());
+            ->setParameter('whoIsBreeder', $user->getMyCompany())
+            ->andWhere('user.listOwner <> :whoOwnsList')
+            ->setParameter('whoOwnsList', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -585,7 +963,7 @@ class BreederController extends Controller
 
 
         $messages = $em->getRepository("AppBundle:Notification")
-            ->getNotifications($user);
+            ->getNotifications($user->getMyCompany());
 
         return $this->render(':breeder/messages:notification.htm.twig',[
             'messages'=> $messages
@@ -599,5 +977,19 @@ class BreederController extends Controller
         return $this->render(':breeder/messages:viewNotification.htm.twig',[
             'notification'=>$notification
         ]);
+    }
+    public function breederGrowerExists(Company $breeder, Company $grower){
+        $em = $this->getDoctrine()->getManager();
+
+        $breederGrower = $em->getRepository('AppBundle:GrowerBreeder')
+            ->findOneBy([
+                'breeder'=>$breeder,
+                'grower'=>$grower,
+            ]);
+        if ($breederGrower){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

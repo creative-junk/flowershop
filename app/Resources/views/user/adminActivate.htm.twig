@@ -1,0 +1,64 @@
+{% extends 'base.htm.twig' %}
+{% block title %}Activate Account{% endblock %}
+{% block pageTitle %}<h2>Activate Account</h2>{% endblock %}
+
+    {% block breadCrumbs %}
+        <ol class="breadcrumb">
+            <li><i class="fa fa-home"></i></li>
+            <li><a href="http://prisk.or.ke/index.php/en" class="pathway">Home</a></li>
+            <li><a href="http://prisk.or.ke/index.php/en/membership" class="pathway">Membership</a></li>
+            <li class="active">Activate Account</li>
+        </ol>
+    {% endblock %}
+{% block body %}
+
+
+    <div id="sp-page-builder" class="sp-page-builder  page-1">
+
+        <div class="page-content">
+            <section class="sppb-section welcome-wrapper" style="padding:0px">
+                <div class="sppb-container">
+                    <div class="sppb-row">
+                        <div class="sppb-col-sm-6" style=";width:600px;">
+                            <div class="sppb-addon-container sppb-wow zoomIn sppb-animated"
+                                 style="visibility: visible; animation-duration: 800ms; animation-delay: 300ms; animation-name: zoomIn;"
+                                 data-sppb-wow-duration="800ms" data-sppb-wow-delay="300ms">
+                                <div class="sppb-addon sppb-addon-text-block sppb-text-left "><h6
+                                            class="sppb-addon-title" style="font-size:14px;line-height:14px;">Account Activation</h6>
+                                    {% if isActivated %}
+                                        <div class="sppb-addon-content"> <p>Hello {{ user.firstName }},<br/>Your account has already been activated.
+                                            </p>
+                                            <p>You can now <a style="color:#fd9614" href="{{ path('admin-login') }}">Click here</a> to login to your Prisk Online Portal Account.</p>
+
+
+                                        </div>
+                                    {% else %}
+                                    <div class="sppb-addon-content"> <p>Hello {{ user.firstName }},<br/>Thank you for activating your Account.
+                                            </p>
+                                        <p>But before we proceed, Let's take a moment to complete your account by updating your login details.</p>
+                                        {{ form_start(activationForm) }}
+                                        <div class="md-form-group float-label">
+                                            <strong>{{ form_row(activationForm.plainPassword.first, { 'label': 'New Password','attr': {'class': 'md-input'} }) }}</strong>
+
+                                        </div>
+                                        <div class="md-form-group float-label">
+                                            <strong>{{ form_row(activationForm.plainPassword.second, { 'label': 'Repeat Password','attr': {'class': 'md-input'} }) }}</strong>
+
+                                        </div><br/>
+                                        <div class="md-form-group float-label">
+                                            <button type="submit" class="btn primary">Update Account</button>
+                                        </div>
+
+                                        {{ form_end(activationForm) }}
+
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock body %}

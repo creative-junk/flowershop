@@ -55,7 +55,7 @@
                             <table id="datatable" class="table table-striped table-bordered">
                                 <thead>
                                 <tr>
-
+                                    <th>Order ID</th>
                                     <th>Order Date</th>
                                     <th>Order Amount</th>
                                     <th>Order Status</th>
@@ -69,11 +69,12 @@
 
                                         <td><a style="color: #e93838" href="{{ path('agent_order_update',{
                                                 'id': order.id
-                                            }) }}">{{ order.createdAt | date("F jS \\a\\t g:ia") }}</a></td>
+                                            }) }}">{{ order.prettyId }}</a></td>
+                                        <td>{{ order.createdAt | date("F jS \\a\\t g:ia") }}</td>
                                         <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount | number_format(2, '.', ',') }}</td>
                                         <td>{{ order.orderStatus }}</td>
                                         <td>{{ order.orderState }}</td>
-                                        <td>{{ order.whoseOrder.firstName }}&nbsp;{{ order.whoseOrder.lastName }}</td>
+                                        <td>{{ order.whoseOrder.myCompany }}</td>
                                     </tr>
                                 {% else %}
                                     <tr>

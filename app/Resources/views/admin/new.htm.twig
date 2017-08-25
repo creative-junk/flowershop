@@ -1,0 +1,59 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}New Administrator{% endblock %}
+{% block body %}
+<!-- ############ LAYOUT START-->
+    <div id="content" class="app-content box-shadow-z0" role="main">
+
+
+    <div ui-view class="app-body" id="view">
+    {{ include(':admin/partials:top.htm.twig') }}
+    <div class="padding">
+    <div class="page messages">
+        <div class="messages" style="">
+            <div class="alert alert-success">
+                <div>
+                    Request successful.
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="page errors">
+        <div class="errors" style="">
+            <div class="alert alert-danger">
+                <div>
+                    :-( Something went wrong. This request was not completed.
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-header">
+            <h2>New Administrator</h2>
+        </div>
+        <div class="table-responsive">
+        {{ form_start(adminForm) }}
+            <div class="md-form-group float-label" style="font-weight: bold">
+                {{ form_row(adminForm.firstName, { 'attr': {'class': 'md-input'} }) }}
+
+            </div>
+            <div class="md-form-group float-label" style="font-weight: bold">
+                {{ form_row(adminForm.lastName, { 'attr': {'class': 'md-input'} }) }}
+
+            </div>
+            <div class="md-form-group float-label" style="font-weight: bold">
+                {{ form_row(adminForm.email, { 'attr': {'class': 'md-input'} }) }}
+
+            </div>
+        <button type="submit" class="btn primary btn-block p-x-md">Create</button>
+        {{ form_end(adminForm) }}
+        </div>
+    </div>
+    </div>
+
+        <!-- ############ PAGE END-->
+
+    </div>
+    </div>
+{% endblock %}

@@ -10,7 +10,10 @@
 namespace AppBundle\Repository;
 
 
+use AppBundle\Entity\Auction;
 use AppBundle\Entity\AuctionOrder;
+use AppBundle\Entity\AuctionProduct;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
 use Doctrine\ORM\EntityRepository;
@@ -42,10 +45,10 @@ class AuctionOrderRepository extends EntityRepository
     /**
      * @return AuctionOrder[]
      */
-    public function findAllMyReceivedOrdersOrderByDate(User $user){
+    public function findAllMyReceivedOrdersOrderByDate(Company $user){
 
         return $this->createQueryBuilder('auction_order')
-            ->andWhere('auction_order.vendor= :soldBy')
+            ->andWhere('auction_order.sellingAgent= :soldBy')
             ->setParameter('soldBy',$user)
             ->orderBy('auction_order.createdAt','DESC')
             ->getQuery()
@@ -54,20 +57,20 @@ class AuctionOrderRepository extends EntityRepository
     /**
      * @return AuctionOrder[]
      */
-    public function findAllMyOrderAssignmentRequests(User $user){
+    public function findAllMyOrderAssignmentRequests(Company $user){
 
         return $this->createQueryBuilder('auction_order')
-            ->andWhere('auction_order.agent= :soldBy')
+            ->andWhere('auction_order.buyingAgent= :soldBy')
             ->setParameter('soldBy',$user)
             ->orderBy('auction_order.createdAt','DESC')
             ->getQuery()
             ->execute();
     }
-    public function findMyAuctionAgencyRequests(User $user){
+    public function findMyAuctionAgencyRequests(Company $user){
 
         $auctionAgencyRequests=$this->createQueryBuilder('auction_order')
             ->select('count(auction_order.id)')
-            ->andWhere('auction_order.agent= :isAgent')
+            ->andWhere('auction_order.buyingAgent= :isAgent')
             ->setParameter('isAgent',$user)
             ->andWhere('auction_order.orderStatus = :orderStatus')
             ->setParameter('orderStatus',"Pending Agent")
@@ -80,11 +83,11 @@ class AuctionOrderRepository extends EntityRepository
             return 0;
         }
     }
-    public function findNrAllMyAgentReceivedOrders(User $user){
+    public function findNrAllMyAgentReceivedOrders(Company $user){
 
         $nrReceivedOrders= $this->createQueryBuilder('user_order')
             ->select('count(user_order.id)')
-            ->andWhere('user_order.agent = :agentIs')
+            ->andWhere('user_order.sellingAgent = :agentIs')
             ->setParameter('agentIs',$user)
             ->getQuery()
             ->getSingleScalarResult();
@@ -94,5 +97,13 @@ class AuctionOrderRepository extends EntityRepository
         }else{
             return 0;
         }
+    }
+    public function findMyAuctionOrders(AuctionProduct $auctionProduct){
+        return $this->createQueryBuilder('auction_order')
+            ->andWhere('auction_order.product = :whichProduct')
+            ->setParameter('whichProduct',$auctionProduct)
+            ->orderBy('auction_order.checkoutCompletedAt','DESC')
+            ->getQuery()
+            ->execute();
     }
 }

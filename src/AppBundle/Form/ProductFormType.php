@@ -16,19 +16,16 @@ class ProductFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
-            ->add('summary')
+            ->add('title',null,[
+                'label'=>'Rose Name'
+            ])
             ->add('description')
-            ->add('imageFile', FileType::class)
-            ->add('currency',ChoiceType::class,array(
-                'choices' => array(
-                    'US Dollars - $'=>'$',
-                    'Kenya Shillings - Ksh'=>'Ksh',
-                    'Euros - Eur'=>'Eur',
-                ),
-
-            ))
-            ->add('price',NumberType::class)
+            ->add('mainImage',ProductImageForm::class)
+            ->add('openHeadTop',ProductImageForm::class)
+            ->add('openHeadSide',ProductImageForm::class)
+            ->add('closedHeadSide',ProductImageForm::class)
+            ->add('openHeadBouquet',ProductImageForm::class)
+            ->add('closedHeadBouquet',ProductImageForm::class)
             ->add('vaselife', NumberType::class, [
                 'required' => false,
                 'attr' => ['placeholder' => 'Number of Days']
@@ -41,7 +38,6 @@ class ProductFormType extends AbstractType
                 'required' => false,
                 'attr' => ['placeholder' => 'Inches']
             ])
-            ->add('quality')
             ->add('color', ChoiceType::class, [
                 'choices' => array(
                     'Pink' => 'Pink',
@@ -61,9 +57,6 @@ class ProductFormType extends AbstractType
                     'Fall' => 'Fall',
                 ),
                 'placeholder' => 'Choose a Season'
-            ])
-            ->add('category',null,[
-                'placeholder'=>'Choose a Category'
             ]);
 
     }

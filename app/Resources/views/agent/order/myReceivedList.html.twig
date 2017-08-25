@@ -73,7 +73,7 @@
                                         <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount | number_format(2, '.', ',') }}</td>
                                         <td>{{ order.orderStatus }}</td>
                                         <td>{{ order.orderState }}</td>
-                                        <td>{{ order.whoseOrder.firstName }}&nbsp;{{ order.whoseOrder.lastName }}</td>
+                                        <td>{{order.whoseOrder.myCompany }}</td>
                                     </tr>
                                 {% else %}
                                     <tr>

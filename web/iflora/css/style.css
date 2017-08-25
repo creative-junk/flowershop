@@ -56,6 +56,9 @@ button:active {
     border-radius: 0;
     border: 0;
 }
+.messages{
+    display: none;
+}
 button.accept{
     background: #36B954;
     color:white;
@@ -63,6 +66,53 @@ button.accept{
     margin-left:10px;
     margin-top:-5px;
 }
+
+
+.gallery > td {
+    position: relative;
+    float: left;
+    padding: 5px;
+}
+
+.gallery > td > img {
+    display: block;
+    width: 150px;
+    transition: .1s transform;
+    transform: translateZ(0); /* hack */
+}
+
+.gallery > td:hover {
+    z-index: 1;
+}
+
+img.nim:hover {
+    transform: scale(2.7,2.7);
+    transition: .3s transform;
+    z-index: 1;
+    padding:10px;
+}
+
+.cf:before, .cf:after {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+
+.cf:after {
+    clear: both;
+}
+.errors{
+    display:none;
+}
+
+ .attributes{
+     font-size: small;
+ }
+table.attributes tr td{
+    padding: 5px;
+    padding-left: 1px;
+}
+
 /*Mega Menu Styles*/
 /*
 - Name: megamenu.js - style.css
@@ -82,9 +132,12 @@ body {
 a {
     color: #333;
 }
+.messenger_thread_message_body a{
+ color:#d61818;
+}
 .description {
     width: 80%;
-    margin: 50px auto;
+    margin: 10px auto;
 }
 .result{
     display: none;

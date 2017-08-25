@@ -1,0 +1,17 @@
+<h3>Registration Successful!</h3>
+<p>
+Dear {{ name }}!
+</p><p>Welcome to the PRISK Online Portal.
+</p><p>
+You have successfully completed the first step. To proceed with the registration, click on the link below.
+</p><p>
+{# example, assuming you have a route named "login" #}
+To login, go to: <a href="http://creative-junk.com/priskportal/web/profile/{{ code }}/update">Click Here</a>.
+</p><p>
+Thank you!
+</p><p>
+--PRISK Team
+</p><p>
+{# Makes an absolute URL to the loko/images/PRISK_Logo_v_2.2_website.png file #}
+<img src="{{ absolute_url(asset('loko/images/PRISK_Logo_v_2.2_website.png')) }}">
+</p>

@@ -21,8 +21,8 @@ class BuyerAgent
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -31,7 +31,7 @@ class BuyerAgent
      */
     private $buyer;
     /**
-     * @ORM\ManyToOne(targetEntity="User",inversedBy="agentBuyers")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company",inversedBy="agentBuyers")
      * @ORM\JoinColumn(nullable=false)
      */
     private $agent;

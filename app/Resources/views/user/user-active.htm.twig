@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Registration - Active</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('homepage') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+
+                <li class="item home">
+                    <a href="#" title="">
+                        Company Registration </a>
+                </li>
+                <li class="item category131">
+                    <strong>Registered - Active</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+        </div>
+        <div class="columns" style="height: 400px">
+            <p>Thank you for signing up for Iflora. Your registration is now complete and your account is active. Kindly click <a href="{{ path('homepage') }}">here</a> to login to your account</p>
+
+            <p>Thank you for choosing Iflora</p>
+
+            <p> -- iFlora Team
+            </p>
+        </div>
+    </main>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+

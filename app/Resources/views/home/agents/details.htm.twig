@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ agent.fullName }}{% endblock %}
+{% block title %}{{ agent.companyName }}{% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         // prepare the form when the DOM is ready
@@ -23,6 +23,7 @@
                         .removeClass('fa-spinner')
                         .removeClass('fa-spin')
                         .addClass('fa-check');
+                    location.reload();
                 }).fail(function () {
                     $(".failure").fadeIn("slow");
 
@@ -128,146 +129,163 @@
 {% endblock %}
 {% block body %}
 
-<div class="breadcrumbs">
-    <ul class="items">
-        <li class="item home">
-            <a href="{{ path('home') }}" title="Go to Home Page">
-                Home </a>
-        </li>
-        <li class="item home">
-            <a href="{{ path('buyer_agents') }}" title="Go to Home Page">
-                Agents </a>
-        </li>
-        <li class="item product">
-            <strong>{{ agent.fullName }}</strong>
-        </li>
-    </ul>
-</div>
-<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('buyer_agents') }}" title="Go to Home Page">
+                    agents </a>
+            </li>
+            <li class="item product">
+                <strong>{{ agent.companyName }}</strong>
+            </li>
+        </ul>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
 
-    <div class="page messages">
-        <div class="messages" style="">
-            <div class="message-success success message">
-                <div>
-                    You added {{ agent.fullName }} to your List of Agents.
+        <div class="page messages">
+            <div class="messages" style="">
+                <div class="message-success success message">
+                    <div>
+                        You added {{ agent.companyName }} to your List of agents.
+                    </div>
                 </div>
+
+            </div>
+        </div>
+        <div class="page failure">
+
+            <div class="alert alert-danger">
+                <strong>:-(</strong> Something went wrong. Refresh the Page and try again.
             </div>
 
         </div>
-    </div>
-    <div class="page failure">
-
-                <div class="alert alert-danger">
-                    <strong>:-(</strong> Something went wrong. Refresh the Page and try again.
-                </div>
-
-    </div>
-    <div class="columns">
-        <div class="column main">
-            <div class="product-info-main">
-                <div class="page-title-wrapper product">
-                    <h1 class="page-title">
+        <div class="columns">
+            <div class="column main">
+                <div class="product-info-main">
+                    <div class="page-title-wrapper product">
+                        <h1 class="page-title">
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
-				{{ agent.fullName }}</span></h1>
-                </div>
-
-
-                <div class="product-add-form">
-
-                    <div class="box-tocart">
-                        <div class="fieldset">
-
-                            <div class="actions">
-                                &nbsp; <a href="#"  class="action request js-request-user"
-                                          data-url="{{ path('request-agent-buyer',{
-                                              'id': agent.id
-                                          }) }}"
-                                          title="Request Agent"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Agent</a>
-                            </div>
-                        </div>
+				{{ agent.companyName }}</span></h1>
                     </div>
 
-                </div>
+                    {% if agent.reviews | length > 0 %}
 
+                        {% set sumQualityratings = 0 %}
+                        {% set avgQualityRatings=0 %}
+                        {% for rating in agent.reviews %}
+                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                        {% endfor %}
+                        {% set avgQualityRatings= (sumQualityratings / agent.reviews|length) | round %}
 
-                <div class="product attribute overview">
-                    <div class="value" itemprop="description">
+                        {% set sumValueratings = 0 %}
+                        {% set avgValueRatings=0 %}
+                        {% for rating in agent.reviews %}
+                            {% set sumValueratings = sumValueratings + rating.value %}
+                        {% endfor %}
+                        {% set avgValueRatings= (sumValueratings / agent.reviews|length) | round %}
 
-                        <ul>
-                            <li><b>Agent Name:</b> {{ agent.fullName }}</li>
-                             <li>{{ nrProducts }} Active Rose(s) in Auction</li>
-                        </ul>
-                        <p></p>
-                    </div>
-                </div>
-            </div>
-            <div class="product media">
-                <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+                        {% set sumPriceratings = 0 %}
+                        {% set avgPriceRatings=0 %}
+                        {% for rating in agent.reviews %}
+                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                        {% endfor %}
+                        {% set avgPriceRatings= (sumQualityratings / agent.reviews|length) | round %}
 
-                    <div class="fotorama--hidden">
-                    </div>
-                    <style>
-                        .fotorama1493313427134 .fotorama__nav--thumbs .fotorama__nav__frame {
-                            padding: 2px;
-                            height: 110px;
-                        }
+                        {% set avgrating=0 %}
+                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
-                        .fotorama1493313427134 .fotorama__thumb-border {
-                            height: 110px;
-                            border-width: 2px;
-                            margin-top: 2px;
-                        }
-                    </style>
-                    <div class="fotorama-item fotorama fotorama1493313427134" data-gallery-role="gallery">
-                        <div data-gallery-role="fotorama__focusable-start" tabindex="-1">
-                        </div>
-                        <div class="fotorama__wrap fotorama__wrap--css3 fotorama__wrap--slide fotorama__wrap--toggle-arrows fotorama__wrap--no-controls"
-                             style="min-width: 0px; max-width: 100%;">
-                            <div class="fotorama__stage" data-fotorama-stage="fotorama__stage"
-                                 style="width: 491px; height: 618px;">
-                                <div aria-label="Exit fullscreen" class="fotorama__fullscreen-icon"
-                                     data-gallery-role="fotorama__fullscreen-icon" role="button" tabindex="0">
-                                </div>
-                                <div aria-label="Previos" class="fotorama__arr fotorama__arr--prev"
-                                     data-gallery-role="arrow" role="button" tabindex="0">
-                                    <div class="fotorama__arr__arr">
-                                    </div>
-                                </div>
-                                <div class="fotorama__stage__shaft fotorama__grab" data-gallery-role="stage-shaft"
-                                     style="width: 491px; margin-left: 0px; transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);"
-                                     tabindex="0">
-                                    <div aria-hidden="false"
-                                         class="fotorama__stage__frame fotorama_vertical_ratio fotorama__loaded fotorama__loaded--img fotorama__active"
-                                         data-active="true"
-                                         href="#"
-                                         style="left: 0px;">
-                                        <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                                             src="{{ asset('images/avatar.jpg') }}"></div>
+                        {{ avgrating | rating(5, "fa-lg")   }}
+                    {% else %}
+                        {{ 0 | rating(5, "fa-lg")   }}
+                    {% endif %}
 
-                                </div>
-                                <div aria-label="Next" class="fotorama__arr fotorama__arr--next"
-                                     data-gallery-role="arrow" role="button" tabindex="0">
-                                    <div class="fotorama__arr__arr">
-                                    </div>
-                                </div>
-                                <div class="fotorama__video-close">
-                                </div>
-                                <div aria-label="Zoom in" class="fotorama__zoom-in zoom-in-loaded"
-                                     data-gallery-role="fotorama__zoom-in" role="button" tabindex="0">
-                                </div>
-                                <div aria-label="Zoom out" class="fotorama__zoom-out zoom-out-loaded"
-                                     data-gallery-role="fotorama__zoom-out" role="button" tabindex="0">
-                                </div>
-                                <div class="fotorama__spinner">
+                    <div class="product-add-form">
+                        {% if agentExists %}
+                        {% else %}
+                            <div class="box-tocart">
+                                <div class="fieldset">
+
+                                    <div class="actions">
+                                        <a href="#"  class="action request js-request-user"
+                                           data-url="{{ path('request-agent-buyer',{
+                                               'id': agent.id
+                                           }) }}"
+                                           title="Request Agent"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Agent</a>          </div>
                                 </div>
                             </div>
+                        {% endif %}
+                    </div>
 
-                        </div>
-                        <div data-gallery-role="fotorama__focusable-end" tabindex="-1">
+
+                    <div class="product attribute overview">
+                        <div class="value" itemprop="description">
+
+                            <table>
+                                <tr>
+                                    <td><strong>Name:</strong> {{ agent.companyName }}</td>
+                                    <td><strong>Country:</strong> {{ agent.country }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No. of Growers:</strong> {{ nrGrowers }}</td>
+                                    <td><strong>No. of Buyers:</strong> {{ nrBuyers }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><strong>About Agent:</strong> <br/>{{ agent.aboutCompany }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Number of Employees: {{ agent.numberOfEmployees }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phone Number:</strong> {{ agent.telephoneNumber }}</td>
+                                    <td><strong>Website:</strong> {{ agent.website }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong> {{ agent.email }}</td>
+                                    <td><strong>Social Media:</strong> <br/>
+                                        Facebook: <a href="{{ agent.facebookPage }}">{{ agent.facebookPage }}</a><br/>
+                                        Twitter: <a href="{{ agent.twitterPage }}">{{ agent.twitterPage }}</a><br/>
+                                        Instagram: <a href="{{ agent.instagramPage }}">{{ agent.instagramPage }}</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p></p>
                         </div>
                     </div>
-                    <div id="preview" class="magnifier-preview magnify-hidden" data-gallery-role="magnifier"
-                         style="display: none;">
+                </div>
+                <div class="product media">
+                    <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/avatar.jpg') }}">
+
+                        <table class="gallery cf">
+                            <tr>
+                                {% if agent.image1 %}
+                                    <td><img class="nim" width="150"
+                                             src="{{ asset('images/products/') }}{{ agent.image1 }}"></td>
+                                {% endif %}
+                                {% if agent.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ agent.image2 }}"></td>
+                                {% endif %}
+                                {% if agent.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ agent.image3 }}"></td>
+                                {% endif %}
+                                {% if agent.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ agent.image4 }}"></td>
+                                {% endif %}
+                                {% if agent.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ agent.image5 }}"></td>
+                                {% endif %}
+                            </tr>
+                        </table>
                     </div>
                 </div>
 
@@ -275,36 +293,41 @@
 
             <div class="product info detailed">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#auction"><b>Roses in Auction</b></a> </li>
+                    <li class="active"><a data-toggle="tab" href="#roses"><b>Roses in Market</b></a> </li>
+
                     <li><a data-toggle="tab" href="#reviews"><b>Reviews</b></a></li>
                     <li><a data-toggle="tab" href="#comments"><b>Comments</b></a></li>
                 </ul>
                 <div class="tab-content">
 
-                    <div id="auction" class="tab-pane fade  in active">
+                    <div id="roses" class="tab-pane fade in active">
                         <div id="product-review-container" data-role="product-review">
                             <div class="block review-list" id="customer-reviews">
                                 <div class="block-content">
-                                    <div class="products wrapper grid products-grid">
+                                    <div class="products wrapper list products-list">
                                         <ol class="products list items product-items">
-                                            {% for product in products %}
-                                                <li class="item product product-item">
+                                            {% for auction in products %}
+                                                <li class="item product product-item" style="float: left;max-width:450px">
                                                     <div class="product-item-info" data-container="product-grid">
                                                         <div class=" product-item-images">
                                                             <a class="product photo product-item-photo"
-                                                               href="#" tabindex="-1">
+                                                               href="{{ path('buyer_product_details',{
+                                                                   'id': auction.id
+                                                               }) }}" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
-						<img alt="{{ product.title }}" class="product-image-photo" height="441"
-                             src="{{ asset('images/products/') }}{{ product.imageName }}" alt="{{ product.title }}"
+						<img alt="{{ auction.product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ auction.product.mainImage }}" alt="{{ auction.product.title }}"
                              width="350"></span>
 						</span></a></div>
                                                         <div class="product-item-details">
                                                             <div class="content-name">
                                                                 <strong class="product name product-item-name">
                                                                     <a class="product-item-link"
-                                                                       href="#">
-                                                                        {{ product.title }} </a></strong>
+                                                                       href="{{ path('buyer_product_details',{
+                                                                           'id': auction.id
+                                                                       }) }}">
+                                                                        {{ auction.product.title }} </a></strong>
                                                             </div>
                                                             <div class="product-reviews-summary short">
                                                                 <div class="rating-summary">
@@ -321,14 +344,28 @@
                                                             <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
 							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-							<span class="price">{{ product.currency }} {{ product.price }}</span> </span></span>
+							<span class="price">{{ auction.currency }} {{ auction.pricePerStem }}</span> </span></span>
                                                             </div>
-
+                                                            <table class="attributes">
+                                                                <tr>
+                                                                    <td><strong>Color:</strong> {{ auction.product.color }}</td>
+                                                                    <td><strong>Season:</strong> {{ auction.product.season }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Stem Length: </strong>{{ auction.product.stemLength }}</td>
+                                                                    <td><strong>Quality:</strong> {{ auction.quality }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><strong>Stock:</strong> {{ auction.numberOfStems | number_format }}</td>
+                                                                    <td><strong>Packing:</strong> {{ auction.stemsPerBox | number_format }}</td>
+                                                                </tr>
+                                                                <tr><td colspan="2"><strong>agent: </strong> {{ auction.product.vendor }}</td></tr>
+                                                            </table>
                                                         </div>
                                                     </div>
                                                 </li>
                                             {% else %}
-                                                <p style="text-align: center;width:100%">This Agent has no Roses in Auction</p>
+                                                <p style="text-align: center;width:100%">This agent has no Roses Assigned</p>
                                             {% endfor %}
                                         </ol>
                                     </div>
@@ -345,7 +382,7 @@
                                 </div>
                                 <div class="block-content">
                                     <ol class="items review-items">
-                                        {% for review in agent.agentReviews %}
+                                        {% for review in agent.reviews %}
                                             <li class="item review-item">
                                                 <div class="review-title" itemprop="name">{{ review.summary }}</div>
                                                 <div class="review-ratings">
@@ -386,7 +423,7 @@
                             </div>
                         </div>
 
-                        {{ render(controller('AppBundle:Rating/Rating:agentRating',{'agentId':agent.id })) }}
+                        {{ render(controller('AppBundle:Rating/Rating:userRating',{'companyId':agent.id })) }}
                     </div>
                     <div id="comments" class="tab-pane fade"><br/>
                         <div id="product-review-container" data-role="product-review">
@@ -396,7 +433,7 @@
                                 </div>
                                 <div class="block-content">
                                     <ol class="items review-items">
-                                        {% for comment in agent.agentComments %}
+                                        {% for comment in agent.comments %}
                                             <li class="item review-item">
 
                                                 <div class="review-details">
@@ -423,13 +460,13 @@
                             </div>
                         </div>
                         <br/>
-                        {{ render(controller('AppBundle:Comment/Comment:agentComment',{'agentId':agent.id })) }}
+                        {{ render(controller('AppBundle:Comment/Comment:userComment',{'companyId':agent.id })) }}
                     </div>
                 </div>
 
             </div>
         </div>
-    </div>
-</main>
+        </div>
+    </main>
 
 {% endblock %}

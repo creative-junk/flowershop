@@ -22,7 +22,7 @@ class GrowerBreederController extends Controller
 
         $grower = $user->getMyCompany();
 
-        if ($this->growerBreederExists($grower,$breeder,$grower)){
+        if ($this->growerBreederExists($grower,$breeder)){
             return new Response(null,500);
         }else {
             $growerBreeder = new GrowerBreeder();
@@ -64,14 +64,13 @@ class GrowerBreederController extends Controller
             return new Response(null, 204);
         }
     }
-    public function growerBreederExists(Company $grower, Company $breeder,Company $whoseList){
+    public function growerBreederExists(Company $grower, Company $breeder){
         $em = $this->getDoctrine()->getManager();
 
         $growerBreeder = $em->getRepository('AppBundle:GrowerBreeder')
             ->findOneBy([
                 'grower'=>$grower,
-                'breeder'=>$breeder,
-                'listOwner'=> $whoseList
+                'breeder'=>$breeder
             ]);
         if ($growerBreeder){
             return true;
@@ -116,11 +115,9 @@ class GrowerBreederController extends Controller
 
     public function cancelGrowerBreederRequestAction(GrowerBreeder $growerBreeder)
     {
-        $growerBreeder->setStatus("Cancelled");
-        $growerBreeder->setDateSince(new \DateTime());
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($growerBreeder);
+        $em->remove($growerBreeder);
         $em->flush();
 
         return new Response(null, 204);

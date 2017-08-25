@@ -22,18 +22,10 @@ class BillingAddress
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $firstName;
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $lastName;
 
     /**
      * @ORM\Column(type="string",nullable=true)
@@ -61,7 +53,7 @@ class BillingAddress
     private $phoneNumber;
     /**
      * @ORM\ManyToOne(targetEntity="user")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
     /**

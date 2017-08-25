@@ -1,0 +1,43 @@
+{% extends 'base.htm.twig' %}
+{% block title %}Activate Account{% endblock %}
+{% block pageTitle %}<h2>Activate Account</h2>{% endblock %}
+
+    {% block breadCrumbs %}
+        <ol class="breadcrumb">
+            <li><i class="fa fa-home"></i></li>
+            <li><a href="http://prisk.or.ke/index.php/en" class="pathway">Home</a></li>
+            <li><a href="http://prisk.or.ke/index.php/en/membership" class="pathway">Membership</a></li>
+            <li class="active">Activate Account</li>
+        </ol>
+    {% endblock %}
+{% block body %}
+
+
+    <div id="sp-page-builder" class="sp-page-builder  page-1">
+
+        <div class="page-content">
+            <section class="sppb-section welcome-wrapper" style="padding:0px">
+                <div class="sppb-container">
+                    <div class="sppb-row">
+                        <div class="sppb-col-sm-6" style=";width:600px;">
+                            <div class="sppb-addon-container sppb-wow zoomIn sppb-animated"
+                                 style="visibility: visible; animation-duration: 800ms; animation-delay: 300ms; animation-name: zoomIn;"
+                                 data-sppb-wow-duration="800ms" data-sppb-wow-delay="300ms">
+                                <div class="sppb-addon sppb-addon-text-block sppb-text-left "><h6
+                                            class="sppb-addon-title" style="font-size:14px;line-height:14px;">Account Updated</h6>
+
+                                    <div class="sppb-addon-content"> <p>Thank you for updating your Account.
+                                        </p>
+                                        <p>You can now <a href="{{ path('login') }}">Click here</a> to login to your Prisk Online Portal Account.</p>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock body %}

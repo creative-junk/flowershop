@@ -1,0 +1,217 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Administrators{% endblock %}
+{% block javascripts %}
+
+    <!-- jqueryui -->
+    <link href="{{ asset('js/jquery-ui-1.12.1/jquery-ui.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jquery-ui-1.12.1/jquery-ui.js') }}"></script>
+
+    <!-- x-editable (jquery) -->
+    <link href="{{ asset('js/jqueryui-editable/css/jqueryui-editable.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jqueryui-editable/js/jqueryui-editable.min.js') }}"></script>t
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.fn.editable.defaults.mode = 'inline';
+
+            //make MemberNumber editable
+            $('a#member').editable({
+                source: [
+                    {value: 1, text: 'Administrator'},
+                    {value: 2, text: 'Super-Administrator'}
+                ]
+            });
+        });
+        jQuery('#js-deactivate-account').on('click',function (e)  {
+            //Prevent Normal Submit
+            e.preventDefault();
+
+            $(".messages").fadeOut("slow");
+
+            $(this).find('.fa-times-rectangle')
+                .removeClass('fa-times-rectangle')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+            $(this).find('.fa-check')
+                .removeClass('fa-check')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+
+            // get form values
+            var values = $(this).serialize();
+
+            $.ajax({
+                url: $(this).data('url'),
+                method: 'GET'
+            }).done(function () {
+                //$el.fadeOut("slow");
+                $(".messages").fadeIn("slow");
+
+                $("#deactivate")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-check');
+            }).error(function () {
+                //$el.fadeOut("slow");
+                $(".errors").fadeIn("slow");
+
+                $("#deactivate")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-times');
+            })
+
+        });
+        jQuery('#js-reset-password').on('click',function (e)  {
+            //Prevent Normal Submit
+            e.preventDefault();
+
+            $(".messages").fadeOut("slow");
+
+            $(this).find('.fa-exclamation-triangle')
+                .removeClass('fa-exclamation-triangle')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+            $(this).find('.fa-check')
+                .removeClass('fa-check')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+
+            // get form values
+            var values = $(this).serialize();
+
+            $.ajax({
+                url: $(this).data('url'),
+                method: 'GET'
+            }).done(function () {
+                //$el.fadeOut("slow");
+                $(".messages").fadeIn("slow");
+
+                $("#reset")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-check');
+            }).error(function () {
+                //$el.fadeOut("slow");
+                $(".errors").fadeIn("slow");
+
+                $("#reset")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-times');
+            })
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block body %}
+    <div id="content" class="app-content box-shadow-z0" role="main">
+
+
+        <div ui-view class="app-body" id="view">
+           {{ include(':admin/partials:top.htm.twig') }}
+            <div class="padding">
+                <div class="page messages">
+                    <div class="messages" style="">
+                        <div class="alert alert-success">
+                            <div>
+                                Request successful.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="page errors">
+                    <div class="errors" style="">
+                        <div class="alert alert-danger">
+                            <div>
+                               :-( Something went wrong. This request was not completed.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="box-header">
+                        <h2>Administrators</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="data" class="table table-striped b-t b-b">
+                            <thead>
+                            <tr>
+                                <th  style="width:20%">Names</th>
+                                <th  style="width:15%">Role</th>
+                                <th  style="width:25%">Created At</th>
+                                <th  style="width:25%">Last Login</th>
+                                <th  style="width:15%">Status</th>
+                                <th  style="width:25%">Manage</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in users  %}
+                                <tr>
+                                    <td><span style="color:#0cc2aa">{{ user.fullName }}</span></td>
+
+                                    <td>
+                                        <a href="#" id="member" data-type="select" data-pk="{{ user.id }}" data-url="{{ path('update-member') }}" data-title="Select Role">                                      {% for role in user.roles %}
+                                                {% if(role =="ROLE_ADMIN") %}
+                                                    Administrator
+                                                {% elseif(role =="ROLE_ADMINISTRATOR") %}
+                                                    Super Administrator
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        </a>
+
+                                    </td>
+                                    <td>{{ user.accountCreatedAt | date("F jS \\a\\t g:ia") }}</td>
+                                    <td>
+                                        {% if user.lastLoginTime != "" %}
+                                        {{ user.lastLoginTime | date("F jS \\a\\t g:ia") }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+
+                                        </td>
+                                    <td>
+                                        {% if user.isActive %}
+                                        <div style="padding: 8px;text-align: center;" class="alert alert-success">
+                                            Active
+                                        </div>
+                                        {% else %}
+                                        <div style="padding: 8px;text-align: center;" class="alert alert-danger">
+                                            Inactive
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if user.isActive %}
+                                        <a id="js-deactivate-account" href="#" data-url="{{ path('deactivate-account',{'id': user.id }) }}"
+                                           class="btn btn-xs white btn-icon"><i id="deactivate" title="De-activate Account" class="fa fa-times-rectangle"></i></a>
+                                        <a id="js-reset-password" href="#" data-url="{{ path('request-password-reset',{'id': user.id }) }}"
+                                           class="btn btn-xs white btn-icon"><i id="reset" title="Reset Password" class="fa fa-exclamation-triangle"></i></a>
+                                        {% else %}
+                                            <a id="js-deactivate-account" href="#" data-url="{{ path('activate-account',{'id': user.id }) }}"
+                                               class="btn btn-xs white btn-icon"><i id="Activate" title="Activate Account" class="fa fa-lock"></i></a>
+
+                                        {% endif  %}
+
+                                    </td>
+                                </tr>
+                            {% endfor  %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ############ PAGE END-->
+
+        </div>
+    </div>
+{% endblock %}

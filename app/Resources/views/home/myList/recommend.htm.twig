@@ -65,13 +65,77 @@
                                 {% for recommendation in recommendations %}
                                     <tr>
                                         <td> <a href="{{ path('buyer_auction_product_details',{
-                                                'id':recommendation.auctionProduct.id
-                                            }) }}"> <img class="" src="{{ asset('images/products/') }}{{ recommendation.auctionProduct.imageName }}" width="150"
-                                                         height="141" alt="{{ recommendation.auctionProduct.title }}"></a></td>
-                                        <td><a href="{{ path('buyer_auction_product_details',{
-                                                'id':recommendation.auctionProduct.id
-                                            }) }}">{{ recommendation.auctionProduct.title }}</a></td>
-                                        <td>{{ recommendation.recommendedBy.firstName }}&nbsp;{{ recommendation.recommendedBy.lastName }}</td>
+                                                'id':recommendation.auctionProduct.whichAuction.id
+                                            }) }}"> <img class="" src="{{ asset('images/products/') }}{{ recommendation.auctionProduct.whichAuction.product.mainImage }}" width="150"
+                                                         height="141" alt="{{ recommendation.auctionProduct.whichAuction.product.title }}"></a></td>
+                                        <td><a style="color:#e93838;" href="{{ path('buyer_auction_product_details',{'id':recommendation.auctionProduct.id }) }}"> {{ recommendation.auctionProduct.whichAuction.product.title }}</a>
+                                            <div class="">
+                                                <div class="rating-summary">
+
+                                                    {% if recommendation.auctionProduct.reviews | length > 0 %}
+
+                                                        {% set sumQualityratings = 0 %}
+                                                        {% set avgQualityRatings=0 %}
+                                                        {% for rating in recommendation.auctionProduct.reviews %}
+                                                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                                        {% endfor %}
+                                                        {% set avgQualityRatings= (sumQualityratings / recommendation.auctionProduct.reviews|length) | round %}
+
+                                                        {% set sumValueratings = 0 %}
+                                                        {% set avgValueRatings=0 %}
+                                                        {% for rating in recommendation.auctionProduct.reviews %}
+                                                            {% set sumValueratings = sumValueratings + rating.value %}
+                                                        {% endfor %}
+                                                        {% set avgValueRatings= (sumValueratings / recommendation.auctionProduct.reviews|length) | round %}
+
+                                                        {% set sumPriceratings = 0 %}
+                                                        {% set avgPriceRatings=0 %}
+                                                        {% for rating in recommendation.auctionProduct.reviews %}
+                                                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                                                        {% endfor %}
+                                                        {% set avgPriceRatings= (sumQualityratings / recommendation.auctionProduct.reviews|length) | round %}
+
+                                                        {% set avgrating=0 %}
+                                                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                                        {{ avgrating | rating(5, "fa-lg")   }}
+                                                    {% else %}
+                                                        {{ 0 | rating(5, "fa-lg")   }}
+                                                    {% endif %}
+
+                                                </div>
+                                            </div>
+                                            <div class="price-box price-final_price" data-role="priceBox"
+                                                 data-product-id="63">
+                                            <span class="price-container price-final_price tax weee">
+                                                    <span
+                                                            data-price-type="finalPrice" class="price-wrapper ">
+                                                    <span class="price"
+                                                          style="color: #666;font-size: 1.5rem">Stock:</span><span> {{ recommendation.auctionProduct.availableStock | number_format }}</span>
+                                                    </span>
+                                            </span>
+
+
+                                            </div>
+                                            <div class="price-box price-final_price" data-role="priceBox"
+                                                 data-product-id="63">
+                                            <span class="price-container price-final_price tax weee">
+                                                    <span
+                                                            data-price-type="finalPrice" class="price-wrapper ">
+                                                    <span class="price"
+                                                          style="color: #666;font-size: 1.5rem">Grower: </span><a href="{{ path('view_grower',{'id': recommendation.auctionProduct.whichAuction.vendor.id}) }}">{{ recommendation.auctionProduct.whichAuction.vendor.companyName }}</a>    </span>
+                                             </span><br/>
+                                                <span
+                                                        data-price-type="finalPrice" class="price-wrapper ">
+                                                    <span class="price"
+                                                          style="color: #666;font-size: 1.5rem">Agent: </span><a href="{{ path('view_agent',{'id': recommendation.auctionProduct.sellingAgent.id}) }}">{{ recommendation.auctionProduct.sellingAgent.companyName }}</a>    </span>
+                                                </span>
+                                            </div>
+
+
+
+                                        </td>
+                                        <td><a href="{{ path('view_agent',{'id':recommendation.recommendedBy.id }) }}"> {{ recommendation.recommendedBy.companyName }}</a></td>
                                         <td>{{ recommendation.createdAt |date("d/m/Y") }}</td>
                                     </tr>
                                 {% else %}

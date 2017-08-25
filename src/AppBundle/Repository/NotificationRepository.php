@@ -9,11 +9,12 @@
  ********************************************************************************/
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Company;
 use Doctrine\ORM\EntityRepository;
 
 class NotificationRepository extends EntityRepository
 {
-    public function getNotifications($user){
+    public function getNotifications(Company $user){
             return $this->createQueryBuilder('t')
 
                 // the participant is in the thread participants
@@ -28,6 +29,23 @@ class NotificationRepository extends EntityRepository
                 ->orderBy('t.sentAt', 'DESC')
                 ->getQuery()
                 ->execute();
-        }
+    }
+    public function getNrUnread(Company $participant){
+        $builder = $this->createQueryBuilder('m');
+
+        return (int) $builder
+            ->select($builder->expr()->count('m.id'))
+
+            // the participant is in the thread participants
+            ->andWhere('m.participant = :user')
+            ->setParameter(':user', $participant)
+
+              ->andWhere('m.isRead = :isRead')
+            ->setParameter('isRead', false)
+
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 
 }

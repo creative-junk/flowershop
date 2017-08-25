@@ -1,0 +1,47 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Administration Login{% endblock %}
+{% block left %}
+{% endblock %}
+{% block body %}
+    <!-- ############ LAYOUT START-->
+    <div class="center-block w-xxl w-auto-xs p-y-md">
+
+        <div class="navbar">
+            <div class="pull-center">
+                <div ui-include="'../views/blocks/navbar.brand.html'"></div>
+            </div>
+        </div>
+        <div class="p-a-md box-color r box-shadow-z1 text-color m-a">
+            <div class="m-b text-sm">
+                Sign in with your Admin Account
+
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        {% endif %}
+
+            </div>
+            {{ form_start(loginForm) }}
+                <div class="md-form-group float-label">
+                    {{ form_row(loginForm._username, { 'attr': {'class': 'md-input'} }) }}
+
+                </div>
+                <div class="md-form-group float-label">
+                    {{ form_row(loginForm._password, { 'attr': {'class': 'md-input'} }) }}
+
+                </div>
+            <input type="hidden" name="_target_path" value="admin-home"/>
+            <input type="hidden" name="_failure_path" value="admin-login"/>
+
+                <button type="submit" class="btn primary btn-block p-x-md">Sign in</button>
+            {{ form_end(loginForm) }}
+        </div>
+
+        <div class="p-v-lg text-center">
+            <div class="m-b"><a ui-sref="access.forgot-password" href="#" class="text-primary _600">Forgot password?</a></div>
+            <div>Do not have an account? <a ui-sref="access.signup" href="{{ path('request-admin-account') }}" class="text-primary _600">Request One</a></div>
+        </div>
+    </div>
+
+    <!-- ############ LAYOUT END-->
+{% endblock %}

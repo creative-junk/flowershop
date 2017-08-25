@@ -4,7 +4,6 @@ namespace AppBundle\Controller\Buyer;
 
 use AppBundle\Entity\BuyerAgent;
 use AppBundle\Entity\Company;
-use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\BrowserKit\Request;
@@ -16,7 +15,7 @@ class BuyerAgentController extends Controller
      * @Route("/home/buyer/{id}/request",name="request-agent-buyer")
      */
 
-    public function requestAgentAction(User $agent)
+    public function requestAgentAction(Company $agent)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
@@ -43,7 +42,8 @@ class BuyerAgentController extends Controller
      * @Route("/agent/agent/{id}/request",name="request-buyer-agent")
      */
     public function requestBuyerAction(Company $buyer){
-        $agent = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
 
         if ($this->buyerAgentExists($buyer,$agent)){
             return new Response(null,500);
@@ -52,7 +52,7 @@ class BuyerAgentController extends Controller
             $buyerAgent->setAgent($agent);
             $buyerAgent->setBuyer($buyer);
             $buyerAgent->setStatus('Requested');
-            $buyerAgent->setAgentListOwner($agent);
+            $buyerAgent->setListOwner($agent);
             $buyerAgent->setUpdatedAt(new \DateTime());
 
             $em = $this->getDoctrine()->getManager();
@@ -62,7 +62,7 @@ class BuyerAgentController extends Controller
             return new Response(null, 204);
         }
     }
-    public function buyerAgentExists(Company $buyer, User $agent){
+    public function buyerAgentExists(Company $buyer, Company $agent){
         $em = $this->getDoctrine()->getManager();
 
         $buyerAgent = $em->getRepository('AppBundle:BuyerAgent')
@@ -82,11 +82,8 @@ class BuyerAgentController extends Controller
 
     public function cancelGrowerBreederRequestAction(BuyerAgent $buyerAgent)
     {
-        $buyerAgent->setStatus("Cancelled");
-        $buyerAgent->setDateSince(new \DateTime());
-
         $em = $this->getDoctrine()->getManager();
-        $em->persist($buyerAgent);
+        $em->remove($buyerAgent);
         $em->flush();
 
         return new Response(null, 204);

@@ -24,8 +24,8 @@ class AuctionOrder
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -33,17 +33,21 @@ class AuctionOrder
      */
     private $prettyId;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\AuctionProduct")
+     */
+    private $product;
+    /**
      * @ORM\Column(type="string")
      */
     private $orderCurrency;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\BillingAddress")
+     * @ORM\Column(type="string")
      */
-    private $billingAddress;
+    private $itemPrice;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ShippingAddress")
+     * @ORM\Column(type="string")
      */
-    private $shippingAddress;
+    private $quantity;
     /**
      * @ORM\Column(type="string")
      */
@@ -81,10 +85,6 @@ class AuctionOrder
      */
     private $updatedAt;
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\AuctionOrderItems",mappedBy="order")
-     */
-    private $orderItems;
-    /**
      * @ORM\Column(type="string")
      */
     private $orderStatus;
@@ -98,14 +98,14 @@ class AuctionOrder
      */
     private $whoseOrder;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $agent;
+    private $buyingAgent;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User",inversedBy="myReceivedAgencyOrders")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
-    private $receivingAgent;
+    private $sellingAgent;
     /**
      * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName", size="imageSize")
      * @var File
@@ -141,6 +141,54 @@ class AuctionOrder
     }
 
     /**
+     * @return AuctionProduct
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param mixed $product
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getItemPrice()
+    {
+        return $this->itemPrice;
+    }
+
+    /**
+     * @param mixed $itemPrice
+     */
+    public function setItemPrice($itemPrice)
+    {
+        $this->itemPrice = $itemPrice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param mixed $quantity
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+    }
+
+    /**
      * @return mixed
      */
     public function getOrderCurrency()
@@ -154,38 +202,6 @@ class AuctionOrder
     public function setOrderCurrency($orderCurrency)
     {
         $this->orderCurrency = $orderCurrency;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBillingAddress()
-    {
-        return $this->billingAddress;
-    }
-
-    /**
-     * @param mixed $billingAddress
-     */
-    public function setBillingAddress($billingAddress)
-    {
-        $this->billingAddress = $billingAddress;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getShippingAddress()
-    {
-        return $this->shippingAddress;
-    }
-
-    /**
-     * @param mixed $shippingAddress
-     */
-    public function setShippingAddress($shippingAddress)
-    {
-        $this->shippingAddress = $shippingAddress;
     }
 
     /**
@@ -368,20 +384,37 @@ class AuctionOrder
     }
 
     /**
-     * @return User
+     * @return Company
      */
-    public function getAgent()
+    public function getBuyingAgent()
     {
-        return $this->agent;
+        return $this->buyingAgent;
     }
 
     /**
-     * @param User $agent
+     * @param Company $agent
      */
-    public function setAgent($agent)
+    public function setBuyingAgent($agent)
     {
-        $this->agent = $agent;
+        $this->buyingAgent = $agent;
     }
+
+    /**
+     * @return Company
+     */
+    public function getSellingAgent()
+    {
+        return $this->sellingAgent;
+    }
+
+    /**
+     * @param Company $sellingAgent
+     */
+    public function setSellingAgent($sellingAgent)
+    {
+        $this->sellingAgent = $sellingAgent;
+    }
+
 
     /**
      * @return ArrayCollection[AuctionOrderItems]
@@ -397,22 +430,6 @@ class AuctionOrder
     public function setOrderItems($orderItems)
     {
         $this->orderItems = $orderItems;
-    }
-
-    /**
-     * @return User
-     */
-    public function getReceivingAgent()
-    {
-        return $this->receivingAgent;
-    }
-
-    /**
-     * @param User $receivingAgent
-     */
-    public function setReceivingAgent($receivingAgent)
-    {
-        $this->receivingAgent = $receivingAgent;
     }
 
     /**

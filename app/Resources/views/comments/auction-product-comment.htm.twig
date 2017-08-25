@@ -1,0 +1,32 @@
+<div class="block review-add">
+    <div class="" style="border-bottom: 1px solid #f1f1f1"><strong>Write Your Own Comment</strong></div>
+    <div class="block-content">
+{{ form_start(commentForm, {'action': path('comment-auction'),'method':'POST','attr': {'id': 'comment-form'} } ) }}
+        <fieldset class="fieldset review-fieldset" data-hasrequired="">
+
+
+                <div class="field review-field-text required">
+                    <div class="control">
+                {{ form_row(commentForm.commentText) }}
+                    </div>
+                </div>
+            </fieldset>
+        <input type="hidden" name="rose" value="{{ rose.id }}"/>
+            <div class="actions-toolbar review-form-actions">
+                <div class="primary actions-primary">
+                    <button type="submit" class="action submit primary"> <i id="comment" class="fa fa-telegram"></i> &nbsp;<span> <span>Submit Comment</span></button>
+                </div>
+            </div>
+        {{ form_end(commentForm) }}
+
+    </div>
+</div>
+<style>
+    .control-label {
+        padding: 6px 15px 0 0;
+        text-align: right;
+        width: 9.8%;
+        float: left;
+
+    }
+</style>

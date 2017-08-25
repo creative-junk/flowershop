@@ -27,11 +27,10 @@
             <div class="row">
                 <div class="col-md-12 col-lg-9">
                     <div class="items-holder">
-                        {% for orderItem in orderItems %}
                         <div class="cart-item row">
                             <div class="col-sm-2 col-lg-3">
                                 <div class="image">
-                                    <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ orderItem.product.imageName }}">
+                                    <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ order.product.whichAuction.product.mainImage }}">
                                 </div>
                             </div>
                             <div class="col-sm-4 col-lg-4">
@@ -39,31 +38,32 @@
                                 </div>
                                 <div class="title">
                                     <a href="{{ path('buyer_auction_product_details',{
-                                        'id': orderItem.product.id
-                                    }) }}">{{ orderItem.product.title }}</a>
+                                        'id': order.product.id
+                                    }) }}">{{ order.product.whichAuction.product.title }}</a>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-lg-5 details no-edit">
                                 <div class="unit-price">
                                     <span class="visible-xs">Price</span>
-                                    {{ order.orderCurrency }} {{ orderItem.unitPrice | number_format(2, '.', ',') }}
+                                    {{ order.orderCurrency }} {{ order.itemPrice | number_format(2, '.', ',') }}
                                 </div>
                                 <div class="quantity">
                                     <span class="visible-xs">Quantity</span>
-                                    {{ orderItem.quantity | number_format(0, '.', ',') }}
+                                    {{ order.quantity | number_format(0, '.', ',') }}
                                 </div>
                                 <div class="total-price">
-                                    <span class="visible-xs">Total</span>
-                                    {{ order.orderCurrency }} {{ orderItem.lineTotal | number_format(2, '.', ',') }}
+                                    <span class="visible-xs">Sub Total</span>
+                                    {{ order.orderCurrency }} {{ order.orderAmount | number_format(2, '.', ',') }}
                                 </div>
+
                             </div>
                         </div>
-                         {% endfor %}
+
                     </div>
                 </div>
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">
-                        <p><strong>Order number: </strong> #46 </p>
+                        <p><strong>Order number: </strong> {{ order.prettyId }} </p>
                         <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
                         <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
                         <p><strong>Subtotal:</strong> <i>{{ order.orderCurrency }} {{ order.orderAmount | number_format(2, '.', ',') }}</i></p>

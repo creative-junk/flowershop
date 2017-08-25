@@ -15,7 +15,7 @@ class BuyerAgentFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('agent',EntityType::class,[
-            'class'=>'AppBundle\Entity\User',
+            'class'=>'AppBundle\Entity\Company',
             'choices'=>$options['agents'],
             'placeholder'=>'Select an Agent'
         ]);

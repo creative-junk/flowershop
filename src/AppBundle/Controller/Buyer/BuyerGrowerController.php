@@ -23,7 +23,7 @@ class BuyerGrowerController extends Controller
 
         $buyer = $user->getMyCompany();
 
-        if ($this->buyerGrowerExists($buyer,$grower,$buyer)){
+        if ($this->buyerGrowerExists($buyer,$grower)){
             return new Response(null,500);
         }else {
             $buyerGrower = new BuyerGrower();
@@ -48,7 +48,7 @@ class BuyerGrowerController extends Controller
 
         $grower = $user->getMyCompany();
 
-        if ($this->buyerGrowerExists($buyer,$grower,$grower)){
+        if ($this->buyerGrowerExists($buyer,$grower)){
             return new Response(null,500);
         }else {
             $buyerGrower = new BuyerGrower();
@@ -65,14 +65,13 @@ class BuyerGrowerController extends Controller
             return new Response(null, 204);
         }
     }
-    public function buyerGrowerExists(Company $buyer, Company $grower,Company $whoseList){
+    public function buyerGrowerExists(Company $buyer, Company $grower){
         $em = $this->getDoctrine()->getManager();
 
         $buyerGrower = $em->getRepository('AppBundle:BuyerGrower')
             ->findOneBy([
                 'buyer'=>$buyer,
                 'grower'=>$grower,
-                'listOwner'=> $whoseList
             ]);
         if ($buyerGrower){
             return true;
@@ -86,11 +85,9 @@ class BuyerGrowerController extends Controller
 
     public function cancelGrowerBuyerRequestAction(BuyerGrower $buyerGrower)
     {
-        $buyerGrower->setStatus("Cancelled");
-        $buyerGrower->setDateSince(new \DateTime());
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($buyerGrower);
+        $em->remove($buyerGrower);
         $em->flush();
 
         return new Response(null, 204);

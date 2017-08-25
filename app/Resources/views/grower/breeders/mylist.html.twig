@@ -67,7 +67,10 @@
                 <table id="shopping-cart-table" class="cart items data table">
                     <thead>
                     <tr>
+                        <th></th>
                         <th class="col item" scope="col"><span>Breeder</span></th>
+                        <th class="col price" scope="col"><span>Rating</span></th>
+
                         <th class="col price" scope="col"><span>Connected Since</span></th>
 
 
@@ -76,6 +79,8 @@
                     <tbody class="cart item">
                     {% for growerBreeder in growerBreeders %}
                         <tr class="item-info js-breeder-item">
+                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
+                                     src="{{ asset('images/products/') }}{{ growerBreeder.breeder.logoName }}"></td>
                             <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
@@ -90,6 +95,39 @@
                     </span>
 
                                                            </td>
+                            <td class="col subtotal" data-th="Subtotal">
+                                {% if growerBreeder.breeder.reviews | length > 0 %}
+
+                                    {% set sumQualityratings = 0 %}
+                                    {% set avgQualityRatings=0 %}
+                                    {% for rating in growerBreeder.breeder.reviews %}
+                                        {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                    {% endfor %}
+                                    {% set avgQualityRatings= (sumQualityratings / growerBreeder.breeder.reviews|length) | round %}
+
+                                    {% set sumValueratings = 0 %}
+                                    {% set avgValueRatings=0 %}
+                                    {% for rating in growerBreeder.breeder.reviews %}
+                                        {% set sumValueratings = sumValueratings + rating.value %}
+                                    {% endfor %}
+                                    {% set avgValueRatings= (sumValueratings / growerBreeder.breeder.reviews|length) | round %}
+
+                                    {% set sumPriceratings = 0 %}
+                                    {% set avgPriceRatings=0 %}
+                                    {% for rating in growerBreeder.breeder.reviews %}
+                                        {% set sumPriceratings = sumPriceratings + rating.price %}
+                                    {% endfor %}
+                                    {% set avgPriceRatings= (sumQualityratings / growerBreeder.breeder.reviews|length) | round %}
+
+                                    {% set avgrating=0 %}
+                                    {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                    {{ avgrating | rating(5, "fa-lg") }}
+                                {% else %}
+                                    {{ 0 | rating(5, "fa-lg") }}
+                                {% endif %}
+
+                            </td>
                             <td class="col subtotal" data-th="Subtotal">
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                             <span class="cart-price">

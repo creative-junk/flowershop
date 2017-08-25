@@ -8,8 +8,8 @@
             <h1 class="page-title">
                 <span class="base" data-ui-id="page-title-wrapper">Buyer Login</span></h1>
         </div>
-        <div class="page messages">
-            <div data-placeholder="messages">
+        <div class="page message">
+            <div data-placeholder="message">
                 {% if error %}
                     <div class="alert alert-danger">
                         {{ error.messageKey|trans(error.messageData, 'security') }}
@@ -27,15 +27,15 @@
                                 Buyers</strong>
                         </div>
                         <div class="block-content" aria-labelledby="block-customer-login-heading">
-                            {{ form_start(buyerform) }}
+                            {{ form_start(loginform) }}
                             <fieldset class="fieldset login" data-hasrequired="* Required Fields">
                                 <div class="field note">If you have an account, sign in with your email address.</div>
                                 <div class="field email required">
 
-                                    {{ form_row(buyerform._username) }}
+                                    {{ form_row(loginform._username) }}
                                 </div>
                                 <div class="field password required">
-                                    {{ form_row(buyerform._password) }}
+                                    {{ form_row(loginform._password) }}
 
                                 </div>
                                 <input type="hidden" name="_target_path" value="home"/>
@@ -50,7 +50,7 @@
                                                               href="{{ path('forgot-password') }}"><span>Forgot Your Password?</span></a></div>
                                 </div>
                             </fieldset>
-                            {{ form_end(buyerform) }}
+                            {{ form_end(loginform) }}
                         </div>
                     </div>
                     <div class="block block-new-customer">
@@ -58,7 +58,7 @@
                             <strong id="block-new-customer-heading" role="heading" aria-level="2">New Buyers</strong>
                         </div>
                         <div class="block-content" aria-labelledby="block-new-customer-heading">
-                            <p>Are you a buyer? Create an Iflora Company account and get the many benefits: check out faster, track orders and more.</p>
+                            <p>Are you a Buyer? Create an Iflora Company account and get the many benefits: check out faster, track orders and more.</p>
 
                             <div class="actions-toolbar">
                                 <div class="primary">

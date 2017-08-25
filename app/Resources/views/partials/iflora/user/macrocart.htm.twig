@@ -65,13 +65,13 @@
                                        href="{{ path('buyer_product_details',{
                                            'id': item.product.id
                                        }) }}"
-                                       title="{{ item.product.title }}">
+                                       title="{{ item.product.product.title }}">
 
                                 <span class="product-image-container" style="width: 76px;">
                                     <span class="product-image-wrapper" style="padding-bottom: 128.947%;">
                                         <img class="product-image-photo"
-                                             src="{{ asset('images/products/') }}{{ item.product.imageName }}"
-                                             alt="{{ item.product.title }}" style="width: 76px; height: 98px;">
+                                             src="{{ asset('images/products/') }}{{ item.product.product.mainImage }}"
+                                             alt="{{ item.product.product.title }}" style="width: 76px; height: 98px;">
                                     </span>
                                 </span>
                                     </a>
@@ -80,7 +80,7 @@
                                         <strong class="product-item-name">
                                             <a href="{{ path('buyer_product_details',{
                                                 'id': item.product.id
-                                            }) }}">{{ item.product.title }}</a>
+                                            }) }}">{{ item.product.product.title }}</a>
                                         </strong>
 
                                         <div class="product-item-pricing">
@@ -88,7 +88,7 @@
                                           <span class="price-wrapper" data-bind="html: price">
                                           <span class="price-excluding-tax" data-label="Excl. Tax">
                                           <span class="minicart-price">
-                                                <span class="price">{{ item.cart.cartCurrency }}{{ item.product.price | number_format(2, '.', ',') }}</span>
+                                                <span class="price">{{ item.cart.cartCurrency }}{{ item.product.pricePerStem | number_format(2, '.', ',') }}</span>
                                           </span>
 
                          </span>

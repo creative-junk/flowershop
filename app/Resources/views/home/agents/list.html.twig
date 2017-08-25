@@ -58,7 +58,7 @@
     </div>
     <div class="page messages">
         <div class="alert alert-danger">
-            <strong>:( oops!</strong> Something went wrong and your reuest was not completed. Refresh the page and try again
+            <strong>:( oops!</strong> Something went wrong and your request was not completed. Refresh the page and try again
         </div>
 
     </div>
@@ -68,14 +68,17 @@
                 <table id="shopping-cart-table" class="cart items data table">
                     <thead>
                     <tr>
+                        <th></th>
                         <th class="col item" scope="col"><span>Agent</span></th>
-                        <th class="col item" scope="col"><span></span></th>
+                        <th class="col subtotal" scope="col"><span>Rating</span></th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
                     <tbody class="cart item">
                     {% for agent in agents %}
                         <tr class="item-info js-agent-item">
+                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
+                                     src="{{ asset('images/products/') }}{{ agent.logoName }}"></td>
                             <td data-th="Item" class="col item">
 
                                 <span class="product-image-container" style="">
@@ -84,7 +87,7 @@
                                     <span class="product-image-wrapper" style="padding-bottom: 100%;">
                                       <a href="{{ path('view_agent',{
                                           'id':agent.id
-                                      }) }}">{{ agent.fullName }}</a>
+                                      }) }}">{{ agent.companyName }}</a>
                                     </span>
                                 </strong>
 
@@ -93,34 +96,35 @@
                             </td>
 
                             <td class="col subtotal" data-th="Subtotal">
-                                {% if agent.agentReviews | length > 0 %}
+                                {% if agent.reviews | length > 0 %}
 
                                     {% set sumQualityratings = 0 %}
                                     {% set avgQualityRatings=0 %}
-                                    {% for rating in agent.agentReviews %}
+                                    {% for rating in agent.reviews %}
                                         {% set sumQualityratings = sumQualityratings + rating.quality %}
                                     {% endfor %}
-                                    {% set avgQualityRatings= (sumQualityratings / agent.agentReviews|length) | round %}
+                                    {% set avgQualityRatings= (sumQualityratings / agent.reviews|length) | round %}
 
                                     {% set sumValueratings = 0 %}
                                     {% set avgValueRatings=0 %}
-                                    {% for rating in agent.agentReviews %}
+                                    {% for rating in agent.reviews %}
                                         {% set sumValueratings = sumValueratings + rating.value %}
                                     {% endfor %}
-                                    {% set avgValueRatings= (sumValueratings / agent.agentReviews|length) | round %}
+                                    {% set avgValueRatings= (sumValueratings / agent.reviews|length) | round %}
 
                                     {% set sumPriceratings = 0 %}
                                     {% set avgPriceRatings=0 %}
-                                    {% for rating in agent.agentReviews %}
+                                    {% for rating in agent.reviews %}
                                         {% set sumPriceratings = sumPriceratings + rating.price %}
                                     {% endfor %}
-                                    {% set avgPriceRatings= (sumQualityratings / agent.agentReviews|length) | round %}
+                                    {% set avgPriceRatings= (sumQualityratings / agent.reviews|length) | round %}
 
                                     {% set avgrating=0 %}
                                     {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                     {{ avgrating | rating(5, "fa-lg") }}
-
+                                {% else %}
+                                    {{ 0 | rating(5, "fa-lg") }}
                                 {% endif %}
 
                             </td>

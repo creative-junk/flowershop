@@ -12,21 +12,27 @@ namespace AppBundle\Controller\Agent;
 
 use AppBundle\Entity\Auction;
 use AppBundle\Entity\AuctionOrder;
+use AppBundle\Entity\AuctionProduct;
+use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\MyList;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\ShippingAddress;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
+use AppBundle\Form\AccountFormType;
 use AppBundle\Form\addToCartFormType;
 use AppBundle\Form\AgentProductForm;
 use AppBundle\Form\AuctionProductForm;
+use AppBundle\Form\BillingAddressFormType;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\RecommendFormType;
+use AppBundle\Form\ShippingAddressFormType;;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -48,16 +54,20 @@ class AgentController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $em = $this->getDoctrine()->getManager();
 
-        $nrReceivedAgentOrders = $em->getRepository('AppBundle:AuctionOrder')
-            ->findNrAllMyAgentReceivedOrders($user);
+        $em = $this->getDoctrine()->getManager();
+        $agent = $em->getRepository("AppBundle:Company")
+            ->findOneBy([
+                'id'=>$user->getMyCompany()->getId()
+            ]);
+       $nrReceivedAgentOrders = $em->getRepository('AppBundle:AuctionOrder')
+            ->findNrAllMyAgentReceivedOrders($agent);
         $nrMyOrders = $em->getRepository('AppBundle:UserOrder')
-            ->findNrAllMyOrdersAgent($user);
+            ->findNrAllMyOrdersAgent($agent);
         $nrBuyers = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrMyAgentBuyers($user);
+            ->getNrMyAgentBuyers($agent);
         $nrGrowers = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrMyAgentGrowers($user);
+            ->getNrMyAgentGrowers($agent);
 
 
 
@@ -75,8 +85,186 @@ class AgentController extends Controller
      */
     public function profileAction()
     {
-        return $this->render('account/account.htm.twig');
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        return $this->render('agent/account/account.htm.twig',[
+            'billingAddress'=>$billingAddress,
+            'shippingAddress'=>$shippingAddress
+        ]);
     }
+
+    /**
+     * @Route("/account/edit",name="agent-edit-account")
+     */
+    public function editAccountAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(AccountFormType::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('my-agent-profile');
+        }
+        return $this->render('agent/account/edit-basic.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/account/add/billing",name="agent-add-billing-address")
+     */
+    public function addBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $billingAddress = new BillingAddress();
+        $billingAddress->setCompany($agent);
+        $billingAddress->setCountry($agent->getCountry());
+        $billingAddress->setEmailAddress($agent->getEmail());
+        $billingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $billingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-agent-profile');
+        }
+
+        return $this->render('agent/account/add-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/account/edit/billing",name="agent-edit-billing-address")
+     */
+    public function editBillingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $billingAddress = $em->getRepository("AppBundle:BillingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(BillingAddressFormType::class,$billingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $billingAddress = $form->getData();
+
+            $em->persist($billingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-agent-profile');
+        }
+
+        return $this->render('agent/account/edit-billing.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
+    /**
+     * @Route("/account/add/shipping",name="agent-add-shipping-address")
+     */
+    public function addShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $shippingAddress = new ShippingAddress();
+        $shippingAddress->setCompany($agent);
+        $shippingAddress->setCountry($agent->getCountry());
+        $shippingAddress->setEmailAddress($agent->getEmail());
+        $shippingAddress->setPhoneNumber($agent->getTelephoneNumber());
+        $shippingAddress->setIsDefault(true);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-agent-profile');
+        }
+
+        return $this->render('agent/account/add-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/account/edit/shipping",name="agent-edit-shipping-address")
+     */
+    public function editShippingAddress(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $shippingAddress = $em->getRepository("AppBundle:ShippingAddress")
+            ->findOneBy([
+                'company'=>$agent
+            ]);
+
+        $form = $this->createForm(ShippingAddressFormType::class,$shippingAddress);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $shippingAddress = $form->getData();
+
+            $em->persist($shippingAddress);
+            $em->flush();
+
+            return $this->redirectToRoute('my-agent-profile');
+        }
+
+        return $this->render('agent/account/edit-shipping.htm.twig',[
+            'form'=>$form->createView()
+        ]);
+
+    }
+
     /**
      * @Route("/product/my",name="my_assigned_product_list")
      */
@@ -85,14 +273,17 @@ class AgentController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $agent = $user->getMyCompany();
         $em = $this->getDoctrine()->getManager();
 
-        $queryBuilder = $em->getRepository('AppBundle:Auction')
-            ->createQueryBuilder('product')
+        $queryBuilder = $em->getRepository('AppBundle:AuctionProduct')
+            ->createQueryBuilder('auctionProduct')
+            ->innerJoin('auctionProduct.whichAuction','auction')
+            ->innerJoin('auction.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('product.agent = :agentIs')
-            ->setParameter('agentIs',$user)
+            ->andWhere('auctionProduct.sellingAgent = :agentIs')
+            ->setParameter('agentIs',$agent)
             ->orderBy('product.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
@@ -122,13 +313,14 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $queryBuilder = $em->getRepository('AppBundle:Auction')
-            ->createQueryBuilder('product')
+            ->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
-            ->andWhere('product.status = :productStatus')
+            ->andWhere('auction.status = :productStatus')
             ->setParameter('productStatus', "Pending Agent")
-            ->andWhere('product.agent = :agentIs')
-            ->setParameter('agentIs',$user)
+            ->andWhere('auction.sellingAgent = :agentIs')
+            ->setParameter('agentIs',$user->getMyCompany())
             ->orderBy('product.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
@@ -183,15 +375,25 @@ class AgentController extends Controller
     public function ordersListAction(){
 
         $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
         $em=$this->getDoctrine()->getManager();
-        $orders = $em->getRepository('AppBundle:UserOrder')
-            ->findAllMyReceivedOrdersOrderByDate($user);
+        $orders = $em->getRepository('AppBundle:AuctionOrder')
+            ->findAllMyReceivedOrdersOrderByDate($agent);
         return $this->render('agent/order/list.html.twig', [
             'orders' => $orders,
         ]);
 
     }
     /**
+     * @Route("/orders/auction/view/{id}",name="agent_view_auction_order")
+     */
+    public function viewAuctionOrderAction(Request $request,AuctionOrder $order)
+    {
+        return $this->render(':grower/auction/order:order-details.htm.twig', ['order' => $order,]);
+    }
+        /**
      * @Route("/orders/my/assigned",name="my_agent_assigned_order_list")
      */
     public function myAssignedOrdersListAction(){
@@ -199,7 +401,7 @@ class AgentController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em=$this->getDoctrine()->getManager();
         $orders = $em->getRepository('AppBundle:AuctionOrder')
-            ->findAllMyOrderAssignmentRequests($user);
+            ->findAllMyOrderAssignmentRequests($user->getMyCompany());
         return $this->render('agent/order/myAssignedlist.html.twig', [
             'orders' => $orders,
         ]);
@@ -282,8 +484,10 @@ class AgentController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $queryBuilder = $em->getRepository('AppBundle:Auction')
-            ->createQueryBuilder('product')
+        $queryBuilder = $em->getRepository('AppBundle:AuctionProduct')
+            ->createQueryBuilder('auctionProduct')
+            ->innerJoin('auctionProduct.whichAuction','auction')
+            ->innerJoin('auction.product','product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
             ->orderBy('product.createdAt', 'DESC');
@@ -306,9 +510,373 @@ class AgentController extends Controller
 
     }
     /**
+     * @Route("/auction/my",name="my_agent_auction_list")
+     */
+    public function myAuctionListAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.sellingAgent =:sellingAgent')
+            ->setParameter('sellingAgent',$agent)
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('agent/auction/my/list.htm.twig', [
+            'products' => $result,
+        ]);
+
+
+    }
+    /**
+     * @Route("/auction/assigned",name="agent_assigned_auction_list")
+     */
+    public function assignedAuctionAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.sellingAgent =:sellingAgent')
+            ->setParameter('sellingAgent',$agent)
+            ->andWhere('auction.status = :auctionStatus')
+            ->setParameter('auctionStatus','Pending Agent')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('agent/auction/my/assigned-list.htm.twig', [
+            'products' => $result,
+        ]);
+
+
+    }
+    /**
+     * @Route("/auction/accepted",name="agent_accepted_auction_list")
+     */
+    public function acceptedAuctionAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.sellingAgent =:sellingAgent')
+            ->setParameter('sellingAgent',$agent)
+            ->andWhere('auction.status = :auctionStatus')
+            ->setParameter('auctionStatus','Accepted')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('agent/auction/my/accepted-list.htm.twig', [
+            'products' => $result,
+        ]);
+
+
+    }
+    /**
+     * @Route("/auction/shipped",name="agent_shipped_auction_list")
+     */
+    public function shippedAuctionAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.sellingAgent =:sellingAgent')
+            ->setParameter('sellingAgent',$agent)
+            ->andWhere('auction.status = :auctionStatus')
+            ->setParameter('auctionStatus','Shipped')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('agent/auction/my/shipped-list.htm.twig', [
+            'products' => $result,
+        ]);
+
+
+    }
+    /**
+     * @Route("/auction/market",name="agent_active_auction_list")
+     */
+    public function activeAuctionAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:AuctionProduct')
+            ->createQueryBuilder('auctionProduct')
+            ->innerJoin('auctionProduct.whichAuction','auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auctionProduct.sellingAgent =:sellingAgent')
+            ->setParameter('sellingAgent',$agent)
+            ->andWhere('auctionProduct.status = :auctionStatus')
+            ->setParameter('auctionStatus','Active')
+            ->andWhere('auctionProduct.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('agent/auction/my/myList.htm.twig', [
+            'products' => $result,
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/auction/market/{id}/edit",name="edit-auction-product")
+     */
+    public function editAuctionProduct(Request $request, AuctionProduct $product){
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(AgentProductForm::class,$product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $product = $form->getData();
+
+            $em->persist($product);
+            $em->flush();
+
+            return $this->redirectToRoute('agent_active_auction_list');
+
+        }
+        return $this->render('agent/auction/my/edit.htm.twig',[
+            'product'=>$product,
+            'productForm'=>$form->createView()
+        ]);
+    }
+    /**
+     * @Route("/auction/floating",name="agent_floating_auction_list")
+     */
+    public function floatingAuctionAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $queryBuilder = $em->getRepository('AppBundle:Auction')
+            ->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status = :auctionStatus')
+            ->setParameter('auctionStatus','Unassigned')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+        return $this->render('agent/auction/list.htm.twig', [
+            'products' => $result,
+        ]);
+
+
+    }
+    /**
+     * @Route("/auction/accept/shipped/{id}/product",name="agent_accept_shipped")
+     */
+    public function acceptShippedAuctionAction(Request $request,Auction $auction)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $auctionProduct = new AuctionProduct();
+        $auctionProduct->setWhichAuction($auction);
+        $auctionProduct->setIsActive(true);
+        $auctionProduct->setAvailableStock($auction->getNumberOfStems());
+        $auctionProduct->setSellingAgent($agent);
+        $auctionProduct->setpricePerStem($auction->getPricePerStem());
+
+        $form = $this->createForm(AgentProductForm::class,$auctionProduct);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $auctionProduct = $form->getData();
+
+            $auction->setStatus("Active");
+            $auctionProduct->setStatus("Active");
+            $auction->setAcceptedAt(new \DateTime());
+
+            $em->persist($auction);
+            $em->persist($auctionProduct);
+            $em->flush();
+
+            $this->sendAuctionProductResponseNotification($auction->getVendor(),"Rejected",$auction);
+
+
+           return $this->redirectToRoute("agent_shipped_auction_list");
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        return $this->render('agent/auction/my/new.htm.twig', [
+            'productForm' => $form->createView(),
+            'auction'=>$auction
+        ]);
+
+
+    }
+    /**
+     * @Route("/auction/reject/shipped/{id}/product",name="agent_reject_shipped")
+     */
+    public function rejectShippedAuctionAction(Request $request,Auction $auction)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $auctionProduct = new AuctionProduct();
+        $auctionProduct->setWhichAuction($auction);
+        $auctionProduct->setIsActive(true);
+        $auctionProduct->setAvailableStock($auction->getNumberOfStems());
+        $auctionProduct->setSellingAgent($agent);
+        $auctionProduct->setpricePerStem($auction->getPricePerStem());
+
+        $form = $this->createForm(AgentProductForm::class,$auctionProduct);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $auctionProduct = $form->getData();
+
+            $auction->setStatus("Defective");
+            $auction->setAcceptedAt(new \DateTime());
+
+            $auctionProduct->setWhichAuction($auction);
+
+            $em->persist($auction);
+            $em->persist($auctionProduct);
+            $em->flush();
+
+            return $this->redirectToRoute("agent_shipped_auction_list");
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        return $this->render('agent/auction/my/reject.htm.twig', [
+            'productForm' => $form->createView(),
+            'auction'
+        ]);
+
+
+    }
+    /**
+     * @Route("/auction/my/{id}/view",name="my_agent_auction_product_details")
+     */
+    public function myAuctionProductDetailsAction(Request $request, Auction $product)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        return $this->render('agent/auction/my/product-details.htm.twig', [
+            'product' => $product,
+
+        ]);
+    }
+    /**
      * @Route("/auction/{id}/view",name="agent_auction_product_details")
      */
-    public function auctionProductDetailsAction(Request $request, Auction $product)
+    public function auctionProductDetailsAction(Request $request, AuctionProduct $product)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
@@ -376,7 +944,7 @@ class AgentController extends Controller
     /**
      * @Route("/auction/{id}/recommend",name="agent_auction_recommend")
      */
-    public function recommendRosesAction(Request $request, Auction $product)
+    public function recommendRosesAction(Request $request, AuctionProduct $product)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
@@ -384,7 +952,7 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $agentBuyers = $em->getRepository('AppBundle:BuyerAgent')
-            ->getMyAgentBuyers($user);
+            ->getMyAgentBuyers($user->getMyCompany());
 
         //only handles data on POST
         $form->handleRequest($request);
@@ -410,13 +978,15 @@ class AgentController extends Controller
      */
     public function agentGrowersAction(Request $request = null)
     {
-        $agent = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
 
         $agentGrowers = $em->getRepository('AppBundle:GrowerAgent')
             ->findBy([
-                'agentListOwner' => $agent
+                'agent' => $agent
             ]);
         $growerIds = array();
 
@@ -461,14 +1031,21 @@ class AgentController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $growerExists = false;
+
+        $agent = $user->getMyCompany();
+
+        if ($this->agentGrowerExists($agent,$grower)){
+            $growerExists = true;
+        }
         $em = $this->getDoctrine()->getManager();
 
-        $products = $em->getRepository("AppBundle:Product")
+        $products = $em->getRepository("AppBundle:Direct")
             ->findAllMyActiveProductsOrderByDate($grower);
         $auctionProducts = $em->getRepository("AppBundle:Auction")
             ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
-        $nrproducts = $em->getRepository('AppBundle:Product')
+        $nrproducts = $em->getRepository('AppBundle:Direct')
             ->findMyActiveProducts($grower);
 
         $nrAuctionProducts = $em->getRepository('AppBundle:Auction')
@@ -479,23 +1056,28 @@ class AgentController extends Controller
             'products'=>$products,
             'nrProducts' => $nrproducts,
             'nrAuctionProducts' => $nrAuctionProducts,
-            'auctionProducts' => $auctionProducts
+            'auctionProducts' => $auctionProducts,
+            'growerExists' => $growerExists
         ]);
 
     }
+
+
 
     /**
      * @Route("/buyers",name="agent_buyer_list")
      */
     public function buyerListAction(Request $request = null)
     {
-        $agent = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
 
         $agentBuyers = $em->getRepository('AppBundle:BuyerAgent')
             ->findBy([
-                'agentListOwner' => $agent
+                'agent' => $agent
             ]);
         $buyerIds = array();
 
@@ -515,7 +1097,7 @@ class AgentController extends Controller
             ->andWhere('user.isActive = :isActive')
             ->setParameter('isActive', true)
             ->andWhere('user.companyType = :userType')
-            ->setParameter('userType', 'buyer');
+            ->setParameter('userType', 'Buyer');
 
         $query = $queryBuilder->getQuery();
         /**
@@ -541,7 +1123,7 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrAgentRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrBuyerRequests($user);
+            ->getNrBuyerRequests($user->getMyCompany());
         $totalRequests += $nrAgentRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -556,7 +1138,7 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrAgentRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrMyBuyerRequests($user);
+            ->getNrMyBuyerRequests($user->getMyCompany());
         $totalRequests += $nrAgentRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -573,7 +1155,7 @@ class AgentController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $query = $em->getRepository('AppBundle:BuyerAgent')
-            ->getMyBuyerRequests($user);
+            ->getMyBuyerRequests($user->getMyCompany());
         /**
          * @var $paginator \Knp\Component\Pager\Paginator
          */
@@ -599,8 +1181,8 @@ class AgentController extends Controller
             ->createQueryBuilder('user')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
-            ->andWhere('user.agentListOwner = :whoOwnsList')
-            ->setParameter('whoOwnsList', $user);
+            ->andWhere('user.listOwner = :whoOwnsList')
+            ->setParameter('whoOwnsList', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -623,14 +1205,14 @@ class AgentController extends Controller
     public function getGrowerRequestsAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $whoseListIds[]=array();
-        $whoseListIds[]=$user;
+        $whoseListIds[]=$user->getMyCompany();
         $em = $this->getDoctrine()->getManager();
         $queryBuilder = $em->getRepository('AppBundle:GrowerAgent')
             ->createQueryBuilder('user')
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.agent = :whoIsAgent')
-            ->setParameter('whoIsAgent', $user)
+            ->setParameter('whoIsAgent', $user->getMyCompany())
             ->andWhere('user.agentListOwner NOT IN (:agents)')
             ->setParameter('agents',$whoseListIds);
 
@@ -656,7 +1238,7 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrGrowerRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrMyGrowerRequests($user);
+            ->getNrMyGrowerRequests($user->getMyCompany());
         $totalRequests += $nrGrowerRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -672,7 +1254,7 @@ class AgentController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $whoseListIds[]=array();
-        $whoseListIds[]=$user;
+        $whoseListIds[]=$user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
         $queryBuilder = $em->getRepository('AppBundle:BuyerAgent')
@@ -680,7 +1262,7 @@ class AgentController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Requested')
             ->andWhere('user.agent = :whoIsAgent')
-            ->setParameter('whoIsAgent', $user)
+            ->setParameter('whoIsAgent', $user->getMyCompany())
             ->andWhere('user.listOwner NOT IN (:agents)')
             ->setParameter('agents',$whoseListIds);
 
@@ -705,21 +1287,21 @@ class AgentController extends Controller
      */
     public function buyerProfileAction(Request $request,Company $buyer)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
-        $billingAddress = $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($buyer);
-        $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($buyer);
-        if ($billingAddress) {
-            $billingAddress = $billingAddress[0];
+
+        $buyerExists = false;
+
+        if ($this->buyerAgentExists($agent,$buyer)){
+            $buyerExists=true;
         }
-        if ($shippingAddress) {
-            $shippingAddress = $shippingAddress[0];
-        }
+
         return $this->render('agent/buyers/details.htm.twig', [
             'buyer' => $buyer,
-            'billingAddress' => $billingAddress,
-            'shippingAddress' => $shippingAddress,
+            'buyerExists' => $buyerExists,
         ]);
     }
 
@@ -734,7 +1316,7 @@ class AgentController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Accepted')
             ->andWhere('user.agent = :whoIsAgent')
-            ->setParameter('whoIsAgent', $user);
+            ->setParameter('whoIsAgent', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -762,7 +1344,7 @@ class AgentController extends Controller
             ->andWhere('user.status = :isAccepted')
             ->setParameter('isAccepted', 'Accepted')
             ->andWhere('user.agent = :whoIsAgent')
-            ->setParameter('whoIsAgent', $user);
+            ->setParameter('whoIsAgent', $user->getMyCompany());
 
         $query = $queryBuilder->getQuery();
         /**
@@ -785,7 +1367,7 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrAgentRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrGrowerRequests($user);
+            ->getNrGrowerRequests($user->getMyCompany());
         $totalRequests += $nrAgentRequests;
 
         return $this->render(':partials:totalRequests.html.twig', [
@@ -799,10 +1381,10 @@ class AgentController extends Controller
         $totalRequests = 0;
         $em = $this->getDoctrine()->getManager();
         $nrGrowerRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrGrowerRequests($user);
+            ->getNrGrowerRequests($user->getMyCompany());
 
         $nrBuyerRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrBuyerRequests($user);
+            ->getNrBuyerRequests($user->getMyCompany());
 
         $totalRequests += $nrGrowerRequests;
         $totalRequests += $nrBuyerRequests;
@@ -821,10 +1403,10 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrBuyerRequests = $em->getRepository('AppBundle:BuyerAgent')
-            ->getNrMyBuyerRequests($user);
+            ->getNrMyBuyerRequests($user->getMyCompany());
 
         $nrGrowerRequests = $em->getRepository('AppBundle:GrowerAgent')
-            ->getNrMyGrowerRequests($user);
+            ->getNrMyGrowerRequests($user->getMyCompany());
 
         $totalRequests += $nrBuyerRequests;
         $totalRequests += $nrGrowerRequests;
@@ -844,7 +1426,7 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrProductRequests = $em->getRepository('AppBundle:Auction')
-            ->findMyActiveProductRequests($user);
+            ->findMyActiveProductRequests($user->getMyCompany());
 
         $totalRequests += $nrProductRequests;
 
@@ -860,7 +1442,7 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrOrderRequests = $em->getRepository('AppBundle:AuctionOrder')
-            ->findMyAuctionAgencyRequests($user);
+            ->findMyAuctionAgencyRequests($user->getMyCompany());
 
         $totalRequests += $nrOrderRequests;
 
@@ -876,10 +1458,10 @@ class AgentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrProductRequests = $em->getRepository('AppBundle:Auction')
-            ->findMyActiveProductRequests($user);
+            ->findMyActiveProductRequests($user->getMyCompany());
 
         $nrOrderRequests = $em->getRepository('AppBundle:AuctionOrder')
-            ->findMyAuctionAgencyRequests($user);
+            ->findMyAuctionAgencyRequests($user->getMyCompany());
 
         $totalRequests += $nrProductRequests;
         $totalRequests += $nrOrderRequests;
@@ -914,8 +1496,10 @@ class AgentController extends Controller
     /**
      * @Route("/recommend/buyer/{id}/auction/{auction}",name="agent-recommend-auction")
      */
-    public function recommendAuction(Company $buyer,Auction $auction){
-        $agent = $this->get('security.token_storage')->getToken()->getUser();
+    public function recommendAuction(Company $buyer,AuctionProduct $auction){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
 
         $myList = new MyList();
         $myList->setAuctionProduct($auction);
@@ -937,7 +1521,9 @@ class AgentController extends Controller
      * @Route("/recommendations/my",name="my-agent-recommendations")
      */
     public function myRecommendationsAction(){
-        $agent = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
 
         $em=$this->getDoctrine()->getManager();
 
@@ -1013,22 +1599,7 @@ class AgentController extends Controller
 
         return new Response(null,204);
     }
-    /**
-     * @Route("/products/assigned/{id}/reject",name="reject-product-assignment")
-     */
-    public function rejectProductAssignmentAction(Request $request,Auction $product){
-        $em=$this->getDoctrine()->getManager();
 
-        $product->setStatus("Agent Rejected");
-        $product->setIsActive(false);
-
-        $em->persist($product);
-        $em->flush();
-        //TODO Notify the User who Created the Product That their Assignment has been Rejected
-
-
-        return new Response(null,204);
-    }
     /**
      * @Route("/orders/assigned/{id}/ship",name="agent-ship-order")
      */
@@ -1161,7 +1732,7 @@ class AgentController extends Controller
 
 
         $messages = $em->getRepository("AppBundle:Notification")
-            ->getNotifications($user);
+            ->getNotifications($user->getMyCompany());
 
         return $this->render(':agent/messages:notification.htm.twig',[
             'messages'=> $messages
@@ -1169,12 +1740,127 @@ class AgentController extends Controller
     }
 
     /**
-     * @Route("/notifications/{id}/view",name="view-notification")
+     * @Route("/notifications/{id}/view",name="agent-view-notification")
      */
     public function viewNotificationAction(Request $request,Notification $notification){
+        $em = $this->getDoctrine()->getManager();
+
+        $notification->setIsRead(true);
+        $em->persist($notification);
+        $em->flush();
+
         return $this->render(':agent/messages:viewNotification.htm.twig',[
             'notification'=>$notification
         ]);
+    }
+    public function buyerAgentExists(Company $agent, Company $buyer){
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerAgent = $em->getRepository('AppBundle:BuyerAgent')
+            ->findOneBy([
+                'buyer'=>$buyer,
+                'agent'=>$agent,
+            ]);
+        if ($buyerAgent){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function agentGrowerExists(Company $agent, Company $grower){
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerAgent = $em->getRepository('AppBundle:GrowerAgent')
+            ->findOneBy([
+                'grower'=>$grower,
+                'agent'=>$agent,
+            ]);
+        if ($buyerAgent){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * @Route("/agent/accept/{id}/request",name="accept-assignment-request")
+     */
+    public function acceptAssignmentAction(Auction $product){
+
+        $product->setStatus("Accepted");
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($product);
+        $em->flush();
+
+        $this->sendAssignmentResponseNotification($product->getVendor(),"Accepted",$product);
+
+        return new Response(null, 204);
+
+    }
+    /**
+     * @Route("/agent/reject/{id}/request",name="reject-assignment-request")
+     */
+    public function rejectAssignmentAction(Auction $product){
+
+        $product->setStatus("Rejected");
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($product);
+        $em->flush();
+
+        $this->sendAssignmentResponseNotification($product->getVendor(),"Rejected",$product);
+
+        return new Response(null, 204);
+
+    }
+
+    public function sendAssignmentResponseNotification(Company $grower,$response,Auction $product){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message =$agent." has ".$response." your request for Product Assignment";
+        $message.="<p> The Agent <b>". $agent." </b> has ".$response." your request for Assignment of the Auction Product <b><a href='/grower/auction/product/".$product->getId()."/edit'>".$product->getProduct()->getTitle()."</a></b></p>";
+
+        $notification = new Notification();
+        $notification->setSubject("Product Assignment Status: ".$response);
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($grower);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+    public function sendAuctionResponseNotification(Company $grower,$response,Auction $product){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message =$agent." has ".$response." your shipped Consignment";
+        $message.="<p> The Agent <b>". $agent." </b> has ".$response." your shipped Consignment <b>".$product->getProduct()->getTitle()."</a></b> check the consignment for details.</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("Consignment Status: ".$response);
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($grower);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
     }
 
 }

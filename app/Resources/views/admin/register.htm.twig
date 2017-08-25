@@ -1,0 +1,47 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Administration register{% endblock %}
+{% block left %}
+{% endblock %}
+{% block body %}
+    <!-- ############ LAYOUT START-->
+    <div class="center-block w-xxl w-auto-xs p-y-md">
+        <div class="p-a-md box-color r box-shadow-z1 text-color m-a">
+            <div style="text-align: center" class="m-b text-sm">
+                <img  src="{{ asset('loko/images/PRISK_Logo_v_2.2_website.png') }}"/><br/><br/>
+                <strong>Request for an Admin Account</strong>
+            </div>
+            {{ form_start(registerForm) }}
+                <div class="md-form-group float-label">
+                    <div class="col-md-6"><strong>{{ form_row(registerForm.firstName, { 'attr': {'class': 'md-input'} }) }}</strong></div>
+                    <div class="col-md-6"><strong> {{ form_row(registerForm.lastName, { 'attr': {'class': 'md-input'} }) }}</strong></div>
+
+
+                </div>
+                <div class="md-form-group float-label">
+
+
+                </div>
+                <div class="md-form-group float-label">
+               <strong> {{ form_row(registerForm.email, { 'attr': {'class': 'md-input'} }) }}</strong>
+
+                </div>
+                <div class="md-form-group float-label">
+                    <strong>{{ form_row(registerForm.plainPassword.first, { 'label': 'Password','attr': {'class': 'md-input'} }) }}</strong>
+
+                </div>
+            <div class="md-form-group float-label">
+                <strong>{{ form_row(registerForm.plainPassword.second, { 'label': 'Repeat Password','attr': {'class': 'md-input'} }) }}</strong>
+
+            </div>
+
+                <button type="submit" class="btn primary btn-block p-x-md">Request Account</button>
+            {{ form_end(registerForm) }}
+        </div>
+        <div class="p-v-lg text-center">
+            <div class="m-b"><a ui-sref="access.forgot-password" href="{{ path('admin-login') }}" class="text-primary _600">Back</a></div>
+        </div>
+
+    </div>
+
+    <!-- ############ LAYOUT END-->
+{% endblock %}

@@ -2,9 +2,12 @@
 
 namespace AppBundle\Controller\Security;
 
+use AppBundle\Entity\User;
+use AppBundle\Form\AdministratorRegistrationForm;
 use AppBundle\Form\ChangePasswordFormType;
 use AppBundle\Form\ForgotPasswordFormType;
 use AppBundle\Form\LoginForm;
+use AppBundle\Form\ResetPasswordForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -22,7 +25,7 @@ class SecurityController extends Controller
         return $this->render('home.htm.twig');
     }
     /**
-     * @Route("/login/admin",name="admin_login")
+     * @Route("/login/admin",name="admin-login")
      *
      */
     public function loginAdminAction()
@@ -30,9 +33,9 @@ class SecurityController extends Controller
         $formArray = $this->processLogin();
 
         return $this->render(
-            'user/admin-login.htm.twig',
+            'admin/login.htm.twig',
             array(
-                'buyerform' => $formArray['form']->createView(),
+                'loginForm' => $formArray['form']->createView(),
                 'error' => $formArray['error'],
             ));
     }
@@ -48,7 +51,7 @@ class SecurityController extends Controller
         return $this->render(
             'user/login.htm.twig',
             array(
-                'buyerform' => $formArray['form']->createView(),
+                'loginform' => $formArray['form']->createView(),
                 'error' => $formArray['error'],
             ));
     }
@@ -178,6 +181,119 @@ class SecurityController extends Controller
     public function logoutAction(){
         throw new \Exception('This should not be reached');
     }
+
+    /**
+     * @Route("/account/admin/{id}/activate",name="user-activate-account")
+     */
+    public function adminFirstLoginAction(Request $request,User $user){
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ResetPasswordForm::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $user=$form->getData();
+            $user->setIsPasswordCreated(true);
+            $em->persist($user);
+            $em->flush();
+
+            return $this->render('user/adminAccountUpdated.htm.twig');
+        }
+
+        if ($user->getIsPasswordCreated()){
+            $activated = true;
+        }else{
+            $activated = false;
+        }
+
+        return $this->render('user/adminActivate.htm.twig',[
+            'user'=>$user,
+            'activationForm'=>$form->createView(),
+            'isActivated'=>$activated
+        ]);
+    }
+    /**
+     * @Route("/account/{code}/reset-password",name="user-reset-password")
+     */
+    public function resetPasswordAction(Request $request,$code){
+        $em = $this->getDoctrine()->getManager();
+
+        $user = $em->getRepository("AppBundle:User")
+            ->findOneBy([
+                'passwordResetToken'=>$code
+            ]);
+
+        $form = $this->createForm(ResetPasswordForm::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $user=$form->getData();
+            $user->setIsResetTokenValid(false);
+            $em->persist($user);
+            $em->flush();
+
+            return $this->render('user/passwordUpdated.htm.twig');
+        }
+
+        if ($user->getIsResetTokenValid()){
+            $validToken = true;
+        }else{
+            $validToken = false;
+        }
+
+        return $this->render('user/reset-password.htm.twig',[
+            'user'=>$user,
+            'passwordResetForm'=>$form->createView(),
+            'isTokenValid'=>$validToken
+        ]);
+    }
+
+
+    /**
+     * @Route("/account/request",name="request-admin-account")
+     */
+    public function requestAccountAction(Request $request){
+
+        $em = $this->getDoctrine()->getManager();
+
+        $user = new User();
+        $user->setIsActive(false);
+        $user->setRoles(["ROLE_ADMIN"]);
+        $user->setIsPasswordCreated(false);
+        $user->setIsMainAccount(false);
+        $myCompany = $em->getRepository("AppBundle:Company")
+            ->findOneBy(
+                [
+                    'companyName'=>'Iflora'
+                ]
+            );
+        $user->setMyCompany($myCompany);
+
+        $form = $this->createForm(AdministratorRegistrationForm::class,$user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
+
+            $em->persist($user);
+            $em->flush();
+            return $this->redirectToRoute("admin-account-requested");
+        }
+        return $this->render(':admin:register.htm.twig',[
+            'registerForm'=>$form->createView()
+        ]);
+
+    }
+    /**
+     * @Route("/account/admin/requested",name="admin-account-requested")
+     */
+    public function accountCreatedAction(Request $request){
+        return $this->render(':admin:created.htm.twig');
+    }
+
 
     //Handle the Login Procedures
     protected function processLogin(){

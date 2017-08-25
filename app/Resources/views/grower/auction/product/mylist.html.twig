@@ -36,15 +36,13 @@
     </div>
     <div class="columns">
         <div class="column main">
-
+            <div class="modes">
+                <strong id="modes-label" class="modes-label">View as</strong>
+                <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
+                    <span>Grid</span> </strong>
+            </div>
             <div class="toolbar toolbar-products">
-                <div class="modes">
-                    <strong id="modes-label" class="modes-label">View as</strong>
-                    <strong class="modes-mode active mode-grid" data-value="grid" title="Grid">
-                        <span>Grid</span> </strong>
-                    <a id="mode-list" aria-labelledby="modes-label mode-list" class="modes-mode mode-list"
-                       data-role="mode-switcher" data-value="list" href="#" title="List">
-                        <span>List</span> </a></div>
+
                 <p id="toolbar-amount" class="toolbar-amount">Items
                     <span class="toolbar-number">1</span>-<span class="toolbar-number">9</span>
                     of <span class="toolbar-number">{{ products.getTotalItemCount }}</span></p>
@@ -67,17 +65,17 @@
             </div>
             <div class="products wrapper list products-list">
                 <ol class="products list items product-items">
-                    {% for product in products %}
-                        <li class="item product product-item">
-                            <div class="product-item-info" data-container="product-grid">
+                    {% for auction in products %}
+                        <li class="item product product-item" style="float: left;max-width:450px">
+                            <div class="product-item-info" data-container="product-grid" style="">
                                 <div class=" product-item-images">
-                                    <a href="/grower/auction/product/{{ product.id }}/edit"
+                                    <a href="{{ path('grower_auction_product_edit',{'id':auction.id}) }}"
                                        class="product photo product-item-photo" tabindex="-1">
 
 <span class="product-image-container" style="width:350px;">
     <span class="product-image-wrapper" style="padding-bottom: 126%;">
-        <img class="product-image-photo" src="{{ asset('images/products/') }}{{ product.imageName }}" width="350"
-             height="441" alt="{{ product.title }}"></span>
+        <img class="product-image-photo" src="{{ asset('images/products/') }}{{ auction.product.mainImage }}" width="350"
+             height="441" alt="{{ auction.product.title }}"></span>
 </span>
                                     </a>
                                 </div>
@@ -86,58 +84,75 @@
                                     <div class="content-name">
                                         <strong class="product name product-item-name">
                                             <a class="product-item-link"
-                                               href="/grower/auction/product/{{ product.id }}/edit">
-                                                {{ product.title }}                            </a>
+                                               href="{{ path('grower_auction_product_edit',{'id':auction.id}) }}">
+                                                {{ auction.product.title }}                            </a>
                                         </strong>
 
-                                        <a href="#" class="wishlist" title="WishList" aria-label="WishList"
-                                           data-post="" data-action="add-to-wishlist" role="button">
-                                            <span>WishList</span>
-                                        </a>
+
                                     </div>
-                                    <!--
-                                                                            <div class="product-reviews-summary" itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating">
-                                                                                <div class="rating-summary">
-                                                                                    <span class="label"><span>Rating:</span></span>
-                                                                                    <div class="rating-result" title="80%">
-                                                                                        <span style="width:80%"><span><span itemprop="ratingValue">80</span>% of <span itemprop="bestRating">100</span></span></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="reviews-actions">
-                                                                                    <a class="action view" href="http://plazathemes.com/demo/presiden/english11/orion-two-tone-fitted.html#reviews"><span itemprop="reviewCount">1</span>&nbsp;<span>Review</span></a>
-                                                                                    <a class="action add" href="http://plazathemes.com/demo/presiden/english11/orion-two-tone-fitted.html#review-form">Add Your Review</a>
-                                                                                </div>
-                                                                            </div> -->
+
                                     <div class="price-box price-final_price" data-role="priceBox"
                                          data-product-id="63">
 
 
 <span class="price-container price-final_price tax weee">
-        <span data-price-amount="{{ product.price }}" data-price-type="finalPrice" class="price-wrapper ">
-        <span class="price">{{ product.currency }} {{ product.price }}</span>    </span>
+        <span  class="price-wrapper ">
+        <span class="price">{{ app.user.myCompany.currency }} {{ auction.pricePerStem  }}</span>    </span>
         </span>
+                                        <table class="attributes">
+                                            <tr>
+                                                <td><strong>Stock:</strong> {{ auction.numberOfStems | number_format }} </td>
 
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Quality:</strong> {{ auction.quality }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Selling Agent:</strong>
+                                                    {% if auction.sellingAgent %}
+                                                    {{ auction.sellingAgent.companyName }}
+                                                {% else %}
+                                                    Unassigned
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Status:</strong>
+                                                    {% if auction.sellingAgent %}
+
+                                                        {% if auction.status =="Active"  %}
+                                                            <div class="alert alert-success" style="display:inline-block;text-align:center;width:150px;padding:5px">{{ auction.status }}</div>
+                                                        {% elseif auction.status =="Rejected" %}
+                                                            <div class="alert alert-danger" style="display:inline-block;text-align:center;width:150px;padding:5px">{{ auction.status }}</div>
+                                                        {% else %}
+                                                            <div class="alert alert-warning" style="display:inline-block;text-align:center;width:150px;padding:5px">{{ auction.status }}</div>
+                                                            {% endif %}
+                                                    {% else %}
+                                                        <div class="alert alert-warning" style="display:inline-block;width:150px;text-align:center;padding:5px">{{ auction.status }}</div>
+                                                    {% endif %}
+                                                    {% if auction.status is null %}
+                                                        Pending Agent
+                                                    {% endif %}
+                                                     </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                     <div class="price-box price-final_price" data-role="priceBox" data-product-id="63">
                                             <span class="price-container price-final_price tax weee">
-                                                    <span data-price-amount="{{ product.price }}"
-                                                          data-price-type="finalPrice" class="price-wrapper ">
-                                                    <span class="price"
-                                                          style="color: #666;">Agent: {{ product.agent.firstName }} {{ product.agent.lastName }}</span>    </span>
-                                             </span>
+                                                    <span  class="price-wrapper ">
+                                                </span>
 
                                     </div>
 
                                     <div class="product description product-item-description">
-                                        <p>{{ product.summary }}</p>
-                                        <a href="/grower/auction/{{ product.id }}" title="{{ product.id }}"
-                                           class="action more">Learn More</a>
+
+
                                     </div>
 
                                     <div class="product-item-actions">
                                         <div class="add-to-cart-primary">
                                             <a title="Edit Product" class="action tocart primary"
-                                               href="/grower/auction/product/{{ product.id }}/edit">
+                                               href="{{ path('grower_auction_product_edit',{'id':auction.id}) }}">
                                                 <span><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Product</span>
                                             </a>
 

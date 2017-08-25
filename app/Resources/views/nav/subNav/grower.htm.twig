@@ -14,13 +14,14 @@
     <strong class="label" style="color:black;"><span>Product Management<i
                     style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>
     <ul class="header links">
-        <li><a href="{{ path('grower_product_new') }}">New Product</a></li>
+        <li><a href="{{ path('grower_product_new') }}">New Rose</a></li>
+        <li><a href="{{ path('grower_direct_new') }}">Add to Market</a></li>
         <li><a href="{{ path('grower_auction_new') }}">Add to Auction</a></li>
         <li><a href="{{ path('grower_order_list') }}">Received Orders</a></li>
     </ul>
 </div>
 <div class="my-acount">
-    <strong class="label" style="color:black;"><span>My Breeders / Agents<i
+    <strong class="label" style="color:black;"><span>My Breeders / Buyers / Agents<i
                     style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>
     <ul class="header links">
         <li><a href="{{ path('my_breeder_list') }}">My Breeders</a></li>
@@ -37,7 +38,7 @@
     <ul class="header links" style="left:-100px;margin-top:5px">
         <li class="top">Messages</li>
         <li><a href="{{ path('grower-inbox') }}">Inbox ( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadMessages')) }} )</a></li>
-        <li><a href="{{ path('breeder_requests') }}">Notifications( {{ render(controller('AppBundle:Grower/Grower:getTotalBreederRequests')) }} )</a></li>
+        <li><a href="{{ path('grower-notifications') }}">Notifications( {{ render(controller('AppBundle:Messaging/Messaging:getTotalUnreadNotifications')) }} )</a></li>
     </ul>
 </div>
 <div class="my-acount" style="margin-right: 60px;height:20px">

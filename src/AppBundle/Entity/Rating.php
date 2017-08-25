@@ -19,8 +19,8 @@ class Rating
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="string")
      */
     private $id;
     /**
@@ -44,9 +44,17 @@ class Rating
      */
     private $review;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product",inversedBy="reviews")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Direct",inversedBy="reviews")
      */
     private $rose;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Auction",inversedBy="reviews")
+     */
+    private $auction;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\AuctionProduct",inversedBy="reviews")
+     */
+    private $auctionProduct;
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
@@ -55,10 +63,7 @@ class Rating
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      */
     private $agent;
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Auction")
-     */
-    private $auctionProduct;
+
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      */
@@ -161,21 +166,7 @@ class Rating
         $this->vendor = $vendor;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAuctionProduct()
-    {
-        return $this->auctionProduct;
-    }
 
-    /**
-     * @param mixed $auctionProduct
-     */
-    public function setAuctionProduct($auctionProduct)
-    {
-        $this->auctionProduct = $auctionProduct;
-    }
 
     /**
      * @return mixed
@@ -255,6 +246,38 @@ class Rating
     public function setAgent($agent)
     {
         $this->agent = $agent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAuction()
+    {
+        return $this->auction;
+    }
+
+    /**
+     * @param mixed $auction
+     */
+    public function setAuction($auction)
+    {
+        $this->auction = $auction;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAuctionProduct()
+    {
+        return $this->auctionProduct;
+    }
+
+    /**
+     * @param mixed $auctionProduct
+     */
+    public function setAuctionProduct($auctionProduct)
+    {
+        $this->auctionProduct = $auctionProduct;
     }
 
 }

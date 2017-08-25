@@ -63,14 +63,17 @@
                 <table id="shopping-cart-table" class="cart items data table">
                     <thead>
                     <tr>
+                        <th></th>
                         <th class="col item" scope="col"><span>Buyer</span></th>
-                        <th>&nbsp;</th>
+                        <th>Rating</th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
                     <tbody class="cart item">
                     {% for buyer in buyers %}
                         <tr class="item-info js-buyer-item">
+                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
+                                     src="{{ asset('images/products/') }}{{ buyer.logoName }}"></td>
                             <td data-th="Item" class="col item">
 
                     <span class="product-image-container" style="width:165px;">
@@ -135,6 +138,10 @@
                 </span>
                             </td>
                         </tr>
+                        {% else %}
+                        <td colspan="3" style="text-align: center">
+                            <p>There are no available Buyers at this time</p>
+                        </td>
                     {% endfor %}
                     </tbody>
                 </table>

@@ -1,69 +1,14 @@
-AppBundle\Entity\Company:
-    company{1..30}:
-        companyName: '<company()>'
-        companyType: '<userType()>'
-        isActive: '<boolean(95)>'
-
-AppBundle\Entity\User:
-    user{1..30}:
-        firstName: "<firstName($gender = null|'male'|'female')>"
-        lastName: '<lastName()>'
-        email: '<email()>'
-        plainPassword: iliketurtles
-        roles: '<userRole()>'
-        userType: '<userType()>'
-        isActive: '<boolean(95)>'
-        myCompany: '@company*'
-
-AppBundle\Entity\Category:
-    category{1..10}:
-        title: '<category()>'
-        description: '<sentence()>'
-        imageUrl: null
-        isActive: '<boolean(75)>'
-        createdAt: null
-        updatedAt: null
-
-AppBundle\Entity\Product:
-    product{1..20}:
-        title: '<product()>'
-        description: '<sentence()>'
-        summary:    '<sentence()>'
+AppBundle\Entity\Direct:
+    direct{1..30}:
+        product: 'dffa9f2d-80ca-11e7-9f08-083e8ec45f2c'
+        vendor: 'd29bd64e-7dbf-11e7-8c8b-a2291047fa21'
+        addedBy: 'cf01e9e9-7dc0-11e7-8c8b-a2291047fa21'
+        numberOfStems: '<numberBetween($min = 1000, $max = 9000)>'
+        minimumOrder:  '<numberBetween($min = 200, $max = 400)>'
+        stemsPerBox:  '30'
+        quality: 'Excellent'
         currency: '$'
-        price:      '<randomFloat($nbMaxDecimals = 2, $min = 10, $max = 100)>'
-        isActive: '<boolean(75)>'
-        isAuthorized: '<boolean(75)>'
-        isFeatured: '<boolean(50)>'
-        imageName: '<imageurl()>'
-        isOnSale: '<boolean(10)>'
-        isActive: '<boolean(75)>'
-        isSeedling: '<boolean(25)>'
-        color:  '<color()>'
-        season: '<season()>'
-        vaselife: '<numberBetween($min = 10, $max = 100)>'
-        stemLength: '<numberBetween($min = 10, $max = 100)>'
-        headsize:   '<numberBetween($min = 10, $max = 100)>'
-        quality:    '<quality()>'
-        category:   '@category*'
-        user:       '@user*'
-        vendor:     '@company*'
-        createdAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"
-        updatedAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"
-
-AppBundle\Entity\Auction:
-    auction{1..20}:
-        title: '<product()>'
-        description: '<sentence()>'
-        summary:    '<sentence()>'
-        quantity: '<numberBetween($min = 1000, $max = 9000)>'
-        currency: '$'
-        bundlePrice:   '<randomFloat($nbMaxDecimals = 2, $min = 1000, $max = 10000)>'
-        finalPrice:   '<randomFloat($nbMaxDecimals = 2, $min = 1000, $max = 10000)>'
-        isActive: '<boolean(75)>'
-        isAuthorized: '<boolean(75)>'
-        imageName: '<imageurl()>'
-        user:       '@user*'
-        agent:      '@user*'
-        vendor:     '@company*'
-        createdAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"
-        updatedAt: "<dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())>"
+        pricePerStem: '29.99'
+        announceToBuyers: '<boolean(35)>'
+        areSamplesAvailable: '<boolean(75)>'
+        createdAt: "<dateTimeThisMonth($max = 'now', $timezone = date_default_timezone_get())>"

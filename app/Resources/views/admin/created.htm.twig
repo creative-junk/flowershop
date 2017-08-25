@@ -1,0 +1,24 @@
+{% extends 'adminBase.htm.twig' %}
+{% block title %}Administration Login{% endblock %}
+{% block left %}
+{% endblock %}
+{% block body %}
+    <!-- ############ LAYOUT START-->
+    <div class="center-block w-xxl w-auto-xs p-y-md">
+        <div class="navbar">
+        </div>
+        <div class="p-a-md box-color r box-shadow-z1 text-color m-a">
+            <div class="m-b text-sm">
+                Account Requested
+            </div>
+                <div class="md-form-group float-label">
+                    A request to create your Administrator Account has been noted. We will email you when the Account has been Approved.
+                </div>
+        </div>
+        <div class="p-v-lg text-center">
+            <div class="m-b"><a ui-sref="access.forgot-password" href="{{ path('admin-login') }}" class="text-primary _600">Back</a></div>
+        </div>
+    </div>
+
+    <!-- ############ LAYOUT END-->
+{% endblock %}

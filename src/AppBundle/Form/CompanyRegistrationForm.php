@@ -33,9 +33,12 @@ class CompanyRegistrationForm extends AbstractType
             ])
             ->add('currency',ChoiceType::class,array(
                 'choices' => array(
-                    'US Dollars - $'=>'$',
-                    'Kenya Shillings - Ksh'=>'Ksh',
-                    'Euros - Eur'=>'Eur',
+                    'US Dollars - $'=>'USD',
+                    'Kenya Shillings - Ksh'=>'KES',
+                    'Euros - Eur'=>'EUR',
+                    'GBP Pounds' =>'GBP',
+                    'Canadian Dollar' => 'CAD',
+                    'Japanese Yen' => 'JPY'
                 ),
                 'placeholder' => 'Please Select',
             ))
