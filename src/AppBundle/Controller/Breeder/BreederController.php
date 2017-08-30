@@ -17,6 +17,7 @@ use AppBundle\Entity\Direct;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
+use AppBundle\Entity\PayOptions;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\ShippingAddress;
 use AppBundle\Entity\Thread;
@@ -25,9 +26,12 @@ use AppBundle\Entity\UserOrder;
 use AppBundle\Form\AccountFormType;
 use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\BillingAddressFormType;
+use AppBundle\Form\BuyerCompanyForm;
 use AppBundle\Form\DirectProductForm;
 use AppBundle\Form\EditDirectProductForm;
+use AppBundle\Form\GalleryForm;
 use AppBundle\Form\MessageReplyForm;
+use AppBundle\Form\PayOptionType;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\SeedlingFormType;
 use AppBundle\Form\ShippingAddressFormType;
@@ -71,6 +75,127 @@ class BreederController extends Controller
             'nrMySeedlings' => $nrMyProducts
         ]);
 
+    }
+
+    /**
+     * @Route("/update/{id}",name="breeder-update-profile")
+     */
+    public function updateProfileAction(Request $request,Company $company){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $company->setIsFirstLogin(false);
+
+        $form = $this->createForm(BuyerCompanyForm::class,$company);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $company = $form->getData();
+
+            $em->persist($company);
+            $em->flush();
+
+            return $this->redirectToRoute("breeder_dashboard");
+        }
+
+        return $this->render("companyProfile/breeder.htm.twig",[
+            'form'=>$form->createView()
+        ]);
+
+
+    }
+    /**
+     * @Route("/update/gallery/{id}",name="breeder-update-gallery")
+     */
+    public function updateGalleryAction(Request $request,Company $company){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $gallery = $em->getRepository("AppBundle:Gallery")
+            ->findOneBy([
+                'myCompany'=>$company->getId()
+            ]);
+
+        $form = $this->createForm(GalleryForm::class,$gallery);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $company = $form->getData();
+
+            $em->persist($company);
+            $em->flush();
+
+            return $this->redirectToRoute("my-breeder-profile");
+        }
+
+        return $this->render("companyProfile/gallery.htm.twig",[
+            'form'=>$form->createView(),
+            'gallery'=>$gallery
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/payment-options/add",name="breeder-add-payment-option")
+     */
+    public function paymentOptionsAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $company = $user->getMyCompany();
+
+        $paymentOption = new PayOptions();
+        $paymentOption->setMyCompany($company);
+
+        $form = $this->createForm(PayOptionType::class,$paymentOption);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+            $paymentOption = $form->getData();
+
+            $em->persist($paymentOption);
+            $em->flush();
+
+            return $this->redirectToRoute('my-breeder-profile');
+
+        }
+        return $this->render("companyProfile/payment.htm.twig",[
+            'form'=>$form->createView(),
+        ]);
+    }
+    /**
+     * @Route("/payment-options/{id}/update",name="breeder--update-payment-option")
+     */
+    public function updatePaymentOptionsAction(Request $request,PayOptions $paymentOption){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $company = $user->getMyCompany();
+
+        $form = $this->createForm(PayOptionType::class,$paymentOption);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+            $paymentOption = $form->getData();
+
+            $em->persist($paymentOption);
+            $em->flush();
+
+            return $this->redirectToRoute('my-breeder-profile');
+
+        }
+        return $this->render("companyProfile/updatePayment.htm.twig",[
+            'form'=>$form->createView(),
+        ]);
     }
     /**
      * @Route("/account",name="my-breeder-profile")
@@ -631,7 +756,7 @@ class BreederController extends Controller
 
         $products = $em->getRepository("AppBundle:Direct")
             ->findAllMyActiveProductsOrderByDate($grower);
-        $auctionProducts = $em->getRepository("AppBundle:Auction")
+        $auctionProducts = $em->getRepository("AppBundle:AuctionProduct")
             ->findAllMyActiveAuctionProductsOrderByDate($grower);
 
         $nrproducts = $em->getRepository('AppBundle:Direct')

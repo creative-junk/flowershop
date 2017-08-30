@@ -70,6 +70,7 @@
                     <tr>
                         <th></th>
                         <th class="col item" scope="col"><span>Agent</span></th>
+                        <th class="col item" scope="col"><span>Country</span></th>
                         <th class="col subtotal" scope="col"><span>Rating</span></th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
@@ -77,8 +78,23 @@
                     <tbody class="cart item">
                     {% for agent in agents %}
                         <tr class="item-info js-agent-item">
-                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                     src="{{ asset('images/products/') }}{{ agent.logoName }}"></td>
+                            <td>
+                                {% if agent.gallery %}
+                                    {% if agent.gallery.logo %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ agent.gallery.logo.imageName }}">
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+                                {% else %}
+                                    <img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/avatar.jpg') }}">
+
+                                {% endif %}
+
+                            </td>
                             <td data-th="Item" class="col item">
 
                                 <span class="product-image-container" style="">
@@ -94,7 +110,7 @@
                                 </span>
 
                             </td>
-
+                            <td>{{ agent.country }}</td>
                             <td class="col subtotal" data-th="Subtotal">
                                 {% if agent.reviews | length > 0 %}
 

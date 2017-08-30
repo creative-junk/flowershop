@@ -70,7 +70,8 @@
                     <tr>
                         <th></th>
                         <th class="col item" scope="col"><span>Agent</span></th>
-                        <th></th>
+                        <th>Country</th>
+                        <th>Rating</th>
                         <th class="col price" scope="col"><span>Connected Since</span></th>
 
 
@@ -79,8 +80,23 @@
                     <tbody class="cart item">
                     {% for growerAgent in growerAgents %}
                         <tr class="item-info js-agent-item">
-                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                     src="{{ asset('images/products/') }}{{ growerAgent.agent.logoName }}"></td>
+                            <td>
+                                {% if growerAgent.agent.gallery %}
+                                    {% if growerAgent.agent.gallery.logo %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ growerAgent.agent.gallery.logo.imageName }}">
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+                                {% else %}
+                                    <img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/avatar.jpg') }}">
+
+                                {% endif %}
+
+                            </td>
                             <td data-th="Item" class="col item">
 
                     <span class="product-image-container" style="width:165px;">
@@ -95,6 +111,7 @@
 
                     </span>
                             </td>
+                            <td>{{ growerAgent.agent.country }}</td>
                             <td class="col subtotal" data-th="Subtotal">
                                 {% if growerAgent.agent.reviews | length > 0 %}
 

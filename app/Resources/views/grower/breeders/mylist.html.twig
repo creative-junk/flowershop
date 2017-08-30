@@ -69,6 +69,8 @@
                     <tr>
                         <th></th>
                         <th class="col item" scope="col"><span>Breeder</span></th>
+                        <th class="col price" scope="col"><span>Country</span></th>
+
                         <th class="col price" scope="col"><span>Rating</span></th>
 
                         <th class="col price" scope="col"><span>Connected Since</span></th>
@@ -79,8 +81,23 @@
                     <tbody class="cart item">
                     {% for growerBreeder in growerBreeders %}
                         <tr class="item-info js-breeder-item">
-                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                     src="{{ asset('images/products/') }}{{ growerBreeder.breeder.logoName }}"></td>
+                            <td>
+                                {% if growerBreeder.breeder.gallery %}
+                                    {% if growerBreeder.breeder.gallery.logo %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ growerBreeder.breeder.gallery.logo.imageName }}">
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+                                {% else %}
+                                    <img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/avatar.jpg') }}">
+
+                                {% endif %}
+
+                            </td>
                             <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
@@ -95,6 +112,7 @@
                     </span>
 
                                                            </td>
+                            <td>{{ growerBreeder.breeder.country }}</td>
                             <td class="col subtotal" data-th="Subtotal">
                                 {% if growerBreeder.breeder.reviews | length > 0 %}
 

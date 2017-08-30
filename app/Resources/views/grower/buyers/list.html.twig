@@ -65,7 +65,8 @@
                     <tr>
                         <th></th>
                         <th class="col item" scope="col"><span>Buyer</span></th>
-                        <th>&nbsp;</th>
+                        <th>Country</th>
+                        <th>Rating</th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
 
                     </tr>
@@ -73,8 +74,23 @@
                     <tbody class="cart item">
                     {% for buyer in buyers %}
                         <tr class="item-info js-buyer-item">
-                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                     src="{{ asset('images/products/') }}{{ buyer.logoName }}"></td>
+                            <td>
+                                {% if buyer.gallery %}
+                                    {% if buyer.gallery.logo %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ buyer.gallery.logo.imageName }}">
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+                                {% else %}
+                                    <img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/avatar.jpg') }}">
+
+                                {% endif %}
+
+                            </td>
                             <td data-th="Item" class="col item">
 
                     <span class="product-image-container" style="">
@@ -89,6 +105,7 @@
 
                     </span>
                             </td>
+                            <td>{{ buyer.country }}</td>
                             <td class="col subtotal" data-th="Subtotal">
                                 {% if buyer.reviews | length > 0 %}
 
@@ -117,7 +134,8 @@
                                     {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                     {{ avgrating | rating(5, "fa-lg")   }}
-
+                                {% else %}
+                                    {{ 0 | rating(5, "fa-lg")   }}
                                 {% endif %}
                             </td>
 

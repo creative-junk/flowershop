@@ -66,15 +66,31 @@
                     <tr>
                         <th></th>
                         <th class="col item" scope="col"><span>Breeder</span></th>
-                        <th>&nbsp;</th>
+                        <th>Country</th>
+                        <th>Rating</th>
                         <th class="col subtotal" scope="col"><span>Request</span></th>
                     </tr>
                     </thead>
                     <tbody class="cart item">
                     {% for breeder in breeders %}
                         <tr class="item-info js-breeder-item">
-                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                     src="{{ asset('images/products/') }}{{ breeder.logoName }}"></td>
+                            <td>
+                                {% if breeder.gallery %}
+                                    {% if breeder.gallery.logo %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ breeder.gallery.logo.imageName }}">
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+                                {% else %}
+                                    <img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/avatar.jpg') }}">
+
+                                {% endif %}
+
+                            </td>
                             <td data-th="Item" class="col item">
                     <span class="product-image-container" style="">
                     <strong class="product-item-name">
@@ -89,6 +105,7 @@
                     </span>
 
                                                            </td>
+                            <td>{{ breeder.country }}</td>
 
                             <td class="col subtotal" data-th="Subtotal">
                                 {% if breeder.reviews | length > 0 %}
@@ -118,7 +135,8 @@
                                     {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                     {{ avgrating | rating(5, "fa-lg")   }}
-
+                                {% else %}
+                                    {{ 0 | rating(5, "fa-lg")   }}
                                 {% endif %}
                             </td>
 

@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{% import ":Macros:form_elements.htm.twig" as formElements %}
+{% block title %} Update payment Option {% endblock %}
+
+{% block body %}
+    <style>
+        .g-recaptcha{
+            margin-left: 27%;
+        }
+    </style>
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Update Payment Option</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="#" title="Go to Home Page">
+                        Home </a>
+                </li>
+
+                <li class="item category121">
+                    <strong>Update payment Option</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">Update Payment Option</span></h1>
+        </div>
+
+        <div class="columns">
+            <div class="column main">
+                {{ form_start(form) }}
+                <fieldset class="fieldset create info">
+                    <legend class="legend"><span>Payment Option Information</span></legend>
+                    <br>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.paymentMethod) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.methodClientKey) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.methodServerKey) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.methodProductionId) }}
+                    </div>
+
+                </fieldset>
+
+                <div class="actions-toolbar">
+                    <div class="secondary">
+                        <button type="submit" class="action submit primary" title="Update Payment Option" formnovalidate>
+                            <span>Update</span></button>
+                    </div>
+
+                </div>
+                {{ form_end(form) }}
+
+
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

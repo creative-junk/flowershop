@@ -24,6 +24,7 @@ use AppBundle\Entity\GrowersList;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
+use AppBundle\Entity\PayOptions;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\ShippingAddress;
 use AppBundle\Entity\Thread;
@@ -37,12 +38,16 @@ use AppBundle\Form\AuctionBuyForm;
 use AppBundle\Form\AuctionPaymentProofForm;
 use AppBundle\Form\BillingAddressFormType;
 use AppBundle\Form\BuyerAgentFormType;
+use AppBundle\Form\BuyerCompanyForm;
 use AppBundle\Form\CheckoutForm;
+use AppBundle\Form\CompanyRegistrationForm;
 use AppBundle\Form\FilterFormType;
+use AppBundle\Form\GalleryForm;
 use AppBundle\Form\MessageFormType;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PaymentMethodFormType;
 use AppBundle\Form\PaymentProofFormType;
+use AppBundle\Form\PayOptionType;
 use AppBundle\Form\ShippingAddressFormType;
 use AppBundle\Form\ShippingMethodFormType;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -64,9 +69,136 @@ class HomeController extends Controller
      */
     public function userHomeAction()
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+
+        if ($buyer->getIsFirstLogin()&&$user->getIsMainAccount()){
+            return $this->redirectToRoute("update-profile",['id'=>$buyer->getId()]);
+        }
+
         return $this->render('home/home.htm.twig');
     }
 
+    /**
+     * @Route("/update/{id}",name="update-profile")
+     */
+    public function updateProfileAction(Request $request,Company $company){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $company->setIsFirstLogin(false);
+
+        $form = $this->createForm(BuyerCompanyForm::class,$company);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $company = $form->getData();
+
+            $em->persist($company);
+            $em->flush();
+
+            return $this->redirectToRoute("home");
+        }
+
+        return $this->render("companyProfile/buyer.htm.twig",[
+            'form'=>$form->createView()
+        ]);
+
+
+    }
+    /**
+     * @Route("/update/gallery/{id}",name="update-gallery")
+     */
+    public function updateGalleryAction(Request $request,Company $company){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $gallery = $em->getRepository("AppBundle:Gallery")
+            ->findOneBy([
+                'myCompany'=>$company->getId()
+            ]);
+
+        $form = $this->createForm(GalleryForm::class,$gallery);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $company = $form->getData();
+
+            $em->persist($company);
+            $em->flush();
+
+            return $this->redirectToRoute("my-buyer-profile");
+        }
+
+        return $this->render("companyProfile/gallery.htm.twig",[
+            'form'=>$form->createView(),
+            'gallery'=>$gallery
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/payment-options/add",name="add-payment-option")
+     */
+    public function paymentOptionsAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $company = $user->getMyCompany();
+
+        $paymentOption = new PayOptions();
+        $paymentOption->setMyCompany($company);
+
+        $form = $this->createForm(PayOptionType::class,$paymentOption);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+            $paymentOption = $form->getData();
+
+            $em->persist($paymentOption);
+            $em->flush();
+
+            return $this->redirectToRoute('my-buyer-profile');
+
+        }
+        return $this->render("companyProfile/payment.htm.twig",[
+            'form'=>$form->createView(),
+        ]);
+    }
+    /**
+     * @Route("/payment-options/{id}/update",name="update-payment-option")
+     */
+    public function updatePaymentOptionsAction(Request $request,PayOptions $paymentOption){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $company = $user->getMyCompany();
+
+        $form = $this->createForm(PayOptionType::class,$paymentOption);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+            $paymentOption = $form->getData();
+
+            $em->persist($paymentOption);
+            $em->flush();
+
+            return $this->redirectToRoute('my-buyer-profile');
+
+        }
+        return $this->render("companyProfile/updatePayment.htm.twig",[
+            'form'=>$form->createView(),
+        ]);
+    }
     /**
      * @Route("/account",name="my-buyer-profile")
      */

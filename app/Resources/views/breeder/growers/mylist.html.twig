@@ -111,8 +111,10 @@
                         <tr>
                             <th></th>
                             <th class="col item" scope="col"><span>Grower</span></th>
+                            <th>Country</th>
+                            <th>Rating</th>
                             <th class="col price" scope="col"><span>Status</span></th>
-                            <th></th>
+
                             <th class="col subtotal" scope="col"><span>Connected On</span></th>
 
                         </tr>
@@ -120,8 +122,23 @@
                         <tbody class="cart item">
                         {% for breederGrower in breederGrowers %}
                             <tr class="item-info js-agent-item">
-                                <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                         src="{{ asset('images/products/') }}{{ breederGrower.grower.logoName }}"></td>
+                                <td>
+                                    {% if breederGrower.grower.gallery %}
+                                        {% if breederGrower.grower.gallery.logo %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/products/') }}{{ breederGrower.grower.gallery.logo.imageName }}">
+                                        {% else %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/avatar.jpg') }}">
+
+                                        {% endif %}
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+
+                                </td>
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="">
                     <strong class="product-item-name">
@@ -136,18 +153,7 @@
                     </span>
 
                                 </td>
-                                <td class="col subtotal" data-th="Subtotal">
-
-
-                                    <span class="price-excluding-tax" data-label="Excl. Tax">
-                                            <span class="cart-price">
-                                                <span class="price">
-                                                {{ breederGrower.status }}
-                                                </span>
-                                            </span>
-
-                                    </span>
-                                </td>
+                                <td>{{ breederGrower.grower.country }}</td>
                                 <td class="col subtotal" data-th="Subtotal">
                                     {% if breederGrower.grower.reviews | length > 0 %}
 
@@ -176,9 +182,23 @@
                                         {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                         {{ avgrating | rating(5, "fa-lg") }}
-
+                                    {% else %}
+                                        {{ 0 | rating(5, "fa-lg") }}
                                     {% endif %}
 
+                                </td>
+
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ breederGrower.status }}
+                                                </span>
+                                            </span>
+
+                                    </span>
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
 

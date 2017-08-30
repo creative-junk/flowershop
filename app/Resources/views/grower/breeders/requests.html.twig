@@ -104,8 +104,9 @@
                         <tr>
                             <th></th>
                             <th class="col item" scope="col"><span>Breeder</span></th>
+                            <th>Country</th>
+                            <th>Rating</th>
                             <th class="col price" scope="col"><span>Status</span></th>
-                            <th></th>
 
                             <th class="col subtotal" scope="col"><span>Requested On</span></th>
                             <th class="col subtotal" scope="col"><span>Accept / Reject</span></th>
@@ -130,18 +131,7 @@
                     </span>
 
                                 </td>
-                                <td class="col subtotal" data-th="Subtotal">
-
-
-                                    <span class="price-excluding-tax" data-label="Excl. Tax">
-                                            <span class="cart-price">
-                                                <span class="price">
-                                                {{ breederRequest.status }}
-                                                </span>
-                                            </span>
-
-                                    </span>
-                                </td>
+                                <td>{{ breederRequest.breeder.country }}</td>
                                 <td class="col subtotal" data-th="Subtotal">
                                     {% if breederRequest.grower.reviews | length > 0 %}
 
@@ -170,10 +160,24 @@
                                         {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                         {{ avgrating | rating(5, "fa-lg") }}
-
+                                    {% else %}
+                                        {{ 0 | rating(5, "fa-lg") }}
                                     {% endif %}
 
                                 </td>
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ breederRequest.status }}
+                                                </span>
+                                            </span>
+
+                                    </span>
+                                </td>
+
                                 <td class="col subtotal" data-th="Subtotal">
 
 

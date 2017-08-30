@@ -18,6 +18,7 @@ use AppBundle\Entity\Direct;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Notification;
 use AppBundle\Entity\OrderItems;
+use AppBundle\Entity\PayOptions;
 use AppBundle\Entity\ShippingAddress;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
@@ -30,13 +31,16 @@ use AppBundle\Form\AccountFormType;
 use AppBundle\Form\addToCartFormType;
 use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\BillingAddressFormType;
+use AppBundle\Form\BuyerCompanyForm;
 use AppBundle\Form\CheckoutForm;
 use AppBundle\Form\DirectProductForm;
 use AppBundle\Form\EditDirectProductForm;
+use AppBundle\Form\GalleryForm;
 use AppBundle\Form\LoginForm;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PaymentMethodFormType;
 use AppBundle\Form\PaymentProofFormType;
+use AppBundle\Form\PayOptionType;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\ShippingAddressFormType;
 use AppBundle\Form\ShippingMethodFormType;
@@ -82,6 +86,127 @@ class GrowerController extends Controller
             'nrMyProducts' =>''
         ]);
 
+    }
+
+    /**
+     * @Route("/update/{id}",name="grower-update-profile")
+     */
+    public function updateProfileAction(Request $request,Company $company){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $company->setIsFirstLogin(false);
+
+        $form = $this->createForm(BuyerCompanyForm::class,$company);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $company = $form->getData();
+
+            $em->persist($company);
+            $em->flush();
+
+            return $this->redirectToRoute("grower_dashboard");
+        }
+
+        return $this->render("companyProfile/grower.htm.twig",[
+            'form'=>$form->createView()
+        ]);
+
+
+    }
+    /**
+     * @Route("/update/gallery/{id}",name="grower-update-gallery")
+     */
+    public function updateGalleryAction(Request $request,Company $company){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $gallery = $em->getRepository("AppBundle:Gallery")
+            ->findOneBy([
+                'myCompany'=>$company->getId()
+            ]);
+
+        $form = $this->createForm(GalleryForm::class,$gallery);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $company = $form->getData();
+
+            $em->persist($company);
+            $em->flush();
+
+            return $this->redirectToRoute("my-grower-profile");
+        }
+
+        return $this->render("companyProfile/gallery.htm.twig",[
+            'form'=>$form->createView(),
+            'gallery'=>$gallery
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/payment-options/add",name="grower-add-payment-option")
+     */
+    public function paymentOptionsAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $company = $user->getMyCompany();
+
+        $paymentOption = new PayOptions();
+        $paymentOption->setMyCompany($company);
+
+        $form = $this->createForm(PayOptionType::class,$paymentOption);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+            $paymentOption = $form->getData();
+
+            $em->persist($paymentOption);
+            $em->flush();
+
+            return $this->redirectToRoute('my-grower-profile');
+
+        }
+        return $this->render("companyProfile/payment.htm.twig",[
+            'form'=>$form->createView(),
+        ]);
+    }
+    /**
+     * @Route("/payment-options/{id}/update",name="grower-update-payment-option")
+     */
+    public function updatePaymentOptionsAction(Request $request,PayOptions $paymentOption){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $company = $user->getMyCompany();
+
+        $form = $this->createForm(PayOptionType::class,$paymentOption);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+            $paymentOption = $form->getData();
+
+            $em->persist($paymentOption);
+            $em->flush();
+
+            return $this->redirectToRoute('my-grower-profile');
+
+        }
+        return $this->render("companyProfile/updatePayment.htm.twig",[
+            'form'=>$form->createView(),
+        ]);
     }
     /**
      * @Route("/account",name="my-grower-profile")
@@ -1346,7 +1471,7 @@ class GrowerController extends Controller
         }
 
 
-        $products = $em->getRepository("AppBundle:Auction")
+        $products = $em->getRepository("AppBundle:AuctionProduct")
             ->findAllMyActiveAgentProductsOrderByDate($agent);
 
         $nrProducts = $em->getRepository("AppBundle:Auction")
@@ -1841,7 +1966,7 @@ class GrowerController extends Controller
             $request->query->getInt('limit', 9)
         );
 
-        return $this->render('grower/buyers/requests.html.twig', [
+        return $this->render('grower/buyers/myRequests.htm.twig', [
             'buyerRequests' => $result,
         ]);
     }

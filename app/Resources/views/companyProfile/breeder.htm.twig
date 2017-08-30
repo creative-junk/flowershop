@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+{% import ":Macros:form_elements.htm.twig" as formElements %}
+{% block title %} Update Profile {% endblock %}
+
+{% block body %}
+    <style>
+        .g-recaptcha{
+            margin-left: 27%;
+        }
+    </style>
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Update Company Profile</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('breeder_dashboard') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+
+                <li class="item category121">
+                    <strong>Update Account</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">Update Account</span></h1>
+        </div>
+
+        <div class="columns">
+            <div class="column main">
+                {{ form_start(form) }}
+                <fieldset class="fieldset create info">
+                    <legend class="legend"><span>Company Information</span></legend>
+                    <br>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.companyName) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.altitude) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.numberOfVarieties) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.aboutCompany) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.numberOfEmployees) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.currency) }}
+                    </div>
+
+                </fieldset>
+                <fieldset class="fieldset create info">
+                    <legend class="legend"><span>Contact Information</span></legend>
+
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.email) }}
+                    </div>
+                    <div class="field field-name-lastname required">
+                        {{ form_row(form.telephoneNumber) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.website) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.facebookPage) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.twitterPage) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.instagramPage) }}
+                    </div>
+
+                    <div class="field field-name-lastname required">
+                        {{ form_row(form.country) }}
+                    </div>
+
+                </fieldset>
+                <fieldset class="fieldset create info">
+                    <legend class="legend"><span>Gallery</span></legend>
+                    <div class="field field-name-firstname required">
+                        {{ form_row(form.gallery) }}
+                    </div>
+                </fieldset>
+                    <div class="actions-toolbar">
+                    <div class="secondary">
+                        <button type="submit" class="action submit primary" title="Update Account" formnovalidate>
+                            <span>Update Account</span></button>
+                    </div>
+
+                </div>
+                {{ form_end(form) }}
+
+
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

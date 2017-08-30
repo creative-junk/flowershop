@@ -256,34 +256,39 @@
             </div>
             <div class="product media">
                 <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+                    {% if breeder.gallery %}
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/products/') }}{{ breeder.gallery.logo.imageName }}">
 
-                    <img aria-hidden="false" width="300" height="329" class="fotorama__img"
-                         src="{{ asset('images/avatar.jpg') }}">
+                        <table class="gallery cf">
+                            <tr>
+                                {% if breeder.gallery.image1 %}
+                                    <td><img class="nim" width="150"
+                                             src="{{ asset('images/products/') }}{{ breeder.gallery.image1.imageName }}"></td>
+                                {% endif %}
+                                {% if breeder.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ breeder.gallery.image2.imageName }}"></td>
+                                {% endif %}
+                                {% if breeder.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ breeder.gallery.image3.imageName }}"></td>
+                                {% endif %}
+                                {% if breeder.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ breeder.gallery.image4.imageName }}"></td>
+                                {% endif %}
+                                {% if breeder.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ breeder.gallery.image5.imageName }}"></td>
+                                {% endif %}
+                            </tr>
+                        </table>
+                    {% else %}
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/avatar.jpg') }}">
 
-                    <table class="gallery cf">
-                        <tr>
-                            {% if breeder.image1 %}
-                                <td><img class="nim" width="150"
-                                         src="{{ asset('images/products/') }}{{ breeder.image1 }}"></td>
-                            {% endif %}
-                            {% if breeder.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ breeder.image2 }}"></td>
-                            {% endif %}
-                            {% if breeder.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ breeder.image3 }}"></td>
-                            {% endif %}
-                            {% if breeder.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ breeder.image4 }}"></td>
-                            {% endif %}
-                            {% if breeder.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ breeder.image5 }}"></td>
-                            {% endif %}
-                        </tr>
-                    </table>
+                    {% endif %}
                 </div>
             </div>
 
@@ -342,7 +347,7 @@
                                                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
 							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-							<span class="price">{{ auction.currency }} {{ auction.pricePerStem }}</span> </span></span>
+							<span class="price">{{ app.user.myCompany.currency }} {{ auction.pricePerStem }}</span> </span></span>
                                                         </div>
                                                         <table class="attributes">
                                                             <tr>

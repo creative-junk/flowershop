@@ -39,7 +39,22 @@
                                 <div class="title">
                                     <a href="{{ path('buyer_auction_product_details',{
                                         'id': order.product.id
-                                    }) }}">{{ order.product.whichAuction.product.title }}</a>
+                                    }) }}">{{ order.product.whichAuction.product.title }}</a><br/><br/>
+                                    <table class="attributes">
+
+                                        <tr>
+                                            <td><strong>Available Stems:</strong> {{ order.product.availableStock | number_format }} </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Quality:</strong> {{ order.product.whichAuction.quality }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Grower: </strong>  <a style="color: #d61818"
+                                                                              href="{{ path('agent_grower_profile',{'id': order.product.whichAuction.product.vendor.id}) }}">{{ order.product.whichAuction.product.vendor }}</a></span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-lg-5 details no-edit">

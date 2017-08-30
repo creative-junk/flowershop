@@ -70,9 +70,9 @@
                         <tr>
                             <th></th>
                             <th class="col item" scope="col"><span>Grower</span></th>
+                            <th class="col item" scope="col"><span>Country</span></th>
+                            <th class="col item" scope="col"><span>Rating</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
-
-
                             <th class="col subtotal" scope="col"><span>Requested On</span></th>
                             <th class="col subtotal" scope="col"><span>Cancel</span></th>
                         </tr>
@@ -80,8 +80,23 @@
                         <tbody class="cart item">
                         {% for breederRequest in breederRequests %}
                             <tr class="item-info js-agent-item">
-                                <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                         src="{{ asset('images/products/') }}{{ breederRequest.grower.logoName }}"></td>
+                                <td>
+                                    {% if breederRequest.grower.gallery %}
+                                        {% if breederRequest.grower.gallery.logo %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/products/') }}{{ breederRequest.grower.gallery.logo.imageName }}">
+                                        {% else %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/avatar.jpg') }}">
+
+                                        {% endif %}
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+
+                                </td>
                                 <td data-th="Item" class="col item">
 
                     <span class="product-image-container" >
@@ -96,6 +111,41 @@
                     </span>
 
                                 </td>
+                                <td>{{ breederRequest.grower.country }}</td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                    {% if breederRequest.grower.reviews | length > 0 %}
+
+                                        {% set sumQualityratings = 0 %}
+                                        {% set avgQualityRatings=0 %}
+                                        {% for rating in breederRequest.grower.reviews %}
+                                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                        {% endfor %}
+                                        {% set avgQualityRatings= (sumQualityratings / breederRequest.grower.reviews|length) | round %}
+
+                                        {% set sumValueratings = 0 %}
+                                        {% set avgValueRatings=0 %}
+                                        {% for rating in breederRequest.grower.reviews %}
+                                            {% set sumValueratings = sumValueratings + rating.value %}
+                                        {% endfor %}
+                                        {% set avgValueRatings= (sumValueratings / breederRequest.grower.reviews|length) | round %}
+
+                                        {% set sumPriceratings = 0 %}
+                                        {% set avgPriceRatings=0 %}
+                                        {% for rating in breederRequest.grower.reviews %}
+                                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                                        {% endfor %}
+                                        {% set avgPriceRatings= (sumQualityratings / breederRequest.grower.reviews|length) | round %}
+
+                                        {% set avgrating=0 %}
+                                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                        {{ avgrating | rating(5, "fa-lg") }}
+                                    {% else %}
+                                        {{ 0 | rating(5, "fa-lg") }}
+                                    {% endif %}
+
+                                </td>
+
                                 <td class="col subtotal" data-th="Subtotal">
 
 

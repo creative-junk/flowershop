@@ -25,7 +25,7 @@
                     <div class="block-content">
                         <div class="box box-information">
                             <strong class="box-title">
-                                <span>Contact Information</span>
+                                <span>Basic Information</span>
                             </strong>
                             <div class="box-content">
                                 <p>
@@ -57,6 +57,42 @@
                             </div>
                         </div>
                     </div>
+                    {% if app.user.isMainAccount %}
+                    <div class="block-content">
+                        <div class="box box-information">
+                            <strong class="box-title">
+                                <span>Company Profile</span>
+                            </strong>
+                            <div class="box-content">
+                                <p>
+                                    {{ app.user.myCompany.companyName }}<br/>
+                                    {{ app.user.myCompany.companyCode }}<br>
+
+                                </p>
+                            </div>
+                            <div class="box-actions">
+                                <a class="action edit"
+                                   href="{{ path('update-profile',{'id':app.user.MyCompany.id}) }}">
+                                    <span>Update Profile</span>
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="box box-newsletter">
+                            <strong class="box-title">
+                                <span>Gallery</span>
+                            </strong>
+                            <div class="box-content">
+                                <p>
+                                    Use this Link to change your Logo and Update you Gallery. </p>
+                            </div>
+                            <div class="box-actions">
+                                <a class="action edit" href="{{ path('update-gallery', {'id': app.user.myCompany.id }) }}"><span>
+                                        Update Gallery </span></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="block block-dashboard-addresses">
                     <div class="block-title">
@@ -118,10 +154,7 @@
                                    data-ui-id="default-billing-edit-link"><span>Edit Address</span></a>
                             </div>
                         {% else %}
-                        <div class="box box-shipping-address">
-                            <strong class="box-title">
-                                <span>Default Shipping Address</span>
-                            </strong>
+
                             <div class="box-content">
                                 <address>
                                     You have not set a default shipping address.
@@ -132,7 +165,6 @@
                                    href="{{ path('buyer-add-shipping-address') }}"
                                    data-ui-id="default-shipping-edit-link"><span>Add Address</span></a>
                             </div>
-                        </div>
                         {% endif %}
                     </div>
                     {% else %}

@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+{% import ":Macros:form_elements.htm.twig" as formElements %}
+{% block title %} Update Gallery {% endblock %}
+
+{% block body %}
+    <style>
+        .g-recaptcha{
+            margin-left: 27%;
+        }
+    </style>
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Update Gallery</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="#" title="Go to Home Page">
+                        Home </a>
+                </li>
+
+                <li class="item category121">
+                    <strong>Update Gallery</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+            <h1 class="page-title">
+                <span class="base" data-ui-id="page-title-wrapper">Update Gallery</span></h1>
+        </div>
+
+        <div class="columns">
+            <div class="column main">
+                {{ form_start(form) }}
+                <fieldset class="fieldset create info">
+                    <legend class="legend"><span>Gallery</span></legend>
+                    <br>
+                    <div class="field field-name-firstname required">
+                        {% if gallery.logo %}
+                        <img width="200" src="{{ asset('images/products/') }}{{ gallery.logo.imageName }}">
+                        {% endif %}
+                        {{ form_row(form.logo) }}
+
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {% if gallery.image1 %}
+                            <img width="200" src="{{ asset('images/products/') }}{{ gallery.image1.imageName }}">
+                        {% endif %}
+
+                        {{ form_row(form.image1) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {% if gallery.image2 %}
+                            <img width="200" src="{{ asset('images/products/') }}{{ gallery.image2.imageName }}">
+                        {% endif %}
+
+                        {{ form_row(form.image2) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {% if gallery.image3 %}
+                            <img width="200" src="{{ asset('images/products/') }}{{ gallery.image3.imageName }}">
+                        {% endif %}
+
+                        {{ form_row(form.image3) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {% if gallery.image4 %}
+                            <img width="200" src="{{ asset('images/products/') }}{{ gallery.image4.imageName }}">
+                        {% endif %}
+
+                        {{ form_row(form.image4) }}
+                    </div>
+                    <div class="field field-name-firstname required">
+                        {% if gallery.image5 %}
+                            <img width="200" src="{{ asset('images/products/') }}{{ gallery.image5.imageName }}">
+                        {% endif %}
+
+                        {{ form_row(form.image5) }}
+                    </div>
+
+                </fieldset>
+                <div class="actions-toolbar">
+                    <div class="secondary">
+                        <button type="submit" class="action submit primary" title="Update Account" formnovalidate>
+                            <span>Update Gallery</span></button>
+                    </div>
+
+                </div>
+                {{ form_end(form) }}
+
+
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

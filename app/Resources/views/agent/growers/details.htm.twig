@@ -259,34 +259,39 @@
             </div>
             <div class="product media">
                 <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+                    {% if grower.gallery %}
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/products/') }}{{ grower.gallery.logo.imageName }}">
 
-                    <img aria-hidden="false" width="300" height="329" class="fotorama__img"
-                         src="{{ asset('images/avatar.jpg') }}">
+                        <table class="gallery cf">
+                            <tr>
+                                {% if grower.gallery.image1 %}
+                                    <td><img class="nim" width="150"
+                                             src="{{ asset('images/products/') }}{{ grower.gallery.image1.imageName }}"></td>
+                                {% endif %}
+                                {% if grower.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ grower.gallery.image2.imageName }}"></td>
+                                {% endif %}
+                                {% if grower.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ grower.gallery.image3.imageName }}"></td>
+                                {% endif %}
+                                {% if grower.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ grower.gallery.image4.imageName }}"></td>
+                                {% endif %}
+                                {% if grower.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ grower.gallery.image5.imageName }}"></td>
+                                {% endif %}
+                            </tr>
+                        </table>
+                    {% else %}
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/avatar.jpg') }}">
 
-                    <table class="gallery cf">
-                        <tr>
-                            {% if grower.image1 %}
-                                <td><img class="nim" width="150"
-                                         src="{{ asset('images/products/') }}{{ grower.image1 }}"></td>
-                            {% endif %}
-                            {% if grower.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ grower.image2 }}"></td>
-                            {% endif %}
-                            {% if grower.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ grower.image3 }}"></td>
-                            {% endif %}
-                            {% if grower.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ grower.image4 }}"></td>
-                            {% endif %}
-                            {% if grower.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ grower.image5 }}"></td>
-                            {% endif %}
-                        </tr>
-                    </table>
+                    {% endif %}
                 </div>
             </div>
 
@@ -312,9 +317,7 @@
                                                 <div class="product-item-info" data-container="product-grid">
                                                     <div class=" product-item-images">
                                                         <a class="product photo product-item-photo"
-                                                           href="{{ path('buyer_product_details',{
-                                                               'id': auction.id
-                                                           }) }}" tabindex="-1">
+                                                           href="#" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
 						<img alt="{{ auction.product.title }}" class="product-image-photo" height="441"
@@ -325,9 +328,7 @@
                                                         <div class="content-name">
                                                             <strong class="product name product-item-name">
                                                                 <a class="product-item-link"
-                                                                   href="{{ path('buyer_product_details',{
-                                                                       'id': auction.id
-                                                                   }) }}">
+                                                                   href="#">
                                                                     {{ auction.product.title }} </a></strong>
                                                         </div>
                                                         <div class="product-reviews-summary short">
@@ -345,7 +346,7 @@
                                                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
 							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-							<span class="price">{{ auction.currency }} {{ auction.pricePerStem }}</span> </span></span>
+							<span class="price">{{ app.user.myCompany.currency }} {{ auction.pricePerStem }}</span> </span></span>
                                                         </div>
                                                         <table class="attributes">
                                                             <tr>
@@ -386,23 +387,19 @@
                                                 <div class="product-item-info" data-container="product-grid">
                                                     <div class=" product-item-images">
                                                         <a class="product photo product-item-photo"
-                                                           href="{{ path('buyer_auction_product_details',{
-                                                               'id': auction.id
-                                                           }) }}" tabindex="-1">
+                                                           href="#" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
-						<img alt="{{ auction.product.title }}" class="product-image-photo" height="441"
-                             src="{{ asset('images/products/') }}{{ auction.product.mainImage }}" alt="{{ auction.product.title }}"
+						<img alt="{{ auction.whichAuction.product.title }}" class="product-image-photo" height="441"
+                             src="{{ asset('images/products/') }}{{ auction.whichAuction.product.mainImage }}" alt="{{ auction.whichAuction.product.title }}"
                              width="350"></span>
 						</span></a></div>
                                                     <div class="product-item-details">
                                                         <div class="content-name">
                                                             <strong class="product name product-item-name">
                                                                 <a class="product-item-link"
-                                                                   href="{{ path('buyer_auction_product_details',{
-                                                                       'id': auction.id
-                                                                   }) }}">
-                                                                    {{ auction.product.title }} </a></strong>
+                                                                   href="#">
+                                                                    {{ auction.whichAuction.product.title }} </a></strong>
                                                         </div>
                                                         <div class="product-reviews-summary short">
                                                             <div class="rating-summary">
@@ -419,19 +416,19 @@
                                                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
 							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-							<span class="price">{{ auction.currency }} {{ auction.pricePerStem }}</span> </span></span>
+							<span class="price">{{ app.user.myCompany.currency }} {{ auction.pricePerStem }}</span> </span></span>
                                                         </div>
                                                         <table class="attributes">
                                                             <tr>
-                                                                <td><strong>Number of Stems:</strong> {{ auction.numberOfStems }} </td>
+                                                                <td><strong>Number of Stems:</strong> {{ auction.availableStock | number_format }} </td>
 
                                                             </tr>
                                                             <tr>
-                                                                <td><strong>Quality:</strong> {{ auction.quality }} </td>
+                                                                <td><strong>Quality:</strong> {{ auction.whichAuction.quality }} </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>
-                                                                    <strong>Grower: </strong> {{ auction.product.vendor }}
+                                                                    <strong>Grower: </strong> {{ auction.whichAuction.product.vendor }}
                                                                 </td>
                                                             </tr>
                                                         </table>

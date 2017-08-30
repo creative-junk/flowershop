@@ -20,7 +20,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CompanyRepository")
  * @ORM\Table(name="company")
  * @ORM\HasLifecycleCallbacks
- * @Vich\Uploadable
  * @UniqueEntity(fields={"email"},message="It looks like you already have an account!")
  */
 class Company
@@ -53,49 +52,7 @@ class Company
      * @ORM\Column(type="boolean",nullable=true)
      */
     private $isPaid;
-    /**
-     * @Vich\UploadableField(mapping="product_image", fileNameProperty="logoName", size="logoSize")
-     * @var File
-     */
-    private $logoFile;
 
-    /**
-     * @ORM\Column(type="string",nullable=true)
-     */
-    private $logoName;
-    /**
-     * @ORM\Column(type="integer",nullable=true)
-     */
-    private $logoSize;
-    /* @Assert\Type("AppBundle\Entity\ProductImages")
-    * @Assert\Valid()
-    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
-    */
-    private $image1;
-    /**
-     * @Assert\Type("AppBundle\Entity\ProductImages")
-     * @Assert\Valid()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
-     */
-    private $image2;
-    /**
-     * @Assert\Type("AppBundle\Entity\ProductImages")
-     * @Assert\Valid()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
-     */
-    private $image3;
-    /**
-     * @Assert\Type("AppBundle\Entity\ProductImages")
-     * @Assert\Valid()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
-     */
-    private $image4;
-    /**
-     * @Assert\Type("AppBundle\Entity\ProductImages")
-     * @Assert\Valid()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductImages",cascade={"persist"})
-     */
-    private $image5;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -157,7 +114,10 @@ class Company
      * @Assert\NotBlank(message="Kindly tell us how you first heard about us")
      */
     private $reference;
-
+    /**
+     * @ORM\Column(type="boolean",nullable=true)
+     */
+    private $isFirstLogin;
     /**
      * @ORM\Column(type="datetime")
      */
@@ -258,6 +218,14 @@ class Company
      * @ORM\Column(type="datetime",nullable=true)
      */
     private $approvedOn;
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Gallery",mappedBy="myCompany",cascade={"persist"})
+     */
+    private $gallery;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\PayOptions",mappedBy="myCompany")
+     */
+    private $payOptions;
 
     public function __construct()
     {
@@ -267,6 +235,7 @@ class Company
             $this->setUpdatedAt(new \DateTime());
         }
         $this->users = new ArrayCollection();
+        $this->payOptions = new ArrayCollection();
         $this->billingAddress =  new ArrayCollection();
         $this->shippingAddress =  new ArrayCollection();
         $this->growerBreeders = new ArrayCollection();
@@ -352,62 +321,6 @@ class Company
         $this->email = $email;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLogoName()
-    {
-        return $this->logoName;
-    }
-
-    /**
-     * @param mixed $imageName
-     */
-    public function setLogoName($logoName)
-    {
-        $this->logoName = $logoName;
-    }
-
-    /**
-     * @return File|null
-     */
-    public function getLogoFile()
-    {
-        return $this->logoFile;
-    }
-
-    /**
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $imageFile
-     * @return Company
-     */
-    public function setLogoFile(File $image = null)
-    {
-        $this->imageFile = $image;
-        if ($image) {
-            //Lets make sure at least one field changes so Doctrine can process the file
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLogoSize()
-    {
-        return $this->logoSize;
-    }
-
-    /**
-     * @param integer $logoSize
-     * @return Company
-     */
-    public function setLogoSize($logoSize)
-    {
-        $this->logoSize = $logoSize;
-
-        return $this;
-    }
 
     /**
      * @return mixed
@@ -970,81 +883,42 @@ class Company
     /**
      * @return mixed
      */
-    public function getImage1()
+    public function getIsFirstLogin()
     {
-        return $this->image1;
+        return $this->isFirstLogin;
     }
 
     /**
-     * @param mixed $image1
+     * @param mixed $isFirstLogin
      */
-    public function setImage1($image1)
+    public function setIsFirstLogin($isFirstLogin)
     {
-        $this->image1 = $image1;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getImage2()
-    {
-        return $this->image2;
-    }
-
-    /**
-     * @param mixed $image2
-     */
-    public function setImage2($image2)
-    {
-        $this->image2 = $image2;
+        $this->isFirstLogin = $isFirstLogin;
     }
 
     /**
      * @return mixed
      */
-    public function getImage3()
+    public function getGallery()
     {
-        return $this->image3;
+        return $this->gallery;
     }
 
     /**
-     * @param mixed $image3
+     * @param mixed $gallery
      */
-    public function setImage3($image3)
+    public function setGallery($gallery)
     {
-        $this->image3 = $image3;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getImage4()
-    {
-        return $this->image4;
-    }
-
-    /**
-     * @param mixed $image4
-     */
-    public function setImage4($image4)
-    {
-        $this->image4 = $image4;
+        $this->gallery = $gallery;
+        $gallery->setMyCompany($this);
     }
 
     /**
      * @return mixed
      */
-    public function getImage5()
+    public function getPayOptions()
     {
-        return $this->image5;
-    }
-
-    /**
-     * @param mixed $image5
-     */
-    public function setImage5($image5)
-    {
-        $this->image5 = $image5;
+        return $this->payOptions;
     }
 
 

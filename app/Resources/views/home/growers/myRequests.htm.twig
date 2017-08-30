@@ -70,8 +70,9 @@
                         <tr>
                             <th></th>
                             <th class="col item" scope="col"><span>Grower</span></th>
+                            <th class="col price" scope="col"><span>Country</span></th>
+                            <th class="col price" scope="col"><span>Rating</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
-                            <th class="col price" scope="col"><span></span></th>
 
                             <th class="col subtotal" scope="col"><span>Requested On</span></th>
                             <th class="col subtotal" scope="col"><span>Cancel</span></th>
@@ -80,8 +81,23 @@
                         <tbody class="cart item">
                         {% for growerRequest in growerRequests %}
                             <tr class="item-info js-grower-item">
-                                <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                         src="{{ asset('images/products/') }}{{ growerRequest.grower.logoName }}"></td>
+                                <td>
+                                    {% if growerRequest.grower.gallery %}
+                                        {% if growerRequest.grower.gallery.logo %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/products/') }}{{ growerRequest.grower.gallery.logo.imageName }}">
+                                        {% else %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/avatar.jpg') }}">
+
+                                        {% endif %}
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+
+                                </td>
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
@@ -96,18 +112,7 @@
                     </span>
 
                                 </td>
-                                <td class="col subtotal" data-th="Subtotal">
-
-
-                                    <span class="price-excluding-tax" data-label="Excl. Tax">
-                                            <span class="cart-price">
-                                                <span class="price">
-                                                {{ growerRequest.status }}
-                                                </span>
-                                            </span>
-
-                                    </span>
-                                </td>
+                                <td>{{ growerRequest.grower.country }}</td>
                                 <td class="col subtotal" data-th="Subtotal">
                                     {% if growerRequest.grower.reviews | length > 0 %}
 
@@ -136,10 +141,24 @@
                                         {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                         {{ avgrating | rating(5, "fa-lg") }}
-
+                                    {% else %}
+                                        {{ 0 | rating(5, "fa-lg")   }}
                                     {% endif %}
 
                                 </td>
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ growerRequest.status }}
+                                                </span>
+                                            </span>
+
+                                    </span>
+                                </td>
+
                                 <td class="col subtotal" data-th="Subtotal">
 
 

@@ -204,7 +204,9 @@ class UserController extends Controller
                 /** @var User $user */
                 $user = $form->getData();
                 $em = $this->getDoctrine()->getManager();
+                $company->setIsFirstLogin(true);
                 $em->persist($user);
+                $em->persist($company);
                 $em->flush();
                 return $this->redirectToRoute('company-active');
             }
@@ -230,8 +232,19 @@ class UserController extends Controller
     public function homeAction()
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
-        if ($user){
-            $this->redirectToRoute("user_logout");
+
+        if ($user & $user != "anon"){
+            $company = $user->getMyCompany();
+            $role = $company->getCompanyType();
+            if ($role == "Buyer") {
+                return $this->redirectToRoute("home");
+            } elseif ($role == "Grower") {
+                return $this->redirectToRoute("grower_dashboard");
+            } elseif ($role == "Breeder") {
+                return $this->redirectToRoute("breeder_dashboard");
+            } elseif ($role == "Agent") {
+                return $this->redirectToRoute("agent_dashboard");
+            }
         }
         return $this->render('home.htm.twig');
     }

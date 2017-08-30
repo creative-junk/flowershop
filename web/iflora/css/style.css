@@ -15,7 +15,9 @@
         transform: scale(1);
     }
 }
-
+a.edit span{
+    color:#d61818;
+}
 @keyframes bounceIn {
     0% {
         opacity: 0;

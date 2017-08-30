@@ -17,7 +17,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductImagesRepository")
  * @Vich\Uploadable
  * @ORM\Table(name="product_images")
  */

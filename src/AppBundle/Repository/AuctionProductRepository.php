@@ -22,11 +22,13 @@ class AuctionProductRepository extends EntityRepository
         return $this->createQueryBuilder('auctionProduct')
             ->innerJoin('auctionProduct.whichAuction','auction')
             ->innerJoin('auction.product','product')
-            ->andWhere('product.isActive = :isActive')
+            ->andWhere('auctionProduct.isActive = :isActive')
             ->setParameter('isActive',true)
             ->andWhere('auction.vendor= :createdBy')
             ->setParameter('createdBy',$user)
-            ->orderBy('auctionProduct.createdAt','DESC');
+            ->orderBy('auctionProduct.createdAt','DESC')
+            ->getQuery()
+            ->execute();
     }
 
     public function findMyActiveAuctionProducts(Company $user){
@@ -56,7 +58,7 @@ class AuctionProductRepository extends EntityRepository
             ->andWhere('auctionProduct.sellingAgent= :isAgent')
             ->setParameter('isAgent',$user)
             ->andWhere('auctionProduct.status= :status')
-            ->setParameter('status',"Agent Accepted")
+            ->setParameter('status',"Active")
             ->orderBy('auctionProduct.createdAt','DESC')
             ->getQuery()
             ->execute();

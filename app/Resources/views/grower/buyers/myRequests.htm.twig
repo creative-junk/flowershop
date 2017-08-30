@@ -1,0 +1,209 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} My buyer Requests {% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            $('.js-request-user').on('click', function (e) {
+                e.preventDefault();
+
+                var $el = $(this).closest('.js-grower-item');
+
+                $(this).find('.fa-exchange')
+                    .removeClass('fa-times')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $el.fadeOut("slow");
+                });
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block pageclass %}
+<body data-container="body"
+      class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">My buyer Requests</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item category131">
+                    <strong>Buyers</strong>
+                </li>
+                <li class="item category131">
+                    <strong>My Buyer Requests</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+        <div class="page-title-wrapper">
+
+        </div>
+        <div class="page messages">
+            <div data-placeholder="messages"></div>
+            <div data-bind="scope: 'messages'">
+                <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+                <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+            </div>
+
+        </div>
+        <div class="columns">
+            <div class="column main">
+                <div class="cart table-wrapper">
+                    <table id="shopping-cart-table" class="cart items data table">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th class="col item" scope="col"><span>Buyer</span></th>
+                            <th class="col price" scope="col"><span>Country</span></th>
+                            <th class="col price" scope="col"><span>Rating</span></th>
+                            <th class="col price" scope="col"><span>Status</span></th>
+
+
+                            <th class="col subtotal" scope="col"><span>Requested On</span></th>
+                            <th class="col subtotal" scope="col"><span>Cancel</span></th>
+                        </tr>
+                        </thead>
+                        <tbody class="cart item">
+                        {% for buyerRequest in buyerRequests %}
+                            <tr class="item-info js-grower-item">
+                                <td>
+                                    {% if buyerRequest.buyer.gallery %}
+                                        {% if buyerRequest.buyer.gallery.logo %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/products/') }}{{ buyerRequest.buyer.gallery.logo.imageName }}">
+                                        {% else %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/avatar.jpg') }}">
+
+                                        {% endif %}
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+
+                                </td>
+                                <td data-th="Item" class="col item">
+                    <span class="product-image-container" style="width:165px;">
+                    <strong class="product-item-name">
+
+                        <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                          <a href="{{ path('buyer_profile',{
+                              'id':buyerRequest.buyer.id
+                          }) }}">{{ buyerRequest.buyer.companyName }}</a>
+                    </span>
+                    </strong>
+
+                    </span>
+
+                                </td>
+                                <td>{{ buyerRequest.buyer.country }}</td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                    {% if buyerRequest.buyer.reviews | length > 0 %}
+
+                                        {% set sumQualityratings = 0 %}
+                                        {% set avgQualityRatings=0 %}
+                                        {% for rating in buyerRequest.buyer.reviews %}
+                                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                        {% endfor %}
+                                        {% set avgQualityRatings= (sumQualityratings / buyerRequest.buyer.reviews|length) | round %}
+
+                                        {% set sumValueratings = 0 %}
+                                        {% set avgValueRatings=0 %}
+                                        {% for rating in buyerRequest.buyer.reviews %}
+                                            {% set sumValueratings = sumValueratings + rating.value %}
+                                        {% endfor %}
+                                        {% set avgValueRatings= (sumValueratings / buyerRequest.buyer.reviews|length) | round %}
+
+                                        {% set sumPriceratings = 0 %}
+                                        {% set avgPriceRatings=0 %}
+                                        {% for rating in buyerRequest.buyer.reviews %}
+                                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                                        {% endfor %}
+                                        {% set avgPriceRatings= (sumQualityratings / buyerRequest.buyer.reviews|length) | round %}
+
+                                        {% set avgrating=0 %}
+                                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                        {{ avgrating | rating(5, "fa-lg") }}
+                                    {% else %}
+                                        {{ 0 | rating(5, "fa-lg") }}
+                                    {% endif %}
+
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ buyerRequest.status }}
+                                                </span>
+                                            </span>
+
+                                    </span>
+                                </td>
+
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ buyerRequest.updatedAt |date("d/m/Y") }}
+                                                </span>
+                                            </span>
+
+                                    </span>
+                                </td>
+
+                                <td class="col price" data-th="Price">
+
+                                    <a
+                                            href="#"
+                                            class="action request js-request-user"
+                                            data-url="{{ path('cancel-buyer-grower-request',{
+                                                'id': buyerRequest.id
+                                            }) }}"
+                                            title="Cancel Request">
+                                        <span class="fa fa-times"></span> Cancel
+
+                                    </a>
+
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr class="item-info">
+                                <td data-th="Item" class="col item">
+                                    You have no Pending buyer Requests
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+            {% include(':grower:sidebar.htm.twig') %}
+
+        </div>
+    </main>
+{% endblock %}
+

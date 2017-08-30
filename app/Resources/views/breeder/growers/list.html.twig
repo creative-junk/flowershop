@@ -66,15 +66,31 @@
                     <tr>
                         <th></th>
                         <th class="col item" scope="col"><span>Grower</span></th>
-                        <th></th>
+                        <th>Country</th>
+                        <th>Rating</th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
                     <tbody class="cart item">
                     {% for grower in growers %}
                         <tr class="item-info js-grower-item">
-                            <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                     src="{{ asset('images/products/') }}{{ grower.logoName }}"></td>
+                            <td>
+                                {% if grower.gallery %}
+                                    {% if grower.gallery.logo %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ grower.gallery.logo.imageName }}">
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+                                {% else %}
+                                    <img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/avatar.jpg') }}">
+
+                                {% endif %}
+
+                            </td>
                             <td data-th="Item" class="col item">
 
                     <span class="product-image-container" style="">
@@ -89,7 +105,7 @@
 
                     </span>
                             </td>
-
+                            <td>{{ grower.country }}</td>
                             <td class="col subtotal" data-th="Subtotal">
                                 {% if grower.reviews | length > 0 %}
 

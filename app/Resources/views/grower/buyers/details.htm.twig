@@ -210,7 +210,7 @@
 
                                 <div class="actions">
                                     <a href="#"  class="action request js-request-user"
-                                       data-url="{{ path('request-buyer-grower',{
+                                       data-url="{{ path('request-buyer-buyer',{
                                            'id': buyer.id
                                        }) }}"
                                        title="Request Buyer"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Buyer</a>        </div>
@@ -254,34 +254,39 @@
             </div>
             <div class="product media">
                 <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+                    {% if buyer.gallery %}
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/products/') }}{{ buyer.gallery.logo.imageName }}">
 
-                    <img aria-hidden="false" width="300" height="329" class="fotorama__img"
-                         src="{{ asset('images/avatar.jpg') }}">
+                        <table class="gallery cf">
+                            <tr>
+                                {% if buyer.gallery.image1 %}
+                                    <td><img class="nim" width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.gallery.image1.imageName }}"></td>
+                                {% endif %}
+                                {% if buyer.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.gallery.image2.imageName }}"></td>
+                                {% endif %}
+                                {% if buyer.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.gallery.image3.imageName }}"></td>
+                                {% endif %}
+                                {% if buyer.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.gallery.image4.imageName }}"></td>
+                                {% endif %}
+                                {% if buyer.gallery.image2 %}
+                                    <td><img class="nim"  width="150"
+                                             src="{{ asset('images/products/') }}{{ buyer.gallery.image5.imageName }}"></td>
+                                {% endif %}
+                            </tr>
+                        </table>
+                    {% else %}
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/avatar.jpg') }}">
 
-                    <table class="gallery cf">
-                        <tr>
-                            {% if buyer.image1 %}
-                                <td><img class="nim" width="150"
-                                         src="{{ asset('images/products/') }}{{ buyer.image1 }}"></td>
-                            {% endif %}
-                            {% if buyer.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ buyer.image2 }}"></td>
-                            {% endif %}
-                            {% if buyer.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ buyer.image3 }}"></td>
-                            {% endif %}
-                            {% if buyer.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ buyer.image4 }}"></td>
-                            {% endif %}
-                            {% if buyer.image2 %}
-                                <td><img class="nim"  width="150"
-                                         src="{{ asset('images/products/') }}{{ buyer.image5 }}"></td>
-                            {% endif %}
-                        </tr>
-                    </table>
+                    {% endif %}
                 </div>
             </div>
 

@@ -111,9 +111,9 @@
                         <tr>
                             <th></th>
                             <th class="col item" scope="col"><span>Buyer</span></th>
+                            <th class="col price"><span>Country</span></th>
+                            <th>Rating</th>
                             <th class="col price" scope="col"><span>Status</span></th>
-                            <th></th>
-
                             <th class="col subtotal" scope="col"><span>Connected On</span></th>
 
                         </tr>
@@ -121,8 +121,23 @@
                         <tbody class="cart item">
                         {% for agentBuyer in agentBuyers %}
                             <tr class="item-info js-agent-item">
-                                <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                         src="{{ asset('images/products/') }}{{ agentBuyer.buyer.logoName }}"></td>
+                                <td>
+                                    {% if agentBuyer.buyer.gallery %}
+                                        {% if agentBuyer.buyer.gallery.logo %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/products/') }}{{ agentBuyer.buyer.gallery.logo.imageName }}">
+                                        {% else %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/avatar.jpg') }}">
+
+                                        {% endif %}
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+
+                                </td>
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
@@ -137,17 +152,8 @@
                     </span>
 
                                 </td>
-                                <td class="col subtotal" data-th="Subtotal">
-
-
-                                    <span class="price-excluding-tax" data-label="Excl. Tax">
-                                            <span class="cart-price">
-                                                <span class="price">
-                                                {{ agentBuyer.status }}
-                                                </span>
-                                            </span>
-
-                                    </span>
+                                <td>
+                                    {{ agentBuyer.buyer.country }}
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
                                     {% if agentBuyer.buyer.reviews | length > 0 %}
@@ -177,8 +183,21 @@
                                         {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                         {{ avgrating | rating(5, "fa-lg")   }}
-
+                                    {% else %}
+                                        {{ 0 | rating(5, "fa-lg")   }}
                                     {% endif %}
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+
+
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                            <span class="cart-price">
+                                                <span class="price">
+                                                {{ agentBuyer.status }}
+                                                </span>
+                                            </span>
+
+                                    </span>
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
 

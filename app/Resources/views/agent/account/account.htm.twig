@@ -25,7 +25,7 @@
                     <div class="block-content">
                         <div class="box box-information">
                             <strong class="box-title">
-                                <span>Contact Information</span>
+                                <span>Basic Information</span>
                             </strong>
                             <div class="box-content">
                                 <p>
@@ -57,6 +57,42 @@
                             </div>
                         </div>
                     </div>
+                    {% if app.user.isMainAccount %}
+                        <div class="block-content">
+                            <div class="box box-information">
+                                <strong class="box-title">
+                                    <span>Company Profile</span>
+                                </strong>
+                                <div class="box-content">
+                                    <p>
+                                        {{ app.user.myCompany.companyName }}<br/>
+                                        {{ app.user.myCompany.companyCode }}<br>
+
+                                    </p>
+                                </div>
+                                <div class="box-actions">
+                                    <a class="action edit"
+                                       href="{{ path('agent-update-profile',{'id':app.user.MyCompany.id}) }}">
+                                        <span>Update Profile</span>
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="box box-newsletter">
+                                <strong class="box-title">
+                                    <span>Gallery</span>
+                                </strong>
+                                <div class="box-content">
+                                    <p>
+                                        Use this Link to change your Logo and Update you Gallery. </p>
+                                </div>
+                                <div class="box-actions">
+                                    <a class="action edit" href="{{ path('agent-update-gallery', {'id': app.user.myCompany.id }) }}"><span>
+                                        Update Gallery </span></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="block block-dashboard-addresses">
                     <div class="block-title">
@@ -141,6 +177,51 @@
                     </div>
                     {% endif %}
                 </div>
+                <div class="block block-dashboard-addresses">
+                    <div class="block-title">
+                        <strong>Payment Methods</strong>
+
+                    </div>
+
+                    {% if app.user.isMainAccount %}
+                        <div class="block-content">
+
+                            <div class="box box-billing-address">
+                                <strong class="box-title">
+                                    <span>Accepted Payment Methods</span>
+                                </strong>
+                                {% if app.user.myCompany.payOptions %}
+                                    {% for paymentOption in app.user.myCompany.payOptions %}
+                                        <div class="box-content">
+                                            <address><br/>
+                                                {{ paymentOption.paymentMethod.methodName }} <a class=" action edit" href="{{ path('agent-update-payment-option',{'id': paymentOption.id }) }}"><span>Configure</span></a> <br/>
+
+                                            </address>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="box-content">
+                                        <address>
+                                            You have not set any payment options.
+                                        </address>
+                                    </div>
+                                {% endif %}
+
+                                <div class="box-actions">
+                                    <a class="action edit"
+                                       href="{{ path('agent-add-payment-option') }}"
+                                       data-ui-id="default-billing-edit-link"><span>Add Payment Option</span></a>
+                                </div>
+                            </div>
+
+                        </div>
+                    {% else %}
+                        <div class="block-content">
+                            Address Book can only be modified by the Company Account Manager<br/><br/>
+                        </div>
+                    {% endif %}
+
+                </div>
 
 
             </div>
@@ -158,7 +239,8 @@
                             <li class="nav item"><a
                                         href="#">Address
                                     Book</a></li>
-
+                            <li class="nav item"><a
+                                        href="#">Payment Methods</a></li>
 
                         </ul>
                     </div>

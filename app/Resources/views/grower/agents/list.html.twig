@@ -67,15 +67,31 @@
                     <tr>
                         <th>&nbsp;</th>
                         <th class="col item" scope="col"><span>Agent</span></th>
-                         <th>&nbsp;</th>
+                        <th>Country</th>
+                        <th>Rating</th>
                         <th class="col subtotal" scope="col"><span>Connect</span></th>
                     </tr>
                     </thead>
                     <tbody class="cart item">
                     {% for agent in agents %}
                         <tr class="item-info js-agent-item">
-                            <td> <img aria-hidden="false" width="100"  class="fotorama__img"
-                                      src="{{ asset('images/products/') }}{{ agent.logoName }}"></td>
+                            <td>
+                                {% if agent.gallery %}
+                                    {% if agent.gallery.logo %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/products/') }}{{ agent.gallery.logo.imageName }}">
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+                                {% else %}
+                                    <img aria-hidden="false" width="100"  class="fotorama__img"
+                                         src="{{ asset('images/avatar.jpg') }}">
+
+                                {% endif %}
+
+                            </td>
                             <td data-th="Item" class="col item">
 
                     <span class="product-image-container" style="width:165px;">
@@ -90,7 +106,7 @@
 
                     </span>
                             </td>
-
+                            <td class="col subtotal" data-th="Subtotal">{{ agent.country }}</td>
                             <td class="col subtotal" data-th="Subtotal">
     {% if agent.reviews | length > 0 %}
 
@@ -119,7 +135,8 @@
         {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
         {{ avgrating | rating(5, "fa-lg") }}
-
+    {% else %}
+        {{ 0 | rating(5,"fa-lg") }}
     {% endif %}
 
 </td>

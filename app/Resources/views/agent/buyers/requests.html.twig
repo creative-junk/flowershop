@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} My Buyer Requests {% endblock %}
+{% block title %} Received Buyer Requests {% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
         jQuery(document).ready(function () {
@@ -64,7 +64,7 @@
     <div class="category-view">
         <div class="page-title-wrapper">
             <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-                <span class="base" data-ui-id="page-title-wrapper">My Buyer Requests</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">Received Buyer Requests</span></h1>
         </div>
         <div class="breadcrumbs">
             <ul class="items">
@@ -76,7 +76,7 @@
                     <strong>Buyers</strong>
                 </li>
                 <li class="item category131">
-                    <strong>My Buyer Requests</strong>
+                    <strong>Received Buyer Requests</strong>
                 </li>
             </ul>
         </div>
@@ -111,6 +111,8 @@
                         <tr>
                             <th></th>
                             <th class="col item" scope="col"><span>Buyer</span></th>
+                            <th class="col item" scope="col"><span>Country</span></th>
+                            <th class="col item" scope="col"><span>Rating</span></th>
                             <th class="col price" scope="col"><span>Status</span></th>
 
                             <th class="col subtotal" scope="col"><span>Requested On</span></th>
@@ -120,8 +122,23 @@
                         <tbody class="cart item">
                         {% for buyerRequest in buyerRequests %}
                             <tr class="item-info js-agent-item">
-                                <td><img aria-hidden="false" width="200"  class="fotorama__img"
-                                         src="{{ asset('images/products/') }}{{ buyerRequest.buyer.logoName }}"></td>
+                                <td>
+                                    {% if buyerRequest.buyer.gallery %}
+                                        {% if buyerRequest.buyer.gallery.logo %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/products/') }}{{ buyerRequest.buyer.gallery.logo.imageName }}">
+                                        {% else %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/avatar.jpg') }}">
+
+                                        {% endif %}
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}
+
+                                </td>
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">
@@ -133,6 +150,39 @@
 
                     </span>
 
+                                </td>
+                                <td>{{ buyerRequest.buyer.country }}</td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                    {% if buyerRequest.buyer.reviews | length > 0 %}
+
+                                        {% set sumQualityratings = 0 %}
+                                        {% set avgQualityRatings=0 %}
+                                        {% for rating in buyerRequest.buyer.reviews %}
+                                            {% set sumQualityratings = sumQualityratings + rating.quality %}
+                                        {% endfor %}
+                                        {% set avgQualityRatings= (sumQualityratings / buyerRequest.buyer.reviews|length) | round %}
+
+                                        {% set sumValueratings = 0 %}
+                                        {% set avgValueRatings=0 %}
+                                        {% for rating in buyerRequest.buyer.reviews %}
+                                            {% set sumValueratings = sumValueratings + rating.value %}
+                                        {% endfor %}
+                                        {% set avgValueRatings= (sumValueratings / buyerRequest.buyer.reviews|length) | round %}
+
+                                        {% set sumPriceratings = 0 %}
+                                        {% set avgPriceRatings=0 %}
+                                        {% for rating in buyerRequest.buyer.reviews %}
+                                            {% set sumPriceratings = sumPriceratings + rating.price %}
+                                        {% endfor %}
+                                        {% set avgPriceRatings= (sumQualityratings / buyerRequest.buyer.reviews|length) | round %}
+
+                                        {% set avgrating=0 %}
+                                        {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                                        {{ avgrating | rating(5, "fa-lg")   }}
+                                    {% else %}
+                                        {{ 0 | rating(5, "fa-lg")   }}
+                                    {% endif %}
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
 
