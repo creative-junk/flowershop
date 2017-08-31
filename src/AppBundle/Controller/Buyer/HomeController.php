@@ -78,6 +78,42 @@ class HomeController extends Controller
 
         return $this->render('home/home.htm.twig');
     }
+    /**
+     * @Route("/users/pending",name="pending-users")
+     */
+    public function pendingUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>false
+            ]);
+        return $this->render('users/pending.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
+    /**
+     * @Route("/users/active",name="active-users")
+     */
+    public function activeUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>true
+            ]);
+        return $this->render('users/active.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
 
     /**
      * @Route("/update/{id}",name="update-profile")
@@ -610,10 +646,11 @@ class HomeController extends Controller
             $existingCart = $em->getRepository('AppBundle:Cart')
                 ->findMyCart($user);
             $quantity = $request->request->get('quantity');
-            $price = $request->request->get('productPrice');
-            $currency = $request->request->get('productCurrency');
-            //$price = $this->container->get('lexik_currency.converter')->convert($basePrice, $user->getMyCompany()->getCurrency(), false, $product->getVendor()->getCurrency());
-
+            $basePrice = $request->request->get('productPrice');
+            $currency = $user->getMyCompany()->getCurrency();
+            //$currency = $request->request->get('productCurrency');
+            //$price = $this->container->get('lexik_currency.converter')->convert(, false, );
+            $price = $this->container->get('crysoft.currency_converter')->convertAmount($basePrice,$product->getVendor()->getCurrency(), $currency);
             $existingCartItem = $em->getRepository('AppBundle:CartItems')
                 ->findItemInCart($product);
 
@@ -1442,13 +1479,13 @@ class HomeController extends Controller
             $quantity = $request->request->get('quantity');
 
             $em = $this->getDoctrine()->getManager();
-
+            $price = $this->container->get('crysoft.currency_converter')->convertAmount($product->getWhichAuction()->getPricePerStem(),$product->getWhichAuction()->getVendor()->getCurrency(),$user->getMyCompany()->getCurrency());
             $auctionCart = new AuctionCart();
             $auctionCart->setProduct($product);
             $auctionCart->setWhoseCart($user);
             $auctionCart->setCompanyCart($user->getMyCompany());
             $auctionCart->setCartCurrency($user->getMyCompany()->getCurrency());
-            $auctionCart->setItemPrice($product->getWhichAuction()->getPricePerStem());
+            $auctionCart->setItemPrice($price);
             $auctionCart->setCartQuantity($quantity);
 
             $em->persist($auctionCart);

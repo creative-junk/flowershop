@@ -58,6 +58,11 @@ class AgentController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $agent = $user->getMyCompany();
+
+        if ($agent->getIsFirstLogin()&&$user->getIsMainAccount()){
+            return $this->redirectToRoute("agent-update-profile",['id'=>$agent->getId()]);
+        }
 
         $em = $this->getDoctrine()->getManager();
         $agent = $em->getRepository("AppBundle:Company")
@@ -85,6 +90,42 @@ class AgentController extends Controller
 
     }
 
+    /**
+     * @Route("/users/pending",name="agent-pending-users")
+     */
+    public function pendingUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>false
+            ]);
+        return $this->render('users/pending.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
+    /**
+     * @Route("/users/active",name="agent-active-users")
+     */
+    public function activeUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>true
+            ]);
+        return $this->render('users/active.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
 
     /**
      * @Route("/update/{id}",name="agent-update-profile")

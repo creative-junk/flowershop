@@ -15,6 +15,21 @@
         </li>
     </ul>
 </div>
+{% if app.user.isMainAccount %}
+<div class="my-acount">
+    <strong class="label" style="color:black;"><span>Users<i style="color: black"
+                                                                  class="fa fa-angle-down">&nbsp;</i></span></strong>
+    <br/><ul class="header links">
+        <li><a href="{{ path('pending-users') }}">Pending Users</a></li>
+        <li class="link wishlist" data-bind="scope: 'wishlist'">
+            <a href="{{ path('active-users') }}">Active Users
+
+            </a>
+        </li>
+
+    </ul>
+</div>
+{% endif %}
 <div class="my-acount">
     <strong class="label" style="color:black;"><span>My Growers / Agents<i
                     style="color:#d61818" class="fa fa-angle-down">&nbsp;</i></span></strong>

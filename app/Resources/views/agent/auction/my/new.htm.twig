@@ -58,6 +58,9 @@
                                 {{ form_row(productForm.availableStock) }}
                             </div>
                             <div class="field field-name-lastname required">
+                                Currency: {{ auction.product.vendor.currency }}
+                            </div>
+                            <div class="field field-name-lastname required">
                                 {{ form_row(productForm.pricePerStem) }}
                             </div>
 

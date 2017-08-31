@@ -13,6 +13,21 @@
         </li>
     </ul>
 </div>
+{% if app.user.isMainAccount %}
+    <div class="my-acount">
+        <strong class="label" style="color:black;"><span>Users<i style="color: black"
+                                                                 class="fa fa-angle-down">&nbsp;</i></span></strong>
+        <br/><ul class="header links">
+            <li><a href="{{ path('agent-pending-users') }}">Pending Users</a></li>
+            <li class="link wishlist" data-bind="scope: 'wishlist'">
+                <a href="{{ path('agent-active-users') }}">Active Users
+
+                </a>
+            </li>
+
+        </ul>
+    </div>
+{% endif %}
 <div class="my-acount"  style="margin-right: 30px;height:20px">
      <span class="fa-stack fa-2x" style="color: black;position:absolute">
     <i style="color: black" class="fa fa-tasks fa-1x fa-inverse"></i>

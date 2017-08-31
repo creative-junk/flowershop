@@ -36,6 +36,7 @@ use AppBundle\Form\CheckoutForm;
 use AppBundle\Form\DirectProductForm;
 use AppBundle\Form\EditDirectProductForm;
 use AppBundle\Form\GalleryForm;
+use AppBundle\Form\GrowerCompanyForm;
 use AppBundle\Form\LoginForm;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PaymentMethodFormType;
@@ -65,6 +66,12 @@ class GrowerController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $grower = $user->getMyCompany();
+
+        if ($grower->getIsFirstLogin()&&$user->getIsMainAccount()){
+            return $this->redirectToRoute("grower-update-profile",['id'=>$grower->getId()]);
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $nrMyReceivedOrders = $em->getRepository('AppBundle:OrderItems')
@@ -87,6 +94,42 @@ class GrowerController extends Controller
         ]);
 
     }
+    /**
+     * @Route("/users/pending",name="grower-pending-users")
+     */
+    public function pendingUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>false
+            ]);
+        return $this->render('users/pending.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
+    /**
+     * @Route("/users/active",name="grower-active-users")
+     */
+    public function activeUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>true
+            ]);
+        return $this->render('users/active.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
 
     /**
      * @Route("/update/{id}",name="grower-update-profile")
@@ -98,7 +141,7 @@ class GrowerController extends Controller
 
         $company->setIsFirstLogin(false);
 
-        $form = $this->createForm(BuyerCompanyForm::class,$company);
+        $form = $this->createForm(GrowerCompanyForm::class,$company);
 
         $form->handleRequest($request);
 
@@ -577,19 +620,25 @@ class GrowerController extends Controller
 
         $form = $this->createForm(addToCartFormType::class, $cart);
 
+
         //only handles data on POST
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $cart = $form->getData();
 
+            $basePrice = $product->getPricePerStem();
+            $currencyFrom = $product->getVendor()->getCurrency();
+            $currencyTo = $user->getMyCompany()->getCurrency();
+
+
             $em = $this->getDoctrine()->getManager();
 
             $existingCart = $em->getRepository('AppBundle:Cart')
                 ->findMyCart($user);
             $quantity = $request->request->get('quantity');
-            $price = $request->request->get('productPrice');
-            $currency = $request->request->get('productCurrency');
+            $price = $this->container->get('crysoft.currency_converter')->convertAmount($basePrice,$currencyFrom,$currencyTo);
+            $currency = $currencyTo;
 
             $existingCartItem = $em->getRepository('AppBundle:CartItems')
                 ->findItemInCart($product);

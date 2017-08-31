@@ -72,7 +72,7 @@
                                     'id': order.id
                                 }) }}">{{ order.prettyId }}</a> </td>
                             <td>{{ order.createdAt | date('d-m-Y H:i:s') }}</td>
-                            <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount | number_format(2, '.', ',') }}</td>
+                            <td>{{ app.user.myCompany.currency }}&nbsp;{{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</td>
                             <td>{{ order.orderStatus }}</td>
                             <td>{{ order.orderState }}</td>
 

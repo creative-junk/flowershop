@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
-class BuyerCompanyForm extends AbstractType
+class GrowerCompanyForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -39,17 +39,6 @@ class BuyerCompanyForm extends AbstractType
             ->add('instagramPage',null,[
                 'attr'=>['placeholder'=>'http://www.instagram.com/iflora']
             ])
-            ->add('currency',ChoiceType::class,array(
-                'choices' => array(
-                    'US Dollars - $'=>'USD',
-                    'Kenya Shillings - Ksh'=>'KES',
-                    'Euros - Eur'=>'EUR',
-                    'GBP Pounds' =>'GBP',
-                    'Canadian Dollar' => 'CAD',
-                    'Japanese Yen' => 'JPY'
-                ),
-                'placeholder' => 'Please Select',
-            ))
             ->add('country', CountryType::class,[
                 'placeholder' => 'Please Select',
                 'disabled'=>true

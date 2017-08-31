@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+{% block title %}Pending Users{% endblock %}
+{% block javascripts %}
+
+    <!-- jqueryui -->
+    <link href="{{ asset('js/jquery-ui-1.12.1/jquery-ui.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jquery-ui-1.12.1/jquery-ui.js') }}"></script>
+
+    <!-- x-editable (jquery) -->
+    <link href="{{ asset('js/jqueryui-editable/css/jqueryui-editable.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/jqueryui-editable/js/jqueryui-editable.min.js') }}"></script>t
+    <script type="text/javascript">
+
+        jQuery('#js-deactivate-account').on('click',function (e)  {
+            //Prevent Normal Submit
+            e.preventDefault();
+
+            var $el = $(this).closest('.js-user');
+
+
+            $(".messages").fadeOut("slow");
+
+            $(this).find('.fa-unlock')
+                .removeClass('fa-unlock')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+            $(this).find('.fa-check')
+                .removeClass('fa-check')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+
+
+            // get form values
+            var values = $(this).serialize();
+
+            $.ajax({
+                url: $(this).data('url'),
+                method: 'GET'
+            }).done(function () {
+                $el.fadeOut("slow");
+
+            }).error(function () {
+                //$el.fadeOut("slow");
+                $(".errors").fadeIn("slow");
+
+                $("#deactivate")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-times');
+            })
+
+        });
+
+
+    </script>
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Pending Users</span></h1>
+        </div>
+        <div class="breadcrumbs">
+
+        </div>
+    </div>
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages">
+        </div>
+        <div data-bind="scope: 'messages'">
+            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            </div>
+            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+    <div class="column main">
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Pending Users </h2>
+                    <ul class="nav navbar-right panel_toolbox">
+
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <p class="text-muted font-13 m-b-30">
+                    </p>
+
+                    <div class="table-responsive">
+                        <table id="data" class="table table-striped b-t b-b">
+                            <thead>
+                            <tr>
+                                <th  style="width:20%">Names</th>
+                                <th  style="width:15%">Role</th>
+                                <th  style="width:25%">Created At</th>
+                                <th  style="width:25%">Manage</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in users  %}
+                                <tr class="js-user">
+                                    <td><span style="color:#0cc2aa">{{ user.fullName }}</span></td>
+
+                                    <td>
+                                        <a href="#" id="member" >
+                                            {% if user.isMainAccount %}
+                                                    Manager
+                                                {% else %}
+                                                    User
+                                                {% endif %}
+
+
+                                        </a>
+
+                                    </td>
+                                    <td>{{ user.accountCreatedAt | date("F jS \\a\\t g:ia") }}</td>
+
+                                    <td>
+                                        <a id="js-deactivate-account" href="#" data-url="{{ path('activate-user-account',{'id': user.id }) }}"
+                                           class="btn btn-xs white btn-icon"><i style="color: black" id="deactivate" title="Activate Account" class="fa fa-lock fa-2x"></i></a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6">
+                                        <p>No Pending users.</p>
+                                    </td>
+                                </tr>
+                            {% endfor  %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ############ PAGE END-->
+
+        </div>
+    </div>
+    </div>
+    </div>
+        </div>
+        </div>
+        </div>
+
+        </div>
+    </main>
+
+{% endblock %}

@@ -24,3 +24,12 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    crysoft.currency_converter:
+        class: Crysoft\CurrencyBundle\DependencyInjection\CurrencyConverter
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    twig.extension.crysoft_currency:
+        class: Crysoft\CurrencyBundle\Twig\Extensions\CrysoftTwigCurrency
+        tags:
+          - { name: 'twig.extension'}
+        arguments: ["@crysoft.currency_converter"]

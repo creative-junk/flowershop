@@ -74,7 +74,7 @@
                                 <td><a style="color: #e93838" href="{{ path('breeder-order-item-details',{
                                         'id':orderItem.id
                                     }) }}">{{ orderItem.order.createdAt | date('d-m-Y H:i:s')  }} </a> </td>
-                                <td>{{ orderItem.order.orderCurrency }}&nbsp;{{ orderItem.order.orderAmount | number_format(2, '.', ',') }}</td>
+                                <td>{{ app.user.myCompany.currency }}&nbsp;{{ orderItem.order.orderAmount | convertCurrency(orderItem.order.orderCurrency,app.user.myCompany.currency) }}</td>
                                 <td>{{ orderItem.itemStatus }}</td>
                                 <td>{{ orderItem.order.orderState }} </td>
 

@@ -3,125 +3,117 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @author Yoann Aparici <y.aparici@lexik.fr>
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CurrencyRepository")
  * @ORM\Table(name="currency")
  */
-class Currency
-{
+class Currency {
+
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",length=3)
      */
-    protected $id;
+    protected $iso;
 
     /**
-     * @Assert\Length(min=3)
-     * @Assert\Length(max=3)
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
+     * @ORM\Column(type="string", length=100)
      *
-     * @var string
-     * @ORM\Column(type="string")
      */
-    protected $originalCode;
-    /**
-     * @Assert\Length(min=3)
-     * @Assert\Length(max=3)
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     * @ORM\Column(type="string")
-     */
-    protected $targetCode;
+    protected $label;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="numeric")
-     *
-     * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="float", name="exchange_rate",nullable=true)
      */
-    protected $rate;
+    protected $exchangeRate ;
+
+
+    public function __construct()
+    {
+
+    }
 
     /**
-     * Get ID
+     * Set label
+     *
+     * @param string $label
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * Get label
      *
      * @return string
      */
-    public function getId()
+    public function getLabel()
     {
-        return $this->id;
+        return $this->label;
     }
 
     /**
-     * Get code
+     * Set iso
+     *
+     * @param string $iso
+     */
+    public function setIso($iso)
+    {
+        $this->iso = $iso;
+    }
+
+    /**
+     * Get iso
      *
      * @return string
      */
-    public function getOriginalCode()
+    public function getIso()
     {
-        return $this->originalCode;
+        return $this->iso;
     }
 
     /**
-     * Set code
+     * Set exchangeRate
      *
-     * @param string $code
+     * @param float $exchangeRate
+     * @return Currency
      */
-    public function setOriginalCode($code)
+    public function setExchangeRate($exchangeRate)
     {
-        $this->originalCode = $code;
+        $this->exchangeRate = $exchangeRate;
+
+        return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getTargetCode()
-    {
-        return $this->targetCode;
-    }
-
-    /**
-     * @param string $targetCode
-     */
-    public function setTargetCode($targetCode)
-    {
-        $this->targetCode = $targetCode;
-    }
-
-    /**
-     * Get rate
+     * Get exchangeRate
      *
-     * @return string
+     * @return float
      */
-    public function getRate()
+    public function getExchangeRate()
     {
-        return $this->rate;
+        return $this->exchangeRate;
     }
 
-    /**
-     * Set rate
-     *
-     * @param string $rate
-     */
-    public function setRate($rate)
-    {
-        $this->rate = $rate;
+    public function __toString(){
+        return $this->getLabel();
     }
 
-    /**
-     * Convert currency rate
-     *
-     * @param float $rate
-     */
-    public function convert($rate)
+    public function getChangeRateToUSD(){
+        return $this->convertToUSD(1);
+    }
+
+    public function getChangeRateFromUSD(){
+        return $this->convertFromUSD(1);
+    }
+
+    public function convertToUSD($nbToConvert)
     {
-        $this->rate /= $rate;
+        return $nbToConvert/$this->getExchangeRate();
+    }
+
+    public function convertFromUSD($nbToConvert){
+        return $nbToConvert*$this->getExchangeRate();
     }
 }

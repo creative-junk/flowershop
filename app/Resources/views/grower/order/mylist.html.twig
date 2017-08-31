@@ -75,7 +75,7 @@
                                 <td>{{ order.orderState }}</td>
                                 <td>{{ order.processingFee }}</td>
                                 <td>{{ order.paymentStatus }}</td>
-                                <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount | number_format(2, '.', ',') }}</td>
+                                <td>{{ app.user.myCompany.currency }}&nbsp;{{ order.orderTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</td>
 
                             </tr>
                         {% else %}

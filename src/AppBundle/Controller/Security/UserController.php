@@ -328,4 +328,52 @@ class UserController extends Controller
     public function logoutAction(){
         throw new \Exception('This should not be reached');
     }
+    /**
+     * @Route("/account/user/{id}/deactivate",name="deactivate-user-account")
+     */
+    public function deactivateAccountAction(Request $request, User $user){
+
+        $em = $this->getDoctrine()->getManager();
+        $user->setIsActive(false);
+
+        $em->persist($user);
+        $em->flush();
+
+        return new Response(null,204);
+    }
+    /**
+     * @Route("/account/user/{id}/activate",name="activate-user-account")
+     */
+    public function activateAccountAction(Request $request, User $user){
+
+        $em = $this->getDoctrine()->getManager();
+
+        $resetToken = base64_encode(random_bytes(10));
+
+        $user->setIsActive(true);
+
+        $em->persist($user);
+        $em->flush();
+
+        $this->sendEmail($user->getFirstName(),"Account Activated",$user->getEmail(),"userAccountApproved.htm.twig",$resetToken);
+
+        return new Response(null,204);
+    }
+    protected function sendEmail($firstName,$subject,$emailAddress,$twigTemplate,$code){
+        $message = \Swift_Message::newInstance()
+            ->setSubject($subject)
+            ->setFrom('iflora@iflora.biz','Iflora Team')
+            ->setTo($emailAddress)
+            ->setBody(
+                $this->renderView(
+                    'Emails/'.$twigTemplate,
+                    array(
+                        'name' => $firstName,
+                        'code' => $code
+                    )
+                ),
+                'text/html'
+            );
+        $this->get('mailer')->send($message);
+    }
 }

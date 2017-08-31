@@ -603,7 +603,7 @@ class AdminController extends Controller
     protected function sendEmail($firstName,$subject,$emailAddress,$twigTemplate,$code){
         $message = \Swift_Message::newInstance()
             ->setSubject($subject)
-            ->setFrom('iflora@creative-junk.com','Iflora Online Portal Team')
+            ->setFrom('iflora@iflora.biz','Iflora Team')
             ->setTo($emailAddress)
             ->setBody(
                 $this->renderView(

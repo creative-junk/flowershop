@@ -133,7 +133,7 @@
                             <div class="col-sm-6 col-lg-5 details no-edit">
                                 <div class="unit-price">
                                     <span class="visible-xs">Price</span>
-                                    {{ order.orderCurrency }} {{ orderItem.unitPrice | number_format(2, '.', ',') }}
+                                    {{ app.user.myCompany.currency }} {{ orderItem.unitPrice | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
                                 </div>
                                 <div class="quantity">
                                     <span class="visible-xs">Quantity</span>
@@ -141,7 +141,7 @@
                                 </div>
                                 <div class="total-price">
                                     <span class="visible-xs">Total</span>
-                                    {{ order.orderCurrency }} {{ orderItem.lineTotal | number_format(2, '.', ',') }}
+                                    {{ app.user.myCompany.currency }} {{ orderItem.lineTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
                                 </div>
                             </div>
                         </div>
@@ -154,9 +154,9 @@
                         <p><strong>Payment method: </strong> {{ orderItem.order.processingFee }}</p>
                         <p><strong>Payment status: </strong> {{ orderItem.order.paymentStatus }}</p>
                         <p><strong>Order Date: </strong> {{ orderItem.order.createdAt | date('d-m-Y H:i:s')  }}</p>
-                        <p><strong>Subtotal:</strong> <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.orderAmount | number_format(2, '.', ',') }}</i></p>
-                        <p><strong>Shipping:</strong> <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.shippingCost | number_format(2, '.', ',') }}</i></p>
-                        <p class="subtotal"><strong>Total:</strong>  <i>{{ orderItem.order.orderCurrency }} {{ orderItem.order.orderTotal | number_format(2, '.', ',') }}</i></p>
+                        <p><strong>Subtotal:</strong> <i>{{ app.user.myCompany.currency }} {{ orderItem.order.orderAmount | convertCurrency(orderItem.order.orderCurrency,app.user.myCompany.currency) }}</i></p>
+                        <p><strong>Shipping:</strong> <i>{{ app.user.myCompany.currency }} {{ orderItem.order.shippingCost | convertCurrency(orderItem.order.orderCurrency,app.user.myCompany.currency) }}</i></p>
+                        <p class="subtotal"><strong>Total:</strong>  <i>{{ app.user.myCompany.currency }} {{ orderItem.order.orderTotal | convertCurrency(orderItem.order.orderCurrency,app.user.myCompany.currency) }}</i></p>
                         <div class="right">
                             <a class="action primary" href="{{ path('breeder_order_list') }}">Back to Orders</a><br/><br/>
                         </div>

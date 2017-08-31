@@ -30,6 +30,7 @@ use AppBundle\Form\BuyerCompanyForm;
 use AppBundle\Form\DirectProductForm;
 use AppBundle\Form\EditDirectProductForm;
 use AppBundle\Form\GalleryForm;
+use AppBundle\Form\GrowerCompanyForm;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PayOptionType;
 use AppBundle\Form\ProductFormType;
@@ -56,6 +57,12 @@ class BreederController extends Controller
 
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $breeder = $user->getMyCompany();
+
+        if ($breeder->getIsFirstLogin()&&$user->getIsMainAccount()){
+            return $this->redirectToRoute("breeder-update-profile",['id'=>$breeder->getId()]);
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $nrMyReceivedOrders = $em->getRepository('AppBundle:OrderItems')
@@ -76,6 +83,42 @@ class BreederController extends Controller
         ]);
 
     }
+    /**
+     * @Route("/users/pending",name="breeder-pending-users")
+     */
+    public function pendingUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>false
+            ]);
+        return $this->render('users/pending.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
+    /**
+     * @Route("/users/active",name="breeder-active-users")
+     */
+    public function activeUsersAction(){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $buyer = $user->getMyCompany();
+        $em = $this->getDoctrine()->getManager();
+
+        $activeUsers = $em->getRepository("AppBundle:User")
+            ->findBy([
+                'myCompany'=>$buyer,
+                'isActive'=>true
+            ]);
+        return $this->render('users/active.htm.twig',[
+            'users'=>$activeUsers
+        ]);
+
+    }
 
     /**
      * @Route("/update/{id}",name="breeder-update-profile")
@@ -87,7 +130,7 @@ class BreederController extends Controller
 
         $company->setIsFirstLogin(false);
 
-        $form = $this->createForm(BuyerCompanyForm::class,$company);
+        $form = $this->createForm(GrowerCompanyForm::class,$company);
 
         $form->handleRequest($request);
 

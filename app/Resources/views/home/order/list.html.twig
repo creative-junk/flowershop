@@ -74,7 +74,7 @@
                             <td><a style="color: #e93838" href="{{ path('order-details',{
                                     'id': order.id
                                 }) }}">{{ order.createdAt | date('d-m-Y H:i:s') }}</a> </td>
-                            <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount | number_format(2, '.', ',') }}</td>
+                            <td>{{ app.user.myCompany.currency }}&nbsp;{{ order.orderTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</td>
                             <td>{{ order.orderStatus }}</td>
                             <td>{{ order.orderState }}</td>
 

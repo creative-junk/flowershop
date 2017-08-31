@@ -192,7 +192,7 @@
 
 <span class="price-container price-final_price tax weee">
         <span  data-price-type="finalPrice" class="price-wrapper ">
-        <span class="price">{{ app.user.myCompany.currency }} {{ auction.pricePerStem | number_format(2, '.', ',') }}</span>    </span>
+        <span class="price">{{ app.user.myCompany.currency }} {{ auction.pricePerStem | convertCurrency(auction.vendor.currency,app.user.myCompany.currency) }}</span>    </span>
         </span>
 
                                         </div>

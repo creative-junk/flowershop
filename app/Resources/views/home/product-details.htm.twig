@@ -262,7 +262,7 @@
                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 					<span class="price-container price-final_price tax weee">
 					<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-					<span class="price">{{ app.user.myCompany.currency }} {{ direct.pricePerStem | number_format(2,'.') }}</span></span>
+					<span class="price">{{ app.user.myCompany.currency }} {{ direct.pricePerStem | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}</span></span>
 					<meta content="{{ direct.currency }}" itemprop="priceCurrency">
 					</span></div>
                         <div class="product-info-stock-sku">
@@ -279,7 +279,7 @@
                     <div class="product-add-form">
                         {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
                         <input type="hidden" name="productCurrency" value="{{ app.user.myCompany.currency }}"/>
-                        <input type="hidden" name="productPrice" value="{{ direct.pricePerStem }}"/>
+                        <input type="hidden" name="productPrice" value="{{ direct.pricePerStem | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}"/>
                         <input type="hidden" name="productId" value="{{ direct.id }}"/>
                             <div class="box-tocart">
                                 <div class="fieldset">

@@ -68,7 +68,7 @@
                                     <tr>
 
 
-                                        <td>{{ order.orderCurrency }}&nbsp;{{ order.orderAmount }}</td>
+                                        <td>{{ app.user.myCompany.currency }}&nbsp;{{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</td>
                                         <td>{{ order.orderStatus }}</td>
                                         <td>{{ order.orderState }}</td>
                                         <td>{{ order.whoseOrder.myCompany }}</td>
