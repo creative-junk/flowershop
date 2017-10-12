@@ -2,7 +2,9 @@
 
 namespace AppBundle\Form;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Lexik\Bundle\FormFilterBundle\Filter\Form\Type as Filters;
@@ -34,6 +36,7 @@ class FilterFormType extends AbstractType
                 'data' => isset($options['data']) ? $options['data']['color'] : ''
 
             ])
+
             ->add('price',Filters\NumberFilterType::class)
             ->add('vaselife', Filters\NumberFilterType::class, [
                 'required' => false,
@@ -44,16 +47,17 @@ class FilterFormType extends AbstractType
             ])
             ->add('headsize', Filters\NumberFilterType::class, [
                 'required' => false,
+            ])
+            ->add('country',CountryType::class,[
+                'required'=>false,
+                'placeholder'=>'Choose a Country'
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-
-            'csrf_protection'=>false,
-            'validation_groups' => array('filtering'),
-            'growers'=>null
+          //  'growers'=>null
         ]);
     }
 

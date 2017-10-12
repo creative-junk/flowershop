@@ -120,6 +120,10 @@ class AuctionOrder
      * @ORM\Column(type="integer",nullable=true)
      */
     private $imageSize;
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
+     */
+    private $buyer;
 
     function __construct()
     {
@@ -511,13 +515,29 @@ class AuctionOrder
 
     /**
      * @param integer $imageSize
-     * @return UserOrder
+     * @return AuctionOrder
      */
     public function setImageSize($imageSize)
     {
         $this->imageSize = $imageSize;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBuyer()
+    {
+        return $this->buyer;
+    }
+
+    /**
+     * @param mixed $buyer
+     */
+    public function setBuyer($buyer)
+    {
+        $this->buyer = $buyer;
     }
 
 }

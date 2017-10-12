@@ -612,12 +612,14 @@ class BreederController extends Controller
     public function myProductListAction(Request $request)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
-
+        $breeder = $user->getMyCompany();
         $em = $this->getDoctrine()->getManager();
         $queryBuilder = $em->getRepository('AppBundle:Product')
             ->createQueryBuilder('product')
             ->andWhere('product.isActive = :isActive')
             ->setParameter('isActive', true)
+            ->andWhere('product.vendor = :vendor')
+            ->setParameter('vendor',$breeder)
             ->andWhere('product.isSeedling = :isSeedling')
             ->setParameter('isSeedling', true)
             ->orderBy('product.createdAt', 'DESC');
@@ -906,10 +908,14 @@ class BreederController extends Controller
         if ($nrUnshippedItems==1){
             $order->setOrderState("Shipped");
             $order->setOrderStatus("Processed");
+            $subject = "Order ID ".$order->getPrettyId()." Fully Shipped";
+            $message ="Your Order ID ".$order->getPrettyId()." has now been fully Shipped";
 
         }else {
             $order->setOrderState("Partially Shipped");
             $order->setOrderStatus("Partially Processed");
+            $subject = "An item in Order ID ".$order->getPrettyId()." has been Shipped";
+            $message = $orderItem->getProduct()->getTitle().", Part of your Order ID ".$order->getPrettyId()." has been Shipped";
         }
         $em->persist($order);
         $em->persist($orderItem);
@@ -917,6 +923,8 @@ class BreederController extends Controller
         $em->flush();
         //TODO Notify the User who Created the Order That their Order has been Shipped
 
+
+        $this->sendNotification($order->getUser()->getMyCompany(),$subject,$message);
         return new Response(null,204);
     }
     /**
@@ -1159,5 +1167,24 @@ class BreederController extends Controller
         }else{
             return false;
         }
+    }
+    public function sendNotification(Company $receiver,$subject,$message){
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $notification = new Notification();
+        $notification->setSubject($subject);
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($receiver);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
     }
 }

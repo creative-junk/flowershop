@@ -26,13 +26,13 @@
 
     <div class="page messages">
         <div data-placeholder="messages">
-        </div>
-        <div data-bind="scope: 'messages'">
-            <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
+            {% if success %}
+                <div class="alert alert-success">
+                    Product Successfully added to market
                 </div>
-            <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
-            </div>
+            {% endif %}
         </div>
+
     </div>
     <div class="columns">
         <div class="column main">
@@ -109,7 +109,7 @@
 
 <span class="price-container price-final_price tax weee">
         <span data-price-amount="{{ product.pricePerStem }}" data-price-type="finalPrice" class="price-wrapper ">
-        <span class="price">{{ app.user.myCompany.currency }} {{ product.pricePerStem }}</span>    </span>
+        <span class="price">{{ app.user.myCompany.currency }} {{ product.pricePerSte }}</span>    </span>
         </span>
 
                                     </div>

@@ -23,8 +23,11 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Lexik\Bundle\FormFilterBundle\LexikFormFilterBundle(),
+            new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
             new blackknight467\StarRatingBundle\StarRatingBundle(),
             new Gregwar\CaptchaBundle\GregwarCaptchaBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
             new AppBundle\AppBundle(),
             new Crysoft\CurrencyBundle\CrysoftCurrencyBundle(),
         ];

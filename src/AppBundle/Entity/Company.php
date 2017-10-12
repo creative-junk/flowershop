@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Intl\Intl;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(fields={"email"},message="It looks like you already have an account!")
  */
-class Company
+class Company implements \Serializable
 {
     /**
      * @ORM\Id
@@ -138,6 +139,10 @@ class Company
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\User",mappedBy="myCompany",fetch="EXTRA_LAZY")
      */
     private $users;
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ShippingOptions",mappedBy="ownedBy",fetch="EXTRA_LAZY")
+     */
+    private $shippingOptions;
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\BillingAddress",mappedBy="company",fetch="EXTRA_LAZY")
      */
@@ -343,7 +348,8 @@ class Company
      */
     public function getCountry()
     {
-        return $this->country;
+        //return $this->country;
+        return Intl::getRegionBundle()->getCountryName($this->country);
     }
 
     /**
@@ -686,6 +692,14 @@ class Company
         $this->shippingAddress = $shippingAddress;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getShippingOptions()
+    {
+        return $this->shippingOptions;
+    }
+
 
     /**
      * @return mixed
@@ -922,5 +936,36 @@ class Company
     }
 
 
+    /**
+     * String representation of object
+     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     * @since 5.1.0
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->companyName,
+            $this->companyCode,
+            $this->currency,
+            $this->companyType,
+            $this->country
 
+        ));
+    }
+
+    /**
+     * Constructs the object
+     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized <p>
+     * The string representation of the object.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function unserialize($serialized)
+    {
+        // TODO: Implement unserialize() method.
+    }
 }

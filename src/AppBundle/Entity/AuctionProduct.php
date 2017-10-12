@@ -29,7 +29,7 @@ class AuctionProduct
      */
     private $whichAuction;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",nullable=true)
      */
     private $assignedStock;
     /**

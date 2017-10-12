@@ -4,7 +4,7 @@
     <input type="hidden" class="compare-item-id" data-bind="value: id" value="65">
     <strong class="product-item-name">
         <a data-bind="attr: {href: product_url}, html: name" class="product-item-link"
-           href="{{ path('buyer_product_details',{'id':listItem.product.id }) }}">{{ listItem.product.title }}</a>
+           href="{{ path('buyer_product_details',{'id':listItem.product.id }) }}">{{ listItem.product.product.title }}</a>
     </strong>
     <a class="compare-remove" href="#"
        data-url="{{ path('remove-rose-from-compare',{

@@ -134,7 +134,8 @@
                                     {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
 
                                     {{ avgrating | rating(5, "fa-lg") }}
-
+                                 {% else %}
+                                     {{ 0 | rating(5, "fa-lg") }}
                                 {% endif %}
 
                             </td>

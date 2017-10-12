@@ -23,6 +23,7 @@
                         .removeClass('fa-spinner')
                         .removeClass('fa-spin')
                         .addClass('fa-check');
+                    location.reload();
                 }).fail(function () {
                     $(".failure").fadeIn("slow");
 
@@ -210,7 +211,7 @@
 
                                 <div class="actions">
                                     <a href="#"  class="action request js-request-user"
-                                       data-url="{{ path('request-buyer-buyer',{
+                                       data-url="{{ path('request-buyer-grower',{
                                            'id': buyer.id
                                        }) }}"
                                        title="Request Buyer"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add Buyer</a>        </div>
@@ -311,15 +312,15 @@
                                             <div class="review-title" itemprop="name">{{ review.summary }}</div>
                                             <div class="review-ratings">
                                                 <div class="rating-summary item" itemprop="reviewRating" itemscope="">
-                                                    <span class="rating-label"><b>Quality</b></span>
+                                                    <span class="rating-label"><b>Pays on Time</b></span>
                                                     {{ review.quality | rating(5, "fa-lg") }}
                                                 </div>
                                                 <div class="rating-summary item">
-                                                    <span class="rating-label"><b>Price</b></span>
+                                                    <span class="rating-label"><b>Easy to work with</b></span>
                                                     {{ review.price | rating(5, "fa-lg") }}
                                                 </div>
                                                 <div class="rating-summary item" itemprop="reviewRating" itemscope="">
-                                                    <span class="rating-label"><b>Value</b></span>
+                                                    <span class="rating-label"><b>Accessible</b></span>
                                                     {{ review.value | rating(5, "fa-lg") }}
                                                 </div>
                                             </div>

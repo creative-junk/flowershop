@@ -1,0 +1,58 @@
+<div class="block review-add">
+    <div class="" style="border-bottom: 1px solid #f1f1f1"><strong>Write Your Own Review</strong></div>
+    <div class="block-content">
+        <style>
+            .form-group .control-label{
+                width:180px;
+                padding-left:0;
+                margin-left:0;
+                text-align: left;
+            }
+        </style>
+{{ form_start(ratingForm, {'action': path('rate-user'),'method':'POST','attr': {'id': 'rating-form'} } ) }}
+        <fieldset class="fieldset review-fieldset" data-hasrequired="">
+                 <fieldset class="field required review-field-ratings">
+                    <div class="control">
+                        <div class="nested" id="product-review-table">
+                            <div class="">
+                                {{ form_row(ratingForm.quality,{'label': 'Pays on time'}) }}
+                            </div>
+                            <div class="field choice review-field-rating">
+                                {{ form_row(ratingForm.price,{'label':'Easy to work with'})}}
+                            </div>
+                            <div class="field choice review-field-rating">
+                                {{ form_row(ratingForm.value,{'label':'Accessible'}) }}
+                            </div>
+                        </div>
+                     </div>
+                </fieldset>
+                <div class="field review-field-summary required">
+                    <div class="control">
+                {{ form_row(ratingForm.summary) }}
+                    </div>
+                </div>
+                <div class="field review-field-text required">
+                    <div class="control">
+                {{ form_row(ratingForm.review) }}
+                    </div>
+                </div>
+            </fieldset>
+        <input type="hidden" name="grower" value="{{ grower.id }}"/>
+            <div class="actions-toolbar review-form-actions">
+                <div class="primary actions-primary">
+                    <button type="submit" class="action submit primary"> <i id="rate" class="fa fa-telegram"></i> &nbsp;<span> <span>Submit Review</span></button>
+                </div>
+            </div>
+        {{ form_end(ratingForm) }}
+
+    </div>
+</div>
+<style>
+    .control-label {
+        padding: 6px 15px 0 0;
+        text-align: right;
+        width: 9.8%;
+        float: left;
+
+    }
+</style>

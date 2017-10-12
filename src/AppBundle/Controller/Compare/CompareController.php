@@ -3,6 +3,8 @@
 namespace AppBundle\Controller\Compare;
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\AuctionProduct;
+use AppBundle\Entity\Direct;
 use AppBundle\Entity\MyList;
 use AppBundle\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -15,18 +17,18 @@ class CompareController extends Controller
     /**
      * @Route("/rose/compare/{id}/add",name="add-rose-to-compare")
      */
-    public function addProductToCompareAction(Request $request, Product $product)
+    public function addProductToCompareAction(Request $request, Direct $product)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
-        $compareList = $em->getRepository("AppBundle:MyList")->findOneBy(['listOwner' => $user, 'listType' => 'Product-Compare', 'productType' => 'Rose', 'product' => $product]);
+        $compareList = $em->getRepository("AppBundle:MyList")->findOneBy(['comparisonOwner' => $user, 'listType' => 'Product-Compare', 'productType' => 'Rose', 'product' => $product]);
         if ($compareList) {
             return new Response(null, 500);
         } else {
             $compareList = new MyList();
             $compareList->setProduct($product);
             $compareList->setListType('Product-Compare');
-            $compareList->setListOwner($user);
+            $compareList->setComparisonOwner($user);
             $compareList->setProductType('Rose');
             $em->persist($compareList);
             $em->flush();
@@ -37,14 +39,14 @@ class CompareController extends Controller
     /**
      * @Route("/auction/compare/{id}/compare",name="add-auction-to-compare")
      */
-    public function addAuctionToCompareAction(Request $request, Auction $auction)
+    public function addAuctionToCompareAction(Request $request, AuctionProduct $auction)
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
         $compareList = new MyList();
         $compareList->setAuctionProduct($auction);
         $compareList->setListType('Product-Compare');
-        $compareList->setListOwner($user);
+        $compareList->setComparisonOwner($user);
         $compareList->setProductType('Auction');
         return new Response(null, 204);
 
@@ -70,7 +72,7 @@ class CompareController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
-        $compareList = $em->getRepository("AppBundle:MyList")->findBy(['listOwner' => $user, 'listType' => 'Product-Compare', 'productType' => 'Rose',]);
+        $compareList = $em->getRepository("AppBundle:MyList")->findBy(['comparisonOwner' => $user, 'listType' => 'Product-Compare', 'productType' => 'Rose',]);
         return $this->render('compare/listing.htm.twig', ['productList' => $compareList]);
     }
 
@@ -82,7 +84,7 @@ class CompareController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
         $compareList = $em->getRepository("AppBundle:MyList")->findBy([
-            'listOwner' => $user,
+            'comparisonOwner' => $user,
             'listType' => 'Product-Compare',
             'productType' => 'Rose',]);
         foreach ($compareList as $listItem) {

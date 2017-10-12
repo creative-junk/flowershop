@@ -17,6 +17,11 @@
             {{ form_row(form.color) }}
 
         </div>
+
+        <div class="field">
+            {{ form_row(form.country) }}
+
+        </div>
         <div class="field">
             {{ form_row(form.price) }}
         </div>
@@ -29,13 +34,13 @@
         <div class="field">
             {{ form_row(form.headsize ) }}
         </div>
-<!--
+
         <div class="field">
             <input class="action primary" id="resetForm" type="button" value="Reset">
             </input>
             <button class="action primary" type="submit">Filter
             </button>
-        </div> -->
+        </div>
     </fieldset>
     {{ form_end(form) }}
 </div>

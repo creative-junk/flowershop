@@ -24,16 +24,17 @@
     </div>
     <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
 
-        <div class="page messages">
+        <div class="page message">
             <div data-placeholder="messages">
+                {% if success is defined %}
+                    <div class="alert alert-success">
+                        Product Successfully added to market
+                    </div>
+                {% endif %}
             </div>
-            <div data-bind="scope: 'messages'">
-                <div class="messages" data-bind="foreach: { data: cookieMessages, as: 'message' }">
-                </div>
-                <div class="messages" data-bind="foreach: { data: messages().messages, as: 'message' }">
-                </div>
-            </div>
+
         </div>
+
         <div class="columns">
             <div class="column main">
 

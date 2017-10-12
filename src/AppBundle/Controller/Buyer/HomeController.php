@@ -433,7 +433,7 @@ class HomeController extends Controller
      */
     public function compareAction()
     {
-        return $this->render('home.htm.twig');
+        return $this->render('compare/compare.htm.twig');
     }
 
     /**
@@ -457,35 +457,79 @@ class HomeController extends Controller
             $growers[]=$buyerGrower->getGrower();
         }
 
-        $form = $this->createForm(BuyerAgentFormType::class,null, ['growers' => $growers]);
+        $form = $this->createForm(BuyerAgentFormType::class);
 
 
         $filterValues = Array();
 
-
+        $filterQuery="";
         $form = $this->createForm(FilterFormType::class);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()){
+              $season = $form['season']->getData();
+              $color = $form['color']->getData();
+              $country = $form['country']->getData();
+              $price = $form['price']->getData();
+              $vaseLife = $form['vaselife']->getData();
+              $stemLength = $form['stemLength']->getData();
+              $headsize = $form['headsize']->getData();
 
-            $filterValues=$form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $filterQuery="SELECT direct FROM AppBundle\Entity\Direct direct INNER JOIN direct.product product INNER JOIN product.vendor vendor WHERE product.isActive = :isActive AND product.isSeedling = :isSeedling";
 
-            $filteredForm = $this->createForm(FilterFormType::class,$filterValues);
+            $filterParam['isActive']=true;
+            $filterParam['isSeedling']=false;
 
-            // initialize a query builder
-            $filterBuilder = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Product')
-                ->createQueryBuilder('e');
 
-            // build the query from the given form object
-            $this->get('lexik_form_filter.query_builder_updater')->addFilterConditions($form, $filterBuilder);
+              if ($season!=''){
+                  $filterQuery.=" and product.season = :season";
+                  $filterParam[':season']=$season;
+              }
+            if ($color!=''){
+                $filterQuery.=" and product.color = :color";
+                $filterParam[':color']=$color;
+            }
+            if ($price!=''){
+                $filterQuery.=" and direct.pricePerStem = :price";
+                $filterParam[':price']=$price;
+            }
+            if ($vaseLife!=''){
+                $filterQuery.=" and product.vaselife = :vaselife";
+                $filterParam[':vaselife']=$vaseLife;
+            }
+            if ($stemLength){
+                $filterQuery.=" and product.stemLength = :stemLength";
+                $filterParam[':stemLength']=$stemLength;
+            }
+            if ($headsize){
+                $filterQuery.=" and product.headsize = :headsize";
+                $filterParam[':headsize']=$headsize;
+            }
+            if ($country){
+                $filterQuery.=" and vendor.country = :country";
+                $filterParam[':country']=$country;
+            }
 
-            $query = $filterBuilder->getQuery();
+/*
+            $queryBuilder = $em->getRepository('AppBundle:Direct')
+                ->createQueryBuilder('direct')
+                ->innerJoin('direct.product','product')
+                ->innerJoin('product.vendor','vendor')
+                ->andWhere('product.isActive = :isActive')
+                ->setParameter('isActive', true)
+                ->andWhere('product.isSeedling = :isSeedling')
+                ->setParameter('isSeedling', false)
+  */
+            $query = $em->createQuery($filterQuery)->setParameters($filterParam);
+
+            //var_dump($query);exit;
+            //$query = $queryBuilder->getQuery();
             /**
              * @var $paginator \Knp\Component\Pager\Paginator
              */
-            $paginator  = $this->get('knp_paginator');
+            $paginator = $this->get('knp_paginator');
 
             $result = $paginator->paginate(
                 $query,
@@ -494,7 +538,7 @@ class HomeController extends Controller
             );
 
             return $this->render('home/Filter/shop.htm.twig', [
-                'form' => $filteredForm->createView(),
+                'form' => $form->createView(),
                 'products' => $result
 
             ]);
@@ -589,6 +633,51 @@ class HomeController extends Controller
         ]);
     }
     /**
+     * @Route("/direct-market/on-sale",name="on-sale")
+     */
+    public function buyerOnSaleShopListAction(Request $request = null)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $cart = new Cart();
+
+        $cart->setOwnedBy($user);
+
+        //$form = $this->createForm(addToCartFormType::class, $cart);
+
+        $form = $this->createForm(FilterFormType::class);
+
+        $em = $this->getDoctrine()->getManager();
+        $queryBuilder = $em->getRepository('AppBundle:Direct')
+            ->createQueryBuilder('direct')
+            ->innerJoin('direct.product','product')
+            ->andWhere('direct.isOnSale = :isOnSale')
+            ->setParameter('isOnSale', true)
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('product.isSeedling = :isSeedling')
+            ->setParameter('isSeedling', false)
+            ->orderBy('direct.createdAt', 'DESC');
+        $query = $queryBuilder->getQuery();
+        /**
+         * @var $paginator \Knp\Component\Pager\Paginator
+         */
+        $paginator = $this->get('knp_paginator');
+        $result = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $request->query->getInt('limit', 9)
+        );
+
+
+        return $this->render('home/list.htm.twig', [
+            'products' => $result,
+            'form' => $form->createView(),
+            'filterValues'=>''
+        ]);
+    }
+
+    /**
      * @Route("/market/grower/view/roses/{id}",name="view_grower_roses")
      */
     public function viewGrowerRosesAction(Request $request,User $user)
@@ -650,7 +739,8 @@ class HomeController extends Controller
             $currency = $user->getMyCompany()->getCurrency();
             //$currency = $request->request->get('productCurrency');
             //$price = $this->container->get('lexik_currency.converter')->convert(, false, );
-            $price = $this->container->get('crysoft.currency_converter')->convertAmount($basePrice,$product->getVendor()->getCurrency(), $currency);
+           // $price = $this->container->get('crysoft.currency_converter')->convertAmount($product->getPricePerStem(),$product->getVendor()->getCurrency(), $currency);
+            $price = $basePrice;
             $existingCartItem = $em->getRepository('AppBundle:CartItems')
                 ->findItemInCart($product);
 
@@ -658,6 +748,7 @@ class HomeController extends Controller
                 $newQty=$existingCartItem[0]->getQuantity()+$quantity;
                 $existingCartItem[0]->setQuantity($newQty);
                 $lineTotal = ($price) * ($newQty);
+                $addingTotal = $price * $quantity;
                 $existingCartItem[0]->setLineTotal($lineTotal);
                 $cartItem = $existingCartItem[0];
             }else {
@@ -667,12 +758,15 @@ class HomeController extends Controller
                 $cartItem->setUnitPrice($price);
                 $cartItem->setProduct($product);
                 $lineTotal = ($price) * ($quantity);
+                $addingTotal = $price * $quantity;
                 $cartItem->setLineTotal($lineTotal);
             }
             //Update the Cart
             if ($existingCart) {
-                $existingCart[0]->setCartAmount(($existingCart[0]->getCartAmount()) + ($lineTotal));
-                $existingCart[0]->setCartTotal(($existingCart[0]->getCartTotal()) + ($lineTotal));
+                $cartAmount = ($existingCart[0]->getCartAmount()) + $addingTotal;
+                $cartTotal = ($existingCart[0]->getCartTotal()) + $addingTotal;
+                $existingCart[0]->setCartAmount($cartAmount);
+                $existingCart[0]->setCartTotal($cartTotal);
                 $existingCart[0]->setNrItems(($existingCart[0]->getNrItems()) + $quantity);
                 $cartItem->setCart($existingCart[0]);
                 $em->persist($existingCart[0]);
@@ -1336,8 +1430,12 @@ class HomeController extends Controller
             $orderItem->setVendor($vendor);
             $orderItem->setOrder($myOrder);
             $this->updateQuantity($product,$cartItem->getQuantity());
+
             $em->persist($orderItem);
             $em->remove($cartItem);
+
+            $this->sendOrderReceivedNotification($vendor,$myOrder);
+
         }
         //$myOrder->setOrderItems($orderItems);
 
@@ -1351,6 +1449,8 @@ class HomeController extends Controller
             $em->persist($myOrder);
             $em->remove($cart[0]);
             $em->flush();
+
+
             $this->container->get('session')->set('order', $myOrder);
             return $this->redirectToRoute('checkout-complete');
 
@@ -1467,6 +1567,119 @@ class HomeController extends Controller
     }
 
     /**
+     * @Route("/auction/filter",name="filter-auction")
+     */
+    public function filterAuctionAction(Request $request){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $vendor = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerGrowers = $em->getRepository("AppBundle:BuyerGrower")
+            ->findBy([
+                'buyer'=>$vendor,
+                'status'=>"Accepted"
+            ]);
+        $growers=array();
+        foreach ($buyerGrowers as $buyerGrower) {
+            $growers[]=$buyerGrower->getGrower();
+        }
+
+        $form = $this->createForm(BuyerAgentFormType::class);
+
+
+        $filterValues = Array();
+
+        $filterQuery="";
+        $form = $this->createForm(FilterFormType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $season = $form['season']->getData();
+            $color = $form['color']->getData();
+            $country = $form['country']->getData();
+            $price = $form['price']->getData();
+            $vaseLife = $form['vaselife']->getData();
+            $stemLength = $form['stemLength']->getData();
+            $headsize = $form['headsize']->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $filterQuery="SELECT auctionProduct FROM AppBundle\Entity\AuctionProduct auctionProduct INNER JOIN auctionProduct.whichAuction auction INNER JOIN auction.product product INNER JOIN product.vendor vendor WHERE product.isActive = :isActive AND product.isSeedling = :isSeedling";
+
+            $filterParam['isActive']=true;
+            $filterParam['isSeedling']=false;
+
+
+            if ($season!=''){
+                $filterQuery.=" and product.season = :season";
+                $filterParam[':season']=$season;
+            }
+            if ($color!=''){
+                $filterQuery.=" and product.color = :color";
+                $filterParam[':color']=$color;
+            }
+            if ($price!=''){
+                $filterQuery.=" and auctionProduct.pricePerStem = :price";
+                $filterParam[':price']=$price;
+            }
+            if ($vaseLife!=''){
+                $filterQuery.=" and product.vaselife = :vaselife";
+                $filterParam[':vaselife']=$vaseLife;
+            }
+            if ($stemLength){
+                $filterQuery.=" and product.stemLength = :stemLength";
+                $filterParam[':stemLength']=$stemLength;
+            }
+            if ($headsize){
+                $filterQuery.=" and product.headsize = :headsize";
+                $filterParam[':headsize']=$headsize;
+            }
+            if ($country){
+                $filterQuery.=" and vendor.country = :country";
+                $filterParam[':country']=$country;
+            }
+
+            /*
+                        $queryBuilder = $em->getRepository('AppBundle:Direct')
+                            ->createQueryBuilder('direct')
+                            ->innerJoin('direct.product','product')
+                            ->innerJoin('product.vendor','vendor')
+                            ->andWhere('product.isActive = :isActive')
+                            ->setParameter('isActive', true)
+                            ->andWhere('product.isSeedling = :isSeedling')
+                            ->setParameter('isSeedling', false)
+              */
+            $query = $em->createQuery($filterQuery)->setParameters($filterParam);
+
+            //var_dump($query);exit;
+            //$query = $queryBuilder->getQuery();
+            /**
+             * @var $paginator \Knp\Component\Pager\Paginator
+             */
+            $paginator = $this->get('knp_paginator');
+
+            $result = $paginator->paginate(
+                $query,
+                $request->query->getInt('page', 1),
+                $request->query->getInt('limit', 9)
+            );
+
+            return $this->render('buyer/auction/list.htm.twig', [
+                'form' => $form->createView(),
+                'products' => $result
+
+            ]);
+        }
+
+        return $this->render('home/Filter/filter.htm.twig', [
+            'form' => $form->createView()
+
+        ]);
+    }
+    /**
      * @Route("/auction/{id}/view",name="buyer_auction_product_details")
      */
     public function auctionProductDetailsAction(Request $request, AuctionProduct $product)
@@ -1483,7 +1696,7 @@ class HomeController extends Controller
             $auctionCart = new AuctionCart();
             $auctionCart->setProduct($product);
             $auctionCart->setWhoseCart($user);
-            $auctionCart->setCompanyCart($user->getMyCompany());
+            //$auctionCart->setCompanyCart($user->getMyCompany());
             $auctionCart->setCartCurrency($user->getMyCompany()->getCurrency());
             $auctionCart->setItemPrice($price);
             $auctionCart->setCartQuantity($quantity);
@@ -1661,7 +1874,7 @@ class HomeController extends Controller
             $agent =$form["agent"]->getData();
             //var_dump($agent);exit;
             $this->container->get('session')->set('cart', $cart);
-            $this->container->get('session')->set('agent',$agent);
+            $this->container->get('session')->set('agent',$agent->getId());
 
             return $this->redirectToRoute('auction_buyer_payment_method');
 
@@ -1698,11 +1911,12 @@ class HomeController extends Controller
 
         $myAgent = $em->getRepository('AppBundle:Company')
             ->findOneBy([
-                'id'=>$agent->getId()
+                'id'=>$agent
             ]);
-
+       // var_dump($myAgent);exit;
         $myOrder = new AuctionOrder();
         $myOrder->setCreatedAt(new \DateTime());
+        $myOrder->setBuyer($user->getMyCompany());
         $myOrder->setOrderStatus("Processing");
         $myOrder->setOrderNotes("None");
         $myOrder->setWhoseOrder($myOwner);
@@ -1710,7 +1924,7 @@ class HomeController extends Controller
         $myOrder->setItemPrice($thisCart->getItemPrice());
         $myOrder->setQuantity($thisCart->getCartQuantity());
         $myOrder->setBuyingAgent($myAgent);
-        $myOrder->setSellingAgent($thisCart->getProduct()->getSellingAgent());
+        $myOrder->setSellingAgent($thisCart->getProduct()->getWhichAuction()->getSellingAgent());
         $myOrder->setCheckoutCompletedAt(new \DateTime());
         $myOrder->setOrderState("Active");
         $myOrder->setOrderAmount(($thisCart->getCartQuantity()*$thisCart->getItemPrice()));
@@ -1731,12 +1945,9 @@ class HomeController extends Controller
 
             $em->flush();
 
-            $this->container->get('session')->remove('agent');
-            $this->container->get('session')->remove('product');
-            $this->container->get('session')->remove('shippingCost');
-            $this->container->get('session')->remove('auction_order');
 
-            $this->container->get('session')->set('auction_order', $myOrder);
+            $this->container->get('session')->set('auction_order', $myOrder->getId());
+
             $this->updateAuctionQty($thisCart->getCartQuantity(),$thisCart->getProduct());
             $this->sendOrderAssignmentNotification($myAgent,$myOrder);
 
@@ -1765,9 +1976,11 @@ class HomeController extends Controller
         $order = $em->getRepository("AppBundle:AuctionOrder")
             ->findOneBy(
                 [
-                    'id'=>$savedOrder->getId()
+                    'id'=>$savedOrder
                 ]
             );
+
+        $sellingAgent = $order->getSellingAgent();
 
         $form = $this->createForm(AuctionPaymentProofForm::class,$order);
 
@@ -1780,6 +1993,8 @@ class HomeController extends Controller
             $em->persist($order);
 
             $em->flush();
+
+            $this->sendAuctionOrderReceivedNotification($sellingAgent,$order);
 
             return $this->redirectToRoute('buyer-auction-payment-complete');
 
@@ -2090,7 +2305,7 @@ class HomeController extends Controller
     public function compareProductsAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
-        $compareList = $em->getRepository("AppBundle:MyList")->findBy(['listOwner' => $user, 'listType' => 'Product-Compare', 'productType' => 'Rose',]);
+        $compareList = $em->getRepository("AppBundle:MyList")->findBy(['comparisonOwner' => $user, 'listType' => 'Product-Compare', 'productType' => 'Rose',]);
         return $this->render('compare/compare.htm.twig', ['productList' => $compareList]);
     }
     public function buyerGrowerExists(Company $buyer, Company $grower){
@@ -2126,10 +2341,7 @@ class HomeController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $existingQty = $product->getNumberOfStems();
-        $newQuantity = $existingQty - $quantity;
-
-        $product->setNumberOfStems($newQuantity);
+        $product->setNumberOfStems($product->getNumberOfStems() - $quantity);
 
         $em->persist($product);
         $em->flush();
@@ -2158,7 +2370,52 @@ class HomeController extends Controller
 
 
     }
+    public function sendAuctionOrderReceivedNotification(Company $agent,AuctionOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p> You have received a new Order #".$order->getPrettyId()." in the Auction and the order has been Automatically added to your list of Received Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Auction Order Received: ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($agent);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+    public function sendOrderReceivedNotification(Company $vendor,UserOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p> You have received a new Order #".$order->getPrettyId()." and the order has been Automatically added to your list of Received Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Order Received: ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($vendor);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
     private function updateAuctionQty($quantity, AuctionProduct $product)
     {
         $em = $this->getDoctrine()->getManager();
@@ -2172,6 +2429,7 @@ class HomeController extends Controller
         $em->flush();
 
     }
+
 
 
 }

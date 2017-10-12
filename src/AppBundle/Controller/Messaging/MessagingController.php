@@ -70,7 +70,7 @@ class MessagingController extends Controller
     /**
      * @Route("/message/new",name="new-message")
      */
-    public function newMessageAction(Request $request,$participantId=null){
+    public function newMessageAction(Request $request,$participantId=null,$roseId=null){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em = $this->getDoctrine()->getManager();
@@ -79,7 +79,13 @@ class MessagingController extends Controller
             ->findOneBy([
                 'id'=>$participantId
             ]);
-        // var_dump($participant);exit;
+
+        $rose = $em->getRepository("AppBundle:Product")
+            ->findOneBy([
+                'id'=>$roseId
+            ]);
+
+//        var_dump($roseTitle);exit;
         $thread = new Thread();
         $thread->setCreatedBy($user);
         $thread->setIsDeleted(false);
@@ -92,7 +98,6 @@ class MessagingController extends Controller
         $message->setIsSpam(false);
         $message->setSender($user);
 
-
         $form = $this->createForm(MessageFormType::class,$message);
 
         $form->handleRequest($request);
@@ -101,16 +106,29 @@ class MessagingController extends Controller
             $message = $form->getData();
             $message->setSentAt(new \DateTime());
 
+            $subject = $form['subject']->getData();
+
             $participant_id =  $request->request->get('participant');
+            $rose_id = $request->request->get('rose');
 
             $participant = $em->getRepository("AppBundle:User")
                 ->findOneBy([
                     'id'=>$participant_id
                 ]);
 
+
+            $rose = $em->getRepository("AppBundle:Product")
+                ->findOneBy([
+                    'id'=>$rose_id
+                ]);
+
+            $subject = $subject.'-'.$rose->getTitle();
+
+
             $thread->setLastMessage($message);
             $thread->setLastMessageDate(new \DateTime());
             $message->setParticipant($participant);
+            $message->setSubject($subject);
 
             $em->persist($thread);
             $em->persist($message);
@@ -123,7 +141,8 @@ class MessagingController extends Controller
         }
         return $this->render(':home/messages:new.htm.twig',[
             'messageForm'=>$form->createView(),
-            'participant'=>$receiver
+            'participant'=>$receiver,
+            'rose'=>$rose
         ]);
     }
 }

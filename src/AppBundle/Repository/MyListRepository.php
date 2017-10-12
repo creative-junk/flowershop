@@ -82,7 +82,7 @@ class MyListRepository extends EntityRepository
         return (int) $builder
             ->select($builder->expr()->count('m.id'))
 
-            ->where('m.listOwner = :listOwner')
+            ->where('m.comparisonOwner = :listOwner')
             ->setParameter('listOwner', $user)
 
             ->andWhere('m.listType = :listType')

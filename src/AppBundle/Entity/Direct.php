@@ -62,6 +62,10 @@ class Direct
     /**
      * @ORM\Column(type="boolean")
      */
+    private $isOnSale=false;
+    /**
+     * @ORM\Column(type="boolean")
+     */
     private $announceToBuyers;
     /**
      * @ORM\Column(type="boolean")
@@ -96,7 +100,8 @@ class Direct
     function __construct()
     {
         $this->productList = new ArrayCollection();
-        $this->setConsignmentNumber($this->numberOfStems);
+        $this->reviews = new ArrayCollection();
+
     }
 
     /**
@@ -152,6 +157,7 @@ class Direct
     public function setNumberOfStems($numberOfStems)
     {
         $this->numberOfStems = $numberOfStems;
+        $this->setConsignmentNumber($numberOfStems);
     }
 
     /**
@@ -211,6 +217,22 @@ class Direct
     }
 
     /**
+     * @return mixed
+     */
+    public function getIsOnSale()
+    {
+        return $this->isOnSale;
+    }
+
+    /**
+     * @param mixed $isOnSale
+     */
+    public function setIsOnSale($isOnSale)
+    {
+        $this->isOnSale = $isOnSale;
+    }
+
+    /**
      * @param mixed $pricePerStem
      */
     public function setPricePerStem($pricePerStem)
@@ -261,7 +283,7 @@ class Direct
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection[Rating]
      */
     public function getReviews()
     {

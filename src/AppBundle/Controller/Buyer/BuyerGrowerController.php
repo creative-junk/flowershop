@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Buyer;
 use AppBundle\Entity\BuyerAgent;
 use AppBundle\Entity\BuyerGrower;
 use AppBundle\Entity\Company;
+use AppBundle\Entity\Notification;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,6 +38,10 @@ class BuyerGrowerController extends Controller
             $em->persist($buyerGrower);
             $em->flush();
 
+            $subject ="You have a new Buyer Request";
+            $message = "You have received a new Connect request from ".$buyer->getCompanyName();
+            $this->sendNotification($grower,$subject,$message);
+
             return new Response(null, 204);
         }
     }
@@ -61,6 +66,11 @@ class BuyerGrowerController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($buyerGrower);
             $em->flush();
+
+            $subject ="You have a new Grower Request";
+            $message = "You have received a new Connect request from ".$grower->getCompanyName();
+            $this->sendNotification($buyer,$subject,$message);
+
 
             return new Response(null, 204);
         }
@@ -97,12 +107,31 @@ class BuyerGrowerController extends Controller
      */
     public function acceptGrowerRequest(BuyerGrower $buyerGrower){
 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $me = $user->getMyCompany();
+
+        $grower = $buyerGrower->getGrower();
+        $buyer = $buyerGrower->getBuyer();
+
+
         $buyerGrower->setStatus("Accepted");
         $buyerGrower->setDateSince(new \DateTime());
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($buyerGrower);
         $em->flush();
+
+
+        if ($me == $grower){
+            $who = $grower->getCompanyName();
+        }else{
+            $who = $buyer->getCompanyName();
+        }
+
+        $subject ="Connect Request Accepted";
+        $message = $who." has accepted your Connect request";
+        $this->sendNotification($who,$subject,$message);
+
 
         return new Response(null, 204);
     }
@@ -111,14 +140,52 @@ class BuyerGrowerController extends Controller
      */
     public function rejectBuyerRequest(BuyerGrower $buyerGrower){
 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $me = $user->getMyCompany();
+
+        $grower = $buyerGrower->getGrower();
+        $buyer = $buyerGrower->getBuyer();
+
+
         $buyerGrower->setStatus("Rejected");
         $buyerGrower->setDateSince(new \DateTime());
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($buyerGrower);
+        $em->remove($buyerGrower);
         $em->flush();
+
+        if ($me == $grower){
+            $who = $grower->getCompanyName();
+        }else{
+            $who = $buyer->getCompanyName();
+        }
+
+        $subject ="Connect Request Rejected";
+        $message = $who." has rejected your Connect request";
+        $this->sendNotification($who,$subject,$message);
+
+
 
         return new Response(null, 204);
     }
 
+    public function sendNotification(Company $receiver,$subject,$message){
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $notification = new Notification();
+        $notification->setSubject($subject);
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($receiver);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
 }

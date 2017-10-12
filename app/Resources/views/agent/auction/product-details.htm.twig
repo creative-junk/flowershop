@@ -1,208 +1,25 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ product.whichAuction.product.title }}{% endblock %}
 {% block javascripts %}
+    <link type="text/css" rel="stylesheet" href="{{ asset('flexslider/lightslider.css') }}" />
+    <script src="{{ asset('flexslider/lightslider.js') }}"></script>
     <script type="text/javascript">
-        // prepare the form when the DOM is ready
         $(document).ready(function() {
-
-            // bind to the form's submit event
-            $('#addToCart').submit(function(e) {
-                var ajaxRequest;
-                //Prevent Normal Submit
-                e.preventDefault();
-
-                $(".messages").fadeOut("slow");
-
-                $(this).find('.fa-shopping-cart')
-                    .removeClass('fa-shopping-cart')
-                    .addClass('fa-spinner')
-                    .addClass('fa-spin');
-
-                $(this).find('.fa-check')
-                    .removeClass('fa-check')
-                    .addClass('fa-spinner')
-                    .addClass('fa-spin');
-
-
-                // get form values
-                var values = $(this).serialize();
-
-
-                $.ajax({
-                    url: $(this).data('url'),
-                    data: values,
-                    method: 'POST'
-                }).done(function () {
-                    //$el.fadeOut("slow");
-                    $(".messages").fadeIn("slow");
-
-                    $("#add-t-cart")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-check');
-                    location.reload();
-                }).fail(function(){
-                    $(".errors").fadeIn("slow");
-
-                    $("#add-t-cart")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-times');
-                })
-
-
-            });
-
-            // bind to the form's submit event
-            $('#newsletter-validate-detail1').submit(function(f) {
-                var ajaxRequest;
-                //Prevent Normal Submit
-                f.preventDefault();
-
-                $(".messages").fadeOut("slow");
-
-                $(this).find('.fa-send')
-                    .removeClass('fa-send')
-                    .addClass('fa-spinner')
-                    .addClass('fa-spin');
-
-                var form = document.getElementById("newsletter-validate-detail1");
-                var elements = form.elements;
-                for (var i = 0, len = elements.length; i < len; ++i) {
-                    elements[i].readOnly = true;
+            $('#imageGallery').lightSlider({
+                gallery:true,
+                item:1,
+                loop:true,
+                thumbItem:9,
+                slideMargin:0,
+                enableDrag: false,
+                currentPagerPosition:'left',
+                onSliderLoad: function(el) {
+                    el.lightGallery({
+                        selector: '#imageGallery .lslide'
+                    });
                 }
-                // get form values
-                var messageValues = $(this).serialize();
-
-                $.ajax({
-                    url: $(this).attr("action"),
-                    data: messageValues,
-                    method: 'POST'
-                }).done(function () {
-                    //$el.fadeOut("slow");
-                    $(".control").fadeOut("slow");
-
-                    $(".sent").fadeIn("slow");
-
-                    $("#send")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-check');
-                })
-
             });
-
-            // bind to the form's submit event
-            $('#rating-form').submit(function(f) {
-                var ajaxRequest;
-                //Prevent Normal Submit
-                f.preventDefault();
-
-                $(".messages").fadeOut("slow");
-
-                $(this).find('.fa-telegram')
-                    .removeClass('fa-telegram')
-                    .addClass('fa-spinner')
-                    .addClass('fa-spin');
-
-                var form = document.getElementById("rating-form");
-                var elements = form.elements;
-                for (var i = 0, len = elements.length; i < len; ++i) {
-                    elements[i].readOnly = true;
-                }
-                // get form values
-                var ratingValues = $(this).serialize();
-
-                $.ajax({
-                    url: $(this).attr("action"),
-                    data: ratingValues,
-                    method: 'POST'
-                }).done(function () {
-                    //$el.fadeOut("slow");
-                    $(".control").fadeOut("slow");
-
-
-                    $("#rate")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-check');
-                    location.reload();
-                })
-
-            });
-
-            $('.tocompare').on('click',function (e) {
-                e.preventDefault();
-
-                $(this).find('#compare')
-                    .addClass('fa-spinner')
-                    .addClass('fa-spin');
-                $.ajax({
-                    url: $(this).data('url'),
-                    method: 'GET'
-                }).done(function () {
-                    $("#compare")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-check');
-                    $(".result").fadeIn("slow");
-                }).fail(function () {
-                    $("#compare")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-times');
-                    $(".error").fadeIn("slow");
-                });
-            });
-
-            // bind to the form's submit event
-            $('#comment-form').submit(function(f) {
-                var ajaxRequest;
-                //Prevent Normal Submit
-                f.preventDefault();
-
-                $(".messages").fadeOut("slow");
-
-                $(this).find('.fa-telegram')
-                    .removeClass('fa-telegram')
-                    .addClass('fa-spinner')
-                    .addClass('fa-spin');
-
-                var form = document.getElementById("comment-form");
-                var elements = form.elements;
-                for (var i = 0, len = elements.length; i < len; ++i) {
-                    elements[i].readOnly = true;
-                }
-                // get form values
-                var commentValues = $(this).serialize();
-
-                $.ajax({
-                    url: $(this).attr("action"),
-                    data: commentValues,
-                    method: 'POST'
-                }).done(function () {
-                    //$el.fadeOut("slow");
-                    $(".control").fadeOut("slow");
-
-
-                    $("#comment")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-check');
-                    location.reload();
-                }).fail(function () {
-                    $(".failure").fadeIn("slow");
-
-                    $("#comment")
-                        .removeClass('fa-spinner')
-                        .removeClass('fa-spin')
-                        .addClass('fa-times');
-                });
-
-            });
-
         });
-
 
     </script>
 {% endblock %}
@@ -214,11 +31,11 @@
 <div class="breadcrumbs">
     <ul class="items">
         <li class="item home">
-            <a href="{{ path('home') }}" title="Go to Home Page">
+            <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
                 Home </a>
         </li>
         <li class="item home">
-            <a href="{{ path('buyer_auction') }}" title="Go to Home Page">
+            <a href="{{ path('agent_auction_product_list') }}" title="Go to Home Page">
                 Auction Market </a>
         </li>
         <li class="item product">
@@ -334,57 +151,57 @@
 
                     <div class="box-tocart">
                        <div class="fieldset">
-                        <!--
-                            {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
-                            <input type="hidden" name="productCurrency" value="{{ product.whichAuction.currency }}"/>
-                            <input type="hidden" name="productPrice" value="{{ product.pricePerStem }}"/>
-                            <input type="hidden" name="productId" value="{{ product.id }}"/>
-                            <div class="box-tocart">
-                                <div class="fieldset">
-                                    <div class="field qty">
-                                        <label class="label" for="qty"><span>Qty</span></label>
+                           {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
+                           <input type="hidden" name="productCurrency" value="{{ app.user.myCompany.currency }}"/>
+                           <input type="hidden" name="productPrice" value="{{ product.whichAuction.pricePerStem | convertCurrency(product.whichAuction.vendor.currency,app.user.myCompany.currency) }}"/>
+                           <input type="hidden" name="productId" value="{{ product.id }}"/>
+                           <div class="box-tocart">
+                               <div class="fieldset">
+                                   <div class="field qty">
+                                       <label class="label" for="qty"><span>Qty</span></label>
 
-                                        <div class="control">
-                                            <input id="qty" class="input-text qty" maxlength="15" name="quantity"
-                                                   title="Qty" type="number" value="10">
-                                        </div>
-                                    </div>
-                                    <div class="actions">
-                                        &nbsp;<button  class="action primary"
-                                                       title="Add to Cart" type="submit">
-                                            <span id="add-t-cart" class="fa fa-shopping-cart"></span>&nbsp;&nbsp; <span>Buy Now</span></button>
-                                    </div>
-                                </div>
-                            </div>
-                            {{ form_end(form) }}
--->
+                                       <div class="control">
+                                           <input id="qty" class="input-text qty" maxlength="12" name="quantity"
+                                                  title="Qty" type="number" value="{{ product.availableStock/10 }}">
+                                       </div>
+                                   </div>
+                                   <div class="actions">
+                                       &nbsp;<button  class="action primary"
+                                                      title="Add to Cart" type="submit">
+                                           <span id="add-t-cart" class="fa fa-shopping-cart"></span>&nbsp;&nbsp; <span>Buy Now</span></button>
+                                   </div>
+                               </div>
+                           </div>
+                           {{ form_end(form) }}
                         </div>
                     </div>
 
                 </div>
             </div>
             <div class="product media">
-                <div>
+                <ul id="imageGallery">
 
-                    <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                         src="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}">
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}">
 
-                    <table class="gallery cf">
-                        <tr>
-                            <td><img class="nim" width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}"></td>
-                        </tr>
-                    </table>
-                </div>
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}">
+                    </li>
 
+                </ul>
             </div>
 
             <div class="product info detailed">

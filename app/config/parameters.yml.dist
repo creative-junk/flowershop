@@ -10,6 +10,9 @@ parameters:
     # You should uncomment this if you want to use pdo_sqlite
     #database_path: '%kernel.root_dir%/../var/data/data.sqlite'
 
+    #Key Password
+    jwt_key_pass_phrase: ''
+
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: ~

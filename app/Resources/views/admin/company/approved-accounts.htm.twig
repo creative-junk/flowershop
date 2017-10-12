@@ -8,8 +8,8 @@
 
             $(".messages").fadeOut("slow");
 
-            $(this).find('.fa-envelope')
-                .removeClass('fa-envelope')
+            $(this).find('.fa-times')
+                .removeClass('fa-times')
                 .addClass('fa-spinner')
                 .addClass('fa-spin');
 
@@ -33,7 +33,7 @@
                     .removeClass('fa-spinner')
                     .removeClass('fa-spin')
                     .addClass('fa-check');
-            }).error(function () {
+            }).fail(function () {
                 //$el.fadeOut("slow");
                 $(".errors").fadeIn("slow");
 
@@ -41,7 +41,7 @@
                     .removeClass('fa-spinner')
                     .removeClass('fa-spin')
                     .addClass('fa-times');
-            })
+            });
 
         });
 
@@ -59,7 +59,7 @@
                     <div class="messages" style="">
                         <div class="alert alert-success">
                             <div>
-                                User reminded successfully.
+                                Account Suspended successfully.
                             </div>
                         </div>
 

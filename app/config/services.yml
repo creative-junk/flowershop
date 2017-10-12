@@ -18,6 +18,10 @@ services:
         tags:
             - { name: doctrine.event_subscriber }
 
+    app.jwt_token_authenticator:
+        class:  AppBundle\Security\JwtTokenAuthenticator
+        autowire: true
+
     app.last_login_subscriber:
         class:  AppBundle\EventListener\LastLoginSubscriber
         arguments: ["@doctrine.orm.entity_manager"]
@@ -33,3 +37,4 @@ services:
         tags:
           - { name: 'twig.extension'}
         arguments: ["@crysoft.currency_converter"]
+

@@ -39,6 +39,7 @@ class DirectProductForm extends AbstractType
                 'attr' => ['placeholder' => 'Price Per Stem']
             ])
             ->add('announceToBuyers')
+            ->add('isOnSale')
             ->add('areSamplesAvailable',null,[
                 'label'=>'Are Samples Available ?'
             ]);

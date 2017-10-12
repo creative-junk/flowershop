@@ -128,8 +128,7 @@
                         <tr>
                             {# sorting of properties based on query components #}
                             <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Rose Name', 'product.title') }}</th>
-                            <th>{{ knp_pagination_sortable(products, 'Price', 'product.price',{'direction': 'asc'}) }}</th>
-                            <th>{{ knp_pagination_sortable(products, 'Price', 'product.price') }}</th>
+                            <th>{{ knp_pagination_sortable(products, 'Price', 'direct.pricePerStem') }}</th>
                             <th>{{ knp_pagination_sortable(products,'Season','product.season') }}</th>
                             <th>{{ knp_pagination_sortable(products, 'Color','product.color') }}</th>
                             <th>{{ knp_pagination_sortable(products, 'Vaselife','product.vaselife') }}</th>

@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ direct.product.title }}{% endblock %}
 {% block javascripts %}
+    <link type="text/css" rel="stylesheet" href="{{ asset('flexslider/lightslider.css') }}" />
+    <script src="{{ asset('flexslider/lightslider.js') }}"></script>
     <script type="text/javascript">
         // prepare the form when the DOM is ready
         $(document).ready(function() {
@@ -52,7 +54,22 @@
 
 
             });
-
+            $(document).ready(function() {
+                $('#imageGallery').lightSlider({
+                    gallery:true,
+                    item:1,
+                    loop:true,
+                    thumbItem:9,
+                    slideMargin:0,
+                    enableDrag: false,
+                    currentPagerPosition:'left',
+                    onSliderLoad: function(el) {
+                        el.lightGallery({
+                            selector: '#imageGallery .lslide'
+                        });
+                    }
+                });
+            });
             // bind to the form's submit event
             $('#newsletter-validate-detail1').submit(function(f) {
                 var ajaxRequest;
@@ -291,7 +308,7 @@
                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 					<span class="price-container price-final_price tax weee">
 					<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-					<span class="price">{{ app.user.myCompany.currency }} {{ direct.pricePerStem | convertCurrency(direct.product.vendor,app.user.myCompany.currency) }}</span></span>
+					<span class="price">{{ app.user.myCompany.currency }} {{ direct.pricePerStem | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}</span></span>
 					</span></div>
                         <div class="product-info-stock-sku">
                             <div class="stock available" title="Availability">
@@ -381,28 +398,32 @@
                     </div>
                 </div>
                 <div class="product media">
-                    <div >
+                    <ul id="imageGallery">
 
-                        <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                             src="{{ asset('images/products/') }}{{ direct.product.mainImage }}">
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.mainImage }}" data-src="{{ asset('images/products/') }}{{ direct.product.mainImage }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.mainImage }}">
 
-                           <table class="gallery cf">
-                               <tr>
-                                   <td><img class="nim" width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}"></td>
-                               </tr>
-                           </table>
-                    </div>
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}" data-src="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}" data-src="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}" data-src="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}">
+                        </li>
 
+                    </ul>
                 </div>
+
+
 
                 <div class="product info detailed">
                     <ul class="nav nav-tabs">

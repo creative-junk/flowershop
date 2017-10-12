@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ direct.product.title }}{% endblock %}
 {% block javascripts %}
+    <link type="text/css" rel="stylesheet" href="{{ asset('flexslider/lightslider.css') }}" />
+    <script src="{{ asset('flexslider/lightslider.js') }}"></script>
     <script type="text/javascript">
         // prepare the form when the DOM is ready
         $(document).ready(function() {
@@ -154,7 +156,22 @@
                     $(".error").fadeIn("slow");
                 });
             });
-
+            $(document).ready(function() {
+                $('#imageGallery').lightSlider({
+                    gallery:true,
+                    item:1,
+                    loop:true,
+                    thumbItem:9,
+                    slideMargin:0,
+                    enableDrag: false,
+                    currentPagerPosition:'left',
+                    onSliderLoad: function(el) {
+                        el.lightGallery({
+                            selector: '#imageGallery .lslide'
+                        });
+                    }
+                });
+            });
             // bind to the form's submit event
             $('#comment-form').submit(function(f) {
                 var ajaxRequest;
@@ -211,7 +228,7 @@
       class="catalog-product-view product-{{ direct.product.slug }} page-layout-1column" aria-busy="false">
 {% endblock %}
 {% block body %}
-
+<style src="{{ asset('flexslider/flexslider.css') }}"></style>
     <div class="breadcrumbs">
         <ul class="items">
             <li class="item home">
@@ -257,7 +274,40 @@
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
 				{{ direct.product.title }}</span></h1>
                     </div>
+                    <div class="rating-summary">
 
+                        {% if direct.reviews | length > 0 %}
+
+                            {% set sumQualityratings = 0 %}
+                            {% set avgQualityRatings=0 %}
+                            {% for rating in direct.reviews %}
+                                {% set sumQualityratings = sumQualityratings + rating.quality %}
+                            {% endfor %}
+                            {% set avgQualityRatings= (sumQualityratings / direct.reviews|length) | round %}
+
+                            {% set sumValueratings = 0 %}
+                            {% set avgValueRatings=0 %}
+                            {% for rating in direct.reviews %}
+                                {% set sumValueratings = sumValueratings + rating.value %}
+                            {% endfor %}
+                            {% set avgValueRatings= (sumValueratings / direct.reviews|length) | round %}
+
+                            {% set sumPriceratings = 0 %}
+                            {% set avgPriceRatings=0 %}
+                            {% for rating in direct.reviews %}
+                                {% set sumPriceratings = sumPriceratings + rating.price %}
+                            {% endfor %}
+                            {% set avgPriceRatings= (sumQualityratings / direct.reviews|length) | round %}
+
+                            {% set avgrating=0 %}
+                            {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                            {{ avgrating | rating(5, "fa-lg")   }}
+                        {% else %}
+                            {{ 0 | rating(5, "fa-lg")   }}
+                        {% endif %}
+
+                    </div>
                     <div class="product-info-price">
                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 					<span class="price-container price-final_price tax weee">
@@ -353,28 +403,34 @@
                     </div>
                 </div>
                 <div class="product media">
-                    <div >
+                    <ul id="imageGallery">
 
-                        <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                             src="{{ asset('images/products/') }}{{ direct.product.mainImage }}">
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.mainImage }}" data-src="{{ asset('images/products/') }}{{ direct.product.mainImage }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.mainImage }}">
 
-                           <table class="gallery cf">
-                               <tr>
-                                   <td><img class="nim" width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}"></td>
-                                   <td><img class="nim"  width="150"
-                                            src="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}"></td>
-                               </tr>
-                           </table>
-                    </div>
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}" data-src="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.openHeadTop }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}" data-src="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.openHeadSide }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}" data-src="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.closedHeadSide }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.openHeadBouquet }}">
+                        </li>
+                        <li data-thumb="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}">
+                            <img src="{{ asset('images/products/') }}{{ direct.product.closedHeadBouquet }}">
+                        </li>
 
+                    </ul>
                 </div>
+
+
+
+
 
                 <div class="product info detailed">
                     <ul class="nav nav-tabs">
@@ -500,7 +556,8 @@
             <div class="control">
                 <div class="form">
               {{ render(controller('AppBundle:Messaging/Messaging:newMessage',{
-                  'participantId': direct.addedBy.id
+                  'participantId': direct.addedBy.id,
+                  'roseId': direct.product.id
               })) }}
                 </div>
             </div>

@@ -1,0 +1,43 @@
+<div class="sidebar sidebar-main">
+
+    <div id="layered-filter-block" class="block filter" data-collapsible="true">
+        <div class="block-title filter-title" data-count="0" role="tablist">
+            <strong aria-expanded="false" aria-selected="false" data-role="title" role="tab" tabindex="0">
+                Shop By</strong></div>
+        <div class="block-content filter-content">
+            {{ include(':home/Filter:filter.htm.twig') }}
+        </div>
+    </div>
+</div>
+<div class="sidebar sidebar-additional">
+    <div class="block block-compare" data-bind="scope: 'compareProducts'" data-role="compare-products-sidebar">
+        <div class="block-title">
+            <strong id="block-compare-heading" role="heading" aria-level="2">Compare Products</strong>
+            <span class="counter qty"
+                  data-bind="text: compareProducts().countCaption, css: {'no-display': !compareProducts().count}">{{ render(controller("AppBundle:Compare/Compare:getNrCompareItems")) }} item</span>
+        </div>
+        <!-- ko if: compareProducts().count -->
+        <div class="block-content" aria-labelledby="block-compare-heading"
+             data-bind="css: {'no-display': !compareProducts().count}">
+            <ol id="compare-items" class="product-items product-items-names"
+                data-bind="foreach: compareProducts().items">
+                {{ render(controller("AppBundle:Compare/Compare:getComparisonList")) }}
+            </ol>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <a class="action primary" href="{{ path('compare-products') }}"><span>Compare</span></a>
+                </div>
+                {% if(render(controller("AppBundle:Compare/Compare:getNrCompareItems")))>0 %}
+                <div class="secondary">
+                    <a href="#" class="compare-remove-all"
+                       data-url="{{ path('clear-list') }}">
+                        <span><span id="compare-all" style="color: black" class="fa fa-times">&nbsp;</span> Clear All </span></a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+
+</div>

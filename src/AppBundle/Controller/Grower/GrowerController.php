@@ -647,6 +647,8 @@ class GrowerController extends Controller
                 $newQty=$existingCartItem[0]->getQuantity()+$quantity;
                 $existingCartItem[0]->setQuantity($newQty);
                 $lineTotal = ($price) * ($newQty);
+                $addingTotal = $price * $quantity;
+
                 $existingCartItem[0]->setLineTotal($lineTotal);
                 $cartItem = $existingCartItem[0];
             }else {
@@ -655,13 +657,14 @@ class GrowerController extends Controller
                 $cartItem->setQuantity($quantity);
                 $cartItem->setUnitPrice($price);
                 $cartItem->setProduct($product);
+                $addingTotal = $price * $quantity;
                 $lineTotal = ($price) * ($quantity);
                 $cartItem->setLineTotal($lineTotal);
             }
             //Update the Cart
             if ($existingCart) {
-                $existingCart[0]->setCartAmount(($existingCart[0]->getCartAmount()) + ($lineTotal));
-                $existingCart[0]->setCartTotal(($existingCart[0]->getCartTotal()) + ($lineTotal));
+                $existingCart[0]->setCartAmount(($existingCart[0]->getCartAmount()) + ($addingTotal));
+                $existingCart[0]->setCartTotal(($existingCart[0]->getCartTotal()) + ($addingTotal));
                 $existingCart[0]->setNrItems(($existingCart[0]->getNrItems()) + $quantity);
                 $cartItem->setCart($existingCart[0]);
                 $em->persist($existingCart[0]);
@@ -1015,7 +1018,7 @@ class GrowerController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $queryBuilder = $em->getRepository('AppBundle:AuctionProduct')
-            ->findAllMyActiveAuctionProductsOrderByDate($grower);
+            ->findAllMyAuctionProductsOrderByDate($grower);
 
         $query = $queryBuilder->getQuery();
         /**
@@ -1850,6 +1853,8 @@ class GrowerController extends Controller
             $orderItem->setItemStatus("Pending");
             $em->persist($orderItem);
             $em->remove($cartItem);
+
+            $this->sendOrderReceivedNotification($vendor,$myOrder);
         }
         //$myOrder->setOrderItems($orderItems);
 
@@ -2330,16 +2335,22 @@ class GrowerController extends Controller
         if ($nrUnshippedItems==1){
             $order->setOrderState("Shipped");
             $order->setOrderStatus("Processed");
+            $subject = "Order ID ".$order->getPrettyId()." Fully Shipped";
+            $message ="Your Order ID ".$order->getPrettyId()." has now been fully Shipped";
 
         }else {
             $order->setOrderState("Partially Shipped");
             $order->setOrderStatus("Partially Processed");
+            $subject = "An item in Order ID ".$order->getPrettyId()." has been Shipped";
+            $message = $orderItem->getProduct()->getTitle().", Part of your Order ID ".$order->getPrettyId()." has been Shipped";
         }
         $em->persist($order);
         $em->persist($orderItem);
 
         $em->flush();
-        //TODO Notify the User who Created the Order That their Order has been Shipped
+
+
+        $this->sendNotification($order->getUser()->getMyCompany(),$subject,$message);
 
         return new Response(null,204);
     }
@@ -2570,7 +2581,7 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $message =$grower." has shipped a consignment of your Product";
-        $message.="<p> The Grower <b>". $grower." </b> has shipped a consignment of the Auction Product <b><a href='/grower/auction/product/".$product->getId()."/edit'>".$product->getProduct()->getTitle()."</a></b></p>";
+        $message.="<p> The Grower <b>". $grower." </b> has shipped a consignment of the Auction Product <b><a href='/agent/auction/market/".$product->getId()."/edit'>".$product->getProduct()->getTitle()."</a></b></p>";
 
         $notification = new Notification();
         $notification->setSubject("Product Shipped: ".$product->getProduct()->getTitle());
@@ -2614,13 +2625,75 @@ class GrowerController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $existingQty = $product->getNumberOfStems();
-        $newQuantity = $existingQty - $quantity;
-
-        $product->setNumberOfStems($newQuantity);
+        $product->setNumberOfStems($product->getNumberOfStems() - $quantity);
 
         $em->persist($product);
         $em->flush();
+
+    }
+    public function sendAuctionOrderReceivedNotification(Company $agent,AuctionOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p> You have received a new Order #".$order->getPrettyId()." in the Auction and the order has been Automatically added to your list of Received Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Auction Order Received: ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($agent);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+    public function sendOrderReceivedNotification(Company $vendor,UserOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p> You have received a new Order #".$order->getPrettyId()." and the order has been Automatically added to your list of Received Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Order Received: ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($vendor);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+    public function sendNotification(Company $receiver,$subject,$message){
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        $notification = new Notification();
+        $notification->setSubject($subject);
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($receiver);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
 
     }
 }

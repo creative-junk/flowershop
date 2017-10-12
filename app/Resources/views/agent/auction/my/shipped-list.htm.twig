@@ -60,7 +60,7 @@
                         <table>
                             <tr>
                                 {# sorting of properties based on query components #}
-                                <th>{{ knp_pagination_sortable(products, 'Price', 'product.price') }}</th>
+                                <th>{{ knp_pagination_sortable(products, 'Price', 'auction.pricePerStem') }}</th>
                                 <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Title', 'product.title') }}</th>
 
                             </tr>

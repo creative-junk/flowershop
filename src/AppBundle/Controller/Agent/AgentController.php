@@ -11,6 +11,7 @@ namespace AppBundle\Controller\Agent;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\AuctionCart;
 use AppBundle\Entity\AuctionOrder;
 use AppBundle\Entity\AuctionProduct;
 use AppBundle\Entity\BillingAddress;
@@ -27,16 +28,21 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\UserOrder;
 use AppBundle\Form\AccountFormType;
 use AppBundle\Form\addToCartFormType;
+use AppBundle\Form\AgentBuyerFormType;
 use AppBundle\Form\AgentProductForm;
+use AppBundle\Form\AuctionPaymentProofForm;
 use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\BillingAddressFormType;
+use AppBundle\Form\BuyerAgentFormType;
 use AppBundle\Form\BuyerCompanyForm;
 use AppBundle\Form\GalleryForm;
 use AppBundle\Form\MessageReplyForm;
+use AppBundle\Form\PaymentMethodFormType;
 use AppBundle\Form\PayOptionType;
 use AppBundle\Form\ProductFormType;
 use AppBundle\Form\RecommendFormType;
 use AppBundle\Form\ShippingAddressFormType;;
+use AppBundle\Form\ShippingMethodFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -591,6 +597,30 @@ class AgentController extends Controller
 
     }
     /**
+     * @Route("/orders/auction/my",name="my_agent_auction_order_list")
+     */
+    public function myAuctionOrdersListAction(){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $em=$this->getDoctrine()->getManager();
+        $orders = $em->getRepository('AppBundle:AuctionOrder')
+            ->findAllMyOrdersOrderByDate($user);
+        return $this->render('agent/order/auction-order-list.html.twig', [
+            'orders' => $orders,
+        ]);
+
+    }
+    /**
+     * @Route("/orders/auction/{id}/view",name="my_agent_auction_order_details")
+     */
+    public function myAuctionOrdersDetailsAction(Request $request,AuctionOrder $auctionOrder){
+
+        return $this->render('agent/order/auction-order-details.htm.twig', [
+            'order' => $auctionOrder,
+        ]);
+
+    }
+    /**
      * @Route("/orders/received/my",name="my_agent_received_order_list")
      */
     public function myReceivedOrdersListAction(Request $request){
@@ -634,9 +664,9 @@ class AgentController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
-            ->findMyBillingAddress($user);
+            ->findMyBillingAddress($user->getMyCompany());
         $shippingAddress = $em->getRepository('AppBundle:ShippingAddress')
-            ->findMyShippingAddress($user);
+            ->findMyShippingAddress($user->getMyCompany());
 
         return $this->render(':agent/order:orderRequest.htm.twig',[
             'order'=>$order,
@@ -949,6 +979,7 @@ class AgentController extends Controller
         $auctionProduct->setWhichAuction($auction);
         $auctionProduct->setIsActive(true);
         $auctionProduct->setAvailableStock($auction->getNumberOfStems());
+        $auctionProduct->setAssignedStock($auction->getNumberOfStems());
         $auctionProduct->setSellingAgent($agent);
         $auctionProduct->setpricePerStem($auction->getPricePerStem());
 
@@ -1049,60 +1080,265 @@ class AgentController extends Controller
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $cart = new Cart();
-
-        $cart->setOwnedBy($user);
-
-        $form = $this->createForm(addToCartFormType::class, $cart);
-
-        //only handles data on POST
+        $form = $this->createForm(addToCartFormType::class);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $cart = $form->getData();
+        if ($form->isSubmitted() && $form->isValid()){
+            $quantity = $request->request->get('quantity');
 
             $em = $this->getDoctrine()->getManager();
+            $price = $this->container->get('crysoft.currency_converter')->convertAmount($product->getWhichAuction()->getPricePerStem(),$product->getWhichAuction()->getVendor()->getCurrency(),$user->getMyCompany()->getCurrency());
+            $auctionCart = new AuctionCart();
+            $auctionCart->setProduct($product);
+            $auctionCart->setWhoseCart($user);
+            $auctionCart->setCartCurrency($user->getMyCompany()->getCurrency());
+            $auctionCart->setItemPrice($price);
+            $auctionCart->setCartQuantity($quantity);
 
-            $existingCart = $em->getRepository('AppBundle:Cart')
-                ->findMyCart($user);
-            $quantity = $request->request->get('quantity');
-            $price = $request->request->get('productPrice');
-            $currency = $request->request->get('productCurrency');
-
-            //Create The cart Item
-            $cartItem = new CartItems();
-            $cartItem->setQuantity($quantity);
-            $cartItem->setUnitPrice($price);
-            $cartItem->setProduct($product);
-            $lineTotal = ($price) * ($quantity);
-            $cartItem->setLineTotal($lineTotal);
-
-            //Update the Cart
-            if ($existingCart) {
-                $existingCart[0]->setCartAmount(($existingCart[0]->getCartAmount()) + ($lineTotal));
-                $existingCart[0]->setNrItems(($existingCart[0]->getNrItems()) + $quantity);
-                $cartItem->setCart($existingCart[0]);
-                $em->persist($existingCart[0]);
-            } else {
-                $cart->setCartAmount($lineTotal);
-                $cart->setNrItems($quantity);
-                $cart->setCartCurrency($currency);
-                $cartItem->setCart($cart);
-                $em->persist($cart);
-            }
-            $em->persist($cartItem);
+            $em->persist($auctionCart);
             $em->flush();
 
-            $this->addFlash('success', 'Product Successfully Added to Cart!');
+            return $this->redirectToRoute('auction_agent_checkout',['id'=>$auctionCart->getId()]);
 
-            return $this->redirectToRoute('agent_auction_product_list');
         }
+
         return $this->render('agent/auction/product-details.htm.twig', [
             'product' => $product,
             'form' => $form->createView()
 
         ]);
     }
+
+    /**
+     * @Route("/auction/checkout/{id}/shipping-method",name="auction_agent_checkout")
+     */
+    public function auctionCheckoutAction(Request $request, AuctionCart $cart){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $this->container->get('session')->set('cart',$cart);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ShippingMethodFormType::class);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $shippingCost = $request->request->get('shippingCost');
+
+            $this->container->get('session')->set('cart', $cart);
+            $this->container->get('session')->set('AuctionShippingCost',$shippingCost);
+            return $this->redirectToRoute('auction_agent_buyer_checkout');
+
+        }
+
+        return $this->render(':partials/iflora/agent/auction:shipping-method.htm.twig', [
+            'buyerCheckoutForm' => $form->createView(),
+            'cart'=> $cart
+        ]);
+    }
+
+    /**
+     * @Route("/auction/checkout-buyer",name="auction_agent_buyer_checkout")
+     */
+    public function auctionBuyerAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+        $cart = $this->container->get('session')->get('cart');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $buyerAgents = $em->getRepository("AppBundle:BuyerAgent")
+            ->findBy([
+                'agent'=>$agent,
+                'status'=>"Accepted"
+            ]);
+        $agents=array();
+        foreach ($buyerAgents as $buyerAgent) {
+            $agents[]=$buyerAgent->getBuyer();
+        }
+
+        $form = $this->createForm(AgentBuyerFormType::class,null, ['agents' => $agents]);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $selectedBuyer =$form["buyer"]->getData();
+
+            $this->container->get('session')->set('cart', $cart);
+            $this->container->get('session')->set('auctionBuyer',$selectedBuyer->getId());
+
+            return $this->redirectToRoute('auction_agent_payment_method');
+
+        }
+
+        return $this->render(':partials/iflora/agent/auction:my-buyer.htm.twig', [
+            'buyerCheckoutForm' => $form->createView(),
+            'cart'=> $cart
+        ]);
+    }
+
+    /**
+     * @Route("/auction/payment",name="auction_agent_payment_method")
+     */
+    public function auctionPaymentAction(Request $request){
+
+        $cart = $this->container->get('session')->get('cart');
+        $shippingCost = $this->container->get('session')->get('AuctionShippingCost');
+
+        $buyer = $this->container->get('session')->get('auctionBuyer');
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $thisCart = $em->getRepository("AppBundle:AuctionCart")
+            ->findOneBy([
+                'id'=>$cart->getId()
+            ]);
+
+        $auctionProduct = $em->getRepository('AppBundle:AuctionProduct')
+            ->findOneBy([
+                'id'=>$cart->getProduct()
+            ]);
+
+        $auction = $em->getRepository("AppBundle:Auction")
+            ->findOneBy([
+                'id'=>$auctionProduct->getWhichAuction()
+            ]);
+
+        $myOwner = $em->getRepository('AppBundle:User')
+            ->findOneBy([
+                'id'=>$user->getId()
+            ]);
+
+        $myBuyer = $em->getRepository('AppBundle:Company')
+            ->findOneBy([
+                'id'=>$buyer
+            ]);
+
+        $myOrder = new AuctionOrder();
+        $myOrder->setCreatedAt(new \DateTime());
+        $myOrder->setOrderStatus("Processing");
+        $myOrder->setOrderNotes("None");
+        $myOrder->setWhoseOrder($myOwner);
+        $myOrder->setBuyer($myBuyer);
+        $myOrder->setProduct($auctionProduct);
+        $myOrder->setItemPrice($cart->getItemPrice());
+        $myOrder->setQuantity($cart->getCartQuantity());
+        $myOrder->setBuyingAgent($user->getMyCompany());
+        $myOrder->setSellingAgent($auction->getSellingAgent());
+        $myOrder->setCheckoutCompletedAt(new \DateTime());
+        $myOrder->setOrderState("Active");
+        $myOrder->setOrderAmount(($cart->getCartQuantity()*$cart->getItemPrice()));
+        $myOrder->setOrderCurrency($cart->getCartCurrency());
+        $myOrder->setShippingCost($shippingCost);
+        $myOrder->setOrderTotal(($cart->getCartQuantity()*$cart->getItemPrice())+$shippingCost);
+
+        $form = $this->createForm(PaymentMethodFormType::class);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $myOrder->setProcessingFee($request->request->get("paymentMethod"));
+
+            $em->persist($myOrder);
+
+            $em->flush();
+
+            $this->container->get('session')->remove('agent');
+            $this->container->get('session')->remove('product');
+            $this->container->get('session')->remove('shippingCost');
+            $this->container->get('session')->remove('auction_order');
+
+            $this->container->get('session')->set('auction_order', $myOrder);
+            $this->updateAuctionQty($thisCart->getCartQuantity(),$thisCart->getProduct());
+            $this->sendOrderAssignmentNotification($myBuyer,$myOrder);
+
+            return $this->redirectToRoute('agent-auction-checkout-complete');
+
+        }
+        $buyer = $this->container->get('session')->get('buyer');
+
+        return $this->render(':partials/iflora/agent/auction:pay.htm.twig', [
+            'buyerCheckoutForm' => $form->createView(),
+            'cart' => $cart,
+            'buyer' => $myBuyer
+        ]);
+    }
+    /**
+     * @Route("/auction/checkout/complete",name="agent-auction-checkout-complete")
+     */
+    public function auctionCheckoutCompleteAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $savedOrder = $this->container->get('session')->get('auction_order');
+
+        $order = $em->getRepository("AppBundle:AuctionOrder")
+            ->findOneBy(
+                [
+                    'id'=>$savedOrder->getId()
+                ]
+            );
+
+        $form = $this->createForm(AuctionPaymentProofForm::class,$order);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
+
+            $em->persist($order);
+
+            $em->flush();
+
+            return $this->redirectToRoute('agent-auction-payment-complete');
+
+        }
+
+        return $this->render(':partials/iflora/user/auction:checkout-complete.htm.twig',[
+            'order'=>$order,
+            'transactionForm'=>$form->createView()
+        ]);
+    }
+    /**
+     * @Route("/auction/payment/complete",name="agent-auction-payment-complete")
+     */
+    public function auctionPaymentCompleteAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em= $this->getDoctrine()->getManager();
+
+        $order = $this->container->get('session')->get('auction_order');
+
+        if (!$order){
+            return $this->redirectToRoute("agent_auction_product_list");
+        }
+        $orderId= $order->getId();
+        $auctionOrder = $em->getRepository('AppBundle:AuctionOrder')
+            ->findOneBy([
+                'id'=>$orderId
+            ]);
+
+        $auctionOrder->setPaymentStatus("Complete");
+
+        $em->persist($auctionOrder);
+        $em->flush();
+
+        $this->container->get('session')->clear();
+
+        return $this->render('partials/iflora/agent/auction/payment-complete.htm.twig',[
+            'order'=>$auctionOrder
+        ]);
+    }
+
     /**
      * @Route("/auction/{id}/buy",name="agent_auction_buy")
      */
@@ -1656,9 +1892,31 @@ class AgentController extends Controller
         $myList->setUpdatedAt(new \DateTime());
         $myList->setProductType("Direct");
 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $agent = $user->getMyCompany();
+
         $em = $this->getDoctrine()->getManager();
+
+        $message="<p>".$agent." </b> has recommended a Product in Auction to you and the product has been Automatically added to your list of Recommended Products</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Product Recommendation");
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($buyer);
+        $notification->setMessage($message);
+
+        $em = $this->getDoctrine()->getManager();
+
+
         $em->persist($myList);
+        $em->persist($notification);
+
         $em->flush();
+
 
         return new Response(null, 204);
     }
@@ -2031,5 +2289,41 @@ class AgentController extends Controller
 
 
     }
+    public function sendOrderAssignmentNotification(Company $agent,AuctionOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p>".$buyer." </b> has made an Order #".$order->getPrettyId()." in the Auction on your behalf and the order has been Automatically added to your list of Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Auction Order : ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($agent);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+
+    private function updateAuctionQty($quantity, AuctionProduct $product)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $existingQty = $product->getAvailableStock();
+        $newQuantity = $existingQty - $quantity;
+
+        $product->setAvailableStock($newQuantity);
+
+        $em->persist($product);
+        $em->flush();
+
+    }
 }

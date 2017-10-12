@@ -23,13 +23,21 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
+        login:
+            pattern: ^/api/login
+            stateless: true
+            anonymous: true
+        api:
+            pattern: ^/api
+            stateless: true
+            guard:
+                authenticators:
+                    - app.jwt_token_authenticator
         main:
             anonymous: ~
             guard:
                 authenticators:
                     - app.security.login_form_authenticator
-
             logout:
                  path: /logout
 
@@ -37,3 +45,5 @@ security:
 
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/api/login,   roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api,         roles: IS_AUTHENTICATED_FULLY }

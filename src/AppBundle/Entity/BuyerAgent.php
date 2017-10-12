@@ -81,7 +81,7 @@ class BuyerAgent
     }
 
     /**
-     * @return User
+     * @return
      */
     public function getAgent()
     {

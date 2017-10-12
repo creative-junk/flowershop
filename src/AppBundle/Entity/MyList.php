@@ -31,6 +31,10 @@ class MyList
      */
     private $listOwner;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $comparisonOwner;
+    /**
      * @ORM\Column(type="string")
      */
     private $listType;
@@ -43,7 +47,7 @@ class MyList
      */
     private $recommendedBy;
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product",inversedBy="productList")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Direct",inversedBy="productList")
      */
     private $product;
     /**
@@ -149,7 +153,7 @@ class MyList
     }
 
     /**
-     * @return Product
+     * @return Direct
      */
     public function getProduct()
     {
@@ -157,7 +161,7 @@ class MyList
     }
 
     /**
-     * @param Product $product
+     * @param Direct $product
      */
     public function setProduct($product)
     {
@@ -210,6 +214,22 @@ class MyList
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComparisonOwner()
+    {
+        return $this->comparisonOwner;
+    }
+
+    /**
+     * @param mixed $comparisonOwner
+     */
+    public function setComparisonOwner($comparisonOwner)
+    {
+        $this->comparisonOwner = $comparisonOwner;
     }
 
 

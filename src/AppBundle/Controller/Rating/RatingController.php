@@ -217,11 +217,12 @@ class RatingController extends Controller
         $reviews = $em->getRepository("AppBundle:Rating")
             ->findVendorReviews($company);
 
-        return $this->render('rating/company-rating.htm.twig',[
-            'reviews'=>$reviews,
-            'ratingForm'=>$form->createView(),
-            'grower'=>$company
-        ]);
+        if ($company->getCompanyType()=="Buyer"){
+            return $this->render('rating/company-buyer-rating.htm.twig', ['reviews' => $reviews, 'ratingForm' => $form->createView(), 'grower' => $company]);
+
+        }else {
+            return $this->render('rating/company-rating.htm.twig', ['reviews' => $reviews, 'ratingForm' => $form->createView(), 'grower' => $company]);
+        }
     }
 
     /**

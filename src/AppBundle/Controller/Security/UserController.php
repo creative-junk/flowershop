@@ -232,8 +232,8 @@ class UserController extends Controller
     public function homeAction()
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
-
-        if ($user & $user != "anon"){
+       // var_dump($user);exit;
+        if ($user && $user != "anon."){
             $company = $user->getMyCompany();
             $role = $company->getCompanyType();
             if ($role == "Buyer") {

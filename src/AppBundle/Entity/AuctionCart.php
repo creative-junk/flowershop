@@ -44,16 +44,13 @@ class AuctionCart
      * @ORM\JoinColumn(nullable=false)
      */
     private $whoseCart;
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $companyCart;
+
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\AuctionProduct")
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;
+
     function __construct()
     {
         // we set up "created"+"modified"
@@ -149,21 +146,6 @@ class AuctionCart
         $this->whoseCart = $whoseCart;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCompanyCart()
-    {
-        return $this->companyCart;
-    }
-
-    /**
-     * @param mixed $companyCart
-     */
-    public function setCompanyCart($companyCart)
-    {
-        $this->companyCart = $companyCart;
-    }
 
     /**
      * @return AuctionProduct

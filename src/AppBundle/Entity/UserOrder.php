@@ -61,9 +61,9 @@ class UserOrder
      */
     private $orderTotal;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",nullable=true)
      */
-    private $processingFee;
+    private $processingFee="";
     /**
      * @ORM\Column(type="string",nullable=true)
      */

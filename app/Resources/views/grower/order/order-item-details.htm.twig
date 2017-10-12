@@ -161,11 +161,11 @@
                             <div class="col-sm-5 col-lg-4 details no-edit">
 
                                 <div class="quantity">
-                                    <span class="visible-xs">Quantity</span>
+                                    <span class="">Quantity</span>
                                     {{ orderItem.quantity }}
                                 </div>
                                 <div class="total-price">
-                                    <span class="visible-xs">Total</span>
+                                    <span class="">Total</span>
                                     {{ app.user.myCompany.currency }} {{ orderItem.lineTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
                                 </div>
                             </div>

@@ -2,50 +2,40 @@
 {% block title %}Pending Company Accounts{% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
-        jQuery('#js-remind-account').on('click',function (e)  {
-            //Prevent Normal Submit
-            e.preventDefault();
+        jQuery(document).ready(function () {
+            $('.js-accept-user').on('click',function (e) {
+                e.preventDefault();
 
-            $(".messages").fadeOut("slow");
+                var $el = $(this).closest('.js-account-item');
 
-            $(this).find('.fa-envelope')
-                .removeClass('fa-envelope')
-                .addClass('fa-spinner')
-                .addClass('fa-spin');
-
-            $(this).find('.fa-check')
-                .removeClass('fa-check')
-                .addClass('fa-spinner')
-                .addClass('fa-spin');
-
-
-            // get form values
-            var values = $(this).serialize();
-
-            $.ajax({
-                url: $(this).data('url'),
-                method: 'GET'
-            }).done(function () {
-                //$el.fadeOut("slow");
-                $(".messages").fadeIn("slow");
-
-                $("#remind")
-                    .removeClass('fa-spinner')
-                    .removeClass('fa-spin')
-                    .addClass('fa-check');
-            }).error(function () {
-                //$el.fadeOut("slow");
-                $(".errors").fadeIn("slow");
-
-                $("#remind")
-                    .removeClass('fa-spinner')
-                    .removeClass('fa-spin')
-                    .addClass('fa-times');
+                $(this).find('.fa-check')
+                    .removeClass('fa-check')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $el.fadeOut("slow");
+                });
             })
+            $('.js-reject-account').on('click',function (e) {
+                e.preventDefault();
 
+                var $el = $(this).closest('.js-account-item');
+
+                $(this).find('.fa-check')
+                    .removeClass('fa-check')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $el.fadeOut("slow");
+                });
+            })
         });
-
-
     </script>
 {% endblock %}
 {% block body %}
@@ -95,7 +85,7 @@
                             </thead>
                             <tbody>
                             {% for company in companies  %}
-                                <tr>
+                                <tr class="js-company-item">
                                     <td><a style="color:#0cc2aa" href="#">{{ company.companyName }}</a></td>
                                     <td>{{ company.companyCode }}</td>
                                     <td>{{ company.companyType }}</td>
@@ -114,11 +104,11 @@
                                     <td>{{ company.isPaid }}</td>
                                     <td>{{ company.createdAt | date("F jS Y \\a\\t g:ia") }}</td>
                                     <td>
-                                        <a id="js-remind-account" href="#" data-url="{{ path('approve-company-account',{'id': company.id }) }}"
-                                           class="btn btn-xs white btn-icon"><i id="remind" title="Approve Account" class="fa fa-check"></i></a>
+                                        <a href="#" data-url="{{ path('approve-company-account',{'id': company.id }) }}"
+                                           class="js-accept-user btn btn-xs white btn-icon"><i id="remind" title="Approve Account" class="fa fa-check"></i></a>
 
-                                        <a id="js-remind-account" href="#" data-url="{{ path('reject-company-account',{'id': company.id }) }}"
-                                           class="btn btn-xs white btn-icon"><i id="remind" title="Reject Account" class="fa fa-times"></i></a>
+                                        <a href="#" data-url="{{ path('reject-company-account',{'id': company.id }) }}"
+                                           class="js-reject-account btn btn-xs white btn-icon"><i id="reject" title="Reject Account" class="fa fa-times"></i></a>
                                     </td>
                                 </tr>
                             {% endfor  %}

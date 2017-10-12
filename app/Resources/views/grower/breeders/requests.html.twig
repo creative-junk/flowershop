@@ -115,8 +115,20 @@
                         <tbody class="cart item">
                         {% for breederRequest in breederRequests %}
                             <tr class="item-info js-breeder-item">
-                                <td><img aria-hidden="false" width="100"  class="fotorama__img"
-                                         src="{{ asset('images/products/') }}{{ breederRequest.breeder.logoName }}"></td>
+                                <td>{% if breederRequest.breeder.gallery %}
+                                        {% if breederRequest.breeder.gallery.logo %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/products/') }}{{ breederRequest.breeder.gallery.logo.imageName }}">
+                                        {% else %}
+                                            <img aria-hidden="false" width="100"  class="fotorama__img"
+                                                 src="{{ asset('images/avatar.jpg') }}">
+
+                                        {% endif %}
+                                    {% else %}
+                                        <img aria-hidden="false" width="100"  class="fotorama__img"
+                                             src="{{ asset('images/avatar.jpg') }}">
+
+                                    {% endif %}</td>
                                 <td data-th="Item" class="col item">
                     <span class="product-image-container" style="width:165px;">
                     <strong class="product-item-name">

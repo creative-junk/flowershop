@@ -1,7 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ product.whichAuction.product.title }}{% endblock %}
 {% block javascripts %}
+    <link type="text/css" rel="stylesheet" href="{{ asset('flexslider/lightslider.css') }}" />
+    <script src="{{ asset('flexslider/lightslider.js') }}"></script>
     <script type="text/javascript">
+        
         // prepare the form when the DOM is ready
         $(document).ready(function() {
 
@@ -52,7 +55,22 @@
 
 
             });
-
+            $(document).ready(function() {
+                $('#imageGallery').lightSlider({
+                    gallery:true,
+                    item:1,
+                    loop:true,
+                    thumbItem:9,
+                    slideMargin:0,
+                    enableDrag: false,
+                    currentPagerPosition:'left',
+                    onSliderLoad: function(el) {
+                        el.lightGallery({
+                            selector: '#imageGallery .lslide'
+                        });
+                    }
+                });
+            });
             // bind to the form's submit event
             $('#newsletter-validate-detail1').submit(function(f) {
                 var ajaxRequest;
@@ -330,29 +348,31 @@
                 </div>
             </div>
             <div class="product media">
-                <div >
+                <ul id="imageGallery">
 
-                    <img aria-hidden="false" width="500" height="629" class="fotorama__img"
-                         src="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}">
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.mainImage }}">
 
-                    <table class="gallery cf">
-                        <tr>
-                            <td><img class="nim" width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}"></td>
-                            <td><img class="nim"  width="150"
-                                     src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}"></td>
-                        </tr>
-                    </table>
-                </div>
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadTop }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadSide }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadSide }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.openHeadBouquet }}">
+                    </li>
+                    <li data-thumb="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}" data-src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}">
+                        <img src="{{ asset('images/products/') }}{{ product.whichAuction.product.closedHeadBouquet }}">
+                    </li>
 
+                </ul>
             </div>
-
+        
             <div class="product info detailed">
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#details">Description</a></li>
