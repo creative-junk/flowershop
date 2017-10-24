@@ -8,7 +8,7 @@
     <div class="category-view">
         <div class="page-title-wrapper">
             <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
-                <span class="base" data-ui-id="page-title-wrapper">Roses</span></h1>
+                <span class="base" data-ui-id="page-title-wrapper">Flowers</span></h1>
         </div>
         <div class="breadcrumbs">
             <ul class="items">
@@ -17,7 +17,7 @@
                         Home </a>
                 </li>
                 <li class="item category131">
-                    <strong>My Roses</strong>
+                    <strong>My Flowers</strong>
                 </li>
             </ul>
         </div>
@@ -55,7 +55,7 @@
                         <table>
                             <tr>
                                 {# sorting of properties based on query components #}
-                                <th{% if products.isSorted('product.Title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Rose Name', 'product.title') }}</th>
+                                <th{% if products.isSorted('product.title') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(products, 'Flower Name', 'product.title') }}</th>
                                 <th>{{ knp_pagination_sortable(products,'Season','product.season') }}</th>
                                 <th>{{ knp_pagination_sortable(products, 'Color','product.color') }}</th>
                                 <th>{{ knp_pagination_sortable(products, 'Vaselife','product.vaselife') }}</th>
@@ -126,7 +126,7 @@
                                             <div class="add-to-cart-primary">
                                                 <a title="Edit Product" class="action tocart primary"
                                                    href="{{ path('grower_edit_rose',{'id': product.id}) }}">
-                                                    <span><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Rose</span>
+                                                    <span><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Flower</span>
                                                 </a>
 
                                             </div>

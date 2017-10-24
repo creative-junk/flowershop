@@ -50,7 +50,6 @@ class BuyerCompanyForm extends AbstractType
             ))
             ->add('country', CountryType::class,[
                 'placeholder' => 'Please Select',
-                'disabled'=>true
             ])
             ->add('gallery',AddLogoForm::class,[
                 'label'=>false,

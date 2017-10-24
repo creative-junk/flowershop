@@ -161,9 +161,9 @@ class GrowerController extends Controller
      * @Rest\Get("requests/breeders/received")
      */
     public function viewReceivedBreederRequestsAction()
-    {
+    {}
 
-    }
+
 
     /**
      * @Rest\Get("/agents")
@@ -215,11 +215,14 @@ class GrowerController extends Controller
 
     private function serializeDirect(Direct $direct)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $price = $this->container->get('crysoft.currency_converter')->convertAmount($direct->getPricePerStem(),$direct->getVendor()->getCurrency(),$user->getMyCompany()->getCurrency());
+        $price = number_format($price,2);
         return array(
             'productId'=> $direct->getId(),
             'productName' => $direct->getProduct()->getTitle(),
             'productImage' => $direct->getProduct()->getMainImage()->getImageName(),
-            'pricePerStem' => $direct->getPricePerStem(),
+            'pricePerStem' => $price,
             'color' => $direct->getProduct()->getColor(),
             'season' => $direct->getProduct()->getSeason(),
             'stemLength' => $direct->getProduct()->getStemLength(),
@@ -229,7 +232,8 @@ class GrowerController extends Controller
             'grower' => $direct->getVendor()->getCompanyName(),
             'reviews' =>$direct->getReviews(),
             'growerId' => $direct->getVendor()->getId(),
-            'rating'  =>$this->calculateRating($direct));
+            'rating'  =>$this->calculateRating($direct),
+            'currency' =>$user->getMyCompany()->getCurrency());
 
     }
 

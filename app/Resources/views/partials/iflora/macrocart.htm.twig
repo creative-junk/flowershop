@@ -123,15 +123,15 @@
 
                 <!-- ko ifnot: getCartParam('summary_count') --><!-- /ko -->
 
-                <!-- ko if: getCartParam('summary_count') -->
+                <!-- ko if: getCartParam('summary_count') ->
                 <div class="actions">
                     <div class="secondary">
                         <a class="action viewcart" data-bind="attr: {href: shoppingCartUrl}"
                            href="{{ path('grower-cart') }}">
-                            <span><!-- ko i18n: 'View and edit cart' --><span>View and edit cart</span><!-- /ko --></span>
+                            <span><!-- ko i18n: 'View and edit cart' --><span>View and edit cart</span><!-- /ko -></span>
                         </a>
                     </div>
-                </div>
+                </div>-->
                 <!-- /ko -->
             {% else %}
                 <div class="block-content">

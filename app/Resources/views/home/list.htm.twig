@@ -231,6 +231,15 @@
                                                 <td><strong>Stock:</strong> {{ direct.numberOfStems | number_format }}</td>
                                                 <td><strong>Packing:</strong> {{ direct.stemsPerBox | number_format }}</td>
                                             </tr>
+                                            <tr>
+                                                <td><strong>Scented:</strong>
+                                                    {% if direct.product.isScented %}
+                                                    Yes
+                                                    {% else %}
+                                                    No
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
                                             <tr><td colspan="2"><strong>Grower: </strong><a href="{{ path('view_grower',{'id':direct.product.vendor.id}) }}"> {{ direct.product.vendor }}</a></td></tr>
                                         </table>
 

@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -51,6 +52,13 @@ class FilterFormType extends AbstractType
             ->add('country',CountryType::class,[
                 'required'=>false,
                 'placeholder'=>'Choose a Country'
+            ])
+            ->add('isScented',ChoiceType::class, [
+                'choices'  => array(
+                    'Yes' => true,
+                    'No' => false,
+                ),
+                'placeholder' => 'Please Select'
             ]);
     }
 

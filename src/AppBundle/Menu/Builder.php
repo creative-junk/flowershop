@@ -34,7 +34,11 @@ class Builder implements ContainerAwareInterface
 
          // $menu->addChild('Roses',array('route'=>'buyer_shop'));
           $menu->addChild('Growers',array('route'=>'buyer_growers'));
+          $menu['Growers']->addChild('My Growers',array('route'=>'my_buyer_growers'));
+
           $menu->addChild('Agents',array('route'=>'buyer_agents'));
+          $menu['Agents']->addChild('My Agents',array('route'=>'my_buyer_agents'));
+
 
           return $menu;
       }

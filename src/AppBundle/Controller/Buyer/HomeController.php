@@ -475,6 +475,7 @@ class HomeController extends Controller
               $vaseLife = $form['vaselife']->getData();
               $stemLength = $form['stemLength']->getData();
               $headsize = $form['headsize']->getData();
+              $scented = $form['isScented']->getData();
 
             $em = $this->getDoctrine()->getManager();
             $filterQuery="SELECT direct FROM AppBundle\Entity\Direct direct INNER JOIN direct.product product INNER JOIN product.vendor vendor WHERE product.isActive = :isActive AND product.isSeedling = :isSeedling";
@@ -487,6 +488,10 @@ class HomeController extends Controller
                   $filterQuery.=" and product.season = :season";
                   $filterParam[':season']=$season;
               }
+            if ($scented!=''){
+                $filterQuery.=" and product.isScented = :scented";
+                $filterParam[':scented']=$scented;
+            }
             if ($color!=''){
                 $filterQuery.=" and product.color = :color";
                 $filterParam[':color']=$color;
@@ -1242,6 +1247,117 @@ class HomeController extends Controller
             'cartItems' => $cartItems,
             'cart' => $cart[0]
         ]);
+    }
+    /**
+     * @Route("/cart/edit",name="buyer-edit-cart")
+     */
+    public function buyerEditCartAction()
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $cart = $em->getRepository('AppBundle:Cart')
+            ->findMyCart($user);
+        if ($cart) {
+            $cartItems = $em->getRepository('AppBundle:CartItems')
+                ->findAllItemsInMyCartOrderByDate($cart[0]);
+        } else {
+            $cartItems = "";
+        }
+        return $this->render('home/cart/cart.htm.twig', [
+            'cartItems' => $cartItems,
+            'cart' => $cart[0]
+        ]);
+    }
+
+    /**
+     * @Route("/cart/update",name="update-cart-quantity")
+     */
+    public function updateCartQtyAction(Request $request){
+        $em = $this->getDoctrine()->getManager();
+
+        $cartItemId = $request->request->get('pk');
+        $qty = $request->request->get('value');
+
+        $cartItem = $em->getRepository("AppBundle:CartItems")
+            ->findOneBy([
+                'id'=>$cartItemId
+            ]);
+
+        if ($cartItem){
+            //Calculate the New Line Total
+            $lineTotal = $cartItem->getUnitPrice() * $qty;
+            //Save the Current Line Total First
+            $adjustingTotal = $cartItem->getLineTotal();
+            //Save the Current Quantity first
+            $currentQty = $cartItem->getQuantity();
+            //Get The Cart
+            $cart = $cartItem->getCart();
+            //Adjust The Cart Total
+            $adjustedCartTotal = $cart->getCartTotal() - $adjustingTotal;
+            //Adjust the Cart Amount
+            $adjustedCartAmount  = $cart->getCartAmount() - $adjustingTotal;
+            //Adjust the Number of Items
+            $adjustedNrItems = $cart->getNrItems() - $currentQty;
+
+            $cartAmount = $adjustedCartAmount + $lineTotal;
+            $cartTotal = $adjustedCartTotal + $lineTotal;
+            //Update the Cart
+
+            $cart->setCartTotal($cartTotal);
+            $cart->setCartAmount($cartAmount);
+            $cart->setNrItems($adjustedNrItems + $qty);
+            //Update the Cart Item
+            $cartItem->setLineTotal($lineTotal);
+            $cartItem->setQuantity($qty);
+            //Persist them both
+            $em->persist($cartItem);
+            $em->persist($cart);
+            $em->flush();
+            return new Response(null,200);
+        }else{
+            return new Response(null,500);
+        }
+
+
+    }
+    /**
+     * @Route("/cart/remove/{id}",name="remove-cart-item")
+     */
+    public function removeItemAction(Request $request,CartItems $cartItem){
+        $em = $this->getDoctrine()->getManager();
+
+
+        if ($cartItem){
+            //Calculate the New Line for Cart Adjustment
+            $lineTotal = $cartItem->getUnitPrice() * $cartItem->getQuantity();
+
+            //Save the Current Quantity first
+            $currentQty = $cartItem->getQuantity();
+            //Get The Cart
+            $cart = $cartItem->getCart();
+            //Adjust The Cart Total
+            $adjustedCartTotal = $cart->getCartTotal() - $lineTotal;
+            //Adjust the Cart Amount
+            $adjustedCartAmount  = $cart->getCartAmount() - $lineTotal;
+            //Adjust the Number of Items
+            $adjustedNrItems = $cart->getNrItems() - $currentQty;
+
+            //Update the Cart
+
+            $cart->setCartTotal($adjustedCartTotal);
+            $cart->setCartAmount($adjustedCartAmount);
+            $cart->setNrItems($adjustedNrItems);
+            //Persist them both
+            $em->persist($cart);
+            $em->remove($cartItem);
+            $em->flush();
+            return new Response(null,200);
+        }else{
+            return new Response(null,500);
+        }
+
+
     }
 
     /**
@@ -2293,6 +2409,10 @@ class HomeController extends Controller
      * @Route("/notifications/{id}/view",name="view-notification")
      */
     public function viewNotificationAction(Request $request,Notification $notification){
+        $em = $this->getDoctrine()->getManager();
+        $notification->setIsRead(true);
+        $em->persist($notification);
+        $em->flush();
         return $this->render(':home/messages:viewNotification.htm.twig',[
             'notification'=>$notification
         ]);

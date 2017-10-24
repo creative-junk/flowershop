@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-    {% block title %}New Rose - iFlora Direct Market{% endblock %}
+    {% block title %}New Flower - iFlora Direct Market{% endblock %}
 {% block pageclass %}
 <body data-container="body"
       class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
@@ -17,7 +17,7 @@
                             Home </a>
                     </li>
                     <li class="item category131">
-                        <strong>My Products - New Rose</strong>
+                        <strong>My Products - New Flower</strong>
                     </li>
                 </ul>
             </div>
@@ -39,7 +39,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="x_panel">
                             <div class="x_title">
-                                <h2>New Rose</h2>
+                                <h2>New Flower</h2>
 
                                 <div class="clearfix"></div>
                             </div>
@@ -57,7 +57,9 @@
                                 <fieldset class="fieldset create info">
                                     <legend class="legend"><span>Attributes</span></legend>
                                     <br>
-
+                                    <div class="field field-name-firstname required">
+                                        {{ form_row(productForm.isScented) }}
+                                    </div>
                                     <div class="field field-name-firstname required">
                                         {{ form_row(productForm.color) }}
                                     </div>
@@ -75,7 +77,7 @@
                                     </div>
                                 </fieldset>
                                 <fieldset class="fieldset create info">
-                                    <legend class="legend"><span>Rose Description</span></legend>
+                                    <legend class="legend"><span>Flower Description</span></legend>
                                     <br>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.description) }}
@@ -84,7 +86,7 @@
 
                                 </fieldset>
                                 <fieldset class="fieldset create info">
-                                    <legend class="legend"><span>Rose Images</span></legend>
+                                    <legend class="legend"><span>Flower Images</span></legend>
                                     <br>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.mainImage) }}
@@ -138,7 +140,7 @@
                                                             href="{{ path('my_grower_roses') }}"><span>Back</span></a>
                                     </div>
                                     <div class="secondary">
-                                        <button type="submit" class="action login primary"><span>Save Rose</span>
+                                        <button type="submit" class="action login primary"><span>Save Flower</span>
                                         </button>
                                     </div>
 

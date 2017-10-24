@@ -38,7 +38,7 @@ class AuctionProductForm extends AbstractType
                 'attr' => ['placeholder' => 'Quality']
             ])
             ->add('pricePerStem',NumberType::class,[
-                'attr' => ['placeholder' => 'Price Per Stem']
+                'attr' => ['placeholder' => 'Price Per Stem ( FOB ) ']
             ])
             ->add('announceToAgents');
     }

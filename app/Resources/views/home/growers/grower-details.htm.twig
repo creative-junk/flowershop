@@ -4,6 +4,9 @@
     {{ grower.firstName }}  {{ grower.lastName }}
 {% endblock %}
 {% block javascripts %}
+    <link type="text/css" rel="stylesheet" href="{{ asset('flexslider/lightslider.css') }}" />
+    <script src="{{ asset('flexslider/lightslider.js') }}"></script>
+
     <script type="text/javascript">
         jQuery(document).ready(function () {
             $('.js-request-user').on('click',function (e) {
@@ -27,6 +30,23 @@
                 });
             });
         })
+        jquery(document).ready(function() {
+            $('#imageGallery').lightSlider({
+                gallery:true,
+                item:1,
+                loop:true,
+                thumbItem:9,
+                slideMargin:0,
+                enableDrag: false,
+                currentPagerPosition:'left',
+                onSliderLoad: function(el) {
+                    el.lightGallery({
+                        selector: '#imageGallery .lslide'
+                    });
+                }
+            });
+        });
+
     </script>
 {% endblock %}
 {% block pageclass %}
@@ -79,9 +99,9 @@
 
                     <p>Products:</p>
 
-                    <p>{{ nrProducts }} Active Rose(s) in Direct Market</p>
+                    <p>{{ nrProducts }} Active Flower(s) in Direct Market</p>
 
-                    <p>{{ nrAuctionProducts }} Active Rose(s) in Auction</p>
+                    <p>{{ nrAuctionProducts }} Active Flower(s) in Auction</p>
 
 
                     <div class="box-tocart">

@@ -116,6 +116,10 @@ class Company implements \Serializable
      */
     private $reference;
     /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $other;
+    /**
      * @ORM\Column(type="boolean",nullable=true)
      */
     private $isFirstLogin;
@@ -518,6 +522,22 @@ class Company implements \Serializable
     public function setReference($reference)
     {
         $this->reference = $reference;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOther()
+    {
+        return $this->other;
+    }
+
+    /**
+     * @param mixed $other
+     */
+    public function setOther($other)
+    {
+        $this->other = $other;
     }
 
     /**

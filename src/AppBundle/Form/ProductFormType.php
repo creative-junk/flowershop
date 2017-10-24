@@ -17,7 +17,7 @@ class ProductFormType extends AbstractType
     {
         $builder
             ->add('title',null,[
-                'label'=>'Rose Name'
+                'label'=>'Flower Name'
             ])
             ->add('description')
             ->add('mainImage',ProductImageForm::class)
@@ -57,7 +57,14 @@ class ProductFormType extends AbstractType
                     'Fall' => 'Fall',
                 ),
                 'placeholder' => 'Choose a Season'
-            ]);
+            ])
+        ->add('isScented',ChoiceType::class, [
+            'choices'  => array(
+                 'Yes' => true,
+                'No' => false,
+            ),
+            'placeholder' => 'Please Select'
+        ]);
 
     }
 

@@ -95,7 +95,7 @@ class CartItems
     }
 
     /**
-     * @return mixed
+     * @return Cart
      */
     public function getCart()
     {

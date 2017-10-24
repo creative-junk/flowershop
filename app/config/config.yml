@@ -42,7 +42,10 @@ twig:
             - bootstrap_3_layout.html.twig
             - LexikFormFilterBundle:Form:form_div_layout.html.twig
     cache: false
-
+    number_format:
+            decimals: 2
+            decimal_point: '.'
+            thousands_separator: ','
 
 # Doctrine Configuration
 doctrine:

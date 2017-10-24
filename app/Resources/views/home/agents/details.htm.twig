@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ agent.companyName }}{% endblock %}
 {% block javascripts %}
+    <link type="text/css" rel="stylesheet" href="{{ asset('flexslider/lightslider.css') }}" />
+    <script src="{{ asset('flexslider/lightslider.js') }}"></script>
+
     <script type="text/javascript">
+
         // prepare the form when the DOM is ready
         $(document).ready(function() {
 
@@ -118,6 +122,22 @@
 
             });
 
+        });
+        $(document).ready(function() {
+            $('#imageGallery').lightSlider({
+                gallery:true,
+                item:1,
+                loop:true,
+                thumbItem:9,
+                slideMargin:0,
+                enableDrag: false,
+                currentPagerPosition:'left',
+                onSliderLoad: function(el) {
+                    el.lightGallery({
+                        selector: '#imageGallery .lslide'
+                    });
+                }
+            });
         });
 
 
@@ -257,44 +277,52 @@
                     </div>
                 </div>
                 <div class="product media">
-                    <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
-                        {% if agent.gallery %}
-                            <img aria-hidden="false" width="300" height="329" class="fotorama__img"
-                                 src="{{ asset('images/products/') }}{{ agent.gallery.logo.imageName }}">
 
-                            <table class="gallery cf">
-                                <tr>
+                        {% if agent.gallery %}
+                        <ul id="imageGallery">
+                            <li data-thumb="{{ asset('images/products/') }}{{ agent.gallery.logo.imageName }}" data-src="{{ asset('images/products/') }}{{ agent.gallery.logo.imageName }}">
+                                <img src="{{ asset('images/products/') }}{{ agent.gallery.logo.imageName }}">
+
+                            </li>
                                     {% if agent.gallery.image1 %}
-                                        <td><img class="nim" width="150"
-                                                 src="{{ asset('images/products/') }}{{ agent.gallery.image1.imageName }}"></td>
+                                        <li data-thumb="{{ asset('images/products/') }}{{ agent.gallery.image1.imageName }}" data-src="{{ asset('images/products/') }}{{ agent.gallery.image1.imageName }}">
+                                            <img src="{{ asset('images/products/') }}{{ agent.gallery.image1.imageName }}">
+
+                                        </li>
                                     {% endif %}
                                     {% if agent.gallery.image2 %}
-                                        <td><img class="nim"  width="150"
-                                                 src="{{ asset('images/products/') }}{{ agent.gallery.image2.imageName }}"></td>
+                                        <li data-thumb="{{ asset('images/products/') }}{{ agent.gallery.image2.imageName }}" data-src="{{ asset('images/products/') }}{{ agent.gallery.image2.imageName }}">
+                                            <img src="{{ asset('images/products/') }}{{ agent.gallery.image2.imageName }}">
+
+                                        </li>
                                     {% endif %}
                                     {% if agent.gallery.image2 %}
-                                        <td><img class="nim"  width="150"
-                                                 src="{{ asset('images/products/') }}{{ agent.gallery.image3.imageName }}"></td>
+                                        <li data-thumb="{{ asset('images/products/') }}{{ agent.gallery.image3.imageName }}" data-src="{{ asset('images/products/') }}{{ agent.gallery.image3.imageName }}">
+                                            <img src="{{ asset('images/products/') }}{{ agent.gallery.image3.imageName }}">
+
+                                        </li>
                                     {% endif %}
                                     {% if agent.gallery.image2 %}
-                                        <td><img class="nim"  width="150"
-                                                 src="{{ asset('images/products/') }}{{ agent.gallery.image4.imageName }}"></td>
+                                        <li data-thumb="{{ asset('images/products/') }}{{ agent.gallery.image4.imageName }}" data-src="{{ asset('images/products/') }}{{ agent.gallery.image4.imageName }}">
+                                            <img src="{{ asset('images/products/') }}{{ agent.gallery.image4.imageName }}">
+
+                                        </li>
                                     {% endif %}
                                     {% if agent.gallery.image2 %}
-                                        <td><img class="nim"  width="150"
-                                                 src="{{ asset('images/products/') }}{{ agent.gallery.image5.imageName }}"></td>
+                                        <li data-thumb="{{ asset('images/products/') }}{{ agent.gallery.image5.imageName }}" data-src="{{ asset('images/products/') }}{{ agent.gallery.image5.imageName }}">
+                                            <img src="{{ asset('images/products/') }}{{ agent.gallery.image5.imageName }}">
+
+                                        </li>
                                     {% endif %}
-                                </tr>
-                            </table>
+                            </ul>
                         {% else %}
                             <img aria-hidden="false" width="300" height="329" class="fotorama__img"
                                  src="{{ asset('images/avatar.jpg') }}">
 
                         {% endif %}
-                    </div>
                 </div>
 
-            </div>
+
 
             <div class="product info detailed">
                 <ul class="nav nav-tabs">

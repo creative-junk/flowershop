@@ -117,6 +117,10 @@ class Product
      */
     private $season;
     /**
+     * @ORM\Column(type="boolean",nullable=true)
+     */
+    private $isScented;
+    /**
      * @Assert\NotBlank()
      * @ORM\Column(type="boolean",options={"default"=true})
      */
@@ -468,6 +472,22 @@ class Product
     public function setSeason($season)
     {
         $this->season = $season;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsScented()
+    {
+        return $this->isScented;
+    }
+
+    /**
+     * @param mixed $isScented
+     */
+    public function setIsScented($isScented)
+    {
+        $this->isScented = $isScented;
     }
 
     /**

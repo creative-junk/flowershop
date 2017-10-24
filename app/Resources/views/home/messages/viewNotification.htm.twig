@@ -14,7 +14,7 @@
     <div class="breadcrumbs">
         <ul class="items">
             <li class="item home">
-                <a href="{{ path('home') }}" title="Go to Home Page">
+                <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
                     Home </a>
             </li>
             <li class="item category131">
@@ -28,26 +28,22 @@
         <a id="contentarea" tabindex="-1"></a>
 
         <h3>{{ notification.subject }}</h3>
-<hr/>
+        <hr/>
         <div class="messenger_thread_message">
             <div class="messenger_thread_message_info">
-                {% if notification.sender.id == app.user.id %}
-                    <b>Replied:</b> {{ notification.sentAt|date }}
-                    {% else %}
-                <b>From:</b> {{ notification.sender }}  <br/>
-                        <b>Sent:</b> {{ notification.sentAt|date }}
-                {% endif %}
+
+                <b>Sent:</b> {{ notification.sentAt|date }}
 
             </div>
             <div class="messenger_thread_message_body" id="message_{{ notification.id }}">
-                <br/>{{ notification.message }}
+                <br/>{{ notification.message | raw }}
             </div>
         </div>
         <hr/>
-    
 
-        <hr/>
-    <br/><br/>
+
+
+        <br/><br/>
     </div>
 
     {% include(':home:message-sidebar.htm.twig') %}

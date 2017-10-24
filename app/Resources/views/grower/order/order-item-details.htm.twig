@@ -175,8 +175,23 @@
                 </div>
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">
-                        <p><strong>Order number: </strong> #46 </p>
-                        <p><strong>Payment method: </strong> {{ orderItem.order.processingFee }}</p>
+                        <p><strong>Order number: </strong> {{ order.prettyId }} </p>
+                        <p><strong>Ordered By: </strong> <a href="{{ path('grower_buyer_profile',{ 'id': order.user.myCompany.id }) }}"> {{ order.user.myCompany }}</a></p>
+                        <p><strong>Shipping Address: </strong><br/>
+                            {% if order.user.myCompany.shippingAddress is not empty  %}
+                                {{ order.user.myCompany.shippingAddress[0].streetAddress }}, {{ order.user.myCompany.shippingAddress[0].town }},{{ order.user.myCompany.shippingAddress[0].zip }}<br/>
+                                {{ order.user.myCompany.shippingAddress[0].country }},
+                                {{ order.user.myCompany.shippingAddress[0].emailAddress }},  {{ order.user.myCompany.shippingAddress[0].phoneNumber }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                            </p>
+                        <p><strong>Payment method: </strong> {{ orderItem.order.processingFee }}<br/>
+                        {% if orderItem.order.processingFee == 'rtgs' or orderItem.order.processingFee == 'cheque' %}
+                        <a href="{{ asset('images/products/') }}{{ orderItem.order.imageName }}">View Payment Details</a>
+                        {% else %}
+                        {% endif %}
+                        </p>
                         <p><strong>Payment status: </strong> {{ orderItem.order.paymentStatus }}</p>
                         <p><strong>Order Date: </strong> {{ orderItem.order.createdAt | date('d-m-Y H:i:s')  }}</p>
                         <p><strong>Subtotal:</strong> <i>{{ app.user.myCompany.currency }} {{ orderItem.order.orderAmount | convertCurrency(orderItem.order.orderCurrency,app.user.myCompany.currency) }}</i></p>

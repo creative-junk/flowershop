@@ -124,11 +124,19 @@ class SecurityController extends Controller
                 ]);
 
             if ($user){
-                $this->container->get('session')->set('user', $user);
-                return $this->redirectToRoute('change-password');
+                $this->container->get('session')->set('user', $user->getId());
+                $this->container->get('session')->set('user', $user->getId());
+                $accountToken = base64_encode(random_bytes(10));
+                $user->setPasswordResetToken($accountToken);
+                $user->setIsResetTokenValid(true);
+                $em->persist($user);
+                $em->flush();
+                $this->sendPasswordResetEmail($user->getFirstName(),$user->getEmail(),$accountToken);
             }else{
                 $error="Invalid User";
             }
+
+            return $this->redirectToRoute('change-password');
 
         }
         return $this->render('user/forgot-password.htm.twig',[
@@ -147,7 +155,7 @@ class SecurityController extends Controller
 
         $user = $em->getRepository('AppBundle:User')
             ->findOneBy([
-                'id'=>$owner->getId()
+                'id'=>$owner
             ]);
 
         $form = $this->createForm(ChangePasswordFormType::class,$user);
@@ -313,5 +321,23 @@ class SecurityController extends Controller
         $formArray['error']=$error;
 
         return $formArray;
+    }
+    private function sendPasswordResetEmail($firstName,$emailAddress, $accountToken)
+    {
+        $message = \Swift_Message::newInstance()
+            ->setSubject("Password Reset Requested")
+            ->setFrom('iflora@iflora.biz','Iflora Team')
+            ->setTo($emailAddress)
+            ->setBody(
+                $this->renderView(
+                    'Emails/userPasswordReset.htm.twig',
+                    array(
+                        'name' => $firstName,
+                        'code' => $accountToken
+                    )
+                ),
+                'text/html'
+            );
+        $this->get('mailer')->send($message);
     }
 }

@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,10 +27,15 @@ class CompanyRegistrationForm extends AbstractType
                     'Google Search' => 'Google Search',
                     'Facebook' => 'Facebook',
                     'Twitter' => 'Twitter',
+                    'Other'   => 'Other'
                 ),
                 'placeholder' => 'Please Select',
                 'label'=>'How did you first hear about Iflora?'
 
+            ])
+            ->add('Other',TextType::class,[
+                'label'=>'Other (If Other is selected above)',
+                'required'=>false
             ])
             ->add('currency',ChoiceType::class,array(
                 'choices' => array(

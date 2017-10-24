@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+{% block title %} View & Edit Cart{% endblock %}
+{% block javascripts %}
+
+<!-- jqueryui -->
+<link href="{{ asset('js/jquery-ui-1.12.1/jquery-ui.css') }}" rel="stylesheet">
+<script src="{{ asset('js/jquery-ui-1.12.1/jquery-ui.js') }}"></script>
+
+<!-- x-editable (jquery) -->
+<link href="{{ asset('js/jqueryui-editable/css/jqueryui-editable.css') }}" rel="stylesheet">
+<script src="{{ asset('js/jqueryui-editable/js/jqueryui-editable.min.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.fn.editable.defaults.mode = 'inline';
+
+        //make Quantity editable
+        $('#qty').editable({
+            success: function(response, newValue) {
+                location.reload(); //msg will be shown in editable form
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('.js-remove-item').on('click',function (e) {
+            e.preventDefault();
+
+
+            $(this).find('.fa-times')
+                .removeClass('fa-times')
+                .addClass('fa-spinner')
+                .addClass('fa-spin');
+            $.ajax({
+                url: $(this).data('url'),
+                method: 'GET'
+            }).done(function () {
+                $(".messages").fadeIn("slow");
+
+                $("#add-t-cart")
+                    .removeClass('fa-spinner')
+                    .removeClass('fa-spin')
+                    .addClass('fa-check');
+
+                location.reload();
+            });
+        });
+    })
+</script>
+{% endblock %}
+{% block body %}
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">View & Edit Cart</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item home">
+                    <a href="{{ path('home') }}" title="Go to Home Page">
+                        Home </a>
+                </li>
+                <li class="item category131">
+                    <strong>Cart</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <section class="section-shopping-cart-page">
+        <div class="container">
+            <div class="col-md-12 col-lg-9">
+
+                <div class="items-holder">
+                    {% for item in cartItems %}
+                    <div class="cart-item row">
+                        <div class="col-sm-2 col-lg-1">
+                            <div class="image">
+                                <img width="60" height="60" alt=""
+                                     src="{{ asset('images/products/') }}{{ item.product.product.mainImage }}"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-lg-2">
+
+                            <div class="title">
+                                <a href="{{ path('buyer_product_details',{
+                                    'id': item.product.id
+                                }) }}">{{ item.product.product.title }}</a>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-2 col-lg-2">
+                            <div class="unit-price">
+                                {{ item.cart.cartCurrency }}{{ item.unitPrice }}
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-lg-2">
+
+                            <div class="quantity">
+                                <a href="#" id="qty" data-type="text" data-pk="{{ item.id }}" data-url="{{ path('update-cart-quantity') }}" data-title="Update Quantity">{{ item.quantity }}</a>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-lg-3">
+
+                            <div class="total-price">
+                                {{ item.cart.cartCurrency }} {{ item.lineTotal | number_format }}
+                            </div>
+                        </div>
+                        <div class="col-sm-1 col-lg-1">
+                            <a href="#"
+                               class="action request js-remove-item"
+                               data-url="{{ path('remove-cart-item',{
+                                   'id': item.id
+                               }) }}"
+                               title="Request Grower">
+                                <span id="add-t-cart" class="fa fa-times"></span>Remove</a>
+
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        <div id="cart-totals">
+            <div class="col-md-12 col-lg-3">
+                <div class="right-sidebar">
+                    {% if cart.nrItems %}
+                        <div class="widget shopping-cart-summary">
+                            <h4 class="md-bordered-title">cart summary</h4>
+
+                            <form>
+                                <fieldset>
+                                    <label class="col-xs-6">subtotal</label>
+                                    <span class="col-xs-6 value">{{ cart.cartCurrency }} {{ cart.cartAmount | number_format }}</span>
+                                </fieldset>
+
+                                <fieldset>
+                                    <label class="col-xs-6">shipping</label>
+                                    <span class="col-xs-6 value"></span>
+                                </fieldset>
+                                <hr>
+                                <fieldset class="total">
+                                    <label class="col-xs-3">total</label>
+                                    <span class="col-xs-9 value">{{ cart.cartCurrency }} {{ cart.cartAmount | number_format }}</span>
+                                </fieldset>
+
+                                <a class="md-button large col-xs-12" style="color:#fff" href="{{ path('buyer_checkout') }}">Checkout</a>
+                                <br/><br/><br/>
+                                <a href="{{ path('buyer-market') }}">continue shopping</a>
+
+                            </form>
+                        </div>
+                </div>
+                    {% else %}
+
+                        <h4 class="md-bordered-title">Your cart is empty!</h4>
+                        <a class="md-button col-xs-12 cart-empty-button" href="{{ path('buyer-market') }}">Continue shopping <span
+                                    class="fa fa-arrow-circle-right"></span></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+{% endblock %}
+

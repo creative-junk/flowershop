@@ -80,12 +80,11 @@ class MessagingController extends Controller
                 'id'=>$participantId
             ]);
 
-        $rose = $em->getRepository("AppBundle:Product")
-            ->findOneBy([
-                'id'=>$roseId
-            ]);
+//        $rose = $em->getRepository("AppBundle:Product")
+//            ->findOneBy([
+//                'id'=>$roseId
+//            ]);
 
-//        var_dump($roseTitle);exit;
         $thread = new Thread();
         $thread->setCreatedBy($user);
         $thread->setIsDeleted(false);
@@ -117,12 +116,12 @@ class MessagingController extends Controller
                 ]);
 
 
-            $rose = $em->getRepository("AppBundle:Product")
+            $rose = $em->getRepository("AppBundle:Direct")
                 ->findOneBy([
                     'id'=>$rose_id
                 ]);
 
-            $subject = $subject.'-'.$rose->getTitle();
+            $subject = $subject.'-'.$rose->getProduct()->getTitle();
 
 
             $thread->setLastMessage($message);
@@ -142,7 +141,7 @@ class MessagingController extends Controller
         return $this->render(':home/messages:new.htm.twig',[
             'messageForm'=>$form->createView(),
             'participant'=>$receiver,
-            'rose'=>$rose
+            'rose'=>$roseId
         ]);
     }
 }

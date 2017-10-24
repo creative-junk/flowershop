@@ -82,7 +82,8 @@ class GrowerController extends Controller
             ->getNrMyGrowerBuyers($user->getMyCompany());
         $nrMyAgents = $em->getRepository('AppBundle:GrowerAgent')
             ->getNrMyGrowerAgents($user->getMyCompany());
-
+        $nrProducts = $em->getRepository('AppBundle:Direct')
+            ->findMyActiveProducts($user->getMyCompany());
 
 
         return $this->render(':grower:home.htm.twig',[
@@ -90,7 +91,7 @@ class GrowerController extends Controller
             'nrMyOrders' =>$nrMyOrders,
             'nrMyBuyers' => $nrMyBuyers,
             'nrMyAgents' => $nrMyAgents,
-            'nrMyProducts' =>''
+            'nrMyProducts' =>$nrProducts
         ]);
 
     }
@@ -538,7 +539,8 @@ class GrowerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $queryBuilder = $em->getRepository('AppBundle:Direct')
-            ->createQueryBuilder('product')
+            ->createQueryBuilder('direct')
+            ->innerJoin('direct.product','product')
          //   ->andWhere('product.isActive = :isActive')
          //  ->setParameter('isActive', true)
             ->andWhere('product.vendor = :isGrower')
@@ -2342,7 +2344,7 @@ class GrowerController extends Controller
             $order->setOrderState("Partially Shipped");
             $order->setOrderStatus("Partially Processed");
             $subject = "An item in Order ID ".$order->getPrettyId()." has been Shipped";
-            $message = $orderItem->getProduct()->getTitle().", Part of your Order ID ".$order->getPrettyId()." has been Shipped";
+            $message = $orderItem->getProduct()->getProduct()->getTitle().", Part of your Order ID ".$order->getPrettyId()." has been Shipped";
         }
         $em->persist($order);
         $em->persist($orderItem);

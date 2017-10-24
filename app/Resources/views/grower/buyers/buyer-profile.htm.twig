@@ -3,6 +3,148 @@
 {% block title %}
     {{ buyer.firstName }}  {{ buyer.lastName }}
 {% endblock %}
+{% block javascripts %}
+    <link type="text/css" rel="stylesheet" href="{{ asset('flexslider/lightslider.css') }}" />
+    <script src="{{ asset('flexslider/lightslider.js') }}"></script>
+
+    <script type="text/javascript">
+        // prepare the form when the DOM is ready
+        $(document).ready(function() {
+
+            $('.js-request-user').on('click',function (e) {
+                e.preventDefault();
+
+
+                $(this).find('.fa-plus-circle')
+                    .removeClass('fa-plus-circle')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+                $.ajax({
+                    url: $(this).data('url'),
+                    method: 'GET'
+                }).done(function () {
+                    $(".messages").fadeIn("slow");
+
+                    $("#add-t-cart")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                }).fail(function () {
+                    $(".failure").fadeIn("slow");
+
+                    $("#add-t-cart")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                });
+            });
+            // bind to the form's submit event
+            $('#rating-form').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-telegram')
+                    .removeClass('fa-telegram')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("rating-form");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var ratingValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: ratingValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+
+                    $("#rate")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                })
+
+            });
+
+            // bind to the form's submit event
+            $('#comment-form').submit(function(f) {
+                var ajaxRequest;
+                //Prevent Normal Submit
+                f.preventDefault();
+
+                $(".messages").fadeOut("slow");
+
+                $(this).find('.fa-telegram')
+                    .removeClass('fa-telegram')
+                    .addClass('fa-spinner')
+                    .addClass('fa-spin');
+
+                var form = document.getElementById("comment-form");
+                var elements = form.elements;
+                for (var i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].readOnly = true;
+                }
+                // get form values
+                var commentValues = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    data: commentValues,
+                    method: 'POST'
+                }).done(function () {
+                    //$el.fadeOut("slow");
+                    $(".control").fadeOut("slow");
+
+
+                    $("#comment")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-check');
+                    location.reload();
+                }).fail(function () {
+                    $(".failure").fadeIn("slow");
+
+                    $("#comment")
+                        .removeClass('fa-spinner')
+                        .removeClass('fa-spin')
+                        .addClass('fa-times');
+                });
+
+            });
+
+        });
+        $(document).ready(function() {
+            $('#imageGallery').lightSlider({
+                gallery:true,
+                item:1,
+                loop:true,
+                thumbItem:9,
+                slideMargin:0,
+                enableDrag: false,
+                currentPagerPosition:'left',
+                onSliderLoad: function(el) {
+                    el.lightGallery({
+                        selector: '#imageGallery .lslide'
+                    });
+                }
+            });
+        });
+
+
+    </script>
+{% endblock %}
 
 {% block pageclass %}
 <body data-container="body"
@@ -81,7 +223,7 @@
 
                                     <div class="actions">
                                         <a href="#"  class="action request js-request-user"
-                                           data-url="{{ path('request-buyer-buyer',{
+                                           data-url="{{ path('request-buyer-grower',{
                                                'id': buyer.id
                                            }) }}"
                                            title="Request buyer"><span id="add-t-cart" class="fa fa-plus-circle"></span>  Add buyer</a>          </div>
@@ -127,38 +269,49 @@
                     </div>
                 </div>
                 <div class="product media">
-                    <div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
 
+                    {% if buyer.gallery %}
+                        <img aria-hidden="false" width="300" height="329" class="fotorama__img"
+                             src="{{ asset('images/products/') }}{{ buyer.gallery.logo.imageName }}">
+
+                        <ul id="imageGallery">
+                            {% if buyer.gallery.image1 %}
+                                <li data-thumb="{{ asset('images/products/') }}{{ buyer.gallery.image1.imageName }}" data-src="{{ asset('images/products/') }}{{ buyer.gallery.image1.imageName }}">
+                                    <img src="{{ asset('images/products/') }}{{ buyer.gallery.image1.imageName }}">
+
+                                </li>
+                            {% endif %}
+                            {% if buyer.gallery.image2 %}
+                                <li data-thumb="{{ asset('images/products/') }}{{ buyer.gallery.image2.imageName }}" data-src="{{ asset('images/products/') }}{{ buyer.gallery.image2.imageName }}">
+                                    <img src="{{ asset('images/products/') }}{{ buyer.gallery.image2.imageName }}">
+
+                                </li>
+                            {% endif %}
+                            {% if buyer.gallery.image2 %}
+                                <li data-thumb="{{ asset('images/products/') }}{{ buyer.gallery.image3.imageName }}" data-src="{{ asset('images/products/') }}{{ buyer.gallery.image3.imageName }}">
+                                    <img src="{{ asset('images/products/') }}{{ buyer.gallery.image3.imageName }}">
+
+                                </li>
+                            {% endif %}
+                            {% if buyer.gallery.image2 %}
+                                <li data-thumb="{{ asset('images/products/') }}{{ buyer.gallery.image4.imageName }}" data-src="{{ asset('images/products/') }}{{ buyer.gallery.image4.imageName }}">
+                                    <img src="{{ asset('images/products/') }}{{ buyer.gallery.image4.imageName }}">
+
+                                </li>
+                            {% endif %}
+                            {% if buyer.gallery.image2 %}
+                                <li data-thumb="{{ asset('images/products/') }}{{ buyer.gallery.image5.imageName }}" data-src="{{ asset('images/products/') }}{{ buyer.gallery.image5.imageName }}">
+                                    <img src="{{ asset('images/products/') }}{{ buyer.gallery.image5.imageName }}">
+
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% else %}
                         <img aria-hidden="false" width="300" height="329" class="fotorama__img"
                              src="{{ asset('images/avatar.jpg') }}">
 
-                        <table class="gallery cf">
-                            <tr>
-                                {% if buyer.image1 %}
-                                    <td><img class="nim" width="150"
-                                             src="{{ asset('images/products/') }}{{ buyer.image1 }}"></td>
-                                {% endif %}
-                                {% if buyer.image2 %}
-                                    <td><img class="nim"  width="150"
-                                             src="{{ asset('images/products/') }}{{ buyer.image2 }}"></td>
-                                {% endif %}
-                                {% if buyer.image2 %}
-                                    <td><img class="nim"  width="150"
-                                             src="{{ asset('images/products/') }}{{ buyer.image3 }}"></td>
-                                {% endif %}
-                                {% if buyer.image2 %}
-                                    <td><img class="nim"  width="150"
-                                             src="{{ asset('images/products/') }}{{ buyer.image4 }}"></td>
-                                {% endif %}
-                                {% if buyer.image2 %}
-                                    <td><img class="nim"  width="150"
-                                             src="{{ asset('images/products/') }}{{ buyer.image5 }}"></td>
-                                {% endif %}
-                            </tr>
-                        </table>
-                    </div>
+                    {% endif %}
                 </div>
-
             </div>
 
             <div class="product info detailed">
