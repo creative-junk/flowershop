@@ -16,6 +16,10 @@ class ProductFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('flowerType',null,[
+                'label'=>'Flower Type',
+                'placeholder' => 'Please Select Flower Type'
+            ])
             ->add('title',null,[
                 'label'=>'Flower Name'
             ])
@@ -34,20 +38,17 @@ class ProductFormType extends AbstractType
                 'required' => false,
                 'attr' => ['placeholder' => 'CM']
             ])
+            ->add('numberOfHeads', NumberType::class, [
+                'required' => false,
+                'attr' => ['placeholder' => 'Number of Heads']
+            ])
             ->add('headsize', NumberType::class, [
+                'label'=>'Headsize/Petal Length',
                 'required' => false,
                 'attr' => ['placeholder' => 'Inches']
             ])
-            ->add('color', ChoiceType::class, [
-                'choices' => array(
-                    'Pink' => 'Pink',
-                    'Red' => 'Red',
-                    'Yellow' => 'Yellow',
-                    'White' => 'White',
-                    'Peach' => 'Peach',
-                ),
-                'placeholder' => 'Choose a Color'
-            ])
+            ->add('primaryColor')
+            ->add('secondaryColor')
             ->add('season', ChoiceType::class, [
                 'choices' => array(
                     'All Seasons' => 'All Seasons',

@@ -28,9 +28,9 @@ class Product
      */
     private $id;
     /**
-     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\ManyToOne(targetEntity="Category",inversedBy="title")
      */
-    private $category;
+    private $flowerType;
 
     /**
      * @ORM\Column(type="boolean",nullable=true,options={"default"=false})
@@ -103,15 +103,24 @@ class Product
     /**
      * @ORM\Column(type="string",nullable=true)
      */
+    private $numberOfHeads;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
     private $headsize;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
     private $variety;
     /**
+     * @ORM\Column(type="string")
+     */
+    private $primaryColor;
+    /**
      * @ORM\Column(type="string",nullable=true)
      */
-    private $color;
+    private $secondaryColor;
+
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -193,17 +202,17 @@ class Product
     /**
      * @return mixed
      */
-    public function getCategory()
+    public function getFlowerType()
     {
-        return $this->category;
+        return $this->flowerType;
     }
 
     /**
-     * @param mixed $category
+     * @param mixed $flowerType
      */
-    public function setCategory(Category $category)
+    public function setFlowerType(Category $flowerType)
     {
-        $this->category = $category;
+        $this->flowerType = $flowerType;
     }
 
     /**
@@ -412,6 +421,22 @@ class Product
     /**
      * @return mixed
      */
+    public function getNumberOfHeads()
+    {
+        return $this->numberOfHeads;
+    }
+
+    /**
+     * @param mixed $numberOfHeads
+     */
+    public function setNumberOfHeads($numberOfHeads)
+    {
+        $this->numberOfHeads = $numberOfHeads;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getHeadsize()
     {
         return $this->headsize;
@@ -445,18 +470,49 @@ class Product
     /**
      * @return mixed
      */
-    public function getColor()
+    public function getPrimaryColor()
     {
-        return $this->color;
+        return $this->primaryColor;
     }
 
     /**
-     * @param mixed $color
+     * @param mixed $primaryColor
      */
-    public function setColor($color)
+    public function setPrimaryColor($primaryColor)
     {
-        $this->color = $color;
+        $this->primaryColor = $primaryColor;
     }
+    /**
+     * @return mixed
+     */
+    public function getColor()
+    {
+        return $this->primaryColor;
+    }
+
+    /**
+     * @param mixed $primaryColor
+     */
+    public function setColor($primaryColor)
+    {
+        $this->primaryColor = $primaryColor;
+    }
+    /**
+     * @return mixed
+     */
+    public function getSecondaryColor()
+    {
+        return $this->secondaryColor;
+    }
+
+    /**
+     * @param mixed $secondaryColor
+     */
+    public function setSecondaryColor($secondaryColor)
+    {
+        $this->secondaryColor = $secondaryColor;
+    }
+
 
     /**
      * @return mixed
@@ -507,7 +563,7 @@ class Product
     }
 
     public function __toString(){
-        return $this->getTitle();
+        return $this->getTitle().'-'.$this->getStemLength().'CM';
     }
 
     /**

@@ -141,7 +141,7 @@
                                             <strong class="product name product-item-name">
                                                 <a class="product-item-link"
                                                    href="{{ path('my_agent_auction_product_details',{'id':auctionProduct.whichAuction.product.id }) }}">
-                                                    {{ auctionProduct.whichAuction.product.title }}                            </a>
+                                                    {{ auctionProduct.whichAuction.product }}                            </a>
                                             </strong>
 
                                             <a href="#" class="wishlist" title="WishList" aria-label="WishList"
@@ -204,11 +204,11 @@
 
                                             <table class="attributes">
                                                 <tr>
-                                                    <td><strong>Consignment:</strong> {{ auctionProduct.whichAuction.numberOfStems | number_format }} </td>
+                                                    <td><strong>Consignment:</strong> {{ auctionProduct.whichAuction.numberOfStems | number_format(0,'.',',') }} </td>
 
                                                 </tr>
                                                 <tr>
-                                                    <td><strong>Stock:</strong> {{ auctionProduct.availableStock | number_format }} </td>
+                                                    <td><strong>Stock:</strong> {{ auctionProduct.availableStock | number_format(0,'.',',') }} </td>
 
                                                 </tr>
                                                 <tr>

@@ -46,7 +46,7 @@
                                 <div class="panel-body step-3">
                                     {{ form_start(buyerCheckoutForm) }}
                                     <div class="section-shopping-cart-page row field-row">
-                                        {{ form_widget(buyerCheckoutForm) }}
+                                        {{ form_row(buyerCheckoutForm.agent,{ 'attr': {'class': 'select'} }) }}
                                     </div>
                                     <div class="row field-row checkout-button-row">
                                         <div class="col-xs-6 button-holder">

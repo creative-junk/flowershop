@@ -29,23 +29,12 @@ class Category
      * @ORM\Column(type="string")
      */
     private $id;
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
     /**
      * @ORM\Column(type="string")
      */
     private $title;
     /**
-     *
-     * @ORM\Column(type="text",nullable=true)
-     *
-     *
+     *@ORM\Column(type="text",nullable=true)
      */
     private $description;
     /**
@@ -81,6 +70,13 @@ class Category
      * @ORM\ManyToOne(targetEntity="Category")
      */
     private $parentCategory;
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
     /**
      * @return mixed
      */

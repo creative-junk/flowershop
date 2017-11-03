@@ -447,19 +447,6 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $buyerGrowers = $em->getRepository("AppBundle:BuyerGrower")
-            ->findBy([
-                'buyer'=>$vendor,
-                'status'=>"Accepted"
-            ]);
-        $growers=array();
-        foreach ($buyerGrowers as $buyerGrower) {
-            $growers[]=$buyerGrower->getGrower();
-        }
-
-        $form = $this->createForm(BuyerAgentFormType::class);
-
-
         $filterValues = Array();
 
         $filterQuery="";
@@ -468,14 +455,21 @@ class HomeController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()){
-              $season = $form['season']->getData();
-              $color = $form['color']->getData();
-              $country = $form['country']->getData();
-              $price = $form['price']->getData();
-              $vaseLife = $form['vaselife']->getData();
-              $stemLength = $form['stemLength']->getData();
-              $headsize = $form['headsize']->getData();
-              $scented = $form['isScented']->getData();
+              $season         = $form['season']->getData();
+              $color          = $form['primaryColor']->getData();
+              $country        = $form['country']->getData();
+              $priceFrom      = $form['min']->getData();
+              $priceTo        = $form['max']->getData();
+              $vaseLifeFrom   = $form['vaselifeFrom']->getData();
+              $vaseLifeTo     = $form['vaselifeTo']->getData();
+              $stemLengthFrom = $form['stemLengthFrom']->getData();
+              $stemLengthTo   = $form['stemLengthTo']->getData();
+              $headsizeFrom   = $form['headsizeFrom']->getData();
+              $headsizeTo     = $form['headsizeTo']->getData();
+              $numberOfHeadsFrom   = $form['numberOfHeadsFrom']->getData();
+              $numberOfHeadsTo     = $form['numberOfHeadsTo']->getData();
+              $scented        = $form['isScented']->getData();
+              $onSale         = $form['isOnSale']->getData();
 
             $em = $this->getDoctrine()->getManager();
             $filterQuery="SELECT direct FROM AppBundle\Entity\Direct direct INNER JOIN direct.product product INNER JOIN product.vendor vendor WHERE product.isActive = :isActive AND product.isSeedling = :isSeedling";
@@ -492,25 +486,38 @@ class HomeController extends Controller
                 $filterQuery.=" and product.isScented = :scented";
                 $filterParam[':scented']=$scented;
             }
+            if ($onSale!=''){
+                $filterQuery.=" and product.isOnSale = :sale";
+                $filterParam[':sale']=$onSale;
+            }
             if ($color!=''){
-                $filterQuery.=" and product.color = :color";
+                $filterQuery.="product.primaryColor LIKE :color OR product.secondaryColor LIKE :color'";
                 $filterParam[':color']=$color;
             }
-            if ($price!=''){
-                $filterQuery.=" and direct.pricePerStem = :price";
-                $filterParam[':price']=$price;
+            if ($priceFrom!='' && $priceTo!=''){
+                $filterQuery.=" and direct.pricePerStem BETWEEN :min AND :max";
+                $filterParam[':min']=$priceFrom;
+                $filterParam[':max']=$priceTo;
             }
-            if ($vaseLife!=''){
-                $filterQuery.=" and product.vaselife = :vaselife";
-                $filterParam[':vaselife']=$vaseLife;
+            if ($vaseLifeFrom!=''&& $vaseLifeTo!=''){
+                $filterQuery.=" and product.vaselife = :vaselife BETWEEN :vfrom AND :vto";
+                $filterParam[':vfrom']=$vaseLifeFrom;
+                $filterParam[':vto']=$vaseLifeTo;
             }
-            if ($stemLength){
-                $filterQuery.=" and product.stemLength = :stemLength";
-                $filterParam[':stemLength']=$stemLength;
+            if ($stemLengthFrom!='' && $stemLengthTo!=''){
+                $filterQuery.=" and product.stemLength BETWEEN :stemLengthFrom AND :stemLengthTo";
+                $filterParam[':stemLengthFrom']=$stemLengthFrom;
+                $filterParam[':stemLengthTo']=$stemLengthTo;
             }
-            if ($headsize){
-                $filterQuery.=" and product.headsize = :headsize";
-                $filterParam[':headsize']=$headsize;
+            if ($headsizeFrom != '' && $headsizeTo !='' ){
+                $filterQuery.=" and product.headsize BETWEEN :headsizeFrom AND :headsizeTo";
+                $filterParam[':headsizeFrom']=$headsizeFrom;
+                $filterParam[':headsizeTo']=$headsizeTo;
+            }
+            if ($numberOfHeadsFrom != '' && $numberOfHeadsTo !='' ){
+                $filterQuery.=" and product.numberOfHeads BETWEEN :numberofheadsFrom AND :numberofheadsTo";
+                $filterParam[':numberofheadsFrom']=$numberOfHeadsFrom;
+                $filterParam[':numberofheadsTo']=$numberOfHeadsTo;
             }
             if ($country){
                 $filterQuery.=" and vendor.country = :country";
@@ -1409,7 +1416,6 @@ class HomeController extends Controller
         $em = $this->getDoctrine()->getManager();
 
 
-
         $billingAddress =  $em->getRepository('AppBundle:BillingAddress')
                 ->findMyBillingAddress($user->getMyCompany());
 
@@ -1693,19 +1699,6 @@ class HomeController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $buyerGrowers = $em->getRepository("AppBundle:BuyerGrower")
-            ->findBy([
-                'buyer'=>$vendor,
-                'status'=>"Accepted"
-            ]);
-        $growers=array();
-        foreach ($buyerGrowers as $buyerGrower) {
-            $growers[]=$buyerGrower->getGrower();
-        }
-
-        $form = $this->createForm(BuyerAgentFormType::class);
-
-
         $filterValues = Array();
 
         $filterQuery="";
@@ -1713,17 +1706,26 @@ class HomeController extends Controller
 
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()){
-            $season = $form['season']->getData();
-            $color = $form['color']->getData();
-            $country = $form['country']->getData();
-            $price = $form['price']->getData();
-            $vaseLife = $form['vaselife']->getData();
-            $stemLength = $form['stemLength']->getData();
-            $headsize = $form['headsize']->getData();
+            $season         = $form['season']->getData();
+            $color          = $form['primaryColor']->getData();
+            $country        = $form['country']->getData();
+            $priceFrom      = $form['min']->getData();
+            $priceTo        = $form['max']->getData();
+            $vaseLifeFrom   = $form['vaselifeFrom']->getData();
+            $vaseLifeTo     = $form['vaselifeTo']->getData();
+            $stemLengthFrom = $form['stemLengthFrom']->getData();
+            $stemLengthTo   = $form['stemLengthTo']->getData();
+            $headsizeFrom   = $form['headsizeFrom']->getData();
+            $headsizeTo     = $form['headsizeTo']->getData();
+            $numberOfHeadsFrom   = $form['numberOfHeadsFrom']->getData();
+            $numberOfHeadsTo     = $form['numberOfHeadsTo']->getData();
+            $scented        = $form['isScented']->getData();
+            $onSale         = $form['isOnSale']->getData();
 
             $em = $this->getDoctrine()->getManager();
-            $filterQuery="SELECT auctionProduct FROM AppBundle\Entity\AuctionProduct auctionProduct INNER JOIN auctionProduct.whichAuction auction INNER JOIN auction.product product INNER JOIN product.vendor vendor WHERE product.isActive = :isActive AND product.isSeedling = :isSeedling";
+            $filterQuery="SELECT direct FROM AppBundle\Entity\Direct direct INNER JOIN direct.product product INNER JOIN product.vendor vendor WHERE product.isActive = :isActive AND product.isSeedling = :isSeedling";
 
             $filterParam['isActive']=true;
             $filterParam['isSeedling']=false;
@@ -1733,25 +1735,42 @@ class HomeController extends Controller
                 $filterQuery.=" and product.season = :season";
                 $filterParam[':season']=$season;
             }
+            if ($scented!=''){
+                $filterQuery.=" and product.isScented = :scented";
+                $filterParam[':scented']=$scented;
+            }
+            if ($onSale!=''){
+                $filterQuery.=" and product.isOnSale = :sale";
+                $filterParam[':sale']=$onSale;
+            }
             if ($color!=''){
-                $filterQuery.=" and product.color = :color";
+                $filterQuery.="product.primaryColor LIKE :color OR product.secondaryColor LIKE :color'";
                 $filterParam[':color']=$color;
             }
-            if ($price!=''){
-                $filterQuery.=" and auctionProduct.pricePerStem = :price";
-                $filterParam[':price']=$price;
+            if ($priceFrom!='' && $priceTo!=''){
+                $filterQuery.=" and direct.pricePerStem BETWEEN :min AND :max";
+                $filterParam[':min']=$priceFrom;
+                $filterParam[':max']=$priceTo;
             }
-            if ($vaseLife!=''){
-                $filterQuery.=" and product.vaselife = :vaselife";
-                $filterParam[':vaselife']=$vaseLife;
+            if ($vaseLifeFrom!=''&& $vaseLifeTo!=''){
+                $filterQuery.=" and product.vaselife = :vaselife BETWEEN :vfrom AND :vto";
+                $filterParam[':vfrom']=$vaseLifeFrom;
+                $filterParam[':vto']=$vaseLifeTo;
             }
-            if ($stemLength){
-                $filterQuery.=" and product.stemLength = :stemLength";
-                $filterParam[':stemLength']=$stemLength;
+            if ($stemLengthFrom!='' && $stemLengthTo!=''){
+                $filterQuery.=" and product.stemLength BETWEEN :stemLengthFrom AND :stemLengthTo";
+                $filterParam[':stemLengthFrom']=$stemLengthFrom;
+                $filterParam[':stemLengthTo']=$stemLengthTo;
             }
-            if ($headsize){
-                $filterQuery.=" and product.headsize = :headsize";
-                $filterParam[':headsize']=$headsize;
+            if ($headsizeFrom != '' && $headsizeTo !='' ){
+                $filterQuery.=" and product.headsize BETWEEN :headsizeFrom AND :headsizeTo";
+                $filterParam[':headsizeFrom']=$headsizeFrom;
+                $filterParam[':headsizeTo']=$headsizeTo;
+            }
+            if ($numberOfHeadsFrom != '' && $numberOfHeadsTo !='' ){
+                $filterQuery.=" and product.numberOfHeads BETWEEN :numberofheadsFrom AND :numberofheadsTo";
+                $filterParam[':numberofheadsFrom']=$numberOfHeadsFrom;
+                $filterParam[':numberofheadsTo']=$numberOfHeadsTo;
             }
             if ($country){
                 $filterQuery.=" and vendor.country = :country";
@@ -1790,7 +1809,7 @@ class HomeController extends Controller
             ]);
         }
 
-        return $this->render('home/Filter/filter.htm.twig', [
+        return $this->render('buyer/auction/list.htm.twig', [
             'form' => $form->createView()
 
         ]);
@@ -2019,7 +2038,7 @@ class HomeController extends Controller
                 'id'=>$cart->getId()
             ]);
         $auctionProduct = $thisCart->getProduct();
-
+        $sellingAgent = $thisCart->getProduct()->getWhichAuction()->getSellingAgent();
         $myOwner = $em->getRepository('AppBundle:User')
             ->findOneBy([
                 'id'=>$user->getId()
@@ -2040,7 +2059,7 @@ class HomeController extends Controller
         $myOrder->setItemPrice($thisCart->getItemPrice());
         $myOrder->setQuantity($thisCart->getCartQuantity());
         $myOrder->setBuyingAgent($myAgent);
-        $myOrder->setSellingAgent($thisCart->getProduct()->getWhichAuction()->getSellingAgent());
+        $myOrder->setSellingAgent($sellingAgent);
         $myOrder->setCheckoutCompletedAt(new \DateTime());
         $myOrder->setOrderState("Active");
         $myOrder->setOrderAmount(($thisCart->getCartQuantity()*$thisCart->getItemPrice()));
@@ -2075,7 +2094,8 @@ class HomeController extends Controller
         return $this->render(':partials/iflora/user/auction:pay.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
             'cart' => $cart,
-            'agent' => $agent
+            'agent' => $agent,
+            'sellingAgent'=>$sellingAgent
         ]);
     }
 
@@ -2130,8 +2150,7 @@ class HomeController extends Controller
 
         $em= $this->getDoctrine()->getManager();
 
-        $order = $this->container->get('session')->get('auction_order');
-        $orderId= $order->getId();
+        $orderId = $this->container->get('session')->get('auction_order');
         $userOrder = $em->getRepository('AppBundle:AuctionOrder')
             ->findOneBy([
                 'id'=>$orderId

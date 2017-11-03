@@ -41,6 +41,10 @@ class AuctionProduct
      */
     private $pricePerStem;
     /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $previousPrice;
+    /**
      * @ORM\Column(type="string")
      */
     private $status;
@@ -48,6 +52,10 @@ class AuctionProduct
      * @ORM\Column(type="boolean")
      */
     private $isActive;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isOnSale=false;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Rating",mappedBy="auction",fetch="EXTRA_LAZY")
@@ -115,6 +123,22 @@ class AuctionProduct
     public function setpricePerStem($pricePerStem)
     {
         $this->pricePerStem = $pricePerStem;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPreviousPrice()
+    {
+        return $this->previousPrice;
+    }
+
+    /**
+     * @param mixed $previousPrice
+     */
+    public function setPreviousPrice($previousPrice)
+    {
+        $this->previousPrice = $previousPrice;
     }
 
     /**
@@ -227,6 +251,22 @@ class AuctionProduct
     public function setAssignedStock($assignedStock)
     {
         $this->assignedStock = $assignedStock;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsOnSale()
+    {
+        return $this->isOnSale;
+    }
+
+    /**
+     * @param mixed $isOnSale
+     */
+    public function setIsOnSale($isOnSale)
+    {
+        $this->isOnSale = $isOnSale;
     }
 
 

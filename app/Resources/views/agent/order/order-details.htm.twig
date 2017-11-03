@@ -26,22 +26,25 @@
             </div>
             <div class="row">
                 <div class="col-md-12 col-lg-9">
-                    <div class="items-holder">
-                        <div class="cart-item row">
-                            <div class="col-sm-2 col-lg-3">
-                                <div class="image">
-                                    <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ order.product.whichAuction.product.mainImage }}">
-                                </div>
-                            </div>
-                            <div class="col-sm-4 col-lg-4">
-                                <div class="brand">
-                                </div>
-                                <div class="title">
+                    <table>
+                        <thead>
+                        <td></td>
+                        <td><strong>Flower Name</strong></td>
+                        <td><strong>Price Per Stem</strong></td>
+                        <td><strong>Quantity</strong></td>
+                        <td><strong>Total</strong></td>
+                        </thead>
+                        <tr>
+                            <td>           <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ order.product.whichAuction.product.mainImage }}">
+                            </td>
+                            <td> <div class="title">
                                     <a href="{{ path('buyer_auction_product_details',{
                                         'id': order.product.id
-                                    }) }}">{{ order.product.whichAuction.product.title }}</a><br/><br/>
-                                    <table class="attributes">
+                                    }) }}">{{ order.product.whichAuction.product.title }}</a>
 
+                                </div><br/>
+                                <div class="brand">
+                                    <table class="attributes">
                                         <tr>
                                             <td><strong>Available Stems:</strong> {{ order.product.availableStock | number_format }} </td>
 
@@ -54,44 +57,64 @@
                                                                               href="{{ path('agent_grower_profile',{'id': order.product.whichAuction.product.vendor.id}) }}">{{ order.product.whichAuction.product.vendor }}</a></span>
                                             </td>
                                         </tr>
+
+                                        <tr>
+                                            <td><strong>Color:</strong> {{ order.product.whichAuction.product.primaryColor }}</td>
+                                        </tr>
+                                        <tr>    <td><strong>Season:</strong> {{ order.product.whichAuction.product.season }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Vaselife: </strong>{{ order.product.whichAuction.product.vaselife }}</td>
+                                        </tr>
+                                        <tr><td><strong>Stem Length:</strong> {{ order.product.whichAuction.product.stemLength }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Number of Heads:</strong> {{ order.product.whichAuction.product.numberOfHeads }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Headsize:</strong> {{ order.product.whichAuction.product.headsize }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Quality: </strong> {{ order.product.whichAuction.quality }}</td>
+                                        </tr>
                                     </table>
                                 </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-5 details no-edit">
-                                <div class="unit-price">
-                                    <span class="visible-xs">Price</span>
-                                    {{ app.user.myCompany.currency }} {{ order.itemPrice | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
-                                </div>
-                                <div class="quantity">
-                                    <span class="visible-xs">Quantity</span>
-                                    {{ order.quantity | number_format(0, '.', ',') }}
-                                </div>
-                                <div class="total-price">
-                                    <span class="visible-xs">Sub Total</span>
-                                    {{ app.user.myCompany.currency }} {{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
-                                </div>
 
-                            </div>
-                        </div>
+                            </td>
+                            <td>
+                                {{ app.user.myCompany.currency }} {{ order.itemPrice | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
 
-                    </div>
+                            </td>
+                            <td>
+                                {{ order.quantity | number_format(0, '.', ',') }}
+
+                            </td>
+                            <td>
+                                {{ app.user.myCompany.currency }} {{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+
                 </div>
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">
                         <p><strong>Order number: </strong> {{ order.prettyId }} </p>
-                        <p><strong>Ordered By: </strong> <a href="{{ path('agent_buyer_profile',{ 'id': order.user.myCompany.id }) }}"> {{ order.user.myCompany }}</a></p>
+                        <p><strong>Ordered By: </strong> <a href="{{ path('agent_buyer_profile',{ 'id': order.buyer.id }) }}"> {{ order.buyer }}</a></p>
                         <p><strong>Shipping Address: </strong><br/>
-                            {% if order.user.myCompany.shippingAddress is not empty  %}
-                                {{ order.user.myCompany.shippingAddress[0].streetAddress }}, {{ order.user.myCompany.shippingAddress[0].town }},{{ order.user.myCompany.shippingAddress[0].zip }}<br/>
-                                {{ order.user.myCompany.shippingAddress[0].country }},
-                                {{ order.user.myCompany.shippingAddress[0].emailAddress }},  {{ order.user.myCompany.shippingAddress[0].phoneNumber }}
+                            {% if order.buyer.shippingAddress is not empty  %}
+                                {{ order.buyer.shippingAddress[0].streetAddress }}, {{ order.buyer.shippingAddress[0].town }},{{ order.buyer.shippingAddress[0].zip }}<br/>
+                                {{ order.buyer.shippingAddress[0].country }},
+                                {{ order.buyer.shippingAddress[0].emailAddress }},  {{ order.buyer.shippingAddress[0].phoneNumber }}
                             {% else %}
                                 Not provided
                             {% endif %}
                         </p>
                         <p><strong>Payment method: </strong> {{ order.processingFee }}
                             {% if order.processingFee == 'rtgs' or order.processingFee == 'cheque' %}
-                                <a href="{{ asset('images/products/') }}{{ oorder.imageName }}">View Payment Details</a>
+                                <a href="{{ asset('images/products/') }}{{ order.imageName }}">View Payment Details</a>
                             {% else %}
                             {% endif %}
                         </p>

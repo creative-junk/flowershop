@@ -54,14 +54,14 @@
                                     <legend class="legend"><span>Basic Information</span></legend>
                                     <br>
                                     <div class="field field-name-firstname required">
-                                        {{ form_row(productForm.product,{value : roses}) }}
+                                        {{ form_row(productForm.product,{value : roses,'attr': {'class': 'select'} }) }}
                                     </div>
                                 </fieldset>
                                 <fieldset class="fieldset create info">
                                     <legend class="legend"><span>Market Information</span></legend>
                                     <br>
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.sellingAgent) }}
+                                        {{ form_row(productForm.sellingAgent,{'attr': {'class': 'select'} }) }}
                                     </div>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.numberOfStems) }}

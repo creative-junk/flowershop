@@ -82,8 +82,8 @@ class Builder implements ContainerAwareInterface
 
 
         $menu->addChild('My Products',array('route'=>'my_grower_roses'));
-        $menu['My Products']->addChild('My Roses',array('route'=>'my_grower_roses'));
-        $menu['My Products']->addChild('My Direct Market',array('route'=>'my_grower_direct_market'));
+        $menu['My Products']->addChild('My Flowers',array('route'=>'my_grower_roses'));
+        $menu['My Products']->addChild('My Direct Market',array('route'=>'my_grower_direct_list'));
         $menu['My Products']->addChild('My Auction Market',array('route'=>'my_grower_auction_list'));
 
         $menu->addChild('My Auction',array('route'=>'my_grower_auction_list'));

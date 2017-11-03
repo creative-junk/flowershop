@@ -116,38 +116,40 @@
             </div>
             <div class="row">
                 <div class="col-md-12 col-lg-9">
-                    <div class="items-holder">
-
-                        <div class="cart-item row">
-                            <div class="col-sm-2 col-lg-3">
-                                <div class="image">
+                    <table>
+                        <thead>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Price Per Seedling</th>
+                        <th>Quantity</th>
+                        <th>SubTotal</th>
+                        </thead>
+                        <tr>
+                            <td><div class="image">
                                     <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ orderItem.product.product.mainImage }}">
                                 </div>
-                            </div>
-                            <div class="col-sm-4 col-lg-4">
-                                <div class="brand">
+                            </td>
+                            <td>    <div class="title">
+                                    {{ orderItem.product.product.title }}
                                 </div>
-                                <div class="title">
-                                   {{ orderItem.product.product.title }}
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-5 details no-edit">
-                                <div class="unit-price">
+                            </td>
+                            <td>    <div class="unit-price">
                                     <span class="visible-xs">Price</span>
                                     {{ app.user.myCompany.currency }} {{ orderItem.unitPrice | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
                                 </div>
-                                <div class="quantity">
+                            </td>
+                            <td>    <div class="quantity">
                                     <span class="visible-xs">Quantity</span>
                                     {{ orderItem.quantity }}
                                 </div>
-                                <div class="total-price">
+                            </td>
+                            <td>    <div class="total-price">
                                     <span class="visible-xs">Total</span>
                                     {{ app.user.myCompany.currency }} {{ orderItem.lineTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
                                 </div>
-                            </div>
-                        </div>
-
-                    </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">

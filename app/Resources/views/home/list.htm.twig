@@ -154,6 +154,11 @@
                 <ol class="products list items product-items">
                     {% for direct in products %}
                         <li class="item product product-item" style="float: left;max-width:450px">
+                            {% if direct.isOnSale %}
+                            <div >
+                                <img width="100" src="{{ asset('images/sale.jpg') }}">
+                            </div>
+                            {% endif %}
                             <div class="product-item-info" data-container="product-grid">
                                 <div class=" product-item-images">
                                     <a class="product photo product-item-photo"
@@ -215,7 +220,12 @@
                                     <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 							<span class="price-container price-final_price tax weee">
 							<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-
+                            {% if direct.isOnSale %}
+                                <strike>
+                                                            <span class="price"><span style="font-size: smaller"> {{ app.user.myCompany.currency }}</span> {{ direct.previousPrice | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}
+                                                            </span>
+                                                            </strike>
+                            {% endif %}
                                 <span class="price"><span style="font-size: smaller"> {{ app.user.myCompany.currency }}</span> {{ direct.pricePerStem | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}
                                     </span> </span></span>
                                         <table class="attributes">
@@ -228,8 +238,8 @@
                                                 <td><strong>Quality:</strong> {{ direct.quality }}</td>
                                             </tr>
                                             <tr>
-                                                <td><strong>Stock:</strong> {{ direct.numberOfStems | number_format }}</td>
-                                                <td><strong>Packing:</strong> {{ direct.stemsPerBox | number_format }}</td>
+                                                <td><strong>Stock:</strong> {{ direct.numberOfStems | number_format(0,'.',',') }}</td>
+                                                <td><strong>Packing:</strong> {{ direct.stemsPerBox | number_format(0,'.','.') }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Scented:</strong>

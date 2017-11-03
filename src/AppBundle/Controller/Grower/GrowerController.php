@@ -13,6 +13,7 @@ use AppBundle\Entity\AuctionOrder;
 use AppBundle\Entity\AuctionProduct;
 use AppBundle\Entity\BillingAddress;
 use AppBundle\Entity\CartItems;
+use AppBundle\Entity\Category;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\Direct;
 use AppBundle\Entity\Message;
@@ -95,6 +96,7 @@ class GrowerController extends Controller
         ]);
 
     }
+
     /**
      * @Route("/users/pending",name="grower-pending-users")
      */
@@ -754,7 +756,7 @@ class GrowerController extends Controller
 
             $this->addFlash('success', 'Rose Updated Successfully!');
 
-            return $this->redirectToRoute('my_grower_direct_market');
+            return $this->redirectToRoute('my_grower_direct_list');
         }
 
         return $this->render('grower/market/edit.html.twig', [
@@ -1209,7 +1211,7 @@ class GrowerController extends Controller
                 $this->notifyAgents($agents,$grower);
             }
 
-            return $this->redirectToRoute('my_grower_direct_market');
+            return $this->redirectToRoute('my_grower_auction_list');
         }
 
         return $this->render('grower/auction/product/new.html.twig', [

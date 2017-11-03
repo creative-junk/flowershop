@@ -4,7 +4,19 @@
 <body data-container="body"
       class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
 {% endblock %}
+
     {% block body %}
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        document.getElementById("direct_product_form_isOnSale").onclick=function() {
+            if (document.getElementById('direct_product_form_previousPrice').readOnly == true){
+                document.getElementById('direct_product_form_previousPrice').readOnly =false;
+            }else{
+                document.getElementById('direct_product_form_previousPrice').readOnly = true;
+            }
+        }
+    });
+</script>
         <div class="category-view">
             <div class="page-title-wrapper">
                 <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
@@ -54,7 +66,7 @@
                                     <legend class="legend"><span>Basic Information</span></legend>
                                     <br>
                                     <div class="field field-name-firstname required">
-                                        {{ form_row(productForm.product,{value : roses}) }}
+                                        {{ form_row(productForm.product,{value : roses,'attr': {'class': 'select'} }) }}
                                     </div>
                                    </fieldset>
                                 <fieldset class="fieldset create info">
@@ -78,6 +90,9 @@
                                     </div>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.isOnSale) }}
+                                    </div>
+                                    <div class="field field-name-lastname required">
+                                        {{ form_row(productForm.previousPrice) }}
                                     </div>
                                 </fieldset>
                                 <fieldset class="fieldset create info">

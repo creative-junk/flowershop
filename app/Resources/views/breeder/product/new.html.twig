@@ -50,6 +50,9 @@
                                     <legend class="legend"><span>Basic Information</span></legend>
                                     <br>
                                     <div class="field field-name-firstname required">
+                                        {{ form_row(productForm.flowerType,{'label': 'Seedling Type','placeholder': 'Please select seedling Type','attr':{'class':'select'}}) }}
+                                    </div>
+                                    <div class="field field-name-firstname required">
                                         {{ form_row(productForm.title,{'label': 'Seedling Name'}) }}
                                     </div>
 
@@ -59,7 +62,11 @@
                                     <br>
 
                                     <div class="field field-name-firstname required">
-                                        {{ form_row(productForm.color) }}
+                                        {{ form_row(productForm.primaryColor) }}
+                                    </div>
+
+                                    <div class="field field-name-firstname required">
+                                        {{ form_row(productForm.secondaryColor) }}
                                     </div>
                                     <div class="field field-name-firstname required">
                                         {{ form_row(productForm.isScented) }}
@@ -75,6 +82,9 @@
                                     </div>
                                     <div class="field field-name-firstname required">
                                         {{ form_row(productForm.headsize) }}
+                                    </div>
+                                    <div class="field field-name-firstname required">
+                                        {{ form_row(productForm.numberOfHeads) }}
                                     </div>
                                 </fieldset>
                                 <fieldset class="fieldset create info">

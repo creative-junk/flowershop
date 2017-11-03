@@ -262,7 +262,7 @@
                 <div class="page-title-wrapper product">
                     <h1 class="page-title">
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
-				{{ product.whichAuction.product.title }}</span></h1>
+				{{ product.whichAuction.product }}</span></h1>
                 </div>
 
                 <div class="product-info-price">
@@ -284,7 +284,7 @@
                     <div class="product-info-stock-sku">
                         <table class="attributes">
                             <tr>
-                                <td><strong>Stock:</strong> {{ product.availableStock | number_format   }} </td>
+                                <td><strong>Stock:</strong> {{ product.availableStock | number_format(0, '.', ',')   }} </td>
 
                             </tr>
                             <tr>
@@ -310,6 +310,30 @@
 
                 <div class="product attribute overview">
                     <div class="value" itemprop="description">
+                        <table>
+
+                            <tr>
+                                <td><strong>Primary Color:</strong> {{ product.whichAuction.product.primaryColor }}</td>
+                                <td><strong>Secondary Color:</strong> {{ product.whichAuction.product.secondaryColor }}</td>
+                            </tr>
+                                <td><strong>Season:</strong> {{ product.whichAuction.product.season }}</td>
+                            <td><strong>Scented:</strong>
+                                {% if product.whichAuction.product.isScented %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vaselife: </strong>{{ product.whichAuction.product.vaselife }}</td>
+                                <td><strong>Stem Length:</strong> {{ product.whichAuction.product.stemLength }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Headsize:</strong> {{ product.whichAuction.product.headsize }}</td>
+                                <td><strong>Number of Heads: </strong> {{ product.whichAuction.product.numberOfHeads | number_format(0, '.', ',') }}</td>
+                            </tr>
+                        </table>
 
                     </div>
                 </div>
@@ -347,6 +371,7 @@
 
                 </div>
             </div>
+
             <div class="product media">
                 <ul id="imageGallery">
 

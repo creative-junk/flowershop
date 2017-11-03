@@ -60,6 +60,10 @@ class Direct
      */
     private $pricePerStem;
     /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $previousPrice;
+    /**
      * @ORM\Column(type="boolean")
      */
     private $isOnSale=false;
@@ -238,6 +242,22 @@ class Direct
     public function setPricePerStem($pricePerStem)
     {
         $this->pricePerStem = $pricePerStem;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPreviousPrice()
+    {
+        return $this->previousPrice;
+    }
+
+    /**
+     * @param mixed $previousPrice
+     */
+    public function setPreviousPrice($previousPrice)
+    {
+        $this->previousPrice = $previousPrice;
     }
 
     /**

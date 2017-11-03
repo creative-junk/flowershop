@@ -329,14 +329,14 @@
 
         <div class="product info detailed">
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#roses"><b>Roses in Market</b></a> </li>
-                <li><a data-toggle="tab" href="#auction"><b>Roses in Auction</b></a></li>
+          <!--      <li class="active"><a data-toggle="tab" href="#roses"><b>Roses in Market</b></a> </li> -->
+                <li class="active"><a data-toggle="tab" href="#auction"><b>Roses in Auction</b></a></li>
                 <li><a data-toggle="tab" href="#reviews"><b>Reviews</b></a></li>
                 <li><a data-toggle="tab" href="#comments"><b>Comments</b></a></li>
             </ul>
             <div class="tab-content">
 
-                <div id="roses" class="tab-pane fade in active">
+                <div id="roses" class="tab-pane fade">
                     <div id="product-review-container" data-role="product-review">
                         <div class="block review-list" id="customer-reviews">
                             <div class="block-content">
@@ -406,7 +406,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="auction" class="tab-pane fade">
+                <div id="auction" class="tab-pane fade  in active">
                     <div id="product-review-container" data-role="product-review">
                         <div class="block review-list" id="customer-reviews">
                             <div class="block-content">
@@ -417,7 +417,7 @@
                                                 <div class="product-item-info" data-container="product-grid">
                                                     <div class=" product-item-images">
                                                         <a class="product photo product-item-photo"
-                                                           href="#" tabindex="-1">
+                                                           href="{{ path('agent_auction_product_details',{'id': auction.id }) }}" tabindex="-1">
 						<span class="product-image-container" style="width: 350px;">
 						<span class="product-image-wrapper" style="padding-bottom: 126%;">
 						<img alt="{{ auction.whichAuction.product.title }}" class="product-image-photo" height="441"
@@ -428,8 +428,8 @@
                                                         <div class="content-name">
                                                             <strong class="product name product-item-name">
                                                                 <a class="product-item-link"
-                                                                   href="#">
-                                                                    {{ auction.whichAuction.product.title }} </a></strong>
+                                                                   href="{{ path('agent_auction_product_details',{'id': auction.id }) }}">
+                                                                    {{ auction.whichAuction.product }} </a></strong>
                                                         </div>
                                                         <div class="product-reviews-summary short">
                                                             <div class="rating-summary">

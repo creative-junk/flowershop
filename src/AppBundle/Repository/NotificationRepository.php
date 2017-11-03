@@ -26,7 +26,7 @@ class NotificationRepository extends EntityRepository
                 ->setParameter('isDeleted', false)
 
                 // sort by date of last message written by an other participant
-                ->orderBy('t.sentAt', 'DESC')
+                ->orderBy('t.subject', 'DESC')
                 ->getQuery()
                 ->execute();
     }

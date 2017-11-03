@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Page Not Found</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item category131">
+                    <strong>Error</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages"></div>
+        <div data-bind="scope: 'messages'">
+            <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+            <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+        </div>
+    </div>
+    <div class="columns col-12"  style="height: 400px">
+        <div class="row space-top-8 space-8 row-table">
+            <div class="col-5 col-middle">
+                <h1 class="text-jumbo text-ginormous">Oops!</h1>
+                <h2>We can't seem to find the page you're looking for.</h2>
+                <h6>Error code: 404</h6>
+                <ul class="list-unstyled">
+                    <li>Here are some helpful links instead:</li>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        {% if is_granted('ROLE_BUYER') %}
+                            <li>
+                                <a href="{{ path('home') }}">Home</a>.
+                            </li>
+                        {% elseif is_granted('ROLE_GROWER') %}
+                            <li>
+                                <a href="{{ path('grower_dashboard') }}">Home</a>.
+                            </li>
+                        {% elseif is_granted('ROLE_BREEDER') %}
+                            <li>
+                               <a href="{{ path('breeder_dashboard') }}">Home</a>.
+                            </li>
+                        {% elseif is_granted('ROLE_AGENT') %}
+                            <li>
+                               <a href="{{ path('agent_dashboard') }}">Home</a>.
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li>
+                            <a href="{{ path('homepage') }}">Home</a>.
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+    </main>
+
+{% endblock %}

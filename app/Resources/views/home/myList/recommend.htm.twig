@@ -65,7 +65,7 @@
                                 {% for recommendation in recommendations %}
                                     <tr>
                                         <td> <a href="{{ path('buyer_auction_product_details',{
-                                                'id':recommendation.auctionProduct.whichAuction.id
+                                                'id':recommendation.auctionProduct.id
                                             }) }}"> <img class="" src="{{ asset('images/products/') }}{{ recommendation.auctionProduct.whichAuction.product.mainImage }}" width="150"
                                                          height="141" alt="{{ recommendation.auctionProduct.whichAuction.product.title }}"></a></td>
                                         <td><a style="color:#e93838;" href="{{ path('buyer_auction_product_details',{'id':recommendation.auctionProduct.id }) }}"> {{ recommendation.auctionProduct.whichAuction.product.title }}</a>

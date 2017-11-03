@@ -33,7 +33,7 @@ class CompanyRegistrationForm extends AbstractType
                 'label'=>'How did you first hear about Iflora?'
 
             ])
-            ->add('Other',TextType::class,[
+            ->add('other',null,[
                 'label'=>'Other (If Other is selected above)',
                 'required'=>false
             ])

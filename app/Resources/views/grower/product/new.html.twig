@@ -50,6 +50,10 @@
                                     <legend class="legend"><span>Basic Information</span></legend>
                                     <br>
                                     <div class="field field-name-firstname required">
+                                        {{ form_row(productForm.flowerType,{ 'attr': {'class': 'select'} }) }}
+                                    </div>
+
+                                    <div class="field field-name-firstname required">
                                         {{ form_row(productForm.title) }}
                                     </div>
 
@@ -61,7 +65,10 @@
                                         {{ form_row(productForm.isScented) }}
                                     </div>
                                     <div class="field field-name-firstname required">
-                                        {{ form_row(productForm.color) }}
+                                        {{ form_row(productForm.primaryColor) }}
+                                    </div>
+                                    <div class="field field-name-firstname required">
+                                        {{ form_row(productForm.secondaryColor) }}
                                     </div>
                                     <div class="field field-name-firstname required">
                                         {{ form_row(productForm.season) }}
@@ -71,6 +78,9 @@
                                     </div>
                                     <div class="field field-name-firstname required">
                                         {{ form_row(productForm.stemLength) }}
+                                    </div>
+                                    <div class="field field-name-firstname required">
+                                        {{ form_row(productForm.numberOfHeads) }}
                                     </div>
                                     <div class="field field-name-firstname required">
                                         {{ form_row(productForm.headsize) }}
@@ -113,7 +123,7 @@
                                     <br>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.closedHeadSide) }}
-                                        <strong>SAMPLE: </strong><img width="150px" src="{{ asset('images/openheadside.jpg') }}">
+                                        <strong>SAMPLE: </strong><img width="150px" src="{{ asset('images/closedheadside.jpg') }}">
 
                                     </div>
                                 </fieldset>
@@ -122,7 +132,7 @@
                                     <br>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.openHeadBouquet) }}
-                                        <strong>SAMPLE: </strong><img width="150px" src="{{ asset('images/closedheadbouqet.jpg') }}">
+                                        <strong>SAMPLE: </strong><img width="150px" src="{{ asset('images/openheadbouquet.jpg') }}">
 
                                     </div>
                                 </fieldset>

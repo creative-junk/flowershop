@@ -22,7 +22,8 @@ class AuctionProductForm extends AbstractType
         $builder
             ->add('product',null,[
                 'choices'=>$options['options']['roses'],
-                'placeholder' => 'Select Rose'
+                'required'=>true,
+                'placeholder' => 'Please Select Flower'
 
             ])
             ->add('sellingAgent',null,[

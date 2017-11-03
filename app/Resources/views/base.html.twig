@@ -23,11 +23,14 @@
         <link rel="stylesheet" type="text/css"
               href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
         <link rel="stylesheet" type="text/css" href="{{ asset('bundles/starrating/css/rating.css') }}" />
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('iflora/js/datatables.css') }}" />
     {% endblock %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('iflora/js/DataTables-1.10.16/js/jquery.dataTables.min.js') }}"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
     <script src="{{ asset('bundles/starrating/js/rating.js') }}"></script>
     <script type="text/javascript">
         /*global $ */
@@ -94,9 +97,9 @@
                                 <strong class="label switcher-label"><span>Currency:</span></strong>
 
                                 {% if app.user %}
-                                    Welcome to Iflora,  <span style="color:#e93838;font-weight: bold">{{ app.user.myCompany }}</span>
+                                    Welcome to iFlora,  <span style="color:#e93838;font-weight: bold">{{ app.user.myCompany }}</span>
                                 {% else %}
-                                    Welcome to Iflora
+                                    Welcome to iFlora
                                 {% endif %}
                             </div>
 
@@ -291,7 +294,11 @@
                     $('body,html').animate({scrollTop: 0}, 500);
                 });
                 $('#shopping-cart-table').DataTable();
+                $('#datatable').DataTable();
 
+            });
+            jQuery(document).ready(function() {
+                $('.select').select2();
             });
         </script>
     </footer>

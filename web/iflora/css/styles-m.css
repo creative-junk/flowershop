@@ -2,7 +2,16 @@ body {
     margin: 0;
     padding: 0;
 }
-
+#product_filter_min,#product_filter_vaselifeFrom,#product_filter_headsizeFrom,#product_filter_stemLengthFrom,#product_filter_numberOfHeadsFrom{
+    width:35%;
+    display: inline-block;
+}
+#product_filter_max,#product_filter_vaselifeTo,#product_filter_headsizeTo,#product_filter_stemLengthTo,#product_filter_numberOfHeadsTo{
+    width:35%;
+    display: inline-block;
+    float:right;
+    margin-top: -16px;
+}
 article, aside, details, figcaption, figure, main, footer, header, nav, section, summary {
     display: block;
 }
@@ -2419,7 +2428,7 @@ body > .loading-mask {
     margin-top: 10px;
 }
 
-.control-label:after, .fieldset > .field.required > .label:after, .fieldset > .fields > .field.required > .label:after, .fieldset > .field._required > .label:after, .fieldset > .fields > .field._required > .label:after {
+.control-label.required:after, .fieldset > .field.required > .label:after, .fieldset > .fields > .field.required > .label:after, .fieldset > .field._required > .label:after, .fieldset > .fields > .field._required > .label:after {
     content: '*';
     color: #e02b27;
     font-size: 1.2rem;

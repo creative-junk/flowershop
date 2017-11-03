@@ -81,6 +81,11 @@
                     <ol class="products list items product-items">
                         {% for product in products %}
                             <li class="item product product-item" style="float: left;max-width:450px">
+                                {% if product.isOnSale %}
+                                <div>
+                                    <img width="100" src="{{ asset('images/sale.jpg') }}">
+                                </div>
+                                {% endif %}
                                 <div class="product-item-info" data-container="product-grid">
                                     <div class=" product-item-images">
                                         <a href="{{ path('grower_edit_product',{'id':product.id}) }}"
@@ -93,7 +98,7 @@
                                             <strong class="product name product-item-name">
                                                 <a class="product-item-link"
                                                    href="{{ path('grower_edit_product',{'id':product.id}) }}">
-                                                    {{ product.product.title }}                            </a>
+                                                    {{ product.product }}                            </a>
                                             </strong>
 
 
@@ -102,7 +107,11 @@
 
                                         <table class="attributes">
                                             <tr>
-                                                <td><strong>Price: </strong> {{ app.user.myCompany.currency }} {{ product.pricePerStem | number_format }}</td>
+                                                <td><strong>Price: </strong>
+                                                    {% if product.isOnSale %}
+                                                        <strike><i>{{ app.user.myCompany.currency }} {{ product.previousPrice | number_format }}</i></strike>
+                                                    {% endif %}
+                                                    {{ app.user.myCompany.currency }} {{ product.pricePerStem | number_format }}</td>
                                                 <td><strong>Quality </strong> {{ product.quality }}</td>
                                             </tr>
                                             <tr>

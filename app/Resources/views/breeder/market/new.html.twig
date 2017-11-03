@@ -5,6 +5,17 @@
       class="page-with-filter page-products categorypath-short-sleeve category-short-sleeve catalog-category-view page-layout-2columns-left">
 {% endblock %}
     {% block body %}
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        document.getElementById("direct_product_form_isOnSale").onclick=function() {
+            if (document.getElementById('direct_product_form_previousPrice').readOnly == true){
+                document.getElementById('direct_product_form_previousPrice').readOnly =false;
+            }else{
+                document.getElementById('direct_product_form_previousPrice').readOnly = true;
+            }
+        }
+    });
+    </script>
         <div class="category-view">
             <div class="page-title-wrapper">
                 <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
@@ -54,7 +65,7 @@
                                     <legend class="legend"><span>Basic Information</span></legend>
                                     <br>
                                     <div class="field field-name-firstname required">
-                                        {{ form_row(productForm.product,{value : roses}) }}
+                                        {{ form_row(productForm.product,{value : roses,'placeholder':'Please Select Seedling','attr':{'class':'select'}}) }}
                                     </div>
                                    </fieldset>
                                 <fieldset class="fieldset create info">
@@ -62,22 +73,25 @@
                                     <br>
 
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.numberOfStems,{'label': 'Number of Seedlings'}) }}
+                                        {{ form_row(productForm.numberOfStems,{'label': 'Number of Seedlings','attr':{'placeholder':'Number of Seedlings'}}) }}
                                     </div>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.minimumOrder) }}
                                     </div>
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.stemsPerBox) }}
+                                        {{ form_row(productForm.stemsPerBox,{'label': 'Seedlings Per Box','attr':{'placeholder':'Seedlings Per Box'}}) }}
                                     </div>
                                     <div class="field field-name-lastname required">
-                                        {{ form_row(productForm.pricePerStem) }}
+                                        {{ form_row(productForm.pricePerStem,{'label': 'Price per Seedling','attr':{'placeholder':'Price per Seedling'}}) }}
                                     </div>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.quality) }}
                                     </div>
                                     <div class="field field-name-lastname required">
                                         {{ form_row(productForm.isOnSale) }}
+                                    </div>
+                                    <div class="field field-name-lastname required">
+                                        {{ form_row(productForm.previousPrice) }}
                                     </div>
                                 </fieldset>
                                 <fieldset class="fieldset create info">

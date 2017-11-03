@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="category-view">
+        <div class="page-title-wrapper">
+            <h1 class="page-title" id="page-title-heading" aria-labelledby="page-title-heading toolbar-amount">
+                <span class="base" data-ui-id="page-title-wrapper">Error</span></h1>
+        </div>
+        <div class="breadcrumbs">
+            <ul class="items">
+                <li class="item category131">
+                    <strong>Error</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+
+    <div class="page messages">
+        <div data-placeholder="messages"></div>
+        <div data-bind="scope: 'messages'">
+            <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages"></div>
+            <div data-bind="foreach: { data: messages().messages, as: 'message' }" class="messages"></div>
+        </div>
+    </div>
+    <div class="columns" style="height: 400px">
+        <h1 class="text-jumbo text-ginormous">Oops!</h1>
+        <h2>Something has gone wrong</h2><p> We seem to have encountered an error and are unable to complete your request. We have noted the error and are working to rectify it.</p>
+        <p>In the meantine, you can hit the back button and try again, refresh the page OR...</p>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        {% if is_granted('ROLE_BUYER') %}
+            <p>
+                <a href="{{ path('home') }}">return to the homepage</a>.
+            </p>
+        {% elseif is_granted('ROLE_GROWER') %}
+            <p>
+                <a href="{{ path('grower_dashboard') }}">return to the homepage</a>.
+            </p>
+        {% elseif is_granted('ROLE_BREEDER') %}
+            <p>
+                <a href="{{ path('breeder_dashboard') }}">return to the homepage</a>.
+            </p>
+        {% elseif is_granted('ROLE_AGENT') %}
+            <p>
+                <a href="{{ path('agent_dashboard') }}">return to the homepage</a>.
+            </p>
+        {% endif %}
+    {% else %}
+        <p>
+            <a href="{{ path('homepage') }}">return to the homepage</a>.
+        </p>
+    {% endif %}
+    </div>
+    </main>
+
+{% endblock %}

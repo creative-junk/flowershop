@@ -93,4 +93,23 @@ class AuctionProductRepository extends EntityRepository
             return 0;
         }
     }
+    public function findNrAllMyAssignedProductsAsAgent(Company $user){
+
+        $nrReceivedOrders= $this->createQueryBuilder('auction_product')
+            ->select('count(auction_product.id)')
+            ->innerJoin('auction_product.whichAuction','auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->andWhere('auction_product.sellingAgent = :agentIs')
+            ->setParameter('agentIs',$user)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($nrReceivedOrders){
+            return $nrReceivedOrders;
+        }else{
+            return 0;
+        }
+    }
 }

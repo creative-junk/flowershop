@@ -21,7 +21,9 @@ class DirectProductForm extends AbstractType
     {
         $builder
             ->add('product',null,[
-                'choices'=>$options['roses']
+                'choices'=>$options['roses'],
+                'required'=>true,
+                'placeholder'=>'Please select Flower'
             ])
             ->add('numberOfStems',NumberType::class,[
                 'attr' => ['placeholder' => 'Number of Stems']
@@ -40,6 +42,11 @@ class DirectProductForm extends AbstractType
             ])
             ->add('announceToBuyers')
             ->add('isOnSale')
+            ->add('previousPrice',null,[
+                'attr'=>[
+                    'readonly'=>true
+                ],
+            ])
             ->add('areSamplesAvailable',null,[
                 'label'=>'Are Samples Available ?'
             ]);

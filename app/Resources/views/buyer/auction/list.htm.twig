@@ -63,6 +63,11 @@
                     <ol class="products list items product-items">
                         {% for auction in products %}
                             <li class="item product product-item" style="float: left;max-width:450px">
+                                {% if auction.isOnSale %}
+                                    <div >
+                                        <img width="100" src="{{ asset('images/sale.jpg') }}">
+                                    </div>
+                                {% endif %}
                                 <div class="product-item-info" data-container="product-grid" style="">
                                     <div class=" product-item-images">
                                         <a href="{{ path('buyer_auction_product_details',{'id':auction.id}) }}"
@@ -71,7 +76,7 @@
 <span class="product-image-container" style="width:350px;">
     <span class="product-image-wrapper" style="padding-bottom: 126%;">
         <img class="product-image-photo" src="{{ asset('images/products/') }}{{ auction.whichAuction.product.mainImage }}" width="350"
-             height="441" alt="{{ auction.whichAuction.product.title }}"></span>
+             height="441" alt="{{ auction.whichAuction.product }}"></span>
 </span>
                                         </a>
                                     </div>
@@ -81,7 +86,7 @@
                                             <strong class="product name product-item-name">
                                                 <a class="product-item-link"
                                                    href="{{ path('buyer_auction_product_details',{'id':auction.id}) }}">
-                                                    {{ auction.whichAuction.product.title }}                            </a>
+                                                    {{ auction.whichAuction.product }}                            </a>
                                             </strong>
 
 
@@ -135,7 +140,7 @@
                                         </div>
                                         <table class="attributes">
                                             <tr>
-                                                <td><strong>Stock:</strong> {{ auction.availableStock | number_format }} </td>
+                                                <td><strong>Stock:</strong> {{ auction.availableStock | number_format(0, '.', ',') }} </td>
 
                                             </tr>
                                             <tr>

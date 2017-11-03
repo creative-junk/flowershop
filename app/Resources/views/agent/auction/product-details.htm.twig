@@ -39,7 +39,7 @@
                 Auction Market </a>
         </li>
         <li class="item product">
-            <strong>{{ product.whichAuction.product.title }}</strong>
+            <strong>{{ product.whichAuction.product }}</strong>
         </li>
     </ul>
 </div>
@@ -61,7 +61,7 @@
                 <div class="page-title-wrapper product">
                     <h1 class="page-title">
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
-				{{ product.whichAuction.product.title }}</span></h1>
+				{{ product.whichAuction.product }}</span></h1>
                 </div>
                 <div class="">
                     <div class="rating-summary">
@@ -120,15 +120,38 @@
                         <table class="attributes">
                             <tr>
                                 <td><strong>Available Stems:</strong> {{ product.availableStock | number_format }} </td>
-
+                                <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td><strong>Quality:</strong> {{ product.whichAuction.quality }} </td>
+                                <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td><strong>Grower: </strong>  <a style="color: #d61818"
                                                                   href="{{ path('agent_grower_profile',{'id': product.whichAuction.product.vendor.id}) }}">{{ product.whichAuction.product.vendor }}</a></span>
                                 </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Primary Color:</strong> {{ product.whichAuction.product.primaryColor }}</td>
+                                <td><strong>Secondary Color:</strong> {{ product.whichAuction.product.secondaryColor }}</td>
+                            </tr>
+                            <td><strong>Season:</strong> {{ product.whichAuction.product.season }}</td>
+                            <td><strong>Scented:</strong>
+                                {% if product.whichAuction.product.isScented %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vaselife: </strong>{{ product.whichAuction.product.vaselife }}</td>
+                                <td><strong>Stem Length:</strong> {{ product.whichAuction.product.stemLength }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Headsize:</strong> {{ product.whichAuction.product.headsize }}</td>
+                                <td><strong>Number of Heads: </strong> {{ product.whichAuction.product.numberOfHeads | number_format(0, '.', ',') }}</td>
                             </tr>
                         </table>
 
@@ -162,7 +185,7 @@
 
                                        <div class="control">
                                            <input id="qty" class="input-text qty" maxlength="12" name="quantity"
-                                                  title="Qty" type="number" value="{{ product.availableStock/10 }}">
+                                                  title="Qty" type="number" value="{{ (product.availableStock/10) | number_format(0,',','.') }}">
                                        </div>
                                    </div>
                                    <div class="actions">

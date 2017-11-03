@@ -85,7 +85,7 @@
                                         <strong class="product name product-item-name">
                                             <a class="product-item-link"
                                                href="{{ path('grower_auction_product_edit',{'id':auction.id}) }}">
-                                                {{ auction.product.title }}                            </a>
+                                                {{ auction.product }}                            </a>
                                         </strong>
 
 
@@ -101,7 +101,7 @@
         </span>
                                         <table class="attributes">
                                             <tr>
-                                                <td><strong>Stock:</strong> {{ auction.numberOfStems | number_format }} </td>
+                                                <td><strong>Stock:</strong> {{ auction.numberOfStems | number_format(0,'.',',') }} </td>
 
                                             </tr>
                                             <tr>

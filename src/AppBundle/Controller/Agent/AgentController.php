@@ -83,7 +83,8 @@ class AgentController extends Controller
             ->getNrMyAgentBuyers($agent);
         $nrGrowers = $em->getRepository('AppBundle:GrowerAgent')
             ->getNrMyAgentGrowers($agent);
-
+        $nrAsssignedProducts = $em->getRepository("AppBundle:AuctionProduct")
+            ->findNrAllMyAssignedProductsAsAgent($agent);
 
 
         return $this->render(':agent:home.htm.twig',[
@@ -91,7 +92,7 @@ class AgentController extends Controller
             'nrMyOrders' =>$nrMyOrders,
             'nrMyBuyers' => $nrBuyers,
             'nrMyGrowers' => $nrGrowers,
-            'nrAssignedProducts' =>''
+            'nrAssignedProducts' =>$nrAsssignedProducts
         ]);
 
     }
@@ -998,7 +999,7 @@ class AgentController extends Controller
             $em->persist($auctionProduct);
             $em->flush();
 
-            $this->sendAuctionProductResponseNotification($auction->getVendor(),"Rejected",$auction);
+            $this->sendAuctionResponseNotification($auction->getVendor(),"Accepted",$auction);
 
 
            return $this->redirectToRoute("agent_shipped_auction_list");
@@ -1047,6 +1048,8 @@ class AgentController extends Controller
             $em->persist($auction);
             $em->persist($auctionProduct);
             $em->flush();
+
+            $this->sendAuctionResponseNotification($auction->getVendor(),"Rejected",$auction);
 
             return $this->redirectToRoute("agent_shipped_auction_list");
         }
@@ -1880,11 +1883,11 @@ class AgentController extends Controller
     /**
      * @Route("/recommend/buyer/{id}/product/{product}",name="agent-recommend-product")
      */
-    public function recommendProduct(Company $buyer,Product $product){
+    public function recommendProduct(Company $buyer,Direct $product){
         $agent = $this->get('security.token_storage')->getToken()->getUser();
 
         $myList = new MyList();
-        $myList->setProduct($product);
+        $myList->setAuctionProduct($product);
         $myList->setRecommendedBy($agent);
         $myList->setListType("Agent Recommendations");
         $myList->setListOwner($buyer);
@@ -1938,8 +1941,26 @@ class AgentController extends Controller
         $myList->setProductType("Auction");
 
         $em = $this->getDoctrine()->getManager();
+
+        $message="<p>".$agent." </b> has recommended a Product in Auction to you and the product has been Automatically added to your list of Recommended Products</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Product Recommendation");
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($buyer);
+        $notification->setMessage($message);
+
+        $em = $this->getDoctrine()->getManager();
+
+
         $em->persist($myList);
+        $em->persist($notification);
+
         $em->flush();
+
 
         return new Response(null, 204);
     }

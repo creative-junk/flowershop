@@ -1,14 +1,4 @@
-AppBundle\Entity\Direct:
-    direct{1..30}:
-        product: 'dffa9f2d-80ca-11e7-9f08-083e8ec45f2c'
-        vendor: 'd29bd64e-7dbf-11e7-8c8b-a2291047fa21'
-        addedBy: 'cf01e9e9-7dc0-11e7-8c8b-a2291047fa21'
-        numberOfStems: '<numberBetween($min = 1000, $max = 9000)>'
-        minimumOrder:  '<numberBetween($min = 200, $max = 400)>'
-        stemsPerBox:  '30'
-        quality: 'Excellent'
-        currency: '$'
-        pricePerStem: '29.99'
-        announceToBuyers: '<boolean(35)>'
-        areSamplesAvailable: '<boolean(75)>'
-        createdAt: "<dateTimeThisMonth($max = 'now', $timezone = date_default_timezone_get())>"
+AppBundle\Entity\Category:
+    category{1..150}:
+        title:
+        isActive: '<boolean(100)>'

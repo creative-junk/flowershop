@@ -37,6 +37,7 @@ class EditDirectProductForm extends AbstractType
             ])
             ->add('announceToBuyers')
             ->add('isOnSale')
+            ->add('previousPrice')
             ->add('areSamplesAvailable',null,[
                 'label'=>'Are Samples Available ?'
             ]);

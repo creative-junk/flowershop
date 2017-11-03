@@ -106,4 +106,5 @@ class AuctionOrderRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+
 }

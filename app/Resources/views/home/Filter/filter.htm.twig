@@ -1,7 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#resetForm').on('click', function () {
-            $('#form_filter').find('input:text, input:password, select, textarea').val('');
+            $('#form_filter').find('input:text, input:password, select, textarea,input:radio').val('');
         });
     });
 </script>
@@ -14,28 +14,40 @@
             {{ form_row(form.season) }}
         </div>
         <div class="field">
-            {{ form_row(form.color) }}
+            {{ form_row(form.primaryColor) }}
 
         </div>
 
         <div class="field">
-            {{ form_row(form.country) }}
-
+            {{ form_row(form.vaselifeFrom) }}
+            {{ form_row(form.vaselifeTo) }}
         </div>
         <div class="field">
-            {{ form_row(form.price) }}
+            {{ form_row(form.headsizeFrom ) }}
+            {{ form_row(form.headsizeTo ) }}
         </div>
         <div class="field">
-            {{ form_row(form.vaselife) }}
+            {{ form_row(form.stemLengthFrom ) }}
+            {{ form_row(form.stemLengthTo ) }}
         </div>
         <div class="field">
-            {{ form_row(form.stemLength ) }}
-        </div>
-        <div class="field">
-            {{ form_row(form.headsize ) }}
+            {{ form_row(form.numberOfHeadsFrom ) }}
+            {{ form_row(form.numberOfHeadsTo ) }}
         </div>
         <div class="field">
             {{ form_row(form.isScented ) }}
+        </div>
+
+        <div class="field">
+            {{ form_row(form.min) }}
+            {{ form_row(form.max) }}
+        </div>
+        <div class="field">
+            {{ form_row(form.isOnSale ) }}
+        </div>
+        <div class="field">
+            {{ form_row(form.country) }}
+
         </div>
         <div class="field">
             <input class="action primary" id="resetForm" type="button" value="Reset">

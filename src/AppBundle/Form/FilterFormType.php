@@ -25,29 +25,255 @@ class FilterFormType extends AbstractType
                     ),
                     'placeholder' => 'Choose a Season'
              ])
-            ->add('color', Filters\ChoiceFilterType::class, [
+            ->add('min', Filters\ChoiceFilterType::class, [
                 'choices' => array(
-                    'Pink' => 'Pink',
-                    'Red' => 'Red',
-                    'Yellow' => 'Yellow',
-                    'White' => 'White',
-                    'Peach' => 'Peach',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                    '70' => '70',
+                    '80' => '80',
+                    '90' => '90',
+                    '100' => '100',
+                    '200' => '200',
+                    '300' => '300',
+                    '400' => '400',
+                    '500' => '500',
+                    '600' => '600',
+                    '700' => '700',
+                    '800' => '800',
+                    '900' => '900',
+                    '1000' => '1000',
+                    '2000' => '2000',
+                    '3000' => '3000',
+                    '4000' => '4000',
+                    '5000' => '5000',
+                    '6000' => '6000',
                 ),
-                'placeholder' => 'Choose a Color',
-                'data' => isset($options['data']) ? $options['data']['color'] : ''
+                'placeholder' => 'Min',
+                'label'=>'Price'
 
             ])
-
-            ->add('price',Filters\NumberFilterType::class)
-            ->add('vaselife', Filters\NumberFilterType::class, [
+            ->add('max', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                    '70' => '70',
+                    '80' => '80',
+                    '90' => '90',
+                    '100' => '100',
+                    '200' => '200',
+                    '300' => '300',
+                    '400' => '400',
+                    '500' => '500',
+                    '600' => '600',
+                    '700' => '700',
+                    '800' => '800',
+                    '900' => '900',
+                    '1000' => '1000',
+                    '2000' => '2000',
+                    '3000' => '3000',
+                    '4000' => '4000',
+                    '5000' => '5000',
+                    '6000' => '6000',
+                ),
+                'placeholder' => 'Max',
+                'label'=>false
+            ])
+            ->add('primaryColor',null,[
+                'label'=>'Color',
+                'required'=>false
+            ])
+            ->add('vaselifeFrom', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
                 'required' => false,
+                'label'=>'Vaselife',
+                'placeholder' => 'Min',
 
             ])
-            ->add('stemLength', Filters\NumberFilterType::class, [
+            ->add('vaselifeTo', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
                 'required' => false,
+                'label'=>false,
+                'placeholder' => 'Max',
+
+
             ])
-            ->add('headsize', Filters\NumberFilterType::class, [
+            ->add('stemLengthFrom', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
                 'required' => false,
+                'label'=>'Stem Length',
+                'placeholder' => 'Min',
+
+            ])
+            ->add('stemLengthTo', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
+                'required' => false,
+                'label'=>false,
+                'placeholder' => 'Max',
+
+            ])
+            ->add('headsizeFrom', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
+                'required' => false,
+                'label'=>'Headsize',
+                'placeholder' => 'Min',
+
+            ])
+            ->add('headsizeTo', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
+                'required' => false,
+                'label'=>false,
+                'placeholder' => 'Max',
+
+            ])
+            ->add('numberOfHeadsFrom', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
+                'required' => false,
+                'label'=>'No. of Heads',
+                'placeholder' => 'Min',
+
+            ])
+            ->add('numberOfHeadsTo', Filters\ChoiceFilterType::class, [
+                'choices' => array(
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                    '7' => '7',
+                    '8' => '8',
+                    '9' => '9',
+                    '10' => '10',
+                    '20' => '20',
+                    '30' => '30',
+                    '40' => '40',
+                    '50' => '50',
+                    '60' => '60',
+                ),
+                'required' => false,
+                'label'=>false,
+                'placeholder' => 'Max',
+
             ])
             ->add('country',CountryType::class,[
                 'required'=>false,
@@ -58,7 +284,19 @@ class FilterFormType extends AbstractType
                     'Yes' => true,
                     'No' => false,
                 ),
-                'placeholder' => 'Please Select'
+                'label'=>'Scented',
+                'expanded'=>true,
+                'data'=>false
+            ])
+             ->add('isOnSale',ChoiceType::class, [
+                'choices'  => array(
+                    'Yes' => true,
+                    'No' => false,
+                ),
+                 'choices_as_values' => true,
+                 'expanded'=>true,
+                 'label'=>'On Sale',
+                 'data'=>false
             ]);
     }
 

@@ -270,6 +270,11 @@
             <div class="column main">
                 <div class="product-info-main">
                     <div class="page-title-wrapper product">
+                        {% if direct.isOnSale %}
+                            <div >
+                                <img width="100" src="{{ asset('images/sale.jpg') }}">
+                            </div>
+                        {% endif %}
                         <h1 class="page-title">
 				<span class="base" data-ui-id="page-title-wrapper" itemprop="name">
 				{{ direct.product.title }}</span></h1>
@@ -312,9 +317,15 @@
                         <div class="price-box price-final_price" data-product-id="63" data-role="priceBox">
 					<span class="price-container price-final_price tax weee">
 					<span class="price-wrapper " data-price-amount="72" data-price-type="finalPrice">
-					<span class="price"><strong>FOB</strong> {{ app.user.myCompany.currency }} {{ direct.pricePerStem | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}</span></span>
-					<meta content="{{ direct.currency }}" itemprop="priceCurrency">
-					</span></div>
+                        {% if direct.isOnSale %}
+                        <span class="price" style="font-size: 2.0rem !important;">
+                            <strike><i>
+                                    <strong><i>FOB</i></strong> {{ app.user.myCompany.currency }} {{ direct.previousPrice | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}
+                                </i></strike>
+                        </span></span><br/><br/>
+                      {% endif %}
+						<span class="price"><strong>FOB</strong> {{ app.user.myCompany.currency }} {{ direct.pricePerStem | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}</span></span>
+					</div>
                         <div class="product-info-stock-sku">
                             <div class="stock available" title="Availability">
                                 <span>Grower:</span>&nbsp; <a href="{{ path('view_grower',{'id':direct.product.vendor.id }) }}">{{ direct.product.vendor }}</a></div>
@@ -382,29 +393,34 @@
                             <table>
                                
                                 <tr>
-                                    <td><strong>Color:</strong> {{ direct.product.color }}</td>
+                                    <td><strong>Color:</strong> {{ direct.product.primaryColor }}</td>
+                                    <td><strong>Color:</strong> {{ direct.product.primaryColor }}</td>
+                                </tr>
                                     <td><strong>Season:</strong> {{ direct.product.season }}</td>
+                                <td><strong>Scented:</strong>
+                                    {% if direct.product.isScented %}
+                                        Yes
+                                    {% else %}
+                                        No
+                                    {% endif %}
+                                </td>
                                 </tr>
                                 <tr>
                                     <td><strong>Vaselife: </strong>{{ direct.product.vaselife }}</td>
                                     <td><strong>Stem Length:</strong> {{ direct.product.stemLength }}</td>
                                 </tr>
                                 <tr>
+                                    <td><strong>Number of Heads:</strong> {{ direct.product.numberOfHeads }}</td>
+
                                     <td><strong>Headsize:</strong> {{ direct.product.headsize }}</td>
-                                    <td><strong>Stock: </strong> {{ direct.numberOfStems | number_format }}</td>
-                                </tr>
+                                      </tr>
                                 <tr>
                                     <td><strong>Stems Per Box:</strong> {{ direct.stemsPerBox | number_format }}</td>
                                     <td><strong>Quality: </strong> {{ direct.quality }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Scented:</strong>
-                                        {% if direct.product.isScented %}
-                                            Yes
-                                        {% else %}
-                                            No
-                                        {% endif %}
-                                    </td>
+                                    <td><strong>Stock: </strong> {{ direct.numberOfStems | number_format }}</td>
+
                                 </tr>
                             </table>
 
