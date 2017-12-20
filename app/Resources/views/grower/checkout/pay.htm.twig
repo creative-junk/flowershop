@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+{% block title %} Checkout{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('grower_seedlings_list') }}" title="Go to Home Page">
+                    Direct Market </a>
+            </li>
+            <li class="item product">
+                <strong>Checkout - Payment Method</strong>
+            </li>
+        </ul>
+    </div>
+
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <div id="checkout-page">  <!-- Checkout progress -->
+
+                                <div id="checkout-progress">
+                                    <ul class="breadcrumb list-inline checkout-progress">
+
+                                        <li>SHIPPING METHOD</li>
+                                        <li>CONFIRM ORDER</li>
+                                        <li><a class="progress-active">PAYMENT</a></li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- End id="checkout-progress" -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <span>payment Method</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body step-1">
+                                   {{ form_start(growerCheckoutForm) }}
+                                    <div class="section-shopping-cart-page row field-row">
+                                        <div class="shipping-method col-md-4 col-lg-4">
+                                            <div>
+                                                <h4>
+                                                    <img style="height: 86px" src="{{ asset('images/offline-payment.png') }}"/>
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			                <span class="">
+    				                                          <input type="radio" value="offline" name="paymentMethod" id="option1" checked>
+    			                                            </span>
+                                                    <span class="price">
+    			                                                <strong>Offline: Cheque, RTGS</strong>
+
+    			                                           </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="shipping-method col-md-4 col-lg-4">
+                                            <div>
+                                                <h4>
+                                                    <img style="height: 85px" src="{{ asset('images/paypal.jpg') }}"/>
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			                <span class="">
+    				                                          <input type="radio" value="paypal" name="paymentMethod" id="option1">
+    			                                            </span>
+                                                    <span class="price">
+    			                                                <strong>Paypal: Visa/Mastercard</strong>
+    			                                           </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <!--
+                                        <div class="shipping-method col-md-4 col-lg-3">
+                                            <div>
+                                                <h4>
+
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			               <span class="">
+    				                                          <input type="radio" value="paypal" name="paymentMethod" id="option1">
+    			                                            </span>
+                                                    <img src="{{ asset('images/paypal.jpg') }}"/>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        -->
+                                    </div>
+                                    <div class="row field-row checkout-button-row">
+                                        <div class="col-xs-6 button-holder">
+                                            <a class="md-button gray step-btn" href="#"><span class="fa fa-chevron-circle-left"></span> confirm order</a>
+                                        </div>
+                                        <div class="col-xs-6 primary pull-right">
+                                            <button class="md-button action primary" type="submit" id="billing-continue">complete</button>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="hidden" id="billing-current-step" name="step" value="billing_info">
+                                    <input type="hidden" id="billing-next-step" name="nextStep" value="shipping_info">
+
+                                    {{ form_end(growerCheckoutForm) }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-3">
+                    <div class="right-sidebar">
+                        <p><strong>Order number: </strong> {{ order.prettyId }} </p>
+                        <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
+                        <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
+                        <p><strong>Subtotal:</strong> <i>{{ order.orderCurrency }} {{ order.orderAmount | number_format(2, '.', ',') }}</i></p>
+                        <p><strong>Shipping:</strong> <i>{{ order.orderCurrency }} {{ order.shippingCost | number_format(2, '.', ',') }}</i></p>
+                        <p class="subtotal"><strong>Total:</strong>  <i>{{ order.orderCurrency }} {{ order.orderTotal | number_format(2, '.', ',') }}</i></p>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

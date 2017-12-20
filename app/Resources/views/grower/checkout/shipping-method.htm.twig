@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+{% block title %} Checkout{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('grower_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('grower_seedlings_list') }}" title="Go to Home Page">
+                    Direct Market </a>
+            </li>
+            <li class="item product">
+                <strong>Checkout Shipping</strong>
+            </li>
+        </ul>
+    </div>
+
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <div id="checkout-page">  <!-- Checkout progress -->
+
+                                <div id="checkout-progress">
+                                    <ul class="breadcrumb list-inline checkout-progress">
+                                        <li><a class="progress-active">SHIPPING METHOD</a></li>
+                                        <li>CONFIRM ORDER</li>
+                                        <li>PAYMENT</li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- End id="checkout-progress" -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <span>shipping method</span>
+                                    </h4>
+                                </div>
+
+                                <div class="panel-body step-3">
+                                    {% if error %}
+                                        <div class="alert alert-danger">
+                                            The selected Airline does not currently provide shipping services for the selected Airport on Iflora.
+                                        </div>
+                                    {% endif %}
+                                    {{ form_start(growerCheckoutForm) }}
+                                    <div class="section-shopping-cart-page row field-row">
+                                        <div class="shipping-method col-md-6 col-lg-5">
+                                            <div>
+                                                <h4>
+                                                    Airline
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			                {{ form_row(growerCheckoutForm.airline,{'attr':{'class':'select'}}) }}
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="shipping-method col-md-6 col-lg-5">
+                                            <div>
+                                                <h4>
+                                                    Airport
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			          {{ form_row(growerCheckoutForm.airport,{'attr':{'class':'select'}}) }}
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row field-row checkout-button-row">
+                                        <div class="col-xs-6 button-holder">
+                                        </div>
+                                        <div class="col-xs-6 primary pull-right">
+                                            <button class="md-button action primary" type="submit" id="billing-continue">continue</button>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="hidden" id="billing-current-step" name="step" value="billing_info">
+                                    <input type="hidden" id="billing-next-step" name="nextStep" value="shipping_info">
+                                    {{ form_end(growerCheckoutForm) }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="cart-totals"> {{ include(':partials:checkout-totals.htm.twig') }}</div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

@@ -30,11 +30,13 @@ use AppBundle\Form\AccountFormType;
 use AppBundle\Form\addToCartFormType;
 use AppBundle\Form\AgentBuyerFormType;
 use AppBundle\Form\AgentProductForm;
+use AppBundle\Form\AuctionBuyForm;
 use AppBundle\Form\AuctionPaymentProofForm;
 use AppBundle\Form\AuctionProductForm;
 use AppBundle\Form\BillingAddressFormType;
 use AppBundle\Form\BuyerAgentFormType;
 use AppBundle\Form\BuyerCompanyForm;
+use AppBundle\Form\ConfirmOrderForm;
 use AppBundle\Form\GalleryForm;
 use AppBundle\Form\MessageReplyForm;
 use AppBundle\Form\PaymentMethodFormType;
@@ -43,6 +45,8 @@ use AppBundle\Form\ProductFormType;
 use AppBundle\Form\RecommendFormType;
 use AppBundle\Form\ShippingAddressFormType;;
 use AppBundle\Form\ShippingMethodFormType;
+use AppBundle\Form\ShippingModeForm;
+use Payum\Core\Request\GetHumanStatus;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -563,6 +567,14 @@ class AgentController extends Controller
 
     }
     /**
+     * @Route("/orders/my/auction/view/{id}",name="agent_view_my_auction_order")
+     */
+    public function viewMyAuctionOrderAction(Request $request,AuctionOrder $order)
+    {
+        return $this->render(':agent/order:my-order-details.htm.twig', ['order' => $order,]);
+    }
+
+    /**
      * @Route("/orders/auction/view/{id}",name="agent_view_auction_order")
      */
     public function viewAuctionOrderAction(Request $request,AuctionOrder $order)
@@ -590,7 +602,7 @@ class AgentController extends Controller
 
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $em=$this->getDoctrine()->getManager();
-        $orders = $em->getRepository('AppBundle:UserOrder')
+        $orders = $em->getRepository('AppBundle:AuctionOrder')
             ->findAllMyOrdersOrderByDate($user);
         return $this->render('agent/order/mylist.html.twig', [
             'orders' => $orders,
@@ -1111,50 +1123,113 @@ class AgentController extends Controller
         ]);
     }
 
+    /*
+     *  Auction Checkout starts here. Methods are arranged in the order the user will follow for the process
+     *  Shipping Method-> Choose Buyer -> Confirm Order -> Make Payment -> Checkout Complete
+     */
+
     /**
      * @Route("/auction/checkout/{id}/shipping-method",name="auction_agent_checkout")
+     * 1. Shipping Method
      */
-    public function auctionCheckoutAction(Request $request, AuctionCart $cart){
+    public function auctionShippingMethodAction(Request $request, AuctionCart $cart){
+        $this->container->get('session')->set('cart',"");
+        $this->container->get('session')->set('auctionOrder',"");
+        $this->container->get('session')->set('agent',"");
+
+
         $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $error = false;
 
         $this->container->get('session')->set('cart',$cart);
 
         $em = $this->getDoctrine()->getManager();
 
-        $form = $this->createForm(ShippingMethodFormType::class);
+        $form = $this->createForm(ShippingModeForm::class);
 
         //only handles data on POST
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $shippingCost = $request->request->get('shippingCost');
 
-            $this->container->get('session')->set('cart', $cart);
-            $this->container->get('session')->set('AuctionShippingCost',$shippingCost);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $airport = $form['airport']->getData();
+            $airline = $form['airline']->getData();
+
+            $em = $this->getDoctrine()->getManager();
+
+            //Get the Applicable Rates table
+            $shippingRate = $em->getRepository("AppBundle:ShippingRate")
+                ->findOneBy([
+                    'airline'=>$airline,
+                    'airport'=>$airport
+                ]);
+            if (!$shippingRate){
+                $error=true;
+                return $this->render('agent/auctionCheckout/shipping-method.htm.twig', [
+                    'buyerCheckoutForm' => $form->createView(),
+                    'cart' => $cart,
+                    'error'=>$error
+                ]);
+            }
+
+
+            $this->container->get('session')->set('auctionAirline', $airline->getId());
+            $this->container->get('session')->set('auctionAirport', $airport->getId());
+
+            //var_dump($shippingRate);exit;
+            $cartTotal=$cart->getItemPrice()+$cart->getCartQuantity();
+            $cartWeight = ($cart->getCartQuantity()*70)/1000;
+
+            $shippingCost = $this->calculateShipping($cartWeight,$shippingRate);
+            //var_dump($shippingCost);exit;
+            $shippingCost = $this->container->get('crysoft.currency_converter')->convertAmount($shippingCost,'USD',$user->getMyCompany()->getCurrency());
+
+            $cart->setShippingCost($shippingCost);
+            $cartTotal+=$shippingCost;
+            $cart->setCartTotal($cartTotal);
+            $em->persist($cart);
+            $em->flush();
+
+            $this->container->get('session')->set('auctionCart', $cart->getId());
+
             return $this->redirectToRoute('auction_agent_buyer_checkout');
 
         }
 
-        return $this->render(':partials/iflora/agent/auction:shipping-method.htm.twig', [
+        return $this->render('agent/auctionCheckout/shipping-method.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
-            'cart'=> $cart
+            'cart' => $cart,
+            'error'=>$error
         ]);
-    }
 
+    }
     /**
      * @Route("/auction/checkout-buyer",name="auction_agent_buyer_checkout")
+     * 2. Choose Buyer
      */
     public function auctionBuyerAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        $agent = $user->getMyCompany();
-        $cart = $this->container->get('session')->get('cart');
+        $em = $this->getDoctrine()->getManager();
+
+        $cartId = $this->container->get('session')->get('auctionCart');
+
+        $form = $this->createForm(ConfirmOrderForm::class);
+
+        $cart = $em->getRepository('AppBundle:AuctionCart')
+            ->findOneBy([
+                'id'=>$cartId
+            ]);
+
+
+        $vendor = $user->getMyCompany();
 
         $em = $this->getDoctrine()->getManager();
 
         $buyerAgents = $em->getRepository("AppBundle:BuyerAgent")
             ->findBy([
-                'agent'=>$agent,
+                'agent'=>$vendor,
                 'status'=>"Accepted"
             ]);
         $agents=array();
@@ -1162,134 +1237,219 @@ class AgentController extends Controller
             $agents[]=$buyerAgent->getBuyer();
         }
 
-        $form = $this->createForm(AgentBuyerFormType::class,null, ['agents' => $agents]);
+        $form = $this->createForm(BuyerAgentFormType::class,null, ['agents' => $agents]);
 
         //only handles data on POST
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $selectedBuyer =$form["buyer"]->getData();
+            $agent =$form["agent"]->getData();
+            //var_dump($agent);exit;
+            $this->container->get('session')->set('buyer',$agent->getId());
 
-            $this->container->get('session')->set('cart', $cart);
-            $this->container->get('session')->set('auctionBuyer',$selectedBuyer->getId());
+            return $this->redirectToRoute('auction_agent_confirm_order');
+
+        }
+
+        return $this->render('agent/auctionCheckout/my-agent.htm.twig', [
+            'buyerCheckoutForm' => $form->createView(),
+            'cart'=> $cart
+        ]);
+    }
+    /**
+     * @Route("/auction/checkout/confirm-order",name="auction_agent_confirm_order")
+     * 3. Confirm Order
+     */
+    public function confirmAuctionOrderAction(Request $request){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $company = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $cartId = $this->container->get('session')->get('auctionCart');
+        $buyerId = $this->container->get('session')->get('buyer');
+
+        $form = $this->createForm(ConfirmOrderForm::class);
+
+        $myCart = $em->getRepository('AppBundle:AuctionCart')
+            ->findOneBy([
+                'id'=>$cartId
+            ]);
+        $buyer = $em->getRepository('AppBundle:Company')
+            ->findOneBy([
+                'id'=>$buyerId
+            ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+
+            //Get the airline and airport
+            $airlineId = $this->container->get('session')->get('auctionAirline');
+            $airportId = $this->container->get('session')->get('auctionAirport');
+
+            $airport = $em->getRepository("AppBundle:Airport")
+                ->findOneBy([
+                    'id'=>$airportId
+                ]);
+            $airline = $em->getRepository("AppBundle:Airline")
+                ->findOneBy([
+                    'id'=>$airlineId
+                ]);
+
+
+            $myOrder = new AuctionOrder();
+            $myOrder->setCreatedAt(new \DateTime());
+
+            $myOrder->setWhoseOrder($user);
+            $myOrder->setOrderStatus("Pending");
+            $myOrder->setOrderNotes("None");
+            $myOrder->setCheckoutCompletedAt(new \DateTime());
+            $myOrder->setOrderState("Active");
+            $myOrder->setOrderAmount($myCart->getItemPrice()*$myCart->getCartQuantity());
+            $myOrder->setOrderCurrency($myCart->getCartCurrency());
+            $myOrder->setShippingCost($myCart->getShippingCost());
+            $myOrder->setOrderTotal(($myCart->getItemPrice()*$myCart->getCartQuantity())+$myCart->getShippingCost());
+            $myOrder->setAirline($airline);
+            $myOrder->setAirport($airport);
+            $myOrder->setItemPrice($myCart->getItemPrice());
+            $myOrder->setQuantity($myCart->getCartQuantity());
+            $myOrder->setUpdatedAt(new \DateTime());
+            $myOrder->setShipmentWeight(($myCart->getCartQuantity()*70)/1000);
+            $myOrder->setProduct($myCart->getProduct());
+            $myOrder->setWhoseOrder($user);
+            $myOrder->setBuyer($buyer);
+            $myOrder->setBuyingAgent($company);
+            $myOrder->setSellingAgent($myCart->getProduct()->getWhichAuction()->getSellingAgent());
+
+            $product = $myCart->getProduct();
+            $product->hold($myCart->getCartQuantity());
+
+            $em->persist($myOrder);
+            $em->remove($myCart);
+            $em->flush();
+
+            $this->container->get('session')->set('auctionOrder', $myOrder->getId());
 
             return $this->redirectToRoute('auction_agent_payment_method');
 
         }
-
-        return $this->render(':partials/iflora/agent/auction:my-buyer.htm.twig', [
-            'buyerCheckoutForm' => $form->createView(),
-            'cart'=> $cart
+        return $this->render(':agent/auctionCheckout:confirmOrder.htm.twig',[
+            'cart'=>$myCart,
+            'buyerCheckoutForm'=>$form->createView(),
+            'shipping'=>$this->container->get('session')->get('shipping')
         ]);
     }
 
     /**
      * @Route("/auction/payment",name="auction_agent_payment_method")
+     * 4. Payment
      */
     public function auctionPaymentAction(Request $request){
-
-        $cart = $this->container->get('session')->get('cart');
-        $shippingCost = $this->container->get('session')->get('AuctionShippingCost');
-
-        $buyer = $this->container->get('session')->get('auctionBuyer');
-
         $user = $this->get('security.token_storage')->getToken()->getUser();
-
         $em = $this->getDoctrine()->getManager();
 
-        $thisCart = $em->getRepository("AppBundle:AuctionCart")
-            ->findOneBy([
-                'id'=>$cart->getId()
-            ]);
-
-        $auctionProduct = $em->getRepository('AppBundle:AuctionProduct')
-            ->findOneBy([
-                'id'=>$cart->getProduct()
-            ]);
-
-        $auction = $em->getRepository("AppBundle:Auction")
-            ->findOneBy([
-                'id'=>$auctionProduct->getWhichAuction()
-            ]);
-
-        $myOwner = $em->getRepository('AppBundle:User')
-            ->findOneBy([
-                'id'=>$user->getId()
-            ]);
-
-        $myBuyer = $em->getRepository('AppBundle:Company')
-            ->findOneBy([
-                'id'=>$buyer
-            ]);
-
-        $myOrder = new AuctionOrder();
-        $myOrder->setCreatedAt(new \DateTime());
-        $myOrder->setOrderStatus("Processing");
-        $myOrder->setOrderNotes("None");
-        $myOrder->setWhoseOrder($myOwner);
-        $myOrder->setBuyer($myBuyer);
-        $myOrder->setProduct($auctionProduct);
-        $myOrder->setItemPrice($cart->getItemPrice());
-        $myOrder->setQuantity($cart->getCartQuantity());
-        $myOrder->setBuyingAgent($user->getMyCompany());
-        $myOrder->setSellingAgent($auction->getSellingAgent());
-        $myOrder->setCheckoutCompletedAt(new \DateTime());
-        $myOrder->setOrderState("Active");
-        $myOrder->setOrderAmount(($cart->getCartQuantity()*$cart->getItemPrice()));
-        $myOrder->setOrderCurrency($cart->getCartCurrency());
-        $myOrder->setShippingCost($shippingCost);
-        $myOrder->setOrderTotal(($cart->getCartQuantity()*$cart->getItemPrice())+$shippingCost);
-
         $form = $this->createForm(PaymentMethodFormType::class);
+
+        $orderId = $this->container->get('session')->get('auctionOrder');
+
+        $order = $em->getRepository("AppBundle:AuctionOrder")
+            ->findOneBy([
+                'id'=>$orderId
+            ]);
+        $currency = $order->getOrderCurrency();
+        $orderAmount = intval($order->getOrderTotal());
+        //var_dump($orderAmount);exit;
 
         //only handles data on POST
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $gatewayName = $request->request->get("paymentMethod");
 
-            $myOrder->setProcessingFee($request->request->get("paymentMethod"));
-
-            $em->persist($myOrder);
-
+            $order->setProcessingFee($gatewayName);
+            $em->persist($order);
             $em->flush();
 
-            $this->container->get('session')->remove('agent');
-            $this->container->get('session')->remove('product');
-            $this->container->get('session')->remove('shippingCost');
-            $this->container->get('session')->remove('auction_order');
+            $storage = $this->get('payum')->getStorage('AppBundle\Entity\Payment');
 
-            $this->container->get('session')->set('auction_order', $myOrder);
-            $this->updateAuctionQty($thisCart->getCartQuantity(),$thisCart->getProduct());
-            $this->sendOrderAssignmentNotification($myBuyer,$myOrder);
+            $payment = $storage->create();
+            $payment->setNumber(uniqid());
+            $payment->setCurrencyCode($currency);
+            $payment->setDescription('iFlora Auction Checkout');
+            $payment->setClientId($user->getId());
+            $payment->setClientEmail($user->getEmail());
+            $payment->setTotalAmount($orderAmount*100);
+            $payment->setAuctionOrder($order);
+            $payment->setGateway($gatewayName);
+            $payment->setPaymentAmount($orderAmount);
+            $payment->setDetails(array([
+                'L_PAYMENTREQUEST_0_DESC0' => 'Iflora Auction Checkout',
+                'PAYMENTREQUEST_0_CURRENCYCODE'=> $currency,
+                'PAYMENTREQUEST_0_AMT'=>$orderAmount
+            ]));
+            $storage->update($payment);
 
-            return $this->redirectToRoute('agent-auction-checkout-complete');
+
+
+            $captureToken = $this->get('payum')->getTokenFactory()->createCaptureToken(
+                $gatewayName,
+                $payment,
+                'auction-agent-checkout-complete' //Page to redirect to after capture
+            );
+
+            //return $this->redirectToRoute('checkout-complete');
+            return $this->redirect($captureToken->getTargetUrl());
 
         }
-        $buyer = $this->container->get('session')->get('buyer');
 
-        return $this->render(':partials/iflora/agent/auction:pay.htm.twig', [
+        return $this->render(':agent/auctionCheckout:auctionPay.htm.twig', [
             'buyerCheckoutForm' => $form->createView(),
-            'cart' => $cart,
-            'buyer' => $myBuyer
+            'order' => $order
         ]);
     }
+
     /**
-     * @Route("/auction/checkout/complete",name="agent-auction-checkout-complete")
+     * @Route("/auction/checkout/complete",name="auction-agent-checkout-complete")
+     * 5. Checkout Complete
      */
     public function auctionCheckoutCompleteAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
+        $token = $this->get('payum')->getHttpRequestVerifier()->verify($request);
+
+        $gateway = $this->get('payum')->getGateway($token->getGatewayName());
+
+        //Fetch the entity
+        $gateway->execute($status = new GetHumanStatus($token));
+        $payment = $status->getFirstModel();
+
+
         $em = $this->getDoctrine()->getManager();
 
-        $savedOrder = $this->container->get('session')->get('auction_order');
+        $savedOrder = $this->container->get('session')->get('auctionOrder');
 
         $order = $em->getRepository("AppBundle:AuctionOrder")
             ->findOneBy(
                 [
-                    'id'=>$savedOrder->getId()
+                    'id'=>$savedOrder
                 ]
             );
+        if ($token->getGatewayName()=='paypal'){
+            if ($status->getValue()=='captured'){
+                $order->setPaymentStatus('Paid');
+                $product=$order->getProduct();
+                $product->sell($order->getQuantity());
+                $em->persist($product);
 
+                $em->persist($order);
+                $em->flush();
+            }else{
+                $order->setPaymentStatus($status->getValue());
+                $em->persist($order);
+                $em->flush();
+            }
+        }
         $form = $this->createForm(AuctionPaymentProofForm::class,$order);
 
         //only handles data on POST
@@ -1297,8 +1457,12 @@ class AgentController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
-
+            $order->setPaymentStatus('Paid');
             $em->persist($order);
+
+            $product = $order->getProduct();
+            $product->sell($order->getQuantity());
+            $em->persist($product);
 
             $em->flush();
 
@@ -1306,49 +1470,45 @@ class AgentController extends Controller
 
         }
 
-        return $this->render(':partials/iflora/user/auction:checkout-complete.htm.twig',[
+        return $this->render(':agent/auctionCheckout:checkout-complete.htm.twig',[
             'order'=>$order,
-            'transactionForm'=>$form->createView()
+            'transactionForm'=>$form->createView(),
+            'status'=> $status->getValue(),
+            'payment'=>$payment->getDetails()
         ]);
     }
     /**
      * @Route("/auction/payment/complete",name="agent-auction-payment-complete")
+     * 6. Checkout Complete
      */
     public function auctionPaymentCompleteAction(Request $request){
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $em= $this->getDoctrine()->getManager();
 
-        $order = $this->container->get('session')->get('auction_order');
-
-        if (!$order){
-            return $this->redirectToRoute("agent_auction_product_list");
-        }
-        $orderId= $order->getId();
-        $auctionOrder = $em->getRepository('AppBundle:AuctionOrder')
+        $orderId = $this->container->get('session')->get('auctionOrder');
+        $order = $em->getRepository('AppBundle:AuctionOrder')
             ->findOneBy([
                 'id'=>$orderId
             ]);
+        $sellingAgent = $order->getSellingAgent();
 
-        $auctionOrder->setPaymentStatus("Complete");
+        $order->setPaymentStatus("Complete");
 
-        $em->persist($auctionOrder);
+        $em->persist($order);
         $em->flush();
 
-        $this->container->get('session')->clear();
+        $this->sendAuctionOrderReceivedNotification($sellingAgent,$order);
 
-        return $this->render('partials/iflora/agent/auction/payment-complete.htm.twig',[
-            'order'=>$auctionOrder
+        //$this->container->get('session')->clear();
+
+        return $this->render(':partials:payment-complete.htm.twig',[
+            'order'=>$order
         ]);
     }
 
-    /**
-     * @Route("/auction/{id}/buy",name="agent_auction_buy")
-     */
-    public function buyAction(Request $request, Product $product)
-    {
-        return $this->render('agent/auction/buy.htm.twig');
-    }
+    /* Auction checkout ends here */
+
     /**
      * @Route("/auction/{id}/recommend",name="agent_auction_recommend")
      */
@@ -2346,5 +2506,116 @@ class AgentController extends Controller
         $em->persist($product);
         $em->flush();
 
+    }
+
+    public function sendAuctionOrderReceivedNotification(Company $agent,AuctionOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p> You have received a new Order #".$order->getPrettyId()." in the Auction and the order has been Automatically added to your list of Received Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Auction Order Received: ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($agent);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+    public function sendOrderReceivedNotification(Company $vendor,UserOrder $order){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $buyer = $user->getMyCompany();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message="<p> You have received a new Order #".$order->getPrettyId()." and the order has been Automatically added to your list of Received Orders</p>";
+
+        $notification = new Notification();
+        $notification->setSubject("New Order Received: ".$order->getPrettyId());
+        $notification->setIsRead(false);
+        $notification->setIsDeleted(false);
+
+        $notification->setSentAt(new \DateTime());
+        $notification->setParticipant($vendor);
+        $notification->setMessage($message);
+
+        $em->persist($notification);
+        $em->flush();
+
+
+    }
+
+    private function calculateShipping($cartWeight,$shippingRate){
+        $shippingCost = 0.00;
+
+        //Whats the difference between this weight and the Base Weight (Assumed to be 15KG)
+        $weightDifference = $cartWeight - 15;
+        //var_dump($weightDifference);exit;
+        //Lets use the Weight difference to find the applicable Rate. Remember, our Scale has 6 increments modelled on the Turkish Airline data
+        if ($weightDifference > 0){
+            if ($weightDifference < 45){
+                if ($shippingRate->getFirstIncrement()>0.0) {
+                    //Calculate it as Total = Minimum charge + (rate + Kgs)
+                    $shippingCost = ($shippingRate->getMinimumCharge() + ($shippingRate->getFirstIncrement() * $weightDifference));
+                }else{
+                    //Calculate it as Total = Minimum charge + (rate + Kgs). Since the rate is 0 use the Normal rate
+                    $shippingCost = ($shippingRate->getMinimumCharge()+(4.1*$weightDifference));
+                }
+            }elseif($weightDifference < 100){
+                if ($shippingRate->getSecondIncrement()>0.0) {
+                    //Calculate it as Total = Minimum charge + (rate + Kgs)
+                    $shippingCost = ($shippingRate->getMinimumCharge() + ($shippingRate->getSecondIncrement() * $weightDifference));
+                }else{
+                    //Calculate it as Total = Minimum charge + (rate + Kgs). Since the rate is 0 use the Normal rate
+                    $shippingCost = ($shippingRate->getMinimumCharge()+(4.1*$weightDifference));
+                }
+            }elseif ($weightDifference < 300){
+                if ($shippingRate->getThirdIncrement()>0.0) {
+                    //Calculate it as Total = Minimum charge + (rate + Kgs)
+                    $shippingCost = ($shippingRate->getMinimumCharge() + ($shippingRate->getThirdIncrement() * $weightDifference));
+                }else{
+                    //Calculate it as Total = Minimum charge + (rate + Kgs). Since the rate is 0 use the Normal rate
+                    $shippingCost = ($shippingRate->getMinimumCharge()+(4.1*$weightDifference));
+                }
+            }elseif ($weightDifference < 500){
+                if ($shippingRate->getFourthIncrement()>0.0) {
+                    //Calculate it as Total = Minimum charge + (rate + Kgs)
+                    $shippingCost = ($shippingRate->getMinimumCharge() + ($shippingRate->getFourthIncrement() * $weightDifference));
+                }else{
+                    //Calculate it as Total = Minimum charge + (rate + Kgs). Since the rate is 0 use the Normal rate
+                    $shippingCost = ($shippingRate->getMinimumCharge()+(4.1*$weightDifference));
+                }
+            }elseif ($weightDifference < 1000){
+                if ($shippingRate->getFifthIncrement()>0.0) {
+                    //Calculate it as Total = Minimum charge + (rate + Kgs)
+                    $shippingCost = ($shippingRate->getMinimumCharge() + ($shippingRate->getFifthIncrement() * $weightDifference));
+                }else{
+                    //Calculate it as Total = Minimum charge + (rate + Kgs). Since the rate is 0 use the Normal rate
+                    $shippingCost = ($shippingRate->getMinimumCharge()+(4.1*$weightDifference));
+                }
+            }else{
+                if ($shippingRate->getSixthIncrement()>0.0) {
+                    //Calculate it as Total = Minimum charge + (rate + Kgs)
+                    $shippingCost = ($shippingRate->getMinimumCharge() + ($shippingRate->getSixthIncrement() * $weightDifference));
+                }else{
+                    //Calculate it as Total = Minimum charge + (rate + Kgs). Since the rate is 0 use the Normal rate
+                    $shippingCost = ($shippingRate->getMinimumCharge()+(4.1*$weightDifference));
+                }
+            }
+        }else{
+            $shippingCost+=$shippingRate->getMinimumCharge();
+        }
+
+        return $shippingCost;
     }
 }

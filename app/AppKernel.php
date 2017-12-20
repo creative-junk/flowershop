@@ -30,6 +30,7 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new AppBundle\AppBundle(),
             new Crysoft\CurrencyBundle\CrysoftCurrencyBundle(),
+            new Payum\Bundle\PayumBundle\PayumBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

@@ -63,10 +63,6 @@ class AuctionOrder
     /**
      * @ORM\Column(type="string")
      */
-    private $processingFee;
-    /**
-     * @ORM\Column(type="string")
-     */
     private $orderState;
     /**
      * @ORM\Column(type="text")
@@ -124,6 +120,24 @@ class AuctionOrder
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Company")
      */
     private $buyer;
+    /**
+     * @var
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Airport")
+     */
+    private $airport;
+    /**
+     * @var
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Airline")
+     */
+    private $airline;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $shipmentWeight;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $processingFee="";
 
     function __construct()
     {
@@ -339,21 +353,6 @@ class AuctionOrder
         $this->orderTotal = $orderTotal;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getProcessingFee()
-    {
-        return $this->processingFee;
-    }
-
-    /**
-     * @param mixed $processingFee
-     */
-    public function setProcessingFee($processingFee)
-    {
-        $this->processingFee = $processingFee;
-    }
 
     /**
      * @return mixed
@@ -538,6 +537,70 @@ class AuctionOrder
     public function setBuyer($buyer)
     {
         $this->buyer = $buyer;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAirport()
+    {
+        return $this->airport;
+    }
+
+    /**
+     * @param mixed $airport
+     */
+    public function setAirport($airport)
+    {
+        $this->airport = $airport;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAirline()
+    {
+        return $this->airline;
+    }
+
+    /**
+     * @param mixed $airline
+     */
+    public function setAirline($airline)
+    {
+        $this->airline = $airline;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShipmentWeight()
+    {
+        return $this->shipmentWeight;
+    }
+
+    /**
+     * @param mixed $shipmentWeight
+     */
+    public function setShipmentWeight($shipmentWeight)
+    {
+        $this->shipmentWeight = $shipmentWeight;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProcessingFee()
+    {
+        return $this->processingFee;
+    }
+
+    /**
+     * @param mixed $processingFee
+     */
+    public function setProcessingFee($processingFee)
+    {
+        $this->processingFee = $processingFee;
     }
 
 }

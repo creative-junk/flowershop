@@ -69,6 +69,8 @@
                         <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
                         <p><strong>Payment status: </strong> {{ order.paymentStatus }}</p>
                         <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
+                        <p><strong>Airline: </strong> {{ order.airline }}</p>
+                        <p><strong>Airport: </strong> {{ order.airport }}</p>
                         <p><strong>Subtotal:</strong> <i>{{ app.user.myCompany.currency }} {{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>
                         <p><strong>Shipping:</strong> <i>{{ app.user.myCompany.currency }} {{ order.shippingCost | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>
                         <p class="subtotal"><strong>Total:</strong>  <i>{{ app.user.myCompany.currency }} {{ order.orderTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>

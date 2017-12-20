@@ -103,15 +103,8 @@
                     <div class="right-sidebar">
                         <p><strong>Order number: </strong> {{ order.prettyId }} </p>
                         <p><strong>Ordered By: </strong> <a href="{{ path('agent_buyer_profile',{ 'id': order.buyer.id }) }}"> {{ order.buyer }}</a></p>
-                        <p><strong>Shipping Address: </strong><br/>
-                            {% if order.buyer.shippingAddress is not empty  %}
-                                {{ order.buyer.shippingAddress[0].streetAddress }}, {{ order.buyer.shippingAddress[0].town }},{{ order.buyer.shippingAddress[0].zip }}<br/>
-                                {{ order.buyer.shippingAddress[0].country }},
-                                {{ order.buyer.shippingAddress[0].emailAddress }},  {{ order.buyer.shippingAddress[0].phoneNumber }}
-                            {% else %}
-                                Not provided
-                            {% endif %}
-                        </p>
+                        <p><strong>Airline: </strong>{{ order.airline }} </p>
+                        <p><strong>Airport: </strong>{{ order.airport }}</p>
                         <p><strong>Payment method: </strong> {{ order.processingFee }}
                             {% if order.processingFee == 'rtgs' or order.processingFee == 'cheque' %}
                                 <a href="{{ asset('images/products/') }}{{ order.imageName }}">View Payment Details</a>

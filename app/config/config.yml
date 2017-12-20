@@ -146,3 +146,21 @@ fos_rest:
         view_response_listener: 'force'
         formats:
             json: true
+
+payum:
+     security:
+         token_storage:
+            AppBundle\Entity\PaymentToken: { doctrine: orm }
+
+     storages:
+         AppBundle\Entity\Payment: { doctrine: orm }
+
+     gateways:
+         offline:
+              factory: offline
+         paypal:
+              factory:  paypal_express_checkout
+              username: accounts-facilitator_api1.iflora.biz
+              password: DCCYUEN3L4EAHGJ8
+              signature: AoQHwKy2ZyawoKk0iKZB2xmuF33TAjhXfScbRDlhA9LsnOzmkPRyw7Rv
+              sandbox: true

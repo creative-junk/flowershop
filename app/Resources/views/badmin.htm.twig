@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>iFlora Webshop Administration</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/assets/bootstrap/css/bootstrap.min.css') }}">
+    <link href="{{ asset('assets/css/font-awesome.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/dbcadmin.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/css/memento-responsive.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/starrating/css/rating.css') }}" />
+
+    <!--Table-->
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('assets/admin/assets/data-tables/bootstrap3/dataTables.bootstrap.css') }}"/>
+
+    <!--Gritter-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/assets/gritter/css/jquery.gritter.css') }}">
+
+    <!--Calendar-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/assets/jquery-ui/jquery-ui.min.css') }}"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('assets/admin/assets/fullcalendar/fullcalendar/fullcalendar.css') }}"/>
+
+    <!--Rickh Text Editor-->
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('assets/admin/assets/bootstrap-wysihtml5/bootstrap-wysihtml5.css') }}"/>
+
+    <!--Rickh Text Editor-->
+
+    <link href="{{ asset('assets/admin/css/no-more-table.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin/css/custom-admin.css') }}" rel="stylesheet">
+
+    <link rel="shortcut icon" href="{{ asset('assets/admin/img/favicon.png') }}">
+
+    <script src="{{ asset('assets/admin/js/jquery-2.1.1.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/jquery-migrate-1.2.1.min.js') }}"></script>
+    <script>window.jQuery || document.write('<script src="{{ asset('assets/admin/jquery/jquery-2.1.1.min.js') }}"><\/script>')</script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script type="text/javascript">
+        var dt_first = 'First';
+        var dt_last = 'Last';
+        var dt_next = 'Next';
+        var dt_prev = 'Previous';
+        var dt_no_data = 'No data available in table';
+        var dt_show_empty = 'Showing 0 to 0 of 0 entries';
+        var dt_no_match = 'No matching records found';
+        var dt_search = 'Search';
+        var dt_processing = 'Processing...';
+        var dt_loading = 'Loading...';
+        var dt_info = 'Showing _START_ to _END_ of _TOTAL_ entries';
+        var dt_filter_info = '(filtered from _MAX_ total entries)';
+        var dt_show_entries = 'Show _MENU_ entries';
+    </script>
+    <script>
+        jQuery(document).ready(function() {
+            $('.js-datepicker').datepicker(
+                {
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'yy-mm-dd',
+                }
+            );
+            $('.select').select2();
+        });
+
+</script>
+
+        <script type="text/javascript">
+        var base_url = {{ path('admin_dashboard') }}; // added on version 1.5
+    </script>
+    {% block javascripts %}{% endblock %}
+
+</head>
+
+<body>
+
+<div id="navbar" class="navbar">
+    <button type="button" class="navbar-toggle navbar-btn collapsed" data-toggle="collapse" data-target="#sidebar">
+        <span class="fa fa-bars"></span>
+    </button>
+    <a class="navbar-brand" href="{{ path('admin_dashboard') }}">
+        <small>
+            <img src="{{ asset('iflora/images/logo.png') }}?>" style="height:40px">
+            </small>
+    </a>
+
+    <div class="pull-left logged-in-user-info">
+        <img class="thumbnail" src="{{ asset('nophoto.jpg') }}"
+             style=""/>
+        <span style=""><b>Logged in as :</b> {{ app.user }}</span>
+    </div>
+
+    <ul class="nav memento-nav pull-right admin-top-menu">
+        <li class="user-profile">
+            <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
+                <i class="fa fa-user"></i>
+                <span class="hhh user_info">{{ app.user.firstName }}</span>
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-navbar" id="user_menu">
+                <li style="margin-top:10px;"></li>
+                <!--<li>
+                    <a href="#">
+                        <i class="fa fa-cog"></i>
+                        Change Password </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-wrench"></i>
+                        Edit Profile </a>
+                </li> -->
+                <li>
+                <li class="divider"></li>
+                <li>
+                    <a href="{{ path('security_logout') }}">
+                        <i class="fa fa-sign-out"></i>
+                        Logout </a>
+                </li>
+                <li class="divider"></li>
+            </ul>
+        </li>
+        {#<li>#}
+            {#<a target="_blank" href="{{ path('home') }}">#}
+                {#<i class="fa fa-laptop"></i>#}
+                {#<span class="hhh user_info">Visit Webshop</span>#}
+            {#</a>#}
+        {#</li>#}
+    </ul>
+</div>
+<div class="container" id="main-container">
+    <div id="sidebar" class="navbar-collapse collapse">
+
+        <div id="sidebar-collapse" class="">
+            <i class="fa fa-angle-double-left"></i>
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            {% include('admin/nav/admin.htm.twig') %}
+        {% elseif is_granted('ROLE_FREIGHT') %}
+            {% include('admin/nav/freight.htm.twig') %}
+        {% endif %}}
+    </div>
+    <div id="main-content" style="{% block style %}{% endblock %}">
+        <div id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="fa fa-home"></i>
+                    <a href="{{ path('admin_dashboard') }}">Admin Panel</a>
+                    <span class="divider"><i class="fa fa-angle-right"></i></span>
+                </li>
+                <li class="active">{% block title %}{% endblock %}</li>
+            </ul>
+        </div>
+
+        {% block body %}{% endblock %}
+
+
+    <footer>
+        <p>
+            © {{ 'now' | date('Y') }}, iFlora Marketplace. All Rights Reserved.
+        </p>
+    </footer>
+    <a id="btn-scrollup" class="btn btn-circle btn-lg" href="#"><i class="fa fa-chevron-up"></i></a>
+</div>
+</div>
+<script src="{{ asset('assets/admin/assets/bootstrap/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/admin/assets/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ asset('assets/admin/assets/jquery-cookie/jquery_cookie.js') }}"></script>
+
+<!--Calendar-->
+<script src="{{ asset('assets/admin/assets/jquery-ui/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('assets/admin/assets/ckeditor/ckeditor.js') }}"></script>
+
+
+<!--Template Scripting-->
+<script src="{{ asset('assets/admin/js/memento.js') }}"></script>
+<script src="{{ asset('assets/admin/js/memento-demo-codes.js') }}"></script>
+
+</body>
+</html>

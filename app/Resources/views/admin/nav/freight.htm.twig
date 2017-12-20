@@ -1,0 +1,64 @@
+
+<ul class="nav nav-list" style="overflow-y:scroll;">
+    <!--<li class="active"> HIGHLIGHTS MENU-->
+    <li class="#">
+        <a href="{{ path('admin_dashboard') }}">
+            <i class="fa fa-dashboard"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+       <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-building"></i>
+            <span>Airports</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('airports') }}">
+                    All
+                </a>
+            </li>
+        </ul>
+
+    </li>
+
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-plane"></i>
+            <span>Airline</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('airlines') }}">
+                    All
+                </a>
+            </li>
+        </ul>
+
+    </li>
+
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-building"></i>
+            <span>Shipping Rates</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('shipping-rates') }}">
+                    All Rates
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('new-rate') }}">
+                    New Rate
+                </a>
+            </li>
+        </ul>
+
+    </li>
+
+
+</ul>

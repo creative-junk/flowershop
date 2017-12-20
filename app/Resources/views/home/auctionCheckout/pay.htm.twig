@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+{% block title %} Checkout{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('buyer_shop') }}" title="Go to Home Page">
+                    Direct Market </a>
+            </li>
+            <li class="item product">
+                <strong>Checkout Shipping</strong>
+            </li>
+        </ul>
+    </div>
+
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <div id="checkout-page">  <!-- Checkout progress -->
+
+                                <div id="checkout-progress">
+                                    <ul class="breadcrumb list-inline checkout-progress">
+                                        <li>BILLING ADDRESS</li>
+                                        <li>SHIPPING ADDRESS</li>
+                                        <li>SHIPPING METHOD</li>
+                                        <li>AGENT</li>
+                                        <li><a class="progress-active">PAYMENT</a></li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- End id="checkout-progress" -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <span>payment Method</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body step-1">
+                                   {{ form_start(buyerCheckoutForm) }}
+                                    <div class="section-shopping-cart-page row field-row">
+                                        <div class="shipping-method col-md-5 col-lg-3">
+                                            <div>
+                                                <h4>
+                                                    Cheque
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			                <span class="">
+    				                                          <input type="radio" value="cheque" name="paymentMethod" id="option1" checked>
+    			                                            </span>
+                                                    <span class="price">
+    			                                                <strong>Payable to {{ sellingAgent }}<!--1.2% Processing Fee--></strong>
+
+    			                                           </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="shipping-method col-md-4 col-lg-3">
+                                            <div>
+                                                <h4>
+                                                    RTGS
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			                <span class="">
+    				                                          <input type="radio" value="rtgs" name="paymentMethod" id="option1">
+    			                                            </span>
+                                                    <span class="price">
+    			                                                <strong>Payable to {{ sellingAgent }}<!--3% Processing Fee--></strong>
+    			                                           </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    <!-- PAYPAL --
+                                        <div class="shipping-method col-md-4 col-lg-3">
+                                            <div>
+                                                <h4>
+
+                                                    <small></small>
+                                                </h4>
+
+                                                <div class="box-content highlight" id="shipping-methods">
+    			                			               <span class="">
+    				                                          <input type="radio" value="paypal" name="paymentMethod" id="option1">
+    			                                            </span>
+                                                    <img src="{{ asset('images/paypal.jpg') }}"/>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    -->
+                                    </div>
+                                    <div class="row field-row checkout-button-row">
+                                        <div class="col-xs-6 button-holder">
+                                            <a class="md-button gray step-btn" href="{{ path('auction_buyer_agent_checkout') }}"><span class="fa fa-chevron-circle-left"></span> agent</a>
+                                        </div>
+                                        <div class="col-xs-6 primary pull-right">
+                                            <button class="md-button action primary" type="submit" id="billing-continue">complete</button>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="hidden" id="billing-current-step" name="step" value="billing_info">
+                                    <input type="hidden" id="billing-next-step" name="nextStep" value="shipping_info">
+
+                                    {{ form_end(buyerCheckoutForm) }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="cart-totals"> {{ include('partials/iflora/user/auction/product-totals.htm.twig') }}</div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'badmin.htm.twig' %}
+{% block title %}Payments{% endblock %}
+{% block body %}
+<table id="all-posts" class="table table-hover table-advance">
+
+    <thead>
+
+    <tr>
+
+        <th class="numeric">#</th>
+
+        <th class="numeric">Paid By</th>
+
+        <th class="numeric">Email</th>
+
+        <th class="numeric">Amount</th>
+
+        <th class="numeric">Order ID</th>
+
+
+        <th class="numeric">Gateway</th>
+
+    </tr>
+
+    </thead>
+
+    <tbody>
+    {% set counter = '0' %}
+
+   {% for payment in payments %}
+    <tr>
+
+        <td data-title="#" class="numeric">{{ payment.number }}</td>
+
+        <td data-title="Image" class="numeric">{{ payment.order.user }} - {{ payment.order.user.myCompany }}</td>
+
+        <td data-title="Product Name" class="numeric">{{ payment.clientEmail }}</td>
+
+
+        <td data-title="Category" class="numeric">{{ payment.currencyCode }} {{ payment.paymentAmount | number_format }}</td>
+
+        <td data-title="Price" class="numeric">
+            {% if payment.order %}
+            {{ payment.order.prettyId }}
+            {% endif %}
+                </td>
+
+
+        <td data-title="Rating" class="numeric">{{ payment.gateway }}
+
+        </td>
+
+    </tr>
+       {% set counter = counter + 1%}
+
+   {% endfor %}
+
+    </tbody>
+
+</table>
+<div class="pull-right">
+    <img src="{{ asset('assets/admin/img/loading.gif') }}" style="width:20px;margin:5px;display:none" class="loading">
+</div>
+<div class="clearfix"></div>
+{% endblock %}

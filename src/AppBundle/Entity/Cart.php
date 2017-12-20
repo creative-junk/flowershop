@@ -32,7 +32,10 @@ class Cart
      * @ORM\Column(type="string")
      */
     private $cartAmount;
-
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $cartWeight;
     /**
      * @ORM\Column(type="string",nullable=true)
      */
@@ -73,6 +76,15 @@ class Cart
         $this->cartItems = new ArrayCollection();
 
     }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * @return mixed
      */
@@ -208,5 +220,22 @@ class Cart
     {
         $this->cartTotal = $cartTotal;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCartWeight()
+    {
+        return $this->cartWeight;
+    }
+
+    /**
+     * @param mixed $cartWeight
+     */
+    public function setCartWeight($cartWeight)
+    {
+        $this->cartWeight = $cartWeight;
+    }
+
 
 }

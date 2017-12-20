@@ -235,6 +235,14 @@ class Company implements \Serializable
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\PayOptions",mappedBy="myCompany")
      */
     private $payOptions;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $subscribedAt;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $status="Pending";
 
     public function __construct()
     {
@@ -449,7 +457,7 @@ class Company implements \Serializable
      */
     public function getEmailAddress()
     {
-        return $this->emailAddress;
+        return $this->email;
     }
 
     /**
@@ -988,4 +996,38 @@ class Company implements \Serializable
     {
         // TODO: Implement unserialize() method.
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSubscribedAt()
+    {
+        return $this->subscribedAt;
+    }
+
+    /**
+     * @param mixed $subscribedAt
+     */
+    public function setSubscribedAt($subscribedAt)
+    {
+        $this->subscribedAt = $subscribedAt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param mixed $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+
 }

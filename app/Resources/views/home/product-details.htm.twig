@@ -260,7 +260,7 @@
             <div class="errors" style="">
                 <div class="alert alert-danger">
                     <div>
-                      :-(  Something went wrong. {{ direct.product.title }} was NOT added to your shopping cart.
+                      :-(  Something went wrong. {{ direct.product.title }} was NOT added to your shopping cart. <br/>Confirm the minimum Order Quantity for this product.
                     </div>
                 </div>
 
@@ -338,7 +338,9 @@
                         </div>
                     </div>
                     <div class="product-add-form">
-                        {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
+                        {% if direct.onHand > direct.minimumOrder %}
+
+                            {{ form_start(form,{'attr': {'id': 'addToCart'}}) }}
                         <input type="hidden" name="productCurrency" value="{{ app.user.myCompany.currency }}"/>
                         <input type="hidden" name="productPrice" value="{{ direct.pricePerStem | convertCurrency(direct.product.vendor.currency,app.user.myCompany.currency) }}"/>
                         <input type="hidden" name="productId" value="{{ direct.id }}"/>
@@ -349,17 +351,28 @@
 
                                         <div class="control">
                                             <input id="qty" class="input-text qty" maxlength="12" name="quantity"
+
                                                    title="Qty" type="number" value="{{ direct.minimumOrder }}">
                                         </div>
                                     </div>
+
                                     <div class="actions">
                                         &nbsp;<button  class="action primary"
                                                 title="Add to Cart" type="submit">
                                             <span id="add-t-cart" class="fa fa-shopping-cart"></span>&nbsp;&nbsp; <span>Add to Cart</span></button>
                                     </div>
+
                                 </div>
                             </div>
+
                         {{ form_end(form) }}
+                        {% else %}
+                            <br/>
+                            <div class="alert alert-warning">
+                                This Product is Low on Stock. Please check back later
+                            </div>
+                            <br/>
+                        {% endif %}
                     </div>
 
                     <div class="product-social-links">
@@ -393,8 +406,8 @@
                             <table>
                                
                                 <tr>
-                                    <td><strong>Color:</strong> {{ direct.product.primaryColor }}</td>
-                                    <td><strong>Color:</strong> {{ direct.product.primaryColor }}</td>
+                                    <td><strong>Primary Color:</strong> {{ direct.product.primaryColor }}</td>
+                                    <td><strong>Secondary Color:</strong> {{ direct.product.primaryColor }}</td>
                                 </tr>
                                     <td><strong>Season:</strong> {{ direct.product.season }}</td>
                                 <td><strong>Scented:</strong>
@@ -419,8 +432,8 @@
                                     <td><strong>Quality: </strong> {{ direct.quality }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Stock: </strong> {{ direct.numberOfStems | number_format }}</td>
-
+                                    <td><strong>Stock: </strong> {{ direct.onHand | number_format }}</td>
+                                    <td><strong>Minimum Order: </strong> {{ direct.minimumOrder | number_format }}</td>
                                 </tr>
                             </table>
 

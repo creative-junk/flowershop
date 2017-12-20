@@ -35,7 +35,7 @@
 
                     <div class="amount price-container">
                         <span class="price-wrapper" data-bind="html: cart().subtotal_excl_tax"><span
-                                    class="price">{{ cart.cartCurrency }} {{ cart.cartAmount }}</span></span>
+                                    class="price">{{ cart.cartCurrency }} {{ cart.cartAmount | number_format }}</span></span>
 
                     </div>
                 </div>

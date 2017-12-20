@@ -11,6 +11,7 @@ namespace AppBundle\Repository;
 
 
 use AppBundle\Entity\Auction;
+use AppBundle\Entity\Category;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
@@ -22,6 +23,7 @@ class CategoryRepository extends EntityRepository
      */
     public function findAllCategoriesOrderByName(){
         return $this->createQueryBuilder('category')
+            ->orderBy('category.title','asc')
             ->getQuery()
             ->execute();
     }

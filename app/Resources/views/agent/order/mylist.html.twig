@@ -56,22 +56,22 @@
                                 <thead>
                                 <tr>
 
-
+                                    <th>Order ID</th>
+                                    <th>Order Date</th>
                                     <th>Order Amount</th>
                                     <th>Order Status</th>
-                                    <th>Order State</th>
+
                                     <th>Sold By</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for order in orders %}
                                     <tr>
-
-
-                                        <td>{{ app.user.myCompany.currency }}&nbsp;{{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</td>
+                                        <td><a href="{{ path('agent_view_my_auction_order', {'id': order.id }) }}"> {{ order.prettyId }}</a></td>
+                                        <td>{{ order.createdAt | date }}</td>
+                                        <td>{{ app.user.myCompany.currency }}&nbsp;{{ order.orderTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</td>
                                         <td>{{ order.orderStatus }}</td>
-                                        <td>{{ order.orderState }}</td>
-                                        <td>{{ order.whoseOrder.myCompany }}</td>
+                                        <td>{{ order.sellingAgent }}</td>
                                     </tr>
                                 {% else %}
                                     <tr>

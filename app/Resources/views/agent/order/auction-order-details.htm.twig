@@ -86,16 +86,8 @@
                         <p><strong>Order number: </strong> {{ order.prettyId }} </p>
                         <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
                         <p><strong>Ordered By: </strong> <a href="{{ path('agent_buyer_profile',{ 'id': order.user.myCompany.id }) }}"> {{ order.user.myCompany }}</a></p>
-
-                        <p><strong>Shipping Address: </strong><br/>
-                            {% if order.user.myCompany.shippingAddress is not empty  %}
-                                {{ order.user.myCompany.shippingAddress[0].streetAddress }}, {{ order.user.myCompany.shippingAddress[0].town }},{{ order.user.myCompany.shippingAddress[0].zip }}<br/>
-                                {{ order.user.myCompany.shippingAddress[0].country }},
-                                {{ order.user.myCompany.shippingAddress[0].emailAddress }},  {{ order.user.myCompany.shippingAddress[0].phoneNumber }}
-                            {% else %}
-                                Not provided
-                            {% endif %}
-                        </p>
+                        <p><strong>Airline: </strong>{{ order.airline }} </p>
+                        <p><strong>Airport: </strong>{{ order.airport }}</p>
                         <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
                         <p><strong>Subtotal:</strong> <i>{{ app.user.myCompany.currency }} {{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>
                         <p><strong>Shipping:</strong> <i>{{ app.user.myCompany.currency }} {{ order.shippingCost | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>

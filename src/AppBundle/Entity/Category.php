@@ -18,6 +18,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
  * @ORM\Table(name="category")
+ * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable
  *
  */
@@ -63,6 +64,10 @@ class Category
      */
     private $createdAt;
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     */
+    private $createdBy;
+    /**
      * @ORM\Column(type="datetime",nullable=true)
      */
     private $updatedAt;
@@ -70,6 +75,27 @@ class Category
      * @ORM\ManyToOne(targetEntity="Category")
      */
     private $parentCategory;
+
+    function __construct()
+    {
+        // we set up "created"+"modified"
+        $this->setCreatedAt(new \DateTime());
+
+        if ($this->getUpdatedAt() == null) {
+            $this->setUpdatedAt(new \DateTime());
+        }
+
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateModifiedDatetime()
+    {
+        // update the modified time
+        $this->setUpdatedAt(new \DateTime());
+    }
     /**
      * @return mixed
      */
@@ -223,6 +249,22 @@ class Category
     public function setImageSize($imageSize)
     {
         $this->imageSize = $imageSize;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @param mixed $createdBy
+     */
+    public function setCreatedBy($createdBy)
+    {
+        $this->createdBy = $createdBy;
     }
 
 }

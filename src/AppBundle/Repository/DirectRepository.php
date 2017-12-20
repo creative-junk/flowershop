@@ -162,4 +162,18 @@ class DirectRepository extends EntityRepository
             return 0;
         }
     }
+    public function findNrActiveProducts(){
+        $nrProducts= $this->createQueryBuilder('direct')
+            ->innerJoin('direct.product','product')
+            ->select('count(direct.id)')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrProducts){
+            return $nrProducts;
+        }else{
+            return 0;
+        }
+    }
 }

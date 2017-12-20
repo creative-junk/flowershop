@@ -1,4 +1,4 @@
-{% extends 'adminBase.htm.twig' %}
+{% extends 'badmin.htm.twig' %}
 {% block title %}Pending Administrator Accounts{% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
@@ -49,53 +49,23 @@
     </script>
 {% endblock %}
 {% block body %}
-    <div id="content" class="app-content box-shadow-z0" role="main">
 
-
-        <div ui-view class="app-body" id="view">
-           {{ include(':admin/partials:top.htm.twig') }}
-            <div class="padding">
-                <div class="page messages">
-                    <div class="messages" style="">
-                        <div class="alert alert-success">
-                            <div>
-                                Account Activated successfully.
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="page errors">
-                    <div class="errors" style="">
-                        <div class="alert alert-danger">
-                            <div>
-                               :-( Something went wrong.
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="box-header">
-                        <h2>Pending Administrator Accounts</h2>
-                    </div>
-                    <div class="table-responsive">
                         <table id="data" class="table table-striped b-t b-b">
                             <thead>
                             <tr>
-                                <th  style="width:20%">Names</th>
-                                <th  style="width:15%">Email</th>
-                                <th  style="width:25%">Created At</th>
-                                <th  style="width:25%">Manage</th>
+                                <th class="numeric">Names</th>
+                                <th class="numeric">Email</th>
+                                <th class="numeric">Created At</th>
+                                <th class="numeric">Manage</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in users  %}
                                 <tr>
-                                    <td><span style="color:#0cc2aa">{{ user.fullName }}</span></td>
-                                    <td>{{ user.email }}</td>
-                                    <td>{{ user.accountCreatedAt | date("F jS \\a\\t g:ia") }}</td>
-                                    <td>
+                                    <td data-title="Full Name" class="numeric"><span style="color:#0cc2aa">{{ user.fullName }}</span></td>
+                                    <td data-title="Email" class="numeric">{{ user.email }}</td>
+                                    <td data-title="Created At" class="numeric">{{ user.accountCreatedAt | date("F jS \\a\\t g:ia") }}</td>
+                                    <td data-title="Actions" class="numeric">
                                         <a id="js-activate-account" href="#" data-url="{{ path('approve-admin-account',{'id': user.id }) }}"
                                            class="btn btn-xs white btn-icon"><i id="activate-account" title="Approve Admin Account" class="fa fa-lock"></i></a>
 
@@ -104,12 +74,5 @@
                             {% endfor  %}
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
 
-            <!-- ############ PAGE END-->
-
-        </div>
-    </div>
 {% endblock %}

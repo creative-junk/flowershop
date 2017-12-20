@@ -71,6 +71,10 @@
                                                     {{ app.user.myCompany.currency }} {{ orderItem.unitPrice | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
 
                                                 </td>
+                                                <td>
+                                                    <strong>Grower: </strong><br/><a href="{{ path('view_grower', {'id': orderItem.product.vendor.id }) }}">
+                                                    {{ orderItem.product.vendor }}</a>
+                                                </td>
                                             </tr>
                                         </table>
                                     </div>
@@ -97,8 +101,11 @@
                 <div class="col-md-12 col-lg-3">
                     <div class="right-sidebar">
                         <p><strong>Order number: </strong> {{ order.prettyId }} </p>
+                        <p><strong>Order Status: </strong> {{ order.orderStatus }} </p>
                         <p><strong>Payment method: </strong> {{ order.processingFee }}</p>
                         <p><strong>Payment Status: </strong> {{ order.paymentStatus }}</p>
+                        <p><strong>Airline: </strong>{{ order.airline }} </p>
+                        <p><strong>Airport: </strong>{{ order.airport }}</p>
                         <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
                         <p><strong>Subtotal:</strong> <i>{{ app.user.myCompany.currency }} {{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>
                         <p><strong>Shipping:</strong> <i>{{ app.user.myCompany.currency }} {{ order.shippingCost | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>

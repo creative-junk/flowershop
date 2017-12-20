@@ -1,0 +1,99 @@
+{% extends 'badmin.htm.twig' %}
+{% block title %}Direct Market{% endblock %}
+{% block body %}
+<table id="all-posts" class="table table-hover table-advance">
+
+    <thead>
+
+    <tr>
+
+        <th class="numeric">#</th>
+
+        <th class="numeric">Image</th>
+
+        <th class="numeric">Product Name</th>
+
+        <th class="numeric">Category</th>
+
+        <th class="numeric">Price</th>
+
+        <th class="numeric">Stock</th>
+
+        <th class="numeric">Rating</th>
+
+
+        <th class="numeric">Grower</th>
+
+    </tr>
+
+    </thead>
+
+    <tbody>
+    {% set counter = '1' %}
+
+   {% for market in markets %}
+    <tr>
+
+        <td data-title="#" class="numeric"><?php echo $i;?></td>
+
+        <td data-title="Image" class="numeric"><img class="thumbnail" style="width:50px;margin-bottom:0px;" src="{{ asset('images/products/') }}{{ market.product.mainImage }}" /></td>
+
+        <td data-title="Product Name" class="numeric">{{ market.product.title }}</td>
+
+
+        <td data-title="Category" class="numeric">{{ market.product.flowerType }}</td>
+
+        <td data-title="Price" class="numeric">{{ market.vendor.currency }} {{ market.pricePerStem }}</td>
+
+        <td data-title="Stock" class="numeric">{{ market.numberOfStems | number_format(0,'.',',') }}</td>
+
+        <td data-title="Rating" class="numeric">
+            {% if market.reviews | length > 0 %}
+
+                {% set sumQualityratings = 0 %}
+                {% set avgQualityRatings=0 %}
+                {% for rating in market.reviews %}
+                    {% set sumQualityratings = sumQualityratings + rating.quality %}
+                {% endfor %}
+                {% set avgQualityRatings= (sumQualityratings / direct.reviews|length) | round %}
+
+                {% set sumValueratings = 0 %}
+                {% set avgValueRatings=0 %}
+                {% for rating in market.reviews %}
+                    {% set sumValueratings = sumValueratings + rating.value %}
+                {% endfor %}
+                {% set avgValueRatings= (sumValueratings / market.reviews|length) | round %}
+
+                {% set sumPriceratings = 0 %}
+                {% set avgPriceRatings=0 %}
+                {% for rating in market.reviews %}
+                    {% set sumPriceratings = sumPriceratings + rating.price %}
+                {% endfor %}
+                {% set avgPriceRatings= (sumQualityratings / market.reviews|length) | round %}
+
+                {% set avgrating=0 %}
+                {% set avgrating = (avgQualityRatings+avgValueRatings+avgPriceRatings)/3 %}
+
+                {{ avgrating | rating(5, "fa-lg")   }}
+            {% else %}
+                {{ 0 | rating(5, "fa-lg")   }}
+            {% endif %}
+
+        </td>
+
+        <td data-title="Grower" class="numeric">{{ market.vendor }}</td>
+
+
+    </tr>
+       {% set counter = counter + 1%}
+
+   {% endfor %}
+
+    </tbody>
+
+</table>
+<div class="pull-right">
+    <img src="{{ asset('assets/admin/img/loading.gif') }}" style="width:20px;margin:5px;display:none" class="loading">
+</div>
+<div class="clearfix"></div>
+{% endblock %}

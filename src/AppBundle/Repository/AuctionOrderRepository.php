@@ -42,6 +42,17 @@ class AuctionOrderRepository extends EntityRepository
             ->getQuery()
             ->execute();
     }
+    public function findNrOrders(){
+        $nrOrders= $this->createQueryBuilder('user_order')
+            ->select('count(user_order.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrOrders){
+            return $nrOrders;
+        }else{
+            return 0;
+        }
+    }
     /**
      * @return AuctionOrder[]
      */

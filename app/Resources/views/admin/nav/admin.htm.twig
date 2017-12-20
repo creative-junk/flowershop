@@ -1,0 +1,327 @@
+
+<ul class="nav nav-list" style="overflow-y:scroll;">
+    <!--<li class="active"> HIGHLIGHTS MENU-->
+    <li class="#">
+        <a href="{{ path('admin_dashboard') }}">
+            <i class="fa fa-dashboard"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+    <li class="#">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-money"></i>
+            <span> Payments</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('direct-market-payments') }}">
+                    Direct Market Payments
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('auction-market-payments') }}">
+                    Auction Market Payments
+                </a>
+            </li>
+                <li class="">
+                    <a href="{{ path('paypal-payments') }}">
+                        Paypal Payments
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{{ path('offline-payments') }}">
+                        Offline Payments
+                    </a>
+                </li>
+
+
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-plus-circle"></i>
+            <span> Direct Market</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('direct-market') }}">
+                    Market
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('admin_order_list') }}">
+                    All Orders
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-cubes"></i>
+            <span> Auction Market</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+
+        <ul class="submenu">
+
+            <li class="">
+                <a href="{{ path('unassigned-products') }}">
+                    Unassigned Products
+                </a>
+            </li>
+
+            <li class="">
+                <a href="{{ path('assigned-products') }}">
+                    Assigned Products
+                </a>
+            </li>
+
+            <li class="">
+                <a href="{{ path('accepted-products') }}">
+                    Accepted Products
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('shipped-products') }}">
+                    Shipped Products
+                </a>
+            </li>
+
+            <li class="">
+                <a href="{{ path('auction-market') }}">
+                    Active Products
+                </a>
+            </li>
+            <!-- <li class="">
+                <a href="#">
+                    Active Orders
+                </a>
+            </li> -->
+            <li class="">
+                <a href="{{ path('admin_auction_order_list') }}">
+                    All Orders
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-users"></i>
+            <span>Buyers</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('all-buyers') }}">
+                    All Buyers
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('pending-buyers') }}">
+                    Pending Buyers
+                </a>
+            </li>
+            <!-- <li class="">
+                 <a href="#">
+                     Buyer-Grower Requests
+                 </a>
+             </li>
+             <li class="">
+                 <a href="#">
+                     Buyer-Agent Requests
+                 </a>
+             </li> -->
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-users"></i>
+            <span>Growers</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('all-growers') }}">
+                    All Growers
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('pending-growers') }}">
+                    Pending Growers
+                </a>
+            </li>
+            <!-- <li class="">
+                 <a href="#">
+                     Grower-Breeder Requests
+                 </a>
+             </li>
+             <li class="">
+                 <a href="#">
+                     Grower-Agent Requests
+                 </a>
+             </li> -->
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-users"></i>
+            <span>Breeders</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('all-breeders') }}">
+                    All Breeders
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('pending-breeders') }}">
+                    Pending Breeders
+                </a>
+            </li>
+
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-users"></i>
+            <span>Agents</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('all-agents') }}">
+                    All Agents
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('pending-agents') }}">
+                    Pending Agents
+                </a>
+            </li>
+
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-database"></i>
+            <span>Category</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('category_list') }}">
+                    All Categories
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('new-category') }}">
+                    New Category
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-building"></i>
+            <span>Airports</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('airports') }}">
+                    All
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('new-airport') }}">
+                    New
+                </a>
+            </li>
+        </ul>
+
+    </li>
+
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-plane"></i>
+            <span>Airline</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('airlines') }}">
+                    All
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('new-airline') }}">
+                    New
+                </a>
+            </li>
+        </ul>
+
+    </li>
+
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-building"></i>
+            <span>Shipping Rates</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('shipping-rates') }}">
+                    All Rates
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('new-rate') }}">
+                    New Rate
+                </a>
+            </li>
+        </ul>
+
+    </li>
+
+
+    <li class="">
+        <a href="#" class="dropdown-toggle">
+            <i class="fa fa-users"></i>
+            <span>Users</span>
+            <b class="arrow fa fa-angle-right"></b>
+        </a>
+        <ul class="submenu">
+            <li class="">
+                <a href="{{ path('admin-accounts') }}">
+                    All Administrators
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('pending-admin-accounts') }}">
+                    Pending Administrators
+                </a>
+            </li>
+            <li class="">
+                <a href="#">
+                    Pending Freighters
+                </a>
+            </li>
+            <li class="">
+                <a href="{{ path('user-accounts') }}">
+                    All Users
+                </a>
+            </li>
+
+        </ul>
+
+    </li>
+
+</ul>

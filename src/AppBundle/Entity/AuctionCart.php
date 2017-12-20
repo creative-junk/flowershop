@@ -36,6 +36,18 @@ class AuctionCart
      */
     private $itemPrice;
     /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $cartWeight;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $cartTotal;
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $shippingCost;
+    /**
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
@@ -161,6 +173,54 @@ class AuctionCart
     public function setProduct($product)
     {
         $this->product = $product;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCartWeight()
+    {
+        return $this->cartWeight;
+    }
+
+    /**
+     * @param mixed $cartWeight
+     */
+    public function setCartWeight($cartWeight)
+    {
+        $this->cartWeight = $cartWeight;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCartTotal()
+    {
+        return $this->cartTotal;
+    }
+
+    /**
+     * @param mixed $cartTotal
+     */
+    public function setCartTotal($cartTotal)
+    {
+        $this->cartTotal = $cartTotal;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShippingCost()
+    {
+        return $this->shippingCost;
+    }
+
+    /**
+     * @param mixed $shippingCost
+     */
+    public function setShippingCost($shippingCost)
+    {
+        $this->shippingCost = $shippingCost;
     }
 
 

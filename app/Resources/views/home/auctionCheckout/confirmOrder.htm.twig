@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+{% block title %} Checkout - Confirm Order{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('home') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="{{ path('buyer_auction') }}" title="Go to Home Page">
+                    Auction Market </a>
+            </li>
+            <li class="item product">
+                <strong>Checkout - Confirm Order</strong>
+            </li>
+        </ul>
+    </div>
+
+    <section class="section-checkout-page section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <div class="panel-group checkout-accordions">
+                        <div class="panel">
+
+                            <div id="checkout-page">  <!-- Checkout progress -->
+
+                                <div id="checkout-progress">
+                                    <ul class="breadcrumb list-inline checkout-progress">
+                                        <li>SHIPPING METHOD</li>
+                                        <li>AGENT</li>
+                                        <li><a class="progress-active">CONFIRM ORDER</a></li>
+                                        <li>PAYMENT</li>
+                                    </ul>
+                                </div>
+
+
+                                <!-- End id="checkout-progress" -->
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <span>confirm order</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body step-3">
+                                    {{ form_start(buyerCheckoutForm) }}
+                                    <input type="hidden" name="id" value="{{ cart.id }}">
+                                    <div class="section-shopping-cart-page row field-row">
+                                        <div class="cart-item row" style="margin-bottom:0;padding: 6px;font-weight: bold">
+                                        <div class="col-sm-2 col-lg-2"></div>
+                                        <div class="col-sm-4 col-lg-2">Product</div>
+                                        <div class="col-sm-6 col-lg-3">Unit Price</div>
+                                        <div class="col-sm-6 col-lg-2">Qty</div>
+                                        <div class="col-sd-6 col-lg-3">Total</div>
+                                        </div>
+                                            <div class="cart-item row" style="padding-bottom: 10px;margin-bottom:10px;">
+                                                <div class="col-sm-2 col-lg-2">
+                                                    <div class="image">
+                                                        <img width="60" height="60" alt="" src="{{ asset('images/products/') }}{{ cart.product.whichAuction.product.mainImage }}"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-lg-2 details">
+
+                                                    <div class="">
+                                                        <a href="{{ path('seedling_details',{
+                                                            'id': cart.product.id
+                                                        }) }}">{{ cart.product.whichAuction.product.title }}</a>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-lg-3 details">
+                                                    <div class="">
+                                                        {{ cart.cartCurrency }} {{ cart.itemPrice | number_format }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-lg-2 details">
+                                                    <div class="quantity">
+                                                        {{ cart.cartQuantity | number_format }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-lg-3 details">
+                                                    <div class="">
+                                                        {{ cart.cartCurrency }} {{ (cart.itemPrice * cart.cartQuantity) | number_format }}
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        <div class="cart-item row" style="margin-bottom:0;margin-top:0;padding-top:0;padding: 6px;font-weight: bold">
+                                            <div class="col-sm-2 col-lg-1"></div>
+                                            <div class="col-sm-4 col-lg-2"></div>
+                                            <div class="col-sm-6 col-lg-3"></div>
+                                            <div class="col-sm-6 col-lg-3"> Sub Total</div>
+                                            <div class="col-sd-6 col-lg-3">{{ cart.cartCurrency }} {{ (cart.itemPrice * cart.cartQuantity) | number_format }}</div>
+                                        </div>
+                                        <div class="cart-item row" style="margin-bottom:0;margin-top:0;padding-top:0;padding: 6px;font-weight: bold">
+                                            <div class="col-sm-2 col-lg-1"></div>
+                                            <div class="col-sm-4 col-lg-2"></div>
+                                            <div class="col-sm-6 col-lg-3"></div>
+                                            <div class="col-sm-6 col-lg-3"> Shipping</div>
+                                            <div class="col-sd-6 col-lg-3">{{ cart.cartCurrency }} {{ cart.shippingCost | number_format }}</div>
+                                        </div>
+                                        <div class="cart-item row" style="border-top:2px black solid;border-bottom:2px black solid;margin-bottom:0;margin-top:0;padding-top:0;padding: 6px;font-weight: bold">
+                                            <div class="col-sm-2 col-lg-1"></div>
+                                            <div class="col-sm-4 col-lg-2"></div>
+                                            <div class="col-sm-6 col-lg-3"></div>
+                                            <div class="col-sm-6 col-lg-3"> Order Total</div>
+                                            <div class="col-sd-6 col-lg-3">{{ cart.cartCurrency }} {{ ((cart.itemPrice * cart.cartQuantity) + cart.shippingCost) | number_format }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="row field-row checkout-button-row">
+                                        <div class="col-xs-6 button-holder">
+                                            <a class="md-button gray step-btn" href="{{ path('buyer_checkout') }}"><span class="fa fa-chevron-circle-left"></span> shipping method</a>
+                                        </div>
+                                        <div class="col-xs-6 primary pull-right">
+                                            <button class="md-button action primary" type="submit" id="billing-continue">confirm</button>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="hidden" id="billing-current-step" name="step" value="billing_info">
+                                    <input type="hidden" id="billing-next-step" name="nextStep" value="shipping_info">
+                                    {{ form_end(buyerCheckoutForm) }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="cart-totals"> {{ include(':home/auctionCheckout:product-totals.htm.twig') }}</div>
+
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

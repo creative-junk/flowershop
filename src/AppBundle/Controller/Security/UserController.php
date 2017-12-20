@@ -296,6 +296,7 @@ class UserController extends Controller
         $company = new Company();
         $company->setCompanyCode($this->generateCode());
         $company->setCompanyType($type);
+        $company->setStatus("Pending");
         $company->setIsActive(false);
         $form = $this->createForm(CompanyRegistrationForm::class, $company);
         $form->handleRequest($request);

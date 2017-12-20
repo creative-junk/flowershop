@@ -37,6 +37,14 @@ class AuctionProduct
      */
     private $availableStock;
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $onHand=0;
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $onHold=0;
+    /**
      * @ORM\Column(type="string")
      */
     private $pricePerStem;
@@ -268,6 +276,85 @@ class AuctionProduct
     {
         $this->isOnSale = $isOnSale;
     }
+    /**
+     * @return integer
+     * The number of items on Hand
+     */
+    public function getOnHand()
+    {
+        return $this->onHand;
+    }
 
+    /**
+     * @param integer $onHand
+     * Set the number of items On Hand
+     */
+    public function setOnHand($onHand)
+    {
+        $this->onHand = $onHand;
+    }
+
+    /**
+     * @return integer
+     * The Number of Items on Hold
+     */
+    public function getOnHold()
+    {
+        return $this->onHold;
+    }
+
+    /**
+     * @param integer $onHold
+     * Set the number of Products on Hold
+     */
+    public function setOnHold($onHold)
+    {
+        $this->onHold = $onHold;
+    }
+
+    /**
+     * @param integer $hold
+     * Put Inventory Items onHold awaiting Payment. Remove them from OnHand. This happens when an
+     * Order is placed but before is paid for
+     */
+    public function hold($hold){
+        $onHand = $this->getOnHand()-$hold;
+        $this->setOnHand($onHand);
+        $this->setOnHold($hold);
+
+    }
+
+    /**
+     * @param integer $sell
+     * Remove the items from OnHold. This happens when the Order State changes to Paid
+     */
+    public function sell($sell){
+        $onHold = $this->getOnHold()-$sell;
+        $this->setOnHold($onHold);
+    }
+
+    /**
+     * @param int $release
+     * Release items from OnHold back to onHand
+     */
+    public function release($release){
+        $onHold = $this->getOnHold()- $release;
+        $onHand = $this->getOnHand() + $release;
+        $this->setOnHold($onHold);
+        $this->setOnHand($onHand);
+    }
+
+    /**
+     * @param $quantity
+     * @return bool
+     * Checks if the Inventory is sufficient to fulfil this Order.
+     */
+    public function isInventorySufficient($quantity){
+        if ($quantity > $this->getOnHand()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 }

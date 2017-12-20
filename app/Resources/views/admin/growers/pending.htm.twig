@@ -1,0 +1,95 @@
+{% extends 'badmin.htm.twig' %}
+{% block title %}Pending Growers{% endblock %}
+{% block body %}
+<table id="all-posts" class="table table-hover table-advance">
+    <thead>
+    <tr>
+        <th class="numeric">#</th>
+
+        <th class="numeric">Logo</th>
+
+        <th class="numeric">Company Name</th>
+
+        <th class="numeric">Email</th>
+
+        <th class="numeric">Country</th>
+
+        <th class="numeric">Status</th>
+
+        <th class="numeric">Expires On</th>
+
+        <th class="numeric">Days Left</th>
+
+        <th class="numeric">Actions</th>
+
+    </tr>
+
+    </thead>
+
+    <tbody>
+    {% set counter = '1' %}
+    {% for buyer in buyers %}
+    <tr>
+
+        <td data-title="#" class="numeric">{{ counter }}</td>
+
+        <td data-title="Image" class="numeric"><img class="thumbnail" style="width:50px;margin-bottom:0px;" src="
+{% if buyer.gallery %}
+{{ asset('images/products/') }}{{ buyer.gallery.logo.imageName }}
+{% else %}
+{{ asset('images/avatar.jpg') }}
+{% endif %}"/></td>
+
+        <td data-title="Company Name" class="numeric">{{ buyer.companyName }}</td>
+
+        <td data-title="Email" class="numeric">{{ buyer.emailAddress }}</td>
+
+        <td data-title="City" class="numeric">{{ buyer.country }}</td>
+
+        <td data-title="Status" class="numeric">{% if buyer.isActive %} <span class="label label-error">Active</span> {% else %}<span class="label label-error">Inactive</span>{% endif %}</td>
+
+        <td data-title="ExpiresOn" class="numeric">{{ buyer.subscribedAt | date_modify("+ 1 year") | date }}</td>
+
+        <td data-title="Number of Days Left" class="numeric">
+            {% if buyer.subscribedAt %}
+            {% set difference = date(buyer.subscribedAt | date_modify("+ 1 year") |date('Y/m/d')).diff(date('now'|date('Y/m/d'))) %}
+            {% set leftDays = difference.days %}
+            {{ leftDays }}
+            {% else %}
+                Unpaid
+            {% endif %}
+        </td>
+
+
+        <td data-title="<?php echo lang_key('actions');?>" class="numeric">
+
+            <div class="btn-group">
+
+                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-cog"></i> Actions <span class="caret"></span></a>
+
+                <ul class="dropdown-menu dropdown-info">
+
+                    <li><a href="{{ path('activate-subscription', {'id': buyer.id }) }}">Activate Subscription</a></li>
+                </ul>
+
+            </div>
+
+        </td>
+
+    </tr>
+        {% set counter = counter + 1%}
+    {% else %}
+        <tr>
+            <td colspan="9">No Pending Growers</td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+<div class="pull-right">
+    <img src="{{ asset('assets/admin/img/loading.gif') }}" style="width:20px;margin:5px;display:none" class="loading">
+</div>
+<div class="clearfix"></div>
+{% endblock %}

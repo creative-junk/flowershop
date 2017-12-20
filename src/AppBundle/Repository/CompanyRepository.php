@@ -18,7 +18,7 @@ class CompanyRepository extends EntityRepository
         $nrUsers= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.companyType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
+            ->setParameter('isBuyer', 'Buyer')
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrUsers){
@@ -31,7 +31,7 @@ class CompanyRepository extends EntityRepository
         $nrUsers= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.companyType = :isBuyer')
-            ->setParameter('isBuyer', 'grower')
+            ->setParameter('isBuyer', 'Grower')
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrUsers){
@@ -44,7 +44,7 @@ class CompanyRepository extends EntityRepository
         $nrUsers= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.companyType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
+            ->setParameter('isBuyer', 'Breeder')
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrUsers){
@@ -57,7 +57,7 @@ class CompanyRepository extends EntityRepository
         $nrUsers= $this->createQueryBuilder('user')
             ->select('count(user.id)')
             ->andWhere('user.companyType = :isBuyer')
-            ->setParameter('isBuyer', 'buyer')
+            ->setParameter('isBuyer', 'Agent')
             ->getQuery()
             ->getSingleScalarResult();
         if ($nrUsers){

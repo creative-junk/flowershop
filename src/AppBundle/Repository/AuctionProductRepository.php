@@ -112,4 +112,31 @@ class AuctionProductRepository extends EntityRepository
             return 0;
         }
     }
+    public function findAllAuctionProductsOrderByDate(){
+
+        return $this->createQueryBuilder('auctionProduct')
+            ->innerJoin('auctionProduct.whichAuction','auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auctionProduct.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->orderBy('auctionProduct.createdAt','DESC');
+    }
+    public function findNrActiveProducts(){
+        $nrProducts= $this->createQueryBuilder('auctionProduct')
+            ->innerJoin('auctionProduct.whichAuction','auction')
+            ->innerJoin('auction.product','product')
+            ->select('count(auctionProduct.id)')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->andWhere('auctionProduct.status= :status')
+            ->setParameter('status',"Active")
+            ->getQuery()
+            ->getSingleScalarResult();
+        if ($nrProducts){
+            return $nrProducts;
+        }else{
+            return 0;
+        }
+    }
+
 }

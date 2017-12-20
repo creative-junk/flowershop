@@ -1,0 +1,76 @@
+{% extends 'badmin.htm.twig' %}
+{% block title %}iFlora Shipping Rates{% endblock %}
+{% block body %}
+    <table id="all-posts" class="table table-hover table-advance">
+        <thead>
+        <tr>
+            <th class="numeric">#</th>
+
+            <th class="numeric">Airline</th>
+
+            <th class="numeric">Airport</th>
+
+            <th class="numeric">M</th>
+            <th class="numeric">N</th>
+            <th class="numeric">+45</th>
+            <th class="numeric">+100</th>
+            <th class="numeric">+300</th>
+            <th class="numeric">+500</th>
+            <th class="numeric">+1000</th>
+            <th class="numeric">+2000</th>
+            <th class="numeric">Actions</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+        {% set counter = '1' %}
+        {% for rate in rates %}
+            <tr>
+
+                <td data-title="#" class="numeric">{{ counter }}</td>
+
+                <td data-title="#" class="numeric">{{ rate.airline }}</td>
+
+                <td data-title="#" class="numeric">{{ rate.airport }}</td>
+
+                <td data-title="#" class="numeric">{{ rate.minimumCharge }}</td>
+                <td data-title="#" class="numeric">{{ rate.baseRate }}</td>
+                <td data-title="#" class="numeric">{{ rate.firstIncrement }}</td>
+                <td data-title="#" class="numeric">{{ rate.secondIncrement }}</td>
+                <td data-title="#" class="numeric">{{ rate.thirdIncrement }}</td>
+                <td data-title="#" class="numeric">{{ rate.fourthIncrement }}</td>
+                <td data-title="#" class="numeric">{{ rate.fifthIncrement }}</td>
+                <td data-title="#" class="numeric">{{ rate.sixthIncrement }}</td>
+                <td data-title="<?php echo lang_key('actions');?>" class="numeric">
+
+                    <div class="btn-group">
+
+                        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-cog"></i> Actions <span class="caret"></span></a>
+
+                        <ul class="dropdown-menu dropdown-info">
+                            <li><a href="{{ path('edit-rate', {'id': rate.id }) }}">Edit</a></li>
+                        </ul>
+
+                    </div>
+
+                </td>
+
+            </tr>
+            {% set counter = counter + 1%}
+        {% else %}
+            <tr>
+                <td colspan="9">No Shipping Rates</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="pull-right">
+        <img src="{{ asset('assets/admin/img/loading.gif') }}" style="width:20px;margin:5px;display:none" class="loading">
+    </div>
+    <div class="clearfix"></div>
+{% endblock %}

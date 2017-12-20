@@ -1,4 +1,4 @@
-{% extends 'adminBase.htm.twig' %}
+{% extends 'badmin.htm.twig' %}
 {% block title %}Administrators{% endblock %}
 {% block javascripts %}
 
@@ -17,7 +17,7 @@
             $('a#member').editable({
                 source: [
                     {value: 1, text: 'Administrator'},
-                    {value: 2, text: 'Super-Administrator'}
+                    {value: 2, text: 'Freighters'}
                 ]
             });
         });
@@ -110,54 +110,24 @@
     </script>
 {% endblock %}
 {% block body %}
-    <div id="content" class="app-content box-shadow-z0" role="main">
 
-
-        <div ui-view class="app-body" id="view">
-           {{ include(':admin/partials:top.htm.twig') }}
-            <div class="padding">
-                <div class="page messages">
-                    <div class="messages" style="">
-                        <div class="alert alert-success">
-                            <div>
-                                Request successful.
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="page errors">
-                    <div class="errors" style="">
-                        <div class="alert alert-danger">
-                            <div>
-                               :-( Something went wrong. This request was not completed.
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="box-header">
-                        <h2>Administrators</h2>
-                    </div>
-                    <div class="table-responsive">
                         <table id="data" class="table table-striped b-t b-b">
                             <thead>
                             <tr>
-                                <th  style="width:20%">Names</th>
-                                <th  style="width:15%">Role</th>
-                                <th  style="width:25%">Created At</th>
-                                <th  style="width:25%">Last Login</th>
-                                <th  style="width:15%">Status</th>
-                                <th  style="width:25%">Manage</th>
+                                <th class="numeric">Names</th>
+                                <th class="numeric">Role</th>
+                                <th class="numeric">Created At</th>
+                                <th class="numeric">Last Login</th>
+                                <th class="numeric">Status</th>
+                                <th class="numeric">Manage</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in users  %}
                                 <tr>
-                                    <td><span style="color:#0cc2aa">{{ user.fullName }}</span></td>
+                                    <td data-title="Full Names" class="numeric"><span style="color:#0cc2aa">{{ user.fullName }}</span></td>
 
-                                    <td>
+                                    <td data-title="Roles" class="numeric">
                                         <a href="#" id="member" data-type="select" data-pk="{{ user.id }}" data-url="{{ path('update-member') }}" data-title="Select Role">                                      {% for role in user.roles %}
                                                 {% if(role =="ROLE_ADMIN") %}
                                                     Administrator
@@ -169,7 +139,7 @@
                                         </a>
 
                                     </td>
-                                    <td>{{ user.accountCreatedAt | date("F jS \\a\\t g:ia") }}</td>
+                                    <td data-title="Created At" class="numeric">{{ user.accountCreatedAt | date("F jS \\a\\t g:ia") }}</td>
                                     <td>
                                         {% if user.lastLoginTime != "" %}
                                         {{ user.lastLoginTime | date("F jS \\a\\t g:ia") }}
@@ -178,7 +148,7 @@
                                         {% endif %}
 
                                         </td>
-                                    <td>
+                                    <td data-title="Status" class="numeric">
                                         {% if user.isActive %}
                                         <div style="padding: 8px;text-align: center;" class="alert alert-success">
                                             Active
@@ -189,10 +159,10 @@
                                         </div>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td data-title="Actions" class="numeric">
                                         {% if user.isActive %}
                                         <a id="js-deactivate-account" href="#" data-url="{{ path('deactivate-account',{'id': user.id }) }}"
-                                           class="btn btn-xs white btn-icon"><i id="deactivate" title="De-activate Account" class="fa fa-times-rectangle"></i></a>
+                                           class="btn btn-xs white btn-icon"><i id="deactivate" title="De-activate Account" class="fa fa-times"></i></a>
                                         <a id="js-reset-password" href="#" data-url="{{ path('request-password-reset',{'id': user.id }) }}"
                                            class="btn btn-xs white btn-icon"><i id="reset" title="Reset Password" class="fa fa-exclamation-triangle"></i></a>
                                         {% else %}
@@ -206,12 +176,5 @@
                             {% endfor  %}
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
 
-            <!-- ############ PAGE END-->
-
-        </div>
-    </div>
 {% endblock %}

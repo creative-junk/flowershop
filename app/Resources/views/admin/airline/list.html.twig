@@ -1,0 +1,57 @@
+{% extends 'badmin.htm.twig' %}
+{% block title %}Airlines{% endblock %}
+{% block body %}
+    <table id="all-posts" class="table table-hover table-advance">
+        <thead>
+        <tr>
+            <th class="numeric">#</th>
+
+            <th class="numeric">Airline Name</th>
+
+            <th class="numeric">Actions</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+        {% set counter = '1' %}
+        {% for airline in airlines %}
+            <tr>
+
+                <td data-title="#" class="numeric">{{ counter }}</td>
+
+                <td data-title="Category Name" class="numeric">{{ airline.airlineName }}</td>
+
+
+                <td data-title="<?php echo lang_key('actions');?>" class="numeric">
+
+                    <div class="btn-group">
+
+                        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-cog"></i> Actions <span class="caret"></span></a>
+
+                        <ul class="dropdown-menu dropdown-info">
+                            <li><a href="{{ path('edit-airline', {'id': airline.id }) }}">Edit</a></li>
+                        </ul>
+
+                    </div>
+
+                </td>
+
+            </tr>
+            {% set counter = counter + 1%}
+        {% else %}
+            <tr>
+                <td colspan="9">No Airline</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="pull-right">
+        <img src="{{ asset('assets/admin/img/loading.gif') }}" style="width:20px;margin:5px;display:none" class="loading">
+    </div>
+    <div class="clearfix"></div>
+{% endblock %}

@@ -1,0 +1,38 @@
+<div class="col-md-12 col-lg-3">
+    <div class="right-sidebar">
+            <div class="widget shopping-cart-summary">
+                <h4 class="md-bordered-title">Checkout summary</h4>
+                {% if cart %}
+                <form>
+                    <fieldset>
+                        <label class="col-xs-6">Qty</label>
+                        <span class="col-xs-6 value">{{ cart.cartQuantity | number_format('0','.',',') }}</span>
+                    </fieldset>
+
+                    <fieldset>
+                        <label class="col-xs-6">subtotal</label>
+                        <span class="col-xs-6 value">{{ cart.cartCurrency }} {{ (cart.itemPrice*cart.cartQuantity) | number_format(2, '.', ',') }}</span>
+                    </fieldset>
+
+                    <fieldset>
+                        <label class="col-xs-6">shipping</label>
+                        <span class="col-xs-6 value">{{ cart.cartCurrency }}
+                            {{ cart.shippingCost | number_format(2, '.', ',') }}
+                        </span>
+                    </fieldset>
+                    <hr>
+                    <fieldset>
+                        <label class="col-xs-3">total</label>
+                        <span class="col-xs-9 value">{{ cart.cartCurrency }} {{ ((cart.itemPrice*cart.cartQuantity) + cart.shippingCost ) | number_format(2, '.', ',') }}</span>
+                    </fieldset>
+
+
+                </form>
+            </div>
+        {% else %}
+            <h4 class="md-bordered-title">Your checkout is empty!</h4>
+            <a class="md-button col-xs-12 cart-empty-button" href="{{ path('buyer_auction') }}">Continue shopping <span
+                        class="fa fa-arrow-circle-right"></span></a>
+        {% endif %}
+    </div>
+</div>

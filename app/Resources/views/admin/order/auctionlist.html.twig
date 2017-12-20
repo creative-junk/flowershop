@@ -1,0 +1,54 @@
+{% extends 'badmin.htm.twig' %}
+{% block title %}Auction Orders{% endblock %}
+{% block body %}
+    <table id="all-posts" class="table table-hover table-advance">
+        <thead>
+        <tr>
+            <th class="numeric">#</th>
+            <th class="numeric">Order ID</th>
+            <th class="numeric">Ordered By</th>
+            <th class="numeric">Ordered On</th>
+            <th class="numeric">Order Status</th>
+            <th class="numeric">Order State</th>
+            <th class="numeric">Order Amount</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+        {% set counter = '1' %}
+        {% for order in orders %}
+            <tr>
+
+                <td data-title="#" class="numeric">{{ counter }}</td>
+                <td data-title="Order ID" class="numeric">{{ order.prettyId }}</td>
+
+                <td data-title="Ordered By" class="numeric">{{ order.user.myCompany }}</td>
+
+
+                <td data-title="Order Date" class="numeric">{{ order.createdAt | date('d-m-Y H:i:s') }}</td>
+
+                <td data-title="Order Status" class="numeric">{{ order.orderStatus }}</td>
+
+                <td data-title="Order State" class="numeric">{{ order.orderState }}</td>
+
+                <td data-title="Order State" class="numeric">{{ order.orderCurrency }} {{ order.orderAmount  | number_format }}</td>
+
+            </tr>
+            {% set counter = counter + 1%}
+        {% else %}
+            <tr>
+                <td colspan="9">No Auction Orders</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="pull-right">
+        <img src="{{ asset('assets/admin/img/loading.gif') }}" style="width:20px;margin:5px;display:none" class="loading">
+    </div>
+    <div class="clearfix"></div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+{% block title %} Order Details{% endblock %}
+{% block body %}
+    <div class="breadcrumbs">
+        <ul class="items">
+            <li class="item home">
+                <a href="{{ path('agent_dashboard') }}" title="Go to Home Page">
+                    Home </a>
+            </li>
+            <li class="item home">
+                <a href="#" title="Go to Home Page">
+                    Auction Orders </a>
+            </li>
+            <li class="item product">
+                <strong>My Order Details</strong>
+            </li>
+        </ul>
+    </div>
+    <section class="section-shopping-cart-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Below are the Items in your Order.</h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-9">
+                    <table>
+                        <thead>
+                        <td></td>
+                        <td><strong>Flower Name</strong></td>
+                        <td><strong>Price Per Stem</strong></td>
+                        <td><strong>Quantity</strong></td>
+                        <td><strong>Total</strong></td>
+                        </thead>
+                        <tr>
+                            <td>           <img width="120" height="120" alt="" src="{{ asset('images/products/') }}{{ order.product.whichAuction.product.mainImage }}">
+                            </td>
+                            <td> <div class="title">
+                                    <a href="{{ path('buyer_auction_product_details',{
+                                        'id': order.product.id
+                                    }) }}">{{ order.product.whichAuction.product.title }}</a>
+
+                                </div><br/>
+                                <div class="brand">
+                                    <table class="attributes">
+                                        <tr>
+                                            <td><strong>Available Stems:</strong> {{ order.product.availableStock | number_format }} </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Quality:</strong> {{ order.product.whichAuction.quality }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Grower: </strong>  <a style="color: #d61818"
+                                                                              href="{{ path('agent_grower_profile',{'id': order.product.whichAuction.product.vendor.id}) }}">{{ order.product.whichAuction.product.vendor }}</a></span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><strong>Color:</strong> {{ order.product.whichAuction.product.primaryColor }}</td>
+                                        </tr>
+                                        <tr>    <td><strong>Season:</strong> {{ order.product.whichAuction.product.season }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Vaselife: </strong>{{ order.product.whichAuction.product.vaselife }}</td>
+                                        </tr>
+                                        <tr><td><strong>Stem Length:</strong> {{ order.product.whichAuction.product.stemLength }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Number of Heads:</strong> {{ order.product.whichAuction.product.numberOfHeads }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Headsize:</strong> {{ order.product.whichAuction.product.headsize }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Quality: </strong> {{ order.product.whichAuction.quality }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </td>
+                            <td>
+                                {{ app.user.myCompany.currency }} {{ order.itemPrice | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
+
+                            </td>
+                            <td>
+                                {{ order.quantity | number_format(0, '.', ',') }}
+
+                            </td>
+                            <td>
+                                {{ app.user.myCompany.currency }} {{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+                <div class="col-md-12 col-lg-3">
+                    <div class="right-sidebar">
+                        <p><strong>Order number: </strong> {{ order.prettyId }} </p>
+                        <p><strong>Ordered For: </strong> <a href="{{ path('agent_buyer_profile',{ 'id': order.buyer.id }) }}"> {{ order.buyer }}</a></p>
+                        <p><strong>Selling Agent: </strong>{{ order.sellingAgent }}</p>
+                        <p><strong>Airline: </strong>{{ order.airline }} </p>
+                        <p><strong>Airport: </strong>{{ order.airport }}</p>
+                        <p><strong>Payment method: </strong> {{ order.processingFee }}
+                            {% if order.processingFee == 'rtgs' or order.processingFee == 'cheque' %}
+                                <a href="{{ asset('images/products/') }}{{ order.imageName }}">View Payment Details</a>
+                            {% else %}
+                            {% endif %}
+                        </p>
+                        <p><strong>Payment Status:</strong>{{ order.paymentStatus }}</p>
+
+                        <p><strong>Order Date: </strong> {{ order.createdAt | date('d-m-Y H:i:s')  }}</p>
+                        <p><strong>Subtotal:</strong> <i>{{ app.user.myCompany.currency }} {{ order.orderAmount | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>
+                        <p><strong>Shipping:</strong> <i>{{ app.user.myCompany.currency }} {{ order.shippingCost | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>
+                        <p class="subtotal"><strong>Total:</strong>  <i>{{ app.user.myCompany.currency }} {{ order.orderTotal | convertCurrency(order.orderCurrency,app.user.myCompany.currency) }}</i></p>
+                        <div class="right">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <div class="clearfix"></div>
+{% endblock %}

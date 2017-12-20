@@ -40,14 +40,7 @@ class UserOrder
      * @ORM\Column(type="string")
      */
     private $orderCurrency;
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\BillingAddress")
-     */
-    private $billingAddress;
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ShippingAddress")
-     */
-    private $shippingAddress;
+
     /**
      * @ORM\Column(type="string")
      */
@@ -117,6 +110,25 @@ class UserOrder
      * @ORM\Column(type="integer",nullable=true)
      */
     private $imageSize;
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Payment",mappedBy="order",fetch="EXTRA_LAZY")
+     */
+    private $payments;
+    /**
+     * @var
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Airport")
+     */
+    private $airport;
+    /**
+     * @var
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Airline")
+     */
+    private $airline;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $shipmentWeight;
 
     function __construct()
     {
@@ -127,6 +139,7 @@ class UserOrder
             $this->setUpdatedAt(new \DateTime());
         }
         $this->orderItems = new ArrayCollection();
+        $this->payments = new ArrayCollection();
     }
 
     /**
@@ -135,6 +148,14 @@ class UserOrder
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPayments()
+    {
+        return $this->payments;
     }
 
     /**
@@ -156,33 +177,49 @@ class UserOrder
     /**
      * @return mixed
      */
-    public function getBillingAddress()
+    public function getAirport()
     {
-        return $this->billingAddress;
+        return $this->airport;
     }
 
     /**
-     * @param mixed $billingAddress
+     * @param mixed $airport
      */
-    public function setBillingAddress($billingAddress)
+    public function setAirport($airport)
     {
-        $this->billingAddress = $billingAddress;
+        $this->airport = $airport;
     }
 
     /**
      * @return mixed
      */
-    public function getShippingAddress()
+    public function getAirline()
     {
-        return $this->shippingAddress;
+        return $this->airline;
     }
 
     /**
-     * @param mixed $shippingAddress
+     * @param mixed $airline
      */
-    public function setShippingAddress($shippingAddress)
+    public function setAirline($airline)
     {
-        $this->shippingAddress = $shippingAddress;
+        $this->airline = $airline;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShipmentWeight()
+    {
+        return $this->shipmentWeight;
+    }
+
+    /**
+     * @param mixed $shipmentWeight
+     */
+    public function setShipmentWeight($shipmentWeight)
+    {
+        $this->shipmentWeight = $shipmentWeight;
     }
 
     /**

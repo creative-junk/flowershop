@@ -346,13 +346,27 @@ class BuyerController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $price = $this->container->get('crysoft.currency_converter')->convertAmount($direct->getPricePerStem(),$direct->getVendor()->getCurrency(),$user->getMyCompany()->getCurrency());
         $price = number_format($price,2);
+        $previousPrice = $this->container->get('crysoft.currency_converter')->convertAmount($direct->getPreviousPrice(),$direct->getVendor()->getCurrency(),$user->getMyCompany()->getCurrency());
+        $previousPrice = number_format($previousPrice,2);
+
+        if ($direct->getIsOnSale()){
+            $onSale = 'Yes';
+        }else{
+            $onSale = 'No';
+        }
+        if ($direct->getProduct()->getIsScented()){
+            $scented = 'Yes';
+        }else{
+            $scented = 'No';
+        }
 
         return array(
             'productId'=> $direct->getId(),
             'productName' => $direct->getProduct()->getTitle(),
             'productImage' => $direct->getProduct()->getMainImage()->getImageName(),
             'pricePerStem' => $price,
-            'color' => $direct->getProduct()->getColor(),
+            'previousPrice' => $previousPrice,
+            'color' => $direct->getProduct()->getPrimaryColor(),
             'season' => $direct->getProduct()->getSeason(),
             'stemLength' => $direct->getProduct()->getStemLength(),
             'quality' => $direct->getQuality(),
@@ -362,6 +376,8 @@ class BuyerController extends Controller
             'reviews' =>$direct->getReviews(),
             'growerId' => $direct->getVendor()->getId(),
             'rating'  =>$this->calculateRating($direct),
+            'onSale'=>$onSale,
+            'scented' => $scented,
             'currency' =>'FOB '.$user->getMyCompany()->getCurrency());
 
     }

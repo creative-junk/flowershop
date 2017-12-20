@@ -45,38 +45,38 @@
                                 <div class="panel-body step-1">
                                    {{ form_start(buyerCheckoutForm) }}
                                     <div class="section-shopping-cart-page row field-row">
-                                        <div class="shipping-method col-md-4 col-lg-3">
+                                        <div class="shipping-method col-md-4 col-lg-4">
                                             <div>
                                                 <h4>
-                                                    Cheque
+                                                    <img style="height: 86px" src="{{ asset('images/offline-payment.png') }}"/>
                                                     <small></small>
                                                 </h4>
 
                                                 <div class="box-content highlight" id="shipping-methods">
     			                			                <span class="">
-    				                                          <input type="radio" value="cheque" name="paymentMethod" id="option1" checked>
+    				                                          <input type="radio" value="offline" name="paymentMethod" id="option1" checked>
     			                                            </span>
                                                     <span class="price">
-    			                                                <strong>Payable to Grower</strong>
+    			                                                <strong>Offline: Cheque, RTGS</strong>
 
     			                                           </span>
                                                 </div>
 
                                             </div>
                                         </div>
-                                        <div class="shipping-method col-md-4 col-lg-3">
+                                        <div class="shipping-method col-md-4 col-lg-4">
                                             <div>
                                                 <h4>
-                                                    RTGS
+                                                    <img style="height: 85px" src="{{ asset('images/paypal.jpg') }}"/>
                                                     <small></small>
                                                 </h4>
 
                                                 <div class="box-content highlight" id="shipping-methods">
     			                			                <span class="">
-    				                                          <input type="radio" value="rtgs" name="paymentMethod" id="option1">
+    				                                          <input type="radio" value="paypal" name="paymentMethod" id="option1">
     			                                            </span>
                                                     <span class="price">
-    			                                                <strong>Payable to Grower</strong>
+    			                                                <strong>Paypal: Visa/Mastercard</strong>
     			                                           </span>
                                                 </div>
 
@@ -121,7 +121,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="cart-totals"> {{ include(':partials:checkout-totals.htm.twig') }}</div>
+                <div id="cart-totals"> {{ include(':partials:order-totals.htm.twig') }}</div>
 
             </div>
 

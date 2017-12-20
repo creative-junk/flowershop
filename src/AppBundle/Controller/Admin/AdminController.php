@@ -10,12 +10,20 @@
 namespace AppBundle\Controller\Admin;
 
 
+use AppBundle\Entity\Airline;
+use AppBundle\Entity\Category;
+use AppBundle\Entity\Airport;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\ShippingRate;
 use AppBundle\Entity\User;
+use AppBundle\Form\ActivateSubscriptionForm;
+use AppBundle\Form\AirlineForm;
 use AppBundle\Form\CategoryFormType;
+use AppBundle\Form\AirportForm;
 use AppBundle\Form\NewAdministratorForm;
 use AppBundle\Form\ProductFormType;
+use AppBundle\Form\ShippingRateForm;
 use AppBundle\Form\UserFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -37,7 +45,13 @@ class AdminController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        $nrDirectProducts = $em->getRepository("AppBundle:Direct")
+            ->findNrActiveProducts();
+        $nrAuctionProducts = $em->getRepository("AppBundle:AuctionProduct")
+            ->findNrActiveProducts();
         $nrOrders = $em->getRepository('AppBundle:UserOrder')
+            ->findNrOrders();
+        $nrAuctionOrders = $em->getRepository('AppBundle:AuctionOrder')
             ->findNrOrders();
         $nrUsers = $em->getRepository('AppBundle:Company')
             ->getNrUsers();
@@ -95,10 +109,13 @@ class AdminController extends Controller
         return $this->render(':admin:dashboard.htm.twig',[
             'nrUsers'=>$nrUsers,
             'nrOrders'=>$nrOrders,
+            'nrAuctionOrders'=>$nrAuctionOrders,
             'nrBuyers' =>$nrBuyers,
             'nrAgents' => $nrAgents,
             'nrGrowers' => $nrGrowers,
             'nrBreeders' => $nrBreeders,
+            'nrDirectProducts'=>$nrDirectProducts,
+            'nrAuctionProducts'=>$nrAuctionProducts,
             'percentChangeUsers'=>$percentChangeUsers,
             'percentChangeOrders'=>$percentChangeOrders,
             'percentChangeBuyers'=>$percentChangeBuyers,
@@ -111,6 +128,638 @@ class AdminController extends Controller
 
     }
     /**
+     * @Route("/payments",name="payments")
+     */
+    public function paymentsAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $payments = $em->getRepository("AppBundle:Payment")
+            ->findAll();
+        return $this->render('admin/payments/all.htm.twig',[
+            'payments'=>$payments
+        ]);
+    }
+    /**
+     * @Route("/payments/direct",name="direct-market-payments")
+     */
+    public function directMarketPaymentsAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $payments = $em->getRepository("AppBundle:Payment")
+            ->findDirectPayments();
+        return $this->render('admin/payments/direct.htm.twig',[
+            'payments'=>$payments
+        ]);
+    }
+    /**
+     * @Route("/payments/auction",name="auction-market-payments")
+     */
+    public function auctionMarketPaymentsAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $payments = $em->getRepository("AppBundle:Payment")
+            ->findAuctionPayments();
+        return $this->render('admin/payments/auction.htm.twig',[
+            'payments'=>$payments
+        ]);
+    }
+    /**
+     * @Route("/payments/paypal",name="paypal-payments")
+     */
+    public function paypalPaymentsAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $payments = $em->getRepository("AppBundle:Payment")
+            ->findBy(
+                [
+                'gateway'=>'paypal'
+                ]
+            );
+        return $this->render('admin/payments/all.htm.twig',[
+            'payments'=>$payments
+        ]);
+    }
+    /**
+     * @Route("/payments/offline",name="offline-payments")
+     */
+    public function offlinePaymentsAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $payments = $em->getRepository("AppBundle:Payment")
+            ->findBy(
+                [
+                    'gateway'=>'offline'
+                ]
+            );
+        return $this->render('admin/payments/all.htm.twig',[
+            'payments'=>$payments
+        ]);
+    }
+    /**
+     * @Route("/direct-market",name="direct-market")
+     */
+    public function directMarketAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $markets = $em->getRepository("AppBundle:Direct")
+            ->findAll();
+        return $this->render('admin/directmarket/market.htm.twig',[
+            'markets'=>$markets
+        ]);
+    }
+    /**
+     * @Route("/auction-market",name="auction-market")
+     */
+    public function auctionMarketAction(){
+        $em = $this->getDoctrine()->getManager();
+
+        $markets = $em->getRepository("AppBundle:AuctionProduct")
+            ->findAll();
+        return $this->render('admin/auctionmarket/all.htm.twig',[
+            'markets'=>$markets
+        ]);
+    }
+    /**
+     * @Route("/buyers",name="all-buyers")
+     */
+    public function allBuyersAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Buyer'
+            ]);
+        return $this->render(':admin/buyers:all.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+    /**
+     * @Route("/buyers/pending",name="pending-buyers")
+     */
+    public function pendingBuyersAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Buyer',
+                'status'=>'Pending'
+            ]);
+        return $this->render(':admin/buyers:pending.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+    /**
+     * @Route("/growers",name="all-growers")
+     */
+    public function allGrowersAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Grower'
+            ]);
+        return $this->render(':admin/growers:all.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+    /**
+     * @Route("/growers/pending",name="pending-growers")
+     */
+    public function pendingGrowersAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Grower',
+                'status'=>'Pending'
+            ]);
+        return $this->render(':admin/growers:pending.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+    /**
+     * @Route("/breeders",name="all-breeders")
+     */
+    public function allBreederAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Breeder'
+            ]);
+        return $this->render(':admin/breeders:all.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+    /**
+     * @Route("/breeders/pending",name="pending-breeders")
+     */
+    public function pendingBreederAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Breeder',
+                'status'=>'Pending'
+            ]);
+        return $this->render(':admin/breeders:pending.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+    /**
+     * @Route("/agents",name="all-agents")
+     */
+    public function allAgentsAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Agent'
+            ]);
+        return $this->render(':admin/agents:all.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+    /**
+     * @Route("/agents/pending",name="pending-agents")
+     */
+    public function pendingAgentsAction(){
+        $em = $this->getDoctrine()->getManager();
+        $buyers = $em->getRepository("AppBundle:Company")
+            ->findBy([
+                'companyType'=>'Agent',
+                'status'=>'Pending'
+            ]);
+        return $this->render(':admin/agents:pending.htm.twig',
+            [
+                'buyers'=>$buyers
+            ]);
+    }
+
+    /**
+     * @Route("/subscription/{id}/activate",name="activate-subscription")
+     */
+    public function activateSubscriptionAction(Request $request, Company $company){
+        $admin = $this->get('security.token_storage')->getToken()->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm(ActivateSubscriptionForm::class,$company);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()&&$form->isValid()){
+            $subscriber = $form->getData();
+            $companyType =$subscriber->getCompanyType();
+           // var_dump($companyType);exit;
+            $subscriber->setIsPaid(true);
+            $subscriber->setIsActive(true);
+            $subscriber->setStatus("Active");
+            $company->setUpdatedBy($admin);
+            $em->persist($subscriber);
+            $em->flush();
+
+            $this->sendEmail($company->getCompanyName(),"Company Account Activated",$company->getEmail(),"companyActivated.htm.twig",null);
+
+
+            if ($companyType=='Buyer'){
+                return $this->redirectToRoute('pending-buyers');
+            }elseif ($companyType=='Grower'){
+                 return $this->redirectToRoute('pending-growers');
+            }elseif ($companyType=='Breeder'){
+                return $this->redirectToRoute('pending-breeders');
+            }elseif($companyType=='Agent'){
+                return $this->redirectToRoute('pending-agents');
+            }
+        }
+        return $this->render(':admin:activate.htm.twig',[
+            'activationForm'=>$form->createView(),
+            'company'=>$company
+        ]);
+    }
+    /**
+     * @Route("/categories",name="category_list")
+     */
+    public function categoryAction(){
+        $em=$this->getDoctrine()->getManager();
+        $categories = $em->getRepository('AppBundle:Category')
+            ->findAllCategoriesOrderByName();
+
+        return $this->render(':admin/category:list.html.twig',[
+            'categories'=>$categories,
+        ]);
+    }
+    /**
+     * @Route("/airports",name="airports")
+     */
+    public function airportsAction(){
+        $em=$this->getDoctrine()->getManager();
+        $airports = $em->getRepository('AppBundle:Airport')
+            ->findAllAirportsOrderByName();
+
+        return $this->render(':admin/airport:list.html.twig',[
+            'airports'=>$airports,
+        ]);
+    }
+    /**
+     * @Route("/airlines",name="airlines")
+     */
+    public function airlineAction(){
+        $em=$this->getDoctrine()->getManager();
+        $airlines = $em->getRepository('AppBundle:Airline')
+            ->findAllAirlinesOrderByName();
+
+        return $this->render(':admin/airline:list.html.twig',[
+            'airlines'=>$airlines,
+        ]);
+    }
+    /**
+     * @Route("/shipping-rates",name="shipping-rates")
+     */
+    public function shippingRatesAction(){
+        $em=$this->getDoctrine()->getManager();
+        $rates = $em->getRepository('AppBundle:ShippingRate')
+            ->findAll();
+
+        return $this->render(':admin/rates:list.html.twig',[
+            'rates'=>$rates,
+        ]);
+    }
+    /**
+     * @Route("/category/new",name="new-category")
+     */
+    public function newCategoryAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $category = new Category();
+
+        $category->setCreatedBy($user);
+
+        $form = $this->createForm(CategoryFormType::class);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $category = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($category);
+            $em->flush();
+
+            $this->addFlash('success','Category Created!');
+
+            return $this->redirectToRoute('category_list');
+        }
+
+        return $this->render(':admin/category:new.html.twig',[
+            'categoryForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/category/{id}/edit",name="edit-category")
+     */
+    public function editCategoryAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $category = new Category();
+
+        $category->setCreatedBy($user);
+
+        $form = $this->createForm(CategoryFormType::class);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $category = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($category);
+            $em->flush();
+
+            $this->addFlash('success','Category Created!');
+
+            return $this->redirectToRoute('category_list');
+        }
+
+        return $this->render(':admin/category:new.html.twig',[
+            'categoryForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/airport/new",name="new-airport")
+     */
+    public function newCityAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $airport = new Airport();
+        $airport->setCreatedBy($user);
+
+
+        $form = $this->createForm(AirportForm::class,$airport);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $airport = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($airport);
+            $em->flush();
+
+            $this->addFlash('success','Airport Created!');
+
+            return $this->redirectToRoute('airports');
+        }
+
+        return $this->render(':admin/airport:new.html.twig',[
+            'airportForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/airport/{id}/edit",name="edit-airport")
+     */
+    public function editCityAction(Request $request, Airport $airport)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $form = $this->createForm(AirportForm::class,$airport);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $airport = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($airport);
+            $em->flush();
+
+            $this->addFlash('success','Airport Created!');
+
+            return $this->redirectToRoute('airports');
+        }
+
+        return $this->render(':admin/airport:edit.html.twig',[
+            'airportForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/airline/new",name="new-airline")
+     */
+    public function newAirlineAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $airline = new Airline();
+        $airline->setCreatedBy($user);
+        $form = $this->createForm(AirlineForm::class,$airline);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $airline = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($airline);
+            $em->flush();
+
+            $this->addFlash('success','Airline Created!');
+
+            return $this->redirectToRoute('airlines');
+        }
+
+        return $this->render(':admin/airline:new.html.twig',[
+            'airlineForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/airline/{id}/edit",name="edit-airline")
+     */
+    public function editAirlineAction(Request $request, Airline $airline){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $form = $this->createForm(AirlineForm::class,$airline);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $airline = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($airline);
+            $em->flush();
+
+            $this->addFlash('success','Airline Created!');
+
+            return $this->redirectToRoute('airlines');
+        }
+
+        return $this->render(':admin/airline:edit.html.twig',[
+            'airlineForm' => $form->createView()
+        ]);
+
+    }
+    /**
+     * @Route("/shipping-rates/new",name="new-rate")
+     */
+    public function newRateAction(Request $request)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
+        $rate = new ShippingRate();
+        $rate->setCreatedBy($user);
+        $rate->setUpdatedBy($user);
+
+        $form = $this->createForm(ShippingRateForm::class,$rate);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $category = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($category);
+            $em->flush();
+
+            $this->addFlash('success','City Created!');
+
+            return $this->redirectToRoute('shipping-rates');
+        }
+
+        return $this->render(':admin/rates:new.html.twig',[
+            'rateForm' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/shipping-rates/{id}/edit",name="edit-rate")
+     */
+    public function editRateAction(Request $request,ShippingRate $shippingRate)
+    {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $shippingRate->setUpdatedBy($user);
+
+        $form = $this->createForm(ShippingRateForm::class,$shippingRate);
+
+        //only handles data on POST
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $category = $form->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($category);
+            $em->flush();
+
+            $this->addFlash('success','City Created!');
+
+            return $this->redirectToRoute('shipping-rates');
+        }
+
+        return $this->render(':admin/rates:edit.html.twig',[
+            'rateForm' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/orders/",name="admin_order_list")
+     */
+    public function ordersListAction(){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $em=$this->getDoctrine()->getManager();
+        $orders = $em->getRepository('AppBundle:UserOrder')
+            ->findAllUserOrdersOrderByDate();
+        return $this->render('admin/order/list.html.twig',[
+            'orders'=>$orders,
+        ]);
+
+    }
+    /**
+     * @Route("/orders/active",name="admin_active_order_list")
+     */
+    public function activeOrdersListAction(){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $em=$this->getDoctrine()->getManager();
+        $orders = $em->getRepository('AppBundle:UserOrder')
+            ->findAllUserOrdersOrderByDate();
+        return $this->render('admin/order/list.html.twig',[
+            'orders'=>$orders,
+        ]);
+
+    }
+    /**
+     * @Route("/orders/auction",name="admin_auction_order_list")
+     */
+    public function auctionOrdersListAction(){
+
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $em=$this->getDoctrine()->getManager();
+        $orders = $em->getRepository('AppBundle:AuctionOrder')
+            ->findAllUserOrdersOrderByDate();
+        return $this->render('admin/order/auctionlist.html.twig',[
+            'orders'=>$orders,
+        ]);
+
+    }
+
+    /**
+     * @Route("/auction/products/unassigned",name="unassigned-products")
+     */
+    public function unassignedProductsAction(){
+        $em=$this->getDoctrine()->getManager();
+        $products = $em->getRepository("AppBundle:Auction")
+            ->findAllUnassignedAuctionOrderByDate();
+        return $this->render('admin/auctionmarket/market.htm.twig',[
+            'markets'=>$products
+        ]);
+    }
+    /**
+     * @Route("/auction/products/assigned",name="assigned-products")
+     */
+    public function assignedProductsAction(){
+        $em=$this->getDoctrine()->getManager();
+        $products = $em->getRepository("AppBundle:Auction")
+            ->findAllAssignedAuctionOrderByDate();
+        return $this->render('admin/auctionmarket/assigned.htm.twig',[
+            'markets'=>$products
+        ]);
+    }
+    /**
+     * @Route("/auction/products/accepted",name="accepted-products")
+     */
+    public function acceptedProductsAction(){
+        $em=$this->getDoctrine()->getManager();
+        $products = $em->getRepository("AppBundle:Auction")
+            ->findAllAcceptedAuctionOrderByDate();
+        return $this->render('admin/auctionmarket/accepted.htm.twig',[
+            'markets'=>$products
+        ]);
+    }
+    /**
+     * @Route("/auction/products/shipped",name="shipped-products")
+     */
+    public function shippedProductsAction(){
+        $em=$this->getDoctrine()->getManager();
+        $products = $em->getRepository("AppBundle:Auction")
+            ->findAllShippedAuctionOrderByDate();
+        return $this->render('admin/auctionmarket/shipped.htm.twig',[
+            'markets'=>$products
+        ]);
+    }
+    public function activeProductsAction(){
+
+    }
+
+    /**
      * @Route("/",name="admin-home")
      */
     public function adminHomeAction(){
@@ -118,6 +767,8 @@ class AdminController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $nrOrders = $em->getRepository('AppBundle:UserOrder')
+            ->findNrOrders();
+        $nrAuctionOrders = $em->getRepository('AppBundle:AuctionOrder')
             ->findNrOrders();
         $nrUsers = $em->getRepository('AppBundle:Company')
             ->getNrUsers();
@@ -175,6 +826,7 @@ class AdminController extends Controller
         return $this->render(':admin:dashboard.htm.twig',[
             'nrUsers'=>$nrUsers,
             'nrOrders'=>$nrOrders,
+            'nrAuctionOrders'=>$nrAuctionOrders,
             'nrBuyers' =>$nrBuyers,
             'nrAgents' => $nrAgents,
             'nrGrowers' => $nrGrowers,
@@ -261,20 +913,6 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/orders/",name="admin_order_list")
-     */
-    public function ordersListAction(){
-
-        $user = $this->get('security.token_storage')->getToken()->getUser();
-        $em=$this->getDoctrine()->getManager();
-        $orders = $em->getRepository('AppBundle:UserOrder')
-            ->findAllUserOrdersOrderByDate();
-        return $this->render('admin/order/list.html.twig',[
-            'orders'=>$orders,
-        ]);
-
-    }
-    /**
      * @Route("/profile",name="my_profile")
      */
     public function profileAction(){
@@ -286,18 +924,7 @@ class AdminController extends Controller
     public function settingsAction(){
 
     }
-    /**
-     * @Route("/categories",name="category_list")
-     */
-    public function categoryAction(){
-        $em=$this->getDoctrine()->getManager();
-        $categories = $em->getRepository('AppBundle:Category')
-            ->findAll();
 
-        return $this->render(':partials:categories.html.twig',[
-            'categoryList'=>$categories,
-        ]);
-    }
     /**
      * @Route("/companies/pending",name="pending-company-accounts")
      */
@@ -629,19 +1256,13 @@ class AdminController extends Controller
 
         switch ($roleValue) {
             case 1:
-                $role = ["ROLE_MEMBERSHIP"];
+                $role = ["ROLE_ADMIN"];
                 break;
             case 2:
-                $role = ["ROLE_MUSIC_DIRECTOR"];
-                break;
-            case 3:
-                $role = ["ROLE_ACTOR_DIRECTOR"];
-                break;
-            case 4:
-                $role = ["ROLE_ADMINISTRATOR"];
+                $role = ["ROLE_FREIGHTERS"];
                 break;
             default:
-                $role = ["ROLE_MEMBERSHIP"];
+                $role = ["ROLE_ADMIN"];
                 break;
         }
 

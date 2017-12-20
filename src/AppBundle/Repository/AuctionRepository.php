@@ -190,4 +190,47 @@ class AuctionRepository extends EntityRepository
             ->execute();
     }
 
+
+    public function findAllUnassignedAuctionOrderByDate(){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status = :unassigned')
+            ->setParameter('unassigned','Unassigned')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+    }
+    public function findAllAssignedAuctionOrderByDate(){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status = :pendingAgent')
+            ->setParameter('pendingAgent','Pending Agent')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+    }
+    public function findAllAcceptedAuctionOrderByDate(){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status= :status')
+            ->setParameter('status','Accepted')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive',true)
+            ->orderBy('product.createdAt','DESC');
+    }
+    public function findAllShippedAuctionOrderByDate(){
+
+        return $this->createQueryBuilder('auction')
+            ->innerJoin('auction.product','product')
+            ->andWhere('auction.status = :pendingAgent')
+            ->setParameter('pendingAgent','Shipped')
+            ->andWhere('product.isActive = :isActive')
+            ->setParameter('isActive', true)
+            ->orderBy('product.createdAt', 'DESC');
+    }
+
+
 }
